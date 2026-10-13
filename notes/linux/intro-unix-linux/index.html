@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Introduction to UNIX &amp; Linux · Linux | AIFDE Notes</title>
+<meta name="description" content="The origin story of UNIX and Linux: the problems of early computing, Multics, UNIX and C, GNU and Linus Torvalds, the open-source idea, kernel vs operating system, and the major distributions.">
+<meta name="keywords" content="UNIX history, Linux kernel, GNU, open source, UNIX philosophy, distributions, Ubuntu, RHEL">
+<meta name="date" content="2026-09-08">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/intro-unix-linux">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Introduction to UNIX &amp; Linux</h1>
+  <p class="byline">Learn where Linux came from, why it was built, what “Linux” really means, and which flavour of it you are likely to meet on the job.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="everywhere">
+  <h2>Where is Linux? (Spoiler: everywhere)</h2>
+  <p>Most people think a computer is just a screen with some icons and a “Start” button. They believe the machine is in control and they are simply using what it allows. Linux is different: it isn’t just an operating system, it’s the <b>“skeleton key”</b> to the digital universe. And you already use it every single day:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>The internet</h4><p>Almost every website you visit (Google, Facebook, Netflix) runs on Linux servers.</p></div>
+    <div class="card t2 tilt-b"><h4>Your phone</h4><p>If you have an Android phone, you carry a Linux “heart” in your pocket.</p></div>
+    <div class="card t4 tilt-a"><h4>The movies</h4><p>Films like <i>Avatar</i> and <i>Spider-Man</i> were rendered on giant Linux render farms.</p></div>
+    <div class="card t5 tilt-b"><h4>Space</h4><p>NASA sent Linux to <b>Mars</b> (the Ingenuity helicopter). If it’s stable enough there, it’s stable enough for your homework.</p></div>
+  </div>
+  <div class="story"><b class="lbl">Rental car vs your own garage</b>Windows and macOS are like rental cars. You can drive them comfortably, but you can’t open up the engine or change the core system, and if something breaks you depend on the manufacturer. Linux is like owning a garage with full access: the machine, the tools and the blueprint. <mark>With Linux you can explore, modify, rebuild and truly understand how a computer works.</mark></div>
+  <div class="sticky tip l"><strong>The vibe check</strong> You don’t need to be a “hacker” to learn Linux. You just need to be <b>curious</b>. We start from the very beginning, back when computers were giant, grumpy metal boxes.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="dark-ages">
+  <h2>The “dark ages” of computing</h2>
+  <p>Before the technical details, let’s ask <i>why Linux exists at all</i>. This is the origin story of the modern digital world: geniuses, big failures, and a student who changed the world from his bedroom. It starts with three big headaches.</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>1 · One person at a time</h4><p>Imagine a skyscraper with <b>one chair and one desk</b>. To work, you book the whole building, do your task, and leave before the next person enters. Early computers were <b>single-user</b>: room-sized, yet only one scientist could use them at a time.</p></div>
+    <div class="card t4 tilt-b"><h4>2 · The language barrier</h4><p>A program written for Computer A wouldn’t run on Computer B, like a book only one person can read. Software wasn’t <b>portable</b>, so engineers rewrote everything for every new machine.</p></div>
+    <div class="card t6 tilt-a"><h4>3 · One task only</h4><p>Computers couldn’t “walk and chew gum”. You gave one job, waited hours for it to finish, then started the next. There was no <b>multitasking</b>.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Three problems of early computing (single user, not portable, no multitasking) lead to the solution built at Bell Labs: UNIX">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="20" width="230" height="44" rx="12"/>
+        <rect class="box f-orange" x="20" y="78" width="230" height="44" rx="12"/>
+        <rect class="box f-orange" x="20" y="136" width="230" height="44" rx="12"/>
+        <path class="lr" d="M258 42 C 330 50, 380 80, 448 95" marker-end="url(#ahr)"/>
+        <path class="lr" d="M258 100 L 448 100" marker-end="url(#ahr)"/>
+        <path class="lr" d="M258 158 C 330 150, 380 120, 448 106" marker-end="url(#ahr)"/>
+        <rect class="box f-green" x="458" y="55" width="240" height="90" rx="16"/>
+      </g>
+      <text class="t" x="135" y="48" text-anchor="middle">single-user only</text>
+      <text class="t" x="135" y="106" text-anchor="middle">software not portable</text>
+      <text class="t" x="135" y="164" text-anchor="middle">no multitasking</text>
+      <text class="th" x="578" y="98" text-anchor="middle">UNIX</text>
+      <text class="ts" x="578" y="124" text-anchor="middle">Bell Labs’ answer, 1969</text>
+    </svg></div>
+    <figcaption>These three headaches frustrated the engineers at Bell Labs enough to build something better.</figcaption>
+  </figure>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="history">
+  <h2>The history: from giant failures to global dominance</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 50 720 140" role="img" aria-label="Timeline: 1965 Multics, 1969 UNIX, 1973 rewritten in C, 1980s commercial UNIX, 1983 GNU project, 1991 Linux kernel">
+      <g class="rough">
+        <path class="ln" d="M30 110 L 695 110" marker-end="url(#ah)"/>
+        <circle class="box f-grey" cx="70" cy="110" r="10"/>
+        <circle class="box f-blue" cx="185" cy="110" r="10"/>
+        <circle class="box f-blue" cx="300" cy="110" r="10"/>
+        <circle class="box f-orange" cx="415" cy="110" r="10"/>
+        <circle class="box f-green" cx="530" cy="110" r="10"/>
+        <circle class="box f-purple" cx="645" cy="110" r="10"/>
+      </g>
+      <text class="tr" x="70" y="80" text-anchor="middle">1965</text>
+      <text class="t" x="70" y="150" text-anchor="middle">Multics</text>
+      <text class="ts" x="70" y="172" text-anchor="middle">too big</text>
+      <text class="tr" x="185" y="80" text-anchor="middle">1969</text>
+      <text class="t" x="185" y="150" text-anchor="middle">UNIX born</text>
+      <text class="ts" x="185" y="172" text-anchor="middle">Thompson, Ritchie</text>
+      <text class="tr" x="300" y="80" text-anchor="middle">1973</text>
+      <text class="t" x="300" y="150" text-anchor="middle">rewritten in C</text>
+      <text class="ts" x="300" y="172" text-anchor="middle">portable!</text>
+      <text class="tr" x="415" y="80" text-anchor="middle">1980s</text>
+      <text class="t" x="415" y="150" text-anchor="middle">locked up</text>
+      <text class="ts" x="415" y="172" text-anchor="middle">IBM, HP, Sun</text>
+      <text class="tr" x="530" y="80" text-anchor="middle">1983</text>
+      <text class="t" x="530" y="150" text-anchor="middle">GNU project</text>
+      <text class="ts" x="530" y="172" text-anchor="middle">Stallman</text>
+      <text class="tr" x="645" y="80" text-anchor="middle">1991</text>
+      <text class="t" x="645" y="150" text-anchor="middle">Linux kernel</text>
+      <text class="ts" x="645" y="172" text-anchor="middle">Torvalds</text>
+    </svg></div>
+    <figcaption>Thirty years from a failed “super-brain” to a free operating system anyone can use.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>The giant mess called Multics (mid-1960s)</b>MIT, AT&amp;T Bell Labs and General Electric tried to build a “super-brain” OS called Multics: one giant computer many people could use at once. It was too big, too complex and too expensive, and Bell Labs walked away in 1969. <span class="tag">→ a bus for the whole world, so heavy it couldn’t move</span></div></li>
+    <li><span class="dot">2</span><div><b>The birth of UNIX: the attic project (1969)</b>Ken Thompson and Dennis Ritchie, two people from that project, found an old discarded computer and built something simpler. They called it UNICS (Uniplexed Information and Computing Service), a pun on Multics; the name became <b>UNIX</b>. In <b>1973</b> they rewrote it in the <b>C language</b>, so it was no longer stuck on one machine and could be moved to almost any computer. <span class="tag">→ a small, fast car with a universal engine that drives on any road</span></div></li>
+    <li><span class="dot">3</span><div><b>The era of corporate lock-in (1980s)</b>UNIX became the system everyone wanted. Companies like IBM, HP and Sun Microsystems made their own versions, sold them at high prices and <b>closed the source code</b>. Students and hobbyists couldn’t afford them and weren’t allowed to study or modify the code. <span class="tag">→ a heavy lock on the hood, and a fortune just to sit in the driver’s seat</span></div></li>
+    <li><span class="dot">4</span><div><b>The GNU Project (from 1983)</b>Richard Stallman led the GNU Project to build a free UNIX-like system. His team built the essential tools: programs for typing commands, managing files, writing software and more. <span class="tag">→ the steering wheel, seats, brakes and lights, everything except the engine</span></div></li>
+    <li><span class="dot">5</span><div><b>Enter the hero: Linus Torvalds (1991)</b>A computer science student in Finland needed a UNIX-like system, but commercial UNIX was far too expensive. Instead of waiting, he started writing his <b>own kernel from scratch</b> in his dorm room, as a personal learning project. <span class="tag">→ the engine</span></div></li>
+    <li><span class="dot">6</span><div><b>The perfect marriage: GNU + Linux</b>Linus’s Linux kernel combined with the GNU tools gave the world a <b>complete operating system</b> that was free, powerful, and open for everyone to study, modify and share. <span class="tag">→ a fully working car anyone can drive for free</span></div></li>
+  </ol>
+  <div class="sticky warn l"><strong>Myth buster</strong> Linus did <b>not</b> copy UNIX. He wrote the Linux kernel himself; it only <i>behaves</i> like UNIX.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="unix-philosophy">
+  <h2>What made UNIX special?</h2>
+  <p>Most software tries to be a <b>Swiss Army knife</b> that does everything. UNIX took the opposite approach. <mark>It stays powerful by staying simple.</mark> That philosophy made it the grandparent of almost every modern system.</p>
+  <h3>The three golden rules</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Small tools, one job each</h4><p>Many tiny tools, each a master of one simple task. To do something big, you link them together like a chain.</p></div>
+    <div class="card t2 tilt-b"><h4>Everything is a file</h4><p>A document is a file, but so are your keyboard, mouse and speakers. The system talks to everything in the same “language”, which keeps it organised.</p></div>
+    <div class="card t5 tilt-a"><h4>Built for teamwork</h4><p>Many people can use the same computer at once, running many programs at once, without the system crashing or getting confused.</p></div>
+  </div>
+  <div class="flow"><span class="op">cat names.txt</span><span class="op">sort</span><span class="op">uniq</span><span class="ok">clean list</span></div>
+  <p>Small tools chained together, the UNIX way. You’ll build chains like this in the pipes note.</p>
+  <h3>The ancestor of our modern world</h3>
+  <p>Even if you never see the name “UNIX” on your laptop or phone, its ideas live inside them:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Family tree: UNIX at the top. Linux is a UNIX-like rebuild and Android is built on it. macOS is certified UNIX via Darwin, and iOS shares that foundation.">
+      <g class="rough">
+        <rect class="box f-yellow" x="270" y="14" width="180" height="52" rx="14"/>
+        <rect class="box f-green" x="80" y="110" width="220" height="52" rx="14"/>
+        <rect class="box f-blue" x="420" y="110" width="220" height="52" rx="14"/>
+        <rect class="box f-green" x="110" y="196" width="160" height="44" rx="12"/>
+        <rect class="box f-blue" x="450" y="196" width="160" height="44" rx="12"/>
+        <path class="ln dash" d="M320 70 C 260 85, 210 92, 190 104" marker-end="url(#ah)"/>
+        <path class="ln" d="M400 70 C 460 85, 510 92, 530 104" marker-end="url(#ah)"/>
+        <path class="lb" d="M190 164 L 190 190" marker-end="url(#ahb)"/>
+        <path class="lb" d="M530 164 L 530 190" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="360" y="50" text-anchor="middle">UNIX</text>
+      <text class="t" x="190" y="142" text-anchor="middle">Linux (UNIX-like)</text>
+      <text class="t" x="530" y="142" text-anchor="middle">macOS (via Darwin)</text>
+      <text class="t" x="190" y="224" text-anchor="middle">Android</text>
+      <text class="t" x="530" y="224" text-anchor="middle">iOS</text>
+      <text class="ts" x="215" y="86" text-anchor="end">same ideas, new code</text>
+      <text class="ts" x="505" y="86">certified UNIX</text>
+    </svg></div>
+    <figcaption>Linux copies UNIX’s behaviour, not its code. macOS is officially certified UNIX.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>System</th><th>Relationship to UNIX</th></tr>
+    <tr><td>Linux</td><td>“UNIX-like”: built from scratch to behave like UNIX, without using the original code.</td></tr>
+    <tr><td>macOS</td><td><b>Certified UNIX</b>, built on Darwin, a direct descendant of the UNIX family (BSD).</td></tr>
+    <tr><td>Android</td><td>Built on the Linux kernel.</td></tr>
+    <tr><td>iOS</td><td>Built on the same Darwin foundation as macOS. Both phones follow classic UNIX ideas for handling apps and security.</td></tr>
+  </table></div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="open-source">
+  <h2>Why the open-source philosophy was needed</h2>
+  <p>To understand Linux you need the open-source mindset. It isn’t just about <i>free of cost</i>; <mark>it is about freedom.</mark></p>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4>The old way: closed and secret</h4><p>You got only the finished program; the <b>source code</b> was hidden.</p><p><b>No control:</b> you couldn’t change even small things.<br><b>Wait and pray:</b> only the company could fix bugs, sometimes taking months.<br><b>Slow innovation:</b> only a small team could see the code.</p></div>
+    <div class="card t2 tilt-b"><h4>The new way: open source</h4><p>The source code is open and readable, like a restaurant giving you the full recipe of its best dish. Anyone in the world can:</p><p><b>Study</b> it · <b>Modify</b> it · <b>Improve</b> it · <b>Share</b> it</p></div>
+  </div>
+  <h3>Why this changed the game</h3>
+  <p>When software became open, it stopped belonging to one company and started belonging to the <b>community</b>.</p>
+  <div class="tbl"><table>
+    <tr><th>Benefit</th><th>What it means</th></tr>
+    <tr><td>Transparency</td><td>Anyone can read the code, so hidden secrets or spyware are much harder to sneak in.</td></tr>
+    <tr><td>Security and trust</td><td>Thousands of developers look at the code, so bugs and security holes are found and fixed quickly.</td></tr>
+    <tr><td>Community-driven</td><td>Instead of one company deciding, millions of users and developers build what they actually need.</td></tr>
+  </table></div>
+  <div class="story"><b class="lbl">The locked car vs the Lego set</b><b>Closed source</b> is a car with the hood welded shut. You can drive it, but if it breaks you must go to the dealer and pay whatever they ask. You can’t even change the seat colour. <b>Open source</b> is a car built like a giant Lego set. You see every piece, swap in a faster engine, and share a better wheel design with everyone. <mark>Everyone’s car gets better because everyone shares ideas.</mark></div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="why-linux">
+  <h2>Why Linux was created</h2>
+  <p>UNIX was the gold standard, but it was mostly <b>proprietary</b>: owned by a company that keeps the secrets to itself. Unless you worked for a big corporation or top university, you couldn’t use it. Linux was built to fill that gap with three goals:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Follow UNIX principles</h4><p>Act like UNIX, with its smart organisation and multitasking, without using any of its restricted code.</p></div>
+    <div class="card t2 tilt-b"><h4>Be open source</h4><p>From day one, anyone can see the “recipe” of the system.</p></div>
+    <div class="card t3 tilt-a"><h4>Run on common hardware</h4><p>Most UNIX ran on expensive, specialised machines. Linux ran on the ordinary PC on your desk.</p></div>
+  </div>
+  <h3>The “full package” equation</h3>
+  <p>Linus didn’t build a whole car; he built the world’s best engine. To drive you to work, the engine needs a body, wheels and a steering wheel.</p>
+  <div class="flow"><span class="hl">Linux kernel (engine) + open-source tools, mostly GNU (body and controls)</span><span class="ok">a full operating system</span></div>
+  <div class="story"><b class="lbl">The secret restaurant vs the community potluck</b><b>UNIX</b> was a famous restaurant with a locked kitchen: a high price, secret ingredients, and no way to cook it at home. <b>Linux</b> is a big community potluck. One person brings a world-class main dish (the kernel), others bring sides, drinks and dessert (the tools), and <mark>everyone gets the recipes for free.</mark> Think it needs more salt? Add it and show everyone.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="kernel-vs-os">
+  <h2>What exactly is Linux? The big clarification</h2>
+  <p>People say “I use the Linux operating system”, but technically that isn’t 100% true. <mark>Linux is the kernel: the engine, not the whole car.</mark></p>
+  <div class="two">
+    <div class="card t3 tilt-a"><h4>The Linux kernel = the engine</h4><p>A massive, powerful engine that can run for years. But you can’t sit on an engine or steer it. On its own it is raw power on the garage floor.</p></div>
+    <div class="card t1 tilt-b"><h4>The operating system = the full car</h4><p>To drive to the shop, the engine needs a body, seats, a steering wheel and a dashboard.</p></div>
+  </div>
+  <p>So when people say “I use Linux”, they mean they drive a car with a Linux engine under the hood.</p>
+  <h3>The kernel’s four jobs</h3>
+  <p>The kernel is like a busy manager in a giant factory:</p>
+  <div class="tbl"><table>
+    <tr><th>Job</th><th>Factory picture</th><th>What it does</th></tr>
+    <tr><td><b>CPU</b></td><td>the super-brain</td><td>Every app wants the CPU at once. The kernel is the referee that decides how many milliseconds each one gets, so nothing freezes.</td></tr>
+    <tr><td><b>Memory</b></td><td>the workspace</td><td>Tracks every megabyte of RAM and stops your browser from wandering into your music player’s memory.</td></tr>
+    <tr><td><b>Devices</b></td><td>the hands</td><td>Translates between software and hardware. When you plug in a mouse or printer, the kernel knows how to talk to it.</td></tr>
+    <tr><td><b>Processes</b></td><td>the tasks</td><td>Starts, stops and watches over every running task so the system stays stable.</td></tr>
+  </table></div>
+  <h3>Building the full car</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Four stacked layers forming a Linux operating system: desktop environment on top, then libraries, then GNU tools, then the Linux kernel at the bottom">
+      <g class="rough">
+        <rect class="box f-pink" x="120" y="14" width="480" height="52" rx="12"/>
+        <rect class="box f-yellow" x="120" y="74" width="480" height="52" rx="12"/>
+        <rect class="box f-green" x="120" y="134" width="480" height="52" rx="12"/>
+        <rect class="box f-orange" x="120" y="194" width="480" height="60" rx="12"/>
+        <path class="lr" d="M90 20 L 90 248"/>
+      </g>
+      <text class="t" x="140" y="46">Desktop environment</text><text class="ts" x="580" y="46" text-anchor="end">paint and dashboard</text>
+      <text class="t" x="140" y="106">Libraries</text><text class="ts" x="580" y="106" text-anchor="end">the interior</text>
+      <text class="t" x="140" y="166">GNU tools</text><text class="ts" x="580" y="166" text-anchor="end">steering and pedals</text>
+      <text class="th" x="140" y="232">Linux kernel</text><text class="ts" x="580" y="230" text-anchor="end">the engine</text>
+      <text class="tr" x="78" y="140" text-anchor="end">the OS</text>
+    </svg></div>
+    <figcaption>Mix all four layers and you get a complete Linux operating system.</figcaption>
+  </figure>
+  <div class="sticky info"><strong>Coming up</strong> The next note, Linux Architecture, opens up this stack properly: hardware, kernel, shell and applications.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="unix-vs-linux">
+  <h2>The family tree: UNIX vs Linux</h2>
+  <p>Side by side they speak the same language, use the same commands and follow the same rules. Look closer and their “lives” are very different.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:20%">Aspect</th><th style="width:40%">UNIX</th><th style="width:40%">Linux</th></tr>
+    <tr><td><b>Origin</b></td><td><b>The parent.</b> Born around 1970 in a high-tech lab (Bell Labs). The original genius that set the rules.</td><td><b>The inspired child.</b> Born in 1991 in a student’s bedroom. Not built from UNIX code, but built to act like it: “UNIX-like”.</td></tr>
+    <tr><td><b>Ownership</b></td><td><b>A private club.</b> Mostly proprietary; companies own it and you can’t see or change the source.</td><td><b>A public park.</b> Open source; anyone can read the blueprints, find a mistake and fix it.</td></tr>
+    <tr><td><b>Development</b></td><td><b>Corporate.</b> Built behind closed doors at companies like IBM or HP, who decide features and timing.</td><td><b>Global.</b> Thousands of contributors, from a teenager in India to a professional in Germany.</td></tr>
+    <tr><td><b>Cost</b></td><td><b>A luxury.</b> Usually expensive, with official support. Aimed at banks and research centres.</td><td><b>A gift.</b> Mostly free: the same price as a glass of water.</td></tr>
+  </table></div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="why-it-rules">
+  <h2>Why Linux rules the world</h2>
+  <p>Look around a classroom and you see Windows and Macs. Look at the hidden world of <b>servers</b> powering Google, Netflix and Instagram, and Linux is everywhere. Four reasons:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · Stability</h4><p>Laptops get laggy and need restarts. Linux servers routinely run for months or years without a reboot; restarts are mostly for kernel updates.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Security: a thousand eyes</h4><p>In closed systems only a small team sees the code. Open source means thousands of developers inspect the engine, so security holes are often fixed within days or even hours.</p></div>
+    <div class="card t8 tilt-a"><h4>3 · Low resource use</h4><p>Linux is lean: no wasted power on animations or background apps you don’t need. It can bring an old, slow computer back to life.</p></div>
+    <div class="card t7 tilt-b"><h4>4 · Zero licensing</h4><p>Install it on 10 or 10 million machines, free. Money goes to innovation instead of “permission” to use an OS.</p></div>
+  </div>
+  <h3>The licence maths</h3>
+  <div class="notes"><div class="note"><b>10,000</b>servers</div><div class="note"><b>× $200</b>licence each</div><div class="note"><b>$2M</b>spent before day one</div><div class="note"><b>$0</b>with Linux</div></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When you deploy an AI service for a customer, it will almost always land on a Linux machine: a cloud VM, a Docker container or a Kubernetes node. If Linux disappeared tomorrow, YouTube, online gaming and cloud storage would go dark. <mark class="v">Linux is the infrastructure of the modern world</mark>, so the terminal skills in this module are your daily tools.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="distros">
+  <h2>Why so many “flavours” of Linux?</h2>
+  <div class="story"><b class="lbl">The ice-cream shop</b>Every tub in the shop starts from the same base of milk and sugar, but one becomes chocolate, one strawberry, one mint. In Linux the <b>kernel</b> is the milk and sugar. Because it’s open source, anyone can add their own toppings and create a <mark>distribution (distro)</mark>.</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="One shared Linux kernel base feeds four distributions: Ubuntu for desktop users, Debian for servers, RHEL for enterprises, Kali for security experts">
+      <g class="rough">
+        <rect class="box f-yellow" x="230" y="150" width="260" height="56" rx="14"/>
+        <rect class="box f-pink" x="20" y="20" width="155" height="66" rx="14"/>
+        <rect class="box f-blue" x="195" y="20" width="155" height="66" rx="14"/>
+        <rect class="box f-orange" x="370" y="20" width="155" height="66" rx="14"/>
+        <rect class="box f-grey" x="545" y="20" width="155" height="66" rx="14"/>
+        <path class="ln" d="M300 146 C 220 130, 120 115, 98 92" marker-end="url(#ah)"/>
+        <path class="ln" d="M330 146 L 280 92" marker-end="url(#ah)"/>
+        <path class="ln" d="M390 146 L 440 92" marker-end="url(#ah)"/>
+        <path class="ln" d="M420 146 C 500 130, 600 115, 622 92" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="360" y="186" text-anchor="middle">Linux kernel</text>
+      <text class="t" x="97" y="50" text-anchor="middle">Ubuntu, Mint</text><text class="ts" x="97" y="72" text-anchor="middle">desktop</text>
+      <text class="t" x="272" y="50" text-anchor="middle">Debian</text><text class="ts" x="272" y="72" text-anchor="middle">server</text>
+      <text class="t" x="447" y="50" text-anchor="middle">RHEL</text><text class="ts" x="447" y="72" text-anchor="middle">enterprise</text>
+      <text class="t" x="622" y="50" text-anchor="middle">Kali</text><text class="ts" x="622" y="72" text-anchor="middle">security</text>
+    </svg></div>
+    <figcaption>Same base, different toppings: 500+ distros because different people need different things.</figcaption>
+  </figure>
+  <h3>Different users, different needs</h3>
+  <div class="tbl"><table>
+    <tr><th>User</th><th>What they want</th><th>Typical choice</th></tr>
+    <tr><td><b>Desktop user</b> (daily driver)</td><td>A beautiful, friendly system with buttons to click and easy installs for apps like Spotify or Zoom.</td><td>Ubuntu, Linux Mint</td></tr>
+    <tr><td><b>Server</b> (workhorse)</td><td>No screen, no pretty icons. Bare essentials so 100% of the power goes to work.</td><td>Debian, Ubuntu Server</td></tr>
+    <tr><td><b>Enterprise</b> (corporate jet)</td><td>Official support they can phone, and a version guaranteed stable for about 10 years.</td><td>RHEL (Red Hat Enterprise Linux)</td></tr>
+    <tr><td><b>Security expert</b> (digital guard)</td><td>Pre-loaded security and penetration-testing tools to test how strong a network is.</td><td>Kali Linux</td></tr>
+  </table></div>
+  <h3>What is inside a distribution?</h3>
+  <p>A distro is a <b>bundle</b>. You don’t just download the engine; you get a complete package:</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Kernel</h4><p>The engine that talks to your hardware.</p></div>
+    <div class="card t2 tilt-b"><h4>Package manager</h4><p>The “app store” of Linux, such as <code>apt</code> or <code>dnf</code>. It installs software safely.</p></div>
+    <div class="card t4 tilt-a"><h4>Desktop environment</h4><p>The look and feel: whether menus sit at the top, the bottom, or look like a Mac.</p></div>
+    <div class="card t1 tilt-b"><h4>Default apps</h4><p>Pre-installed tools: a web browser, a text editor, a terminal.</p></div>
+  </div>
+  <div class="sticky tip l"><strong>Don’t panic</strong> If kernel, distro or package manager still feel like big words, that’s completely normal. We go step by step and they will soon feel simple.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="major-distros">
+  <h2>The major Linux distributions</h2>
+  <p>There are hundreds of distros, but understand these four and you understand the heart of Linux.</p>
+  <div class="two">
+    <div class="card t5 tilt-a"><h4>Ubuntu · the friendly neighbour</h4><p><b>Why it exists:</b> to make Linux easy for everyone, not just experts. “Ubuntu” means “I am because we are”.</p><p><b>Why people love it:</b> clean, familiar interface; a huge community that has already answered most questions online; browser, office tools and media player pre-installed.</p><p><b>Best for:</b> learning Linux, everyday desktops and modern cloud servers.</p></div>
+    <div class="card t1 tilt-b"><h4>Debian · the solid rock</h4><p><b>Why it exists:</b> stability first. A strict testing process means no release until it is rock solid.</p><p><b>Why people love it:</b> runs for years without fuss; it is the foundation many distros (including Ubuntu!) are built on; strictly committed to free software.</p><p><b>Best for:</b> 24/7 web servers and machines that should “just work” without constant updates.</p></div>
+    <div class="card t6 tilt-a"><h4>RHEL · the corporate suit</h4><p><b>Why it exists:</b> companies that lose millions per hour of downtime need <b>official support</b> they can call.</p><p><b>Why businesses love it:</b> paid subscription with professional help; security updates for a version for 10+ years; hardware and software vendors certify their products for it.</p><p><b>Best for:</b> banks, hospitals, government, stock exchanges and big data centres.</p></div>
+    <div class="card t2 tilt-b"><h4>CentOS · the free training ground</h4><p><b>Why it existed:</b> RHEL’s “twin brother”, rebuilt from the source code Red Hat publishes, without the paid support.</p><p><b>Why people loved it:</b> enterprise experience for free, and just as stable as RHEL.</p><p><b>Best for:</b> small company servers, home labs, and testing before moving to a real RHEL server.</p></div>
+  </div>
+  <div class="sticky warn"><strong>CentOS today</strong> Classic CentOS Linux has reached end of life (CentOS 8 in 2021, CentOS 7 in 2024). Red Hat now offers <b>CentOS Stream</b>, which sits just ahead of RHEL. Free RHEL-compatible rebuilds now come from <b>Rocky Linux</b> and <b>AlmaLinux</b>, and you will still find old CentOS 7 boxes on customer sites.</div>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>UNIX</dt><dd>The operating system created at Bell Labs in 1969 by Ken Thompson and Dennis Ritchie, rewritten in C in 1973; the ancestor of most modern systems.</dd></div>
+    <div><dt>Multics</dt><dd>An ambitious 1960s multi-user operating system project by MIT, Bell Labs and GE that was too big and complex; its failure led to UNIX.</dd></div>
+    <div><dt>Portability</dt><dd>The ability of software to run on different machines without being rewritten; UNIX gained it by being written in C.</dd></div>
+    <div><dt>Multitasking</dt><dd>Running several programs at the same time, with the operating system sharing the CPU between them.</dd></div>
+    <div><dt>Kernel</dt><dd>The core of an operating system that manages the CPU, memory, devices and processes, and talks directly to hardware. Linux is a kernel.</dd></div>
+    <div><dt>GNU Project</dt><dd>Richard Stallman’s free-software project (started 1983) that built the essential tools (shell, file utilities, compilers) that, together with the Linux kernel, form a full OS.</dd></div>
+    <div><dt>Open source</dt><dd>Software whose source code is public, so anyone can study, modify, improve and share it.</dd></div>
+    <div><dt>Proprietary software</dt><dd>Software owned by a company that keeps its source code secret and controls how it may be used.</dd></div>
+    <div><dt>UNIX-like</dt><dd>A system that behaves like UNIX (same ideas and commands) without using the original UNIX code, such as Linux.</dd></div>
+    <div><dt>Distribution (distro)</dt><dd>A complete bundle built around the Linux kernel: package manager, desktop environment and default apps. Examples: Ubuntu, Debian, RHEL.</dd></div>
+    <div><dt>Package manager</dt><dd>The “app store” of a Linux distro (e.g. <code>apt</code>, <code>dnf</code>) that installs, updates and removes software safely.</dd></div>
+    <div><dt>Desktop environment</dt><dd>The graphical layer of a distro: windows, menus, icons and wallpaper.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Why was rewriting UNIX in C in 1973 such a big deal?</p>
+      <ol><li>It made UNIX free of cost</li><li>It added a graphical desktop</li><li>It made UNIX portable to other computers</li><li>It allowed only one user at a time</li></ol>
+      <p class="why">Code written in C could be recompiled for new machines, so UNIX was no longer tied to one computer.</p></div>
+    <div class="q" data-answer="2"><p>What did Linus Torvalds actually write in 1991?</p>
+      <ol><li>A complete OS including all tools</li><li>A kernel, written from scratch</li><li>A copy of the UNIX source code</li><li>The GNU tools</li></ol>
+      <p class="why">Linus wrote the kernel (the engine). The tools mostly came from the GNU Project.</p></div>
+    <div class="q" data-answer="4"><p>Which equation best describes a Linux operating system?</p>
+      <ol><li>UNIX code + Windows drivers</li><li>Desktop environment only</li><li>GNU tools without a kernel</li><li>Linux kernel + open-source tools (mostly GNU)</li></ol>
+      <p class="why">The kernel alone can’t be “driven”. Tools, libraries and a desktop turn it into a full OS.</p></div>
+    <div class="q" data-answer="1"><p>“Everything is a file” means…</p>
+      <ol><li>Devices like the keyboard are treated like files too</li><li>You must save all work as text files</li><li>Programs can only open one file at a time</li><li>Folders are not allowed</li></ol>
+      <p class="why">UNIX exposes devices through the same file interface, so the system talks to everything the same way.</p></div>
+    <div class="q" data-answer="3"><p>A bank wants a 10-year supported Linux with a phone number to call. Which distro fits?</p>
+      <ol><li>Kali Linux</li><li>Linux Mint</li><li>RHEL</li><li>Any distro, they are identical</li></ol>
+      <p class="why">RHEL is sold with paid support, long-term security updates and vendor certification.</p></div>
+    <div class="q" data-answer="2"><p>Which statement about UNIX and Linux is correct?</p>
+      <ol><li>Linux is built from the original UNIX source code</li><li>Linux is UNIX-like: it behaves like UNIX without its code</li><li>UNIX is open source and Linux is proprietary</li><li>They have nothing in common</li></ol>
+      <p class="why">Linux follows UNIX’s design and commands but was written independently and is open source.</p></div>
+    <div class="q" data-answer="4"><p>What makes two distros like Ubuntu and Debian different?</p>
+      <ol><li>They use completely different kernels written by different people</li><li>Only one of them is Linux</li><li>Their file names are in different languages</li><li>The bundle around the kernel: tools, package choices, defaults and release policy</li></ol>
+      <p class="why">Both use the Linux kernel. Distros differ in the “toppings” and how they are tested and released.</p></div>
+    <div class="q" data-answer="1"><p>Why do companies running thousands of servers prefer Linux?</p>
+      <ol><li>Zero licence cost, stability and low resource use</li><li>It has the prettiest animations</li><li>It only runs on expensive hardware</li><li>It cannot be modified</li></ol>
+      <p class="why">No per-server licence, long uptimes and a lean footprint make Linux the default for servers.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>UNIX</b> solved early computing’s single-user, non-portable, one-task problems; companies locked it up, so <b>GNU</b> tools plus Linus Torvalds’ <b>Linux kernel</b> created a free, <b>open-source</b>, UNIX-like system that now runs the world in many <b>distributions</b>.</p>
+  <p>Next up: <b>Linux Architecture</b>, where we open the hood and see how hardware, kernel, shell and applications fit together.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

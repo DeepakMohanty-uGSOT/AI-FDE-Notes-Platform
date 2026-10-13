@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IP Address Fundamentals · Networking Basics | AIFDE Notes</title>
+<meta name="description" content="Why devices need IP addresses, how a 32-bit IPv4 address is built and converted between binary and decimal, the old A–E classes, public vs private, NAT, special addresses and IPv6.">
+<meta name="keywords" content="IPv4, binary conversion, octets, network and host portion, IP classes, private IP, NAT, IPv6">
+<meta name="date" content="2026-09-13">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="networking/ip-address-fundamentals">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>IP Address Fundamentals</h1>
+  <p class="byline">Read any IPv4 address like a pro: convert it to binary and back, split it into network and host, tell public from private, and know why IPv6 had to arrive.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why IP addresses are needed</h2>
+  <div class="story"><b class="lbl">The Chennai office and the Toronto letter</b>A switch in a Chennai office knows the MAC addresses of all 20 computers plugged into it, so they can talk to each other easily. But one computer now needs to send a file to a company in <b>Toronto</b>. The Chennai switch knows nothing about Toronto or the networks in between. <mark>A MAC address says <i>which device</i>; it cannot say <i>which network</i> that device lives on.</mark> For that we need a bigger kind of address: the IP address.</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Chennai office network on the left, Toronto office network on the right, the Internet of many networks in the middle. A MAC address cannot say which network; an IP address can.">
+      <g class="rough">
+        <rect class="box f-blue" x="15" y="50" width="210" height="130" rx="16"/>
+        <rect class="box f-green" x="495" y="50" width="210" height="130" rx="16"/>
+        <ellipse class="box f-grey" cx="360" cy="115" rx="100" ry="52"/>
+        <path class="lr dash" d="M228 115 L 256 115" marker-end="url(#ahr)"/>
+        <path class="lb" d="M464 115 L 490 115" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="120" y="95" text-anchor="middle">Chennai</text>
+      <text class="ts" x="120" y="128" text-anchor="middle">switch knows 20 MACs</text>
+      <text class="ts" x="120" y="152" text-anchor="middle">only on its own LAN</text>
+      <text class="th" x="600" y="95" text-anchor="middle">Toronto</text>
+      <text class="ts" x="600" y="128" text-anchor="middle">a different network</text>
+      <text class="ts" x="600" y="152" text-anchor="middle">far, far away</text>
+      <text class="t" x="360" y="112" text-anchor="middle">Internet</text>
+      <text class="ts" x="360" y="136" text-anchor="middle">many networks</text>
+      <text class="tr" x="360" y="212" text-anchor="middle">a MAC address can't say which network</text>
+      <text class="tb" x="360" y="244" text-anchor="middle">an IP address can</text>
+    </svg></div>
+    <figcaption>Local delivery works with MACs. Delivery <i>across</i> networks needs a logical address.</figcaption>
+  </figure>
+  <h3>Two questions every delivery must answer</h3>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Which network?</h4><p>Out of millions of networks on the Internet, which one is the device on?</p></div>
+    <div class="card t2 tilt-b"><h4>Which device?</h4><p>Inside that network, which exact device is the destination?</p></div>
+  </div>
+  <p>A MAC address cannot answer the first question, so we need <b>logical addressing</b>. Unlike a MAC address (burned into the hardware), a logical address is <b>assigned according to the network a device is connected to</b>, and it can change when the device moves to another network.</p>
+  <h3>What is an IP address?</h3>
+  <p>An <mark>IP address is a logical address given to a device so it can be identified and reached within a network or across the Internet.</mark> Think of a house address: it tells you <i>where</i> to find something, not <i>what</i> it physically is. The MAC identifies the hardware; the IP identifies the device’s current location.</p>
+  <p>Every piece of data sent over IP carries two of them:</p>
+  <ul><li><b>Source IP</b>: where the data came from.</li><li><b>Destination IP</b>: where the data needs to go.</li></ul>
+  <p>For example, your home router might give your laptop <code>192.168.1.10</code>. That identifies the laptop inside your home network so other devices can talk to it.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="types">
+  <h2>“Types” of IP address: five different lenses</h2>
+  <p>People say “type of IP address” and mean five <b>different</b> things. Each is a separate way of describing the same address:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · Version</h4><p><b>IPv4</b>: the original version. <b>IPv6</b>: the newer one, made mainly to fix the IPv4 shortage. They differ in size and format.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Reachability</h4><p><b>Public</b>: reachable from anywhere on the Internet. <b>Private</b>: used only inside a local network, not reachable directly from the Internet.</p></div>
+    <div class="card t3 tilt-a"><h4>3 · Assignment</h4><p><b>Static</b>: configured by hand, stays until someone changes it. <b>Dynamic</b>: handed out automatically by a DHCP server, may change.</p></div>
+    <div class="card t4 tilt-b"><h4>4 · Communication</h4><p><b>Unicast</b> one → one. <b>Broadcast</b> one → everyone on the LAN. <b>Multicast</b> one → a chosen group. <b>Anycast</b> one → the nearest suitable receiver.</p></div>
+    <div class="card t5 tilt-a"><h4>5 · Purpose</h4><p><b>Host</b> (one device), <b>loopback</b> (talk to yourself), <b>link-local</b> (automatic, one segment only), <b>network</b> (the whole subnet), <b>broadcast</b> (all devices on a subnet, IPv4).</p></div>
+  </div>
+  <p>These lenses are <mark>not mutually exclusive</mark>. One single address wears all five labels at once:</p>
+  <div class="tbl"><table>
+    <tr><th>Lens</th><th>Label for <code>192.168.1.10</code></th></tr>
+    <tr><td>Version</td><td>IPv4</td></tr>
+    <tr><td>Reachability</td><td>Private</td></tr>
+    <tr><td>Assignment</td><td>Static or dynamic (depends on how it was set)</td></tr>
+    <tr><td>Communication</td><td>Unicast</td></tr>
+    <tr><td>Purpose</td><td>Host address</td></tr>
+  </table></div>
+  <div class="sticky tip l"><strong>Don’t think “either/or”</strong> An address is not “IPv4 <i>or</i> private <i>or</i> static”. Those are answers to different questions about the same address. Keeping this clear makes everything that follows much easier.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="ipv4-bits">
+  <h2>IPv4: 32 bits in four octets</h2>
+  <p><b>IPv4</b> (Internet Protocol version 4) is the first widely adopted version of IP. When people just say “IP address”, they usually mean an IPv4 address like <code>192.168.1.10</code>.</p>
+  <p>A <b>bit</b> is the smallest unit of digital information: it is either <code>0</code> or <code>1</code>. <mark>Every IPv4 address is exactly 32 bits.</mark> Written raw, <code>192.168.1.10</code> looks like this:</p>
+  <pre class="out"><code>11000000101010000000000100001010</code></pre>
+  <h3>How many IPv4 addresses can exist?</h3>
+  <p>Each of the 32 bits has 2 possible values, so the number of different addresses is 2 multiplied by itself 32 times:</p>
+  <div class="notes"><div class="note"><b>2³²</b>possible patterns</div><div class="note"><b>4,294,967,296</b>IPv4 addresses</div><div class="note"><b>≈ 4.29 bn</b>seemed huge in the 1980s</div></div>
+  <p>That seemed enormous when IPv4 was designed. The Internet’s growth later made it too small, which is the whole story behind IPv6.</p>
+  <h3>Octets: four groups of eight</h3>
+  <p>32 bits in a row are hard for humans to read, so they are cut into <b>four groups of 8 bits</b>. Each 8-bit group is an <b>octet</b> (8 + 8 + 8 + 8 = 32).</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The address 192.168.1.10 as four boxes of eight bits each: 11000000, 10101000, 00000001, 00001010. Together they make 32 bits.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="58" width="155" height="56" rx="12"/>
+        <rect class="box f-green" x="195" y="58" width="155" height="56" rx="12"/>
+        <rect class="box f-orange" x="370" y="58" width="155" height="56" rx="12"/>
+        <rect class="box f-pink" x="545" y="58" width="155" height="56" rx="12"/>
+        <path class="ln" d="M20 160 L 700 160"/>
+        <path class="ln" d="M20 150 L 20 170"/>
+        <path class="ln" d="M700 150 L 700 170"/>
+      </g>
+      <text class="th" x="97" y="42" text-anchor="middle">192</text>
+      <text class="th" x="272" y="42" text-anchor="middle">168</text>
+      <text class="th" x="447" y="42" text-anchor="middle">1</text>
+      <text class="th" x="622" y="42" text-anchor="middle">10</text>
+      <text class="tm" x="97" y="91" text-anchor="middle">11000000</text>
+      <text class="tm" x="272" y="91" text-anchor="middle">10101000</text>
+      <text class="tm" x="447" y="91" text-anchor="middle">00000001</text>
+      <text class="tm" x="622" y="91" text-anchor="middle">00001010</text>
+      <text class="ts" x="97" y="138" text-anchor="middle">octet 1 · 8 bits</text>
+      <text class="ts" x="272" y="138" text-anchor="middle">octet 2 · 8 bits</text>
+      <text class="ts" x="447" y="138" text-anchor="middle">octet 3 · 8 bits</text>
+      <text class="ts" x="622" y="138" text-anchor="middle">octet 4 · 8 bits</text>
+      <text class="t" x="360" y="196" text-anchor="middle">4 octets × 8 bits = 32 bits</text>
+    </svg></div>
+    <figcaption>The same 32 bits, chopped into four readable pieces.</figcaption>
+  </figure>
+  <h3>Why each octet is 0–255</h3>
+  <p>One octet has 8 bits, and each bit has 2 values, so:</p>
+  <pre class="out"><code>2⁸ = 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 = 256 different values</code></pre>
+  <p>Counting starts at 0, so those 256 values are <mark>0 to 255</mark>. Every one of the four octets follows the same rule. There is nothing special about the first octet compared with the fourth; they are just four 8-bit sections side by side.</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="binary">
+  <h2>Dotted decimal and binary ↔ decimal conversion</h2>
+  <p>Humans write IPv4 in <b>dotted decimal notation</b>: each octet is turned into a decimal number (0–255) and the four numbers are joined with dots, as in <code>192.168.1.10</code>. Computers still work with the 32 binary bits underneath; the decimal form is just for us.</p>
+  <h3>The eight place values</h3>
+  <p>Every bit position in an octet is worth a fixed amount. Each one is double the one to its right:</p>
+  <div class="tbl"><table>
+    <tr><th>Bit position</th><th>1st</th><th>2nd</th><th>3rd</th><th>4th</th><th>5th</th><th>6th</th><th>7th</th><th>8th</th></tr>
+    <tr><td><b>Place value</b></td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+    <tr><td>As a power of 2</td><td>2⁷</td><td>2⁶</td><td>2⁵</td><td>2⁴</td><td>2³</td><td>2²</td><td>2¹</td><td>2⁰</td></tr>
+  </table></div>
+  <p>All eight added together: 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = <b>255</b>, the biggest octet value.</p>
+
+  <h3>Decimal → binary: convert 192</h3>
+  <p>Go left to right. If the place value fits into what is left, write <code>1</code> and subtract it; otherwise write <code>0</code>.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Start with 128</b>Does 128 fit into 192? Yes. 192 − 128 = 64, so the 128 bit is <code>1</code>. <span class="tag">→ left: 64</span></div></li>
+    <li><span class="dot">2</span><div><b>Next, 64</b>Does 64 fit into 64? Yes. 64 − 64 = 0, so the 64 bit is <code>1</code>. <span class="tag">→ left: 0</span></div></li>
+    <li><span class="dot">3</span><div><b>Fill the rest</b>Nothing is left, so 32, 16, 8, 4, 2 and 1 are all <code>0</code>.</div></li>
+    <li><span class="dot">4</span><div><b>Read left to right</b><code>11000000</code>. So 192₁₀ = 11000000₂.</div></li>
+  </ol>
+  <div class="tbl"><table>
+    <tr><th>Place value</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr>
+    <tr><td>Bit for 192</td><td><mark class="g">1</mark></td><td><mark class="g">1</mark></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+  </table></div>
+  <p>In short: 192 = 128 + 64, so you switch on the 128 and 64 positions and switch off everything else.</p>
+
+  <h3>Binary → decimal: convert 11000000</h3>
+  <p>The reverse is even easier. <mark>Look at each bit: if it is 1, add its place value; if it is 0, ignore it.</mark></p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Match bits to place values</b>Write <code>1 1 0 0 0 0 0 0</code> under 128, 64, 32, 16, 8, 4, 2, 1.</div></li>
+    <li><span class="dot">2</span><div><b>Add where the bit is 1</b>Only 128 and 64 are switched on: 128 + 64 = 192.</div></li>
+    <li><span class="dot">3</span><div><b>Write the answer</b>11000000₂ = 192₁₀.</div></li>
+  </ol>
+
+  <h3>One more each way</h3>
+  <div class="tbl"><table>
+      <tr><th>168 → binary</th><th>left over</th><th>bit</th></tr>
+      <tr><td>128 fits</td><td>168 − 128 = 40</td><td>1</td></tr>
+      <tr><td>64 doesn’t fit 40</td><td>40</td><td>0</td></tr>
+      <tr><td>32 fits</td><td>40 − 32 = 8</td><td>1</td></tr>
+      <tr><td>16 doesn’t fit 8</td><td>8</td><td>0</td></tr>
+      <tr><td>8 fits</td><td>8 − 8 = 0</td><td>1</td></tr>
+      <tr><td>4, 2, 1</td><td>0</td><td>0 0 0</td></tr>
+      <tr><td colspan="3"><b>168 = 10101000</b></td></tr>
+    </table></div>
+  <div class="tbl"><table>
+      <tr><th>00001010 → decimal</th><th>bit</th><th>add?</th></tr>
+      <tr><td>128, 64, 32, 16</td><td>0 0 0 0</td><td>no</td></tr>
+      <tr><td>8</td><td>1</td><td>+8</td></tr>
+      <tr><td>4</td><td>0</td><td>no</td></tr>
+      <tr><td>2</td><td>1</td><td>+2</td></tr>
+      <tr><td>1</td><td>0</td><td>no</td></tr>
+      <tr><td colspan="3"><b>8 + 2 = 10</b></td></tr>
+    </table></div>
+
+  <h3>A complete address</h3>
+  <p>Do the same for all four octets of <code>192.168.1.10</code>:</p>
+  <div class="tbl"><table>
+    <tr><th>Octet</th><th>Decimal</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th><th>Check</th></tr>
+    <tr><td>1st</td><td><b>192</b></td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>128+64</td></tr>
+    <tr><td>2nd</td><td><b>168</b></td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>128+32+8</td></tr>
+    <tr><td>3rd</td><td><b>1</b></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+    <tr><td>4th</td><td><b>10</b></td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>8+2</td></tr>
+  </table></div>
+  <div class="anatomy"><span class="a1">11000000</span>.<span class="a2">10101000</span>.<span class="a3">00000001</span>.<span class="a4">00001010</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>192</b> · first octet</p></div>
+    <div><span class="sw a2"></span><p><b>168</b> · second octet</p></div>
+    <div><span class="sw a3"></span><p><b>1</b> · third octet</p></div>
+    <div><span class="sw a4"></span><p><b>10</b> · fourth octet</p></div>
+  </div>
+  <p>That is the full 32-bit form. Always 32 bits, always four 8-bit octets.</p>
+
+  <h3>Is it a valid IPv4 address?</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Exactly four octets</b>separated by dots.</div></li>
+    <li><span class="dot">2</span><div><b>Each octet 0–255</b>nothing bigger fits in 8 bits.</div></li>
+    <li><span class="dot">3</span><div><b>Dotted decimal notation</b>decimal numbers, not hex or words.</div></li>
+  </ol>
+  <div class="tbl"><table>
+    <tr><th>Address</th><th>Valid?</th><th>Reason</th></tr>
+    <tr><td><code>192.168.1.10</code></td><td>✅ Valid</td><td>Four octets, all between 0 and 255</td></tr>
+    <tr><td><code>192.168.1.300</code></td><td>❌ Invalid</td><td>300 is bigger than 255</td></tr>
+    <tr><td><code>192.168.1</code></td><td>❌ Invalid</td><td>Only three octets</td></tr>
+    <tr><td><code>192.168.1.10.5</code></td><td>❌ Invalid</td><td>Five octets instead of four</td></tr>
+  </table></div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="network-host">
+  <h2>Network portion and host portion</h2>
+  <div class="story"><b class="lbl">MG Road</b>Many houses stand on MG Road. They all share the street name, but each has its own house number. <mark>In an IP address, the network portion is the street name and the host portion is the house number.</mark></div>
+  <p>Although an IPv4 address is one 32-bit value, it is split into two logical parts:</p>
+  <div class="anatomy"><span class="a4">network portion</span><span class="a2">host portion</span> = 32 bits, always</div>
+  <ul>
+    <li><b>Network portion</b>: which network the device belongs to.</li>
+    <li><b>Host portion</b>: which specific device it is within that network.</li>
+  </ul>
+  <p>The point where the two meet is the <b>network/host boundary</b>. Take the network <code>192.168.1.0/24</code> and three devices on it:</p>
+  <div class="anatomy"><span class="a4">192.168.1</span>.<span class="a2">10</span></div>
+  <div class="anatomy"><span class="a4">192.168.1</span>.<span class="a2">21</span></div>
+  <div class="anatomy"><span class="a4">192.168.1</span>.<span class="a2">34</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p><b>Network</b> · the same <code>192.168.1</code> for every device (24 bits)</p></div>
+    <div><span class="sw a2"></span><p><b>Host</b> · different for each device (8 bits)</p></div>
+  </div>
+  <p>Seen in binary, the boundary sits after bit 24:</p>
+  <div class="anatomy"><span class="a4">11000000.10101000.00000001</span>.<span class="a2">00001010</span></div>
+  <div class="sticky info"><strong>Who decides where the boundary is?</strong> The <b>subnet mask</b> or <b>CIDR prefix</b>. In <code>192.168.1.0/24</code>, the <code>/24</code> says the first 24 bits are network and the remaining 8 bits are host. The next note (Subnetting &amp; CIDR) is all about moving this boundary.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="classes">
+  <h2>Classful addressing: the historical A–E system</h2>
+  <p>In the early Internet, a large organisation needed thousands of addresses and a small one only a few dozen. To serve both, IPv4 was divided into five <b>classes</b>: A, B, C, D and E. Each class split network and host at a different fixed point. This was <b>classful addressing</b>. You can tell the class from the <mark>first few bits of the first octet</mark>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Number line of first-octet values 0 to 255. Class A covers 0 to 127 with leading bit 0, Class B 128 to 191 with leading bits 10, Class C 192 to 223 with 110, Class D 224 to 239 with 1110, Class E 240 to 255 with 1111.">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="70" width="320" height="60" rx="8"/>
+        <rect class="box f-green" x="360" y="70" width="160" height="60" rx="8"/>
+        <rect class="box f-orange" x="520" y="70" width="80" height="60" rx="8"/>
+        <rect class="box f-pink" x="600" y="70" width="40" height="60" rx="6"/>
+        <rect class="box f-purple" x="640" y="70" width="40" height="60" rx="6"/>
+      </g>
+      <text class="tm" x="200" y="56" text-anchor="middle">0xxxxxxx</text>
+      <text class="tm" x="440" y="56" text-anchor="middle">10xxxxxx</text>
+      <text class="tm" x="560" y="56" text-anchor="middle">110xxxxx</text>
+      <text class="ts" x="620" y="56" text-anchor="middle">1110</text>
+      <text class="ts" x="660" y="56" text-anchor="middle">1111</text>
+      <text class="th" x="200" y="110" text-anchor="middle">A</text>
+      <text class="th" x="440" y="110" text-anchor="middle">B</text>
+      <text class="th" x="560" y="110" text-anchor="middle">C</text>
+      <text class="th" x="620" y="110" text-anchor="middle">D</text>
+      <text class="th" x="660" y="110" text-anchor="middle">E</text>
+      <text class="ts" x="40" y="150" text-anchor="middle">0</text>
+      <text class="ts" x="360" y="150" text-anchor="middle">128</text>
+      <text class="ts" x="520" y="150" text-anchor="middle">192</text>
+      <text class="ts" x="600" y="150" text-anchor="middle">224</text>
+      <text class="ts" x="640" y="150" text-anchor="middle">240</text>
+      <text class="ts" x="680" y="150" text-anchor="middle">255</text>
+      <text class="tr" x="360" y="186" text-anchor="middle">first octet decides the class</text>
+      <text class="ts" x="360" y="210" text-anchor="middle">0 and 127 are reserved, so Class A hosts use 1–126</text>
+    </svg></div>
+    <figcaption>Each class “owns” a slice of possible first-octet values, fixed by its leading bits.</figcaption>
+  </figure>
+
+  <h3>Class A · very large networks</h3>
+  <p>Range <code>1.0.0.0 – 126.255.255.255</code>. Leading bit is always <code>0</code> (pattern <code>0xxxxxxx</code>). Default prefix <b>/8</b>, default mask <code>255.0.0.0</code>: 8 network bits, 32 − 8 = <b>24 host bits</b>.</p>
+  <div class="anatomy"><span class="a4">10</span>.<span class="a2">20</span>.<span class="a2">30</span>.<span class="a2">40</span></div>
+  <div class="legend"><div><span class="sw a4"></span><p>Network · 1 octet</p></div><div><span class="sw a2"></span><p>Host · 3 octets (Network | Host | Host | Host)</p></div></div>
+  <p>Inside the <code>10.0.0.0</code> network, the <code>10</code> stays fixed and the host part changes: <code>10.0.0.1</code>, <code>10.0.0.2</code>, <code>10.0.0.3</code> … up to <code>10.255.255.254</code>. <code>10.20.30.40</code>, <code>.41</code> and <code>.42</code> are all on the same network.</p>
+  <div class="notes"><div class="note"><b>2²⁴</b>= 16,777,216 total</div><div class="note"><b>16,777,214</b>usable (− network − broadcast)</div></div>
+  <div class="sticky warn l"><strong>Correction to a common shortcut</strong> The pattern <code>0xxxxxxx</code> by itself allows first-octet values <b>0 to 127</b>. Class A is quoted as 1–126 only because <code>0.x.x.x</code> is reserved (unspecified/“this network”) and <code>127.x.x.x</code> is reserved for loopback.</div>
+  <div class="sticky info"><strong>Subnet mask, in one line</strong> A <b>subnet mask</b> marks which part of an address is network and which is host. <code>255.0.0.0</code> means “first octet = network, rest = host”. How masks relate to prefixes like /8 is covered in the next note.</div>
+
+  <h3>Class B · medium/large networks</h3>
+  <p>Range <code>128.0.0.0 – 191.255.255.255</code>. Leading bits <code>10</code> (pattern <code>10xxxxxx</code>). Default prefix <b>/16</b>, mask <code>255.255.0.0</code>: 16 network bits + 16 host bits. Built for universities and large businesses.</p>
+  <div class="anatomy"><span class="a4">172</span>.<span class="a4">20</span>.<span class="a2">10</span>.<span class="a2">50</span></div>
+  <div class="legend"><div><span class="sw a4"></span><p>Network · <code>172.20</code></p></div><div><span class="sw a2"></span><p>Host · <code>10.50</code></p></div></div>
+  <div class="notes"><div class="note"><b>2¹⁶</b>= 65,536 total</div><div class="note"><b>65,534</b>usable</div></div>
+
+  <h3>Class C · smaller networks</h3>
+  <p>Range <code>192.0.0.0 – 223.255.255.255</code>. Leading bits <code>110</code> (pattern <code>110xxxxx</code>). Default prefix <b>/24</b>, mask <code>255.255.255.0</code>: 24 network bits + 8 host bits. Built for small offices.</p>
+  <div class="anatomy"><span class="a4">192</span>.<span class="a4">168</span>.<span class="a4">1</span>.<span class="a2">50</span></div>
+  <div class="legend"><div><span class="sw a4"></span><p>Network · <code>192.168.1</code></p></div><div><span class="sw a2"></span><p>Host · <code>50</code></p></div></div>
+  <div class="notes"><div class="note"><b>2⁸</b>= 256 total</div><div class="note"><b>254</b>usable</div></div>
+
+  <h3>Class D · multicast</h3>
+  <p>Range <code>224.0.0.0 – 239.255.255.255</code>, leading bits <code>1110</code>. Not for individual devices: these addresses name <b>multicast groups</b>, where one sender reaches a group of interested receivers (e.g. one video stream to 100 devices instead of 100 separate copies; also used by some routing protocols, e.g. <code>224.0.0.5</code>). No network/host split and no default mask.</p>
+
+  <h3>Class E · experimental / reserved</h3>
+  <p>Range <code>240.0.0.0 – 255.255.255.255</code>, leading bits <code>1111</code>. Reserved for experimental and special use, never for normal hosts. Two special addresses worth knowing now: <code>255.255.255.255</code> is the <b>limited broadcast</b> (all devices on the local network), and <code>127.0.0.0/8</code> (inside the Class A range) is reserved for <b>loopback</b>.</p>
+
+  <h3>All five classes side by side</h3>
+  <div class="tbl"><table>
+    <tr><th>Class</th><th>Leading bits</th><th>First octet</th><th>Full range</th><th>Prefix</th><th>Default mask</th><th>Purpose</th></tr>
+    <tr><td><b>A</b></td><td><code>0</code></td><td>1–126</td><td>1.0.0.0 – 126.255.255.255</td><td>/8</td><td>255.0.0.0</td><td>Very large networks</td></tr>
+    <tr><td><b>B</b></td><td><code>10</code></td><td>128–191</td><td>128.0.0.0 – 191.255.255.255</td><td>/16</td><td>255.255.0.0</td><td>Medium/large networks</td></tr>
+    <tr><td><b>C</b></td><td><code>110</code></td><td>192–223</td><td>192.0.0.0 – 223.255.255.255</td><td>/24</td><td>255.255.255.0</td><td>Small networks</td></tr>
+    <tr><td><b>D</b></td><td><code>1110</code></td><td>224–239</td><td>224.0.0.0 – 239.255.255.255</td><td>n/a</td><td>n/a</td><td>Multicast</td></tr>
+    <tr><td><b>E</b></td><td><code>1111</code></td><td>240–255</td><td>240.0.0.0 – 255.255.255.255</td><td>n/a</td><td>n/a</td><td>Experimental/reserved</td></tr>
+  </table></div>
+  <p>Two more ranges sit outside normal host addressing: <code>0.x.x.x</code> is special/reserved, and <code>127.x.x.x</code> is loopback (see Special addresses below).</p>
+  <p>Notice 127 sits right between Class A and Class B. It technically belongs to the Class A pattern, but the whole of it is set aside for loopback. A handful of values like this carry special meanings instead of being handed to devices.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="classful-waste">
+  <h2>Why classful addressing was wasteful</h2>
+  <p>Each class came in one fixed size. An organisation that needs <b>500 hosts</b> is stuck:</p>
+  <div class="two">
+    <div class="flow v"><span class="op">Class C</span><span>254 usable</span><span class="bad">not enough</span></div>
+    <div class="flow v"><span class="op">Class B</span><span>65,534 usable</span><span class="bad">65,034 wasted</span></div>
+  </div>
+  <p>Either too few addresses or a huge block with <mark>over 99% of it unused</mark>. There was no way to ask for “about 500”.</p>
+  <p>This limitation led to <b>subnetting</b> and <b>CIDR</b> (Classless Inter-Domain Routing), which let you size networks to real needs. You will learn them in the next note. It also raises a different question: does every device really need its own publicly reachable address?</p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="public-private">
+  <h2>Public vs private IPv4 addresses</h2>
+  <div class="story"><b class="lbl">Flat numbers and the society gate</b>Every housing society in India has a “Flat 101”. Inside the society that number is enough; to the outside world, the society’s own street address is what matters. <mark>Private IPs are flat numbers, reused in every building; public IPs are the unique street addresses.</mark></div>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Public IP</h4><p>Reachable from anywhere on the Internet. <b>Publicly routable</b> (Internet routers can deliver to it) and <b>globally unique</b>: allocation is coordinated worldwide so no two networks get the same one. Examples: <code>8.8.8.8</code>, <code>1.1.1.1</code>, <code>142.250.183.14</code>. A public web server needs one.</p></div>
+    <div class="card t2 tilt-b"><h4>Private IP</h4><p>Used inside a home, office or college network. <b>Not routable</b> on the public Internet, so the <b>same address can be reused</b> by many networks at once: your home and your office can both have a <code>192.168.1.10</code>.</p></div>
+  </div>
+  <p>There is no single “public range”. Public addresses are simply everything that isn’t reserved for private or special use. The three private ranges are fixed:</p>
+  <div class="tbl"><table>
+    <tr><th>Private range</th><th>CIDR</th><th>Host bits</th><th>Addresses</th><th>Typical size</th></tr>
+    <tr><td>10.0.0.0 – 10.255.255.255</td><td>10.0.0.0/8</td><td>32 − 8 = 24</td><td>2²⁴ = 16,777,216</td><td>Large</td></tr>
+    <tr><td>172.16.0.0 – 172.31.255.255</td><td>172.16.0.0/12</td><td>32 − 12 = 20</td><td>2²⁰ = 1,048,576</td><td>Medium</td></tr>
+    <tr><td>192.168.0.0 – 192.168.255.255</td><td>192.168.0.0/16</td><td>32 − 16 = 16</td><td>2¹⁶ = 65,536</td><td>Small (homes, offices)</td></tr>
+  </table></div>
+  <p>Notice the prefixes /8, /12 and /16. These are CIDR-style sizes, not classes. Matching a block’s size to the need, but with far more flexibility than classes ever allowed.</p>
+  <div class="sticky warn l"><strong>Watch the 172 range</strong> Only <code>172.16.x.x</code> to <code>172.31.x.x</code> is private. <code>172.15.0.1</code> and <code>172.32.0.1</code> are public addresses.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="static-dynamic">
+  <h2>Static vs dynamic addresses</h2>
+  <div class="grid two">
+    <div class="card t3 tilt-a"><h4>Static IP</h4><p>Configured <b>by hand</b> and stays the same until someone changes it. Right for devices people must always find at one address: servers, printers, network gear. Example: an office file server at <code>192.168.1.10</code>. If it kept changing, nobody could find it.</p></div>
+    <div class="card t8 tilt-b"><h4>Dynamic IP</h4><p>Handed out <b>automatically</b>, usually by a <b>DHCP</b> server, when the device joins. It may change on the next connection. Example: your laptop gets <code>192.168.1.15</code> today and <code>192.168.1.22</code> after reconnecting.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Aspect</th><th>Static</th><th>Dynamic</th></tr>
+    <tr><td>How it’s assigned</td><td>Manually, by a person</td><td>Automatically, typically via DHCP</td></tr>
+    <tr><td>Stability</td><td>Usually unchanging</td><td>Can change from time to time</td></tr>
+    <tr><td>Best for</td><td>Servers, key network devices</td><td>Large numbers of laptops and phones</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When you deploy an app on a customer’s network, ask early whether the server gets a static IP or a DHCP <i>reservation</i>. Firewall rules, DNS records and API allow-lists all break silently if the server’s address changes after a reboot.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="nat">
+  <h2>NAT: private networks on the public Internet</h2>
+  <p>Your laptop has a private address like <code>192.168.1.10</code>, which the Internet can’t route to. Yet it browses websites fine. And public IPv4 addresses are scarce. How?</p>
+  <p><b>NAT (Network Address Translation)</b>, usually done by the router at the edge of your network. <mark>On the way out, the router swaps the device’s private IP for its own public IP; on the way back, it remembers who asked and hands the reply to the right device.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Laptop 192.168.1.10 sends a request to the NAT router, which rewrites the source to its public IP 203.0.113.5 and sends it to the website. The reply comes back to the router, which forwards it to the laptop.">
+      <g class="rough">
+        <rect class="box f-blue" x="15" y="40" width="160" height="84" rx="14"/>
+        <rect class="box f-yellow" x="255" y="40" width="210" height="84" rx="14"/>
+        <rect class="box f-green" x="545" y="40" width="160" height="84" rx="14"/>
+        <path class="lr" d="M178 66 L 250 66" marker-end="url(#ahr)"/>
+        <path class="lr" d="M468 66 L 540 66" marker-end="url(#ahr)"/>
+        <path class="lb" d="M540 102 L 470 102" marker-end="url(#ahb)"/>
+        <path class="lb" d="M250 102 L 180 102" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="95" y="78" text-anchor="middle">Laptop</text>
+      <text class="tm" x="95" y="108" text-anchor="middle">192.168.1.10</text>
+      <text class="th" x="360" y="78" text-anchor="middle">NAT router</text>
+      <text class="tm" x="360" y="108" text-anchor="middle">public 203.0.113.5</text>
+      <text class="th" x="625" y="78" text-anchor="middle">Website</text>
+      <text class="ts" x="625" y="108" text-anchor="middle">on the Internet</text>
+      <text class="t" x="360" y="168" text-anchor="middle">out: source 192.168.1.10 is rewritten to 203.0.113.5</text>
+      <text class="t" x="360" y="200" text-anchor="middle">back: the router remembers who asked and forwards to .10</text>
+    </svg></div>
+    <figcaption>From the Internet’s point of view, only the router’s public IP is visible.</figcaption>
+  </figure>
+  <div class="flow"><span class="op">Private IP</span><span class="hl">NAT router</span><span class="op">Public IP</span><span class="ok">Internet</span></div>
+  <h3>Why NAT became so important</h3>
+  <p>Without NAT, every device online would need its own public IPv4 address. With NAT, <b>dozens of devices share one public IP</b>, which saves the limited IPv4 supply.</p>
+  <div class="sticky info l"><strong>Scope for now</strong> You only need the <i>why</i> and the <i>what</i>. There are several ways to implement NAT and track translations; those details come later.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> “The vendor needs our IP for their allow-list” almost always means the <b>public</b> IP your traffic leaves from after NAT (check with <code>curl ifconfig.me</code> on the server), not the <code>10.x</code> address in <code>ip addr</code>.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="delivery">
+  <h2>Unicast, broadcast, multicast and anycast</h2>
+  <p>This is the “communication” lens from earlier: when data is sent, is it for one device, a group, or everyone?</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Four panels. Unicast: sender to one receiver. Broadcast: sender to all four receivers. Multicast: sender to three receivers that joined a group, one left out. Anycast: sender to the single nearest of several servers sharing an address.">
+      <g class="rough">
+        <rect class="box f-none" x="8" y="8" width="168" height="196" rx="12"/>
+        <rect class="box f-none" x="188" y="8" width="168" height="196" rx="12"/>
+        <rect class="box f-none" x="368" y="8" width="168" height="196" rx="12"/>
+        <rect class="box f-none" x="548" y="8" width="168" height="196" rx="12"/>
+        <circle class="box f-blue" cx="92" cy="72" r="15"/>
+        <circle class="box f-blue" cx="272" cy="72" r="15"/>
+        <circle class="box f-blue" cx="452" cy="72" r="15"/>
+        <circle class="box f-blue" cx="632" cy="72" r="15"/>
+        <circle class="box f-card" cx="32" cy="160" r="13"/><circle class="box f-card" cx="72" cy="160" r="13"/><circle class="box f-green" cx="112" cy="160" r="13"/><circle class="box f-card" cx="152" cy="160" r="13"/>
+        <circle class="box f-green" cx="212" cy="160" r="13"/><circle class="box f-green" cx="252" cy="160" r="13"/><circle class="box f-green" cx="292" cy="160" r="13"/><circle class="box f-green" cx="332" cy="160" r="13"/>
+        <circle class="box f-green" cx="392" cy="160" r="13"/><circle class="box f-green" cx="432" cy="160" r="13"/><circle class="box f-grey" cx="472" cy="160" r="13"/><circle class="box f-green" cx="512" cy="160" r="13"/>
+        <circle class="box f-green" cx="572" cy="160" r="13"/><circle class="box f-grey" cx="612" cy="160" r="13"/><circle class="box f-grey" cx="652" cy="160" r="13"/><circle class="box f-grey" cx="692" cy="160" r="13"/>
+        <path class="ln" d="M96 88 L 110 142" marker-end="url(#ah)"/>
+        <path class="ln" d="M266 86 L 216 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M270 88 L 254 142" marker-end="url(#ah)"/>
+        <path class="ln" d="M275 88 L 290 142" marker-end="url(#ah)"/>
+        <path class="ln" d="M279 86 L 328 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M446 86 L 396 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M450 88 L 434 142" marker-end="url(#ah)"/>
+        <path class="ln" d="M459 86 L 508 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M626 86 L 576 144" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="92" y="40" text-anchor="middle">Unicast</text>
+      <text class="th" x="272" y="40" text-anchor="middle">Broadcast</text>
+      <text class="th" x="452" y="40" text-anchor="middle">Multicast</text>
+      <text class="th" x="632" y="40" text-anchor="middle">Anycast</text>
+      <text class="ts" x="92" y="195" text-anchor="middle">one → one</text>
+      <text class="ts" x="272" y="195" text-anchor="middle">one → all (IPv4)</text>
+      <text class="ts" x="452" y="195" text-anchor="middle">one → joined group</text>
+      <text class="ts" x="632" y="195" text-anchor="middle">one → nearest</text>
+    </svg></div>
+    <figcaption>Green receivers get the data. Grey ones didn’t join (multicast) or weren’t the nearest (anycast).</figcaption>
+  </figure>
+
+  <h3>Unicast: one sender, one receiver</h3>
+  <p>Computer A (<code>192.168.1.10</code>) sends a file to Computer B (<code>192.168.1.21</code>). The data is addressed to <code>192.168.1.21</code> only. Almost all everyday traffic is unicast.</p>
+
+  <h3>Broadcast (IPv4): one sender, every device on the local network</h3>
+  <p>The <b>broadcast address</b> of a network is built by <mark>keeping the network portion and setting every host bit to 1</mark>. Eight 1s are <code>11111111</code> = 255, so each full host octet becomes 255.</p>
+  <ol class="path">
+    <li><span class="dot">A</span><div><b>Class A · Network | Host | Host | Host</b>Three host octets → <code>Network.255.255.255</code>. <span class="tag">→ 10.0.0.0 ⇒ 10.255.255.255</span></div></li>
+    <li><span class="dot">B</span><div><b>Class B · Network | Network | Host | Host</b>Two host octets → <code>Network.Network.255.255</code>. <span class="tag">→ 172.20.0.0 ⇒ 172.20.255.255</span></div></li>
+    <li><span class="dot">C</span><div><b>Class C · Network | Network | Network | Host</b>One host octet → <code>Network.Network.Network.255</code>. <span class="tag">→ 192.168.1.0 ⇒ 192.168.1.255</span></div></li>
+    <li><span class="dot">D</span><div><b>Class D and E</b>No traditional broadcast address: D is for multicast, E is reserved.</div></li>
+  </ol>
+  <div class="anatomy"><span class="a4">11000000.10101000.00000001</span>.<span class="a3">11111111</span> = <span class="a4">192.168.1</span>.<span class="a3">255</span></div>
+  <div class="legend"><div><span class="sw a4"></span><p>Network bits kept as they are</p></div><div><span class="sw a3"></span><p>Every host bit set to 1</p></div></div>
+  <p><b>Easy way to remember:</b> the number of host octets = the number of 255s at the end.</p>
+
+  <h3>Multicast: one sender, a chosen group</h3>
+  <p>A company streams a live training session to 50 employees. Instead of 50 separate copies, the server sends to a <b>multicast group</b>, and only devices that have <b>joined</b> the group receive it. Others on the network don’t.</p>
+
+  <h3>Anycast: one sender, the nearest suitable receiver</h3>
+  <p>Several servers <b>share the same IP</b>. A company has DNS servers in Bengaluru, Mumbai and Delhi, all on one anycast address. Ask from Bengaluru and routing will usually deliver you to the Bengaluru server. Only one server handles each request; the network picks it based on routing and conditions.</p>
+
+  <div class="tbl"><table>
+    <tr><th>Type</th><th>Senders</th><th>Receivers</th><th>Example</th></tr>
+    <tr><td>Unicast</td><td>1</td><td>1</td><td>Sending a file to one PC</td></tr>
+    <tr><td>Broadcast</td><td>1</td><td>All on the local network</td><td>“Who has this IP?” on a LAN</td></tr>
+    <tr><td>Multicast</td><td>1</td><td>Selected group</td><td>Live stream to subscribers</td></tr>
+    <tr><td>Anycast</td><td>1</td><td>One suitable member</td><td>Nearest DNS server</td></tr>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="special">
+  <h2>Special IPv4 addresses</h2>
+  <p>A few addresses carry fixed meanings and are never given to ordinary devices.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Loopback · 127.0.0.1</h4><p>The whole <code>127.0.0.0/8</code> range means “this same device”. Data never leaves the machine. <code>127.0.0.1</code> is also called <b>localhost</b>. Run a web server locally and open <code>localhost</code>, and you are talking to yourself.</p></div>
+    <div class="card t6 tilt-b"><h4>Unspecified · 0.0.0.0</h4><p>“No specific address” or “any address”, depending on context. A booting device with no IP yet uses it as its source; a server listening on <code>0.0.0.0</code> accepts connections on <b>every</b> interface.</p></div>
+    <div class="card t3 tilt-a"><h4>Limited broadcast · 255.255.255.255</h4><p>“Everyone on my local network.” Routers never forward it to other networks, so it stays on the LAN.</p></div>
+    <div class="card t2 tilt-b"><h4>Network address</h4><p>All host bits <b>0</b>. Names the whole network, never a device. For <code>192.168.1.0/24</code> it is <code>192.168.1.0</code>.</p></div>
+    <div class="card t4 tilt-a"><h4>Broadcast address (subnet)</h4><p>All host bits <b>1</b>. Every host on that subnet at once, never a single device. For <code>192.168.1.0/24</code> it is <code>192.168.1.255</code>.</p></div>
+    <div class="card t8 tilt-b"><h4>Link-local · 169.254.x.x</h4><p>The IPv4 link-local range <code>169.254.0.0/16</code>. A device gives itself one when DHCP fails. It works only on the local segment.</p></div>
+  </div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 170" role="img" aria-label="Loopback: your computer sends to 127.0.0.1 and the data loops straight back to the same computer without touching the network.">
+      <g class="rough">
+        <ellipse class="box f-grey" cx="62" cy="90" rx="48" ry="30"/>
+        <rect class="box f-blue" x="160" y="60" width="210" height="64" rx="14"/>
+        <path class="ln dash" d="M114 90 L 154 90"/>
+        <path class="lr" d="M372 76 C 470 30, 480 150, 376 110" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="265" y="100" text-anchor="middle">Your computer</text>
+      <text class="ts" x="62" y="95" text-anchor="middle">network</text>
+      <text class="tr" x="134" y="76" text-anchor="middle">✗</text>
+      <text class="tr" x="440" y="34" text-anchor="middle">127.0.0.1</text>
+      <text class="ts" x="265" y="155" text-anchor="middle">data never leaves the machine</text>
+    </svg></div>
+    <figcaption>Loopback: out of the computer and straight back in.</figcaption>
+  </figure>
+  <h3>Why Class A starts at 1, and why we subtract 2</h3>
+  <p>Class A’s pattern <code>0xxxxxxx</code> technically allows a first octet of 0, but <code>0.0.0.0/8</code> is reserved (it includes the unspecified address). So Class A is quoted as 1–126.</p>
+  <p>Likewise, every network loses two addresses to these special roles:</p>
+  <div class="flow"><span>256 total</span><span class="bad">− 1 network</span><span class="bad">− 1 broadcast</span><span class="ok">= 254 usable</span></div>
+  <p>That is the “− 2” in the Class A, B and C maths earlier. Classes D and E have no network/host split, so it doesn’t apply to them. Calculating the network and broadcast address of <i>any</i> subnet is covered step by step in the next note.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> “It works on my laptop but not from the other machine” is very often a service listening on <code>127.0.0.1</code> instead of <code>0.0.0.0</code>. Check with <code>ss -tlnp</code>: loopback-only services can’t be reached from outside.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="ipv6">
+  <h2>IPv4 exhaustion and the arrival of IPv6</h2>
+  <h3>The 32-bit ceiling</h3>
+  <p>2³² = 4,294,967,296 is fixed by the design. However you divide or manage addresses, the total can never grow. Meanwhile the Internet filled up: first PCs, then smartphones, then cloud servers and virtual machines, then millions of IoT gadgets (smart bulbs, speakers, cameras, appliances).</p>
+  <div class="flow"><span>PCs</span><span>smartphones</span><span>cloud &amp; VMs</span><span>IoT devices</span><span class="bad">IPv4 runs out</span></div>
+  <h3>Stretching IPv4</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Private addressing</h4><p>Millions of devices reuse the same private ranges internally.</p></div>
+    <div class="card t7 tilt-b"><h4>NAT</h4><p>Whole networks share one public address.</p></div>
+    <div class="card t1 tilt-a"><h4>CIDR &amp; subnetting</h4><p>Blocks sized to real needs instead of wasteful classes.</p></div>
+  </div>
+  <p>These conserve addresses but <mark>can never raise the 2³² ceiling</mark>. They only delayed the problem. A bigger address was needed.</p>
+
+  <h3>IPv6: 128 bits</h3>
+  <p><b>IPv6</b> (Internet Protocol version 6) is a completely new addressing system with <b>128-bit</b> addresses. Every extra bit doubles the count:</p>
+  <div class="tbl"><table>
+    <tr><th>Version</th><th>Bits</th><th>Possible addresses</th></tr>
+    <tr><td>IPv4</td><td>32</td><td>2³² = 4,294,967,296 (≈ 4.29 billion)</td></tr>
+    <tr><td>IPv6</td><td>128</td><td>2¹²⁸ = 340,282,366,920,938,463,463,374,607,431,768,211,456 (≈ 340 undecillion)</td></tr>
+  </table></div>
+
+  <h3>The shape of an IPv6 address</h3>
+  <p>The 128 bits are split into <b>8 groups of 16 bits</b>, written in <b>hexadecimal</b> and separated by colons:</p>
+  <pre class="out"><code>2001:0db8:0000:0000:0000:ff00:0042:8329</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 160" role="img" aria-label="An IPv6 address as eight boxes of four hex digits each, every box is 16 bits, totalling 128 bits.">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-blue" x="98" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-grey" x="186" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-grey" x="274" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-grey" x="362" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-blue" x="450" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-blue" x="538" y="26" width="82" height="50" rx="10"/>
+        <rect class="box f-blue" x="626" y="26" width="82" height="50" rx="10"/>
+      </g>
+      <text class="tm" x="51" y="56" text-anchor="middle">2001</text>
+      <text class="tm" x="139" y="56" text-anchor="middle">0db8</text>
+      <text class="tm" x="227" y="56" text-anchor="middle">0000</text>
+      <text class="tm" x="315" y="56" text-anchor="middle">0000</text>
+      <text class="tm" x="403" y="56" text-anchor="middle">0000</text>
+      <text class="tm" x="491" y="56" text-anchor="middle">ff00</text>
+      <text class="tm" x="579" y="56" text-anchor="middle">0042</text>
+      <text class="tm" x="667" y="56" text-anchor="middle">8329</text>
+      <text class="ts" x="51" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="139" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="227" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="315" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="403" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="491" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="579" y="100" text-anchor="middle">16 bits</text>
+      <text class="ts" x="667" y="100" text-anchor="middle">16 bits</text>
+      <text class="t" x="360" y="140" text-anchor="middle">8 groups × 16 bits = 128 bits</text>
+    </svg></div>
+    <figcaption>Each group = 4 hex digits = 16 bits. The grey groups are all zeros (they get compressed below).</figcaption>
+  </figure>
+
+  <h3>Why hexadecimal?</h3>
+  <p>Hexadecimal has 16 digit values: 0–9, then A–F.</p>
+  <div class="tbl"><table>
+    <tr><th>Decimal</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+    <tr><th>Hex</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td></tr>
+  </table></div>
+  <p>Four bits give 2⁴ = 16 combinations, exactly one hex digit. <mark>One hex digit = 4 bits</mark>, so 4 hex digits = 16 bits = one group, and 8 groups = 128 bits.</p>
+  <div class="tbl"><table>
+    <tr><th>Binary</th><th>Hex</th><th>Why</th></tr>
+    <tr><td><code>0000</code></td><td>0</td><td>nothing switched on</td></tr>
+    <tr><td><code>0001</code></td><td>1</td><td>1</td></tr>
+    <tr><td><code>1010</code></td><td>A</td><td>8 + 2 = 10</td></tr>
+    <tr><td><code>1111</code></td><td>F</td><td>8 + 4 + 2 + 1 = 15</td></tr>
+  </table></div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="ipv6-compress">
+  <h2>IPv6 compression, types and special addresses</h2>
+  <p>Full IPv6 addresses are long, so two rules shorten them <b>without changing the value</b>.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Drop leading zeros in each group</b>Only zeros at the <i>start</i> of a group go; zeros in the middle or end stay. <code>0db8 → db8</code>, <code>0042 → 42</code>, <code>0001 → 1</code>, <code>0000 → 0</code>. <span class="tag">→ 2001:db8:0:0:0:ff00:42:8329</span></div></li>
+    <li><span class="dot">2</span><div><b>Replace one run of all-zero groups with <code>::</code></b>Two or more consecutive <code>0</code> groups collapse to a double colon. Here three zero groups (3rd, 4th, 5th) go. <span class="tag">→ 2001:db8::ff00:42:8329</span></div></li>
+  </ol>
+  <div class="flow v"><span class="op">2001:0db8:0000:0000:0000:ff00:0042:8329</span><span class="op">2001:db8:0:0:0:ff00:42:8329</span><span class="ok">2001:db8::ff00:42:8329</span></div>
+  <div class="sticky warn l"><strong><code>::</code> only once!</strong> <code>::</code> doesn’t say how many zero groups it hides. With one <code>::</code> you can work it out (8 minus the groups you can see); with two, you couldn’t tell how to split the missing zeros. So it may appear only once per address.</div>
+  <h3>Basic IPv6 address types</h3>
+  <ul>
+    <li><b>Unicast</b>: exactly one device, one-to-one.</li>
+    <li><b>Multicast</b>: a group of interested devices (the same job Class D did in IPv4).</li>
+    <li><b>Anycast</b>: one address shared by several devices; the nearest or most suitable one receives.</li>
+    <li>There is <b>no broadcast</b> in IPv6, on purpose. Multicast does that job more efficiently.</li>
+  </ul>
+  <h3>Basic IPv6 special addresses</h3>
+  <div class="tbl"><table>
+    <tr><th>IPv6</th><th>Meaning</th><th>IPv4 cousin</th></tr>
+    <tr><td><code>::1</code></td><td>Loopback (this device)</td><td><code>127.0.0.1</code></td></tr>
+    <tr><td><code>::</code></td><td>Unspecified address</td><td><code>0.0.0.0</code></td></tr>
+    <tr><td><code>fe80::/10</code></td><td>Link-local: automatic, one local segment only</td><td><code>169.254.0.0/16</code></td></tr>
+    <tr><td>Global unicast</td><td>Ordinary routable address</td><td>A public IPv4 address</td></tr>
+  </table></div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="v4-vs-v6">
+  <h2>IPv4 vs IPv6, side by side</h2>
+  <div class="tbl"><table>
+    <tr><th>Aspect</th><th>IPv4</th><th>IPv6</th></tr>
+    <tr><td>Address size</td><td>32 bits</td><td>128 bits (the root of every other difference)</td></tr>
+    <tr><td>Capacity</td><td>2³² ≈ 4.29 billion</td><td>2¹²⁸ ≈ 340 undecillion; exhaustion not a concern for the foreseeable future</td></tr>
+    <tr><td>Written as</td><td>Dotted decimal: <code>192.168.1.10</code></td><td>Hex groups with colons, compressed: <code>2001:db8::1</code></td></tr>
+    <tr><td>Broadcast</td><td>Yes (subnet broadcast, 255.255.255.255)</td><td>No, by design</td></tr>
+    <tr><td>Multicast</td><td>Yes (Class D), alongside broadcast</td><td>Yes, the main group-communication tool</td></tr>
+    <tr><td>Configuration</td><td>Static, or automatic via DHCP</td><td>Static, or automatic (SLAAC and/or DHCPv6)</td></tr>
+    <tr><td>NAT</td><td>Nearly everywhere: addresses are scarce</td><td>Largely unnecessary: enough addresses for every device to have its own global one</td></tr>
+  </table></div>
+  <h3>Why you still see both</h3>
+  <p>IPv4 is deeply embedded in decades of hardware, software and systems, so the move to IPv6 is gradual, network by network, not one worldwide switch-over. To bridge the gap, many devices run <b>dual-stack</b>: <mark>they speak IPv4 and IPv6 at the same time</mark>, using whichever the other side supports.</p>
+  <div class="flow"><span>MAC: local only</span><span>IP: network + device</span><span>IPv4: 32 bits</span><span class="bad">exhaustion</span><span>private + NAT + CIDR</span><span class="ok">IPv6: 128 bits</span><span class="hl">dual-stack today</span></div>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>IP address</dt><dd>A logical address assigned to a device so it can be identified and reached within a network or across the Internet. Unlike a MAC address, it reflects where the device currently is.</dd></div>
+    <div><dt>IPv4</dt><dd>The original widely used IP version: 32-bit addresses written in dotted decimal, giving 2³² = 4,294,967,296 possible addresses.</dd></div>
+    <div><dt>Octet</dt><dd>One 8-bit group of an IPv4 address. Each octet holds a value from 0 to 255, and an address has four of them.</dd></div>
+    <div><dt>Dotted decimal notation</dt><dd>Writing an IPv4 address as four decimal numbers (one per octet) separated by dots, such as 192.168.1.10.</dd></div>
+    <div><dt>Network portion</dt><dd>The leading bits of an IP address that identify which network the device belongs to; all devices on the same network share it.</dd></div>
+    <div><dt>Host portion</dt><dd>The trailing bits of an IP address that identify one specific device within its network.</dd></div>
+    <div><dt>Subnet mask</dt><dd>A 32-bit value that marks which bits of an IP address are network (1s) and which are host (0s), e.g. 255.255.255.0.</dd></div>
+    <div><dt>Classful addressing</dt><dd>The historical system that split IPv4 into fixed classes A–E by the leading bits of the first octet, each with a fixed network size.</dd></div>
+    <div><dt>Private IP address</dt><dd>An address from 10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16, used inside local networks, reusable everywhere and not routable on the Internet.</dd></div>
+    <div><dt>NAT</dt><dd>Network Address Translation: a router rewrites private source addresses to its public address on the way out and maps replies back, letting many devices share one public IP.</dd></div>
+    <div><dt>Dynamic IP</dt><dd>An address assigned automatically, usually by a DHCP server, that may change over time. Its opposite, a static IP, is set by hand.</dd></div>
+    <div><dt>Loopback address</dt><dd>An address that means “this same device”: 127.0.0.0/8 (usually 127.0.0.1, “localhost”) in IPv4 and ::1 in IPv6.</dd></div>
+    <div><dt>Broadcast address</dt><dd>The address with all host bits set to 1, used to reach every device on a subnet at once (IPv4 only); e.g. 192.168.1.255 for 192.168.1.0/24.</dd></div>
+    <div><dt>IPv6</dt><dd>The newer IP version with 128-bit addresses written as eight colon-separated hex groups, providing about 340 undecillion addresses and no broadcast.</dd></div>
+    <div><dt>Dual-stack</dt><dd>Running IPv4 and IPv6 side by side on the same device or network so it can talk to peers using either version.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Why isn’t a MAC address enough to deliver data from Chennai to Toronto?</p>
+      <ol><li>MAC addresses are too short</li><li>MAC addresses change every reboot</li><li>A MAC identifies a device but says nothing about which network it is on</li><li>Switches can’t read MAC addresses</li></ol>
+      <p class="why">Delivery across networks needs to know the destination <i>network</i>. That is what the logical IP address adds.</p></div>
+    <div class="q" data-answer="2"><p>What is <code>10101000</code> in decimal?</p>
+      <ol><li>160</li><li>168</li><li>172</li><li>192</li></ol>
+      <p class="why">The 1s sit under 128, 32 and 8: 128 + 32 + 8 = 168.</p></div>
+    <div class="q" data-answer="4"><p>Which of these is a valid IPv4 address?</p>
+      <ol><li><code>10.0.256.1</code></li><li><code>192.168.1</code></li><li><code>172.16.1.1.1</code></li><li><code>203.0.113.255</code></li></ol>
+      <p class="why">Four octets, each 0–255. 256 is too big, and the others have three or five octets.</p></div>
+    <div class="q" data-answer="1"><p>Under classful addressing, what class is <code>172.20.10.50</code>, and how many host bits does it have?</p>
+      <ol><li>Class B, 16 host bits</li><li>Class A, 24 host bits</li><li>Class C, 8 host bits</li><li>Class B, 8 host bits</li></ol>
+      <p class="why">172 is between 128 and 191 (leading bits 10), so it is Class B: /16, which leaves 32 − 16 = 16 host bits.</p></div>
+    <div class="q" data-answer="3"><p>Which address is <b>private</b>?</p>
+      <ol><li><code>172.32.0.5</code></li><li><code>8.8.8.8</code></li><li><code>172.20.5.4</code></li><li><code>192.169.1.1</code></li></ol>
+      <p class="why">The private 172 block is only 172.16.0.0 – 172.31.255.255. 172.32 and 192.169 are public.</p></div>
+    <div class="q" data-answer="2"><p>What is the broadcast address of the Class C network <code>192.168.5.0</code>?</p>
+      <ol><li><code>192.168.5.0</code></li><li><code>192.168.5.255</code></li><li><code>192.168.255.255</code></li><li><code>255.255.255.0</code></li></ol>
+      <p class="why">Keep the network part (192.168.5) and set every host bit to 1. One host octet → one 255.</p></div>
+    <div class="q" data-answer="4"><p>What does NAT on a home router mainly do?</p>
+      <ol><li>Gives each device a public IP</li><li>Converts IPv4 into IPv6</li><li>Blocks all incoming traffic</li><li>Lets many private-IP devices share one public IP to reach the Internet</li></ol>
+      <p class="why">NAT rewrites private source addresses to the router’s public one and maps replies back to the right device.</p></div>
+    <div class="q" data-answer="1"><p>What is the correct compressed form of <code>2001:0db8:0000:0000:0000:ff00:0042:8329</code>?</p>
+      <ol><li><code>2001:db8::ff00:42:8329</code></li><li><code>2001:db8::ff:42:8329</code></li><li><code>2001:db8:::ff00:42:8329</code></li><li><code>21:db8::ff00:42:8329</code></li></ol>
+      <p class="why">Drop only <i>leading</i> zeros (ff00 keeps its trailing zeros, 2001 has no leading zero) and replace the run of zero groups with a single <code>::</code>.</p></div>
+    <div class="q" data-answer="3"><p>Which statement about IPv6 is true?</p>
+      <ol><li>It uses 64-bit addresses</li><li>It relies on broadcast even more than IPv4</li><li>It has no broadcast and uses multicast instead</li><li>It still needs NAT for every home device</li></ol>
+      <p class="why">IPv6 is 128-bit, deliberately drops broadcast in favour of multicast, and has enough space that NAT is largely unnecessary.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">An <b>IP address</b> tells the world <i>which network</i> and <i>which device</i>: in IPv4 that is <b>32 bits in four 0–255 octets</b> split into a <b>network portion and a host portion</b>, once by rigid classes, stretched by <b>private ranges and NAT</b>, and finally outgrown by <b>128-bit IPv6</b>.</p>
+  <p>Next up: <b>Subnetting &amp; CIDR</b>, where you move that network/host boundary yourself and calculate network, broadcast and host ranges for any subnet.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Searching Files &amp; Content · Linux | AIFDE Notes</title>
+<meta name="description" content="Locate files anywhere with find (by name, type, size and time) and search inside files with grep (-i, -n, -r, -v, -c, -w), with examples and expected output.">
+<meta name="keywords" content="find, grep, -name, -type, grep -r, grep -v, wildcards, case sensitivity">
+<meta name="date" content="2026-09-10">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/searching-files">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Searching Files &amp; Content</h1>
+  <p class="byline">Find any file on a crowded server with <code>find</code>, and find the exact lines you need inside files with <code>grep</code>.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why searching is needed</h2>
+  <p>On a real server the number of files and folders grows quickly:</p>
+  <pre class="out"><code>/home/ubuntu/
+├── projects/
+│   ├── website/
+│   ├── app/
+│   └── backup/
+├── documents/
+│   ├── reports/
+│   └── notes/
+└── downloads/
+    ├── images/
+    └── files/</code></pre>
+  <p>After a while you forget <b>where a particular file is</b>, or <b>which file contains a particular piece of information</b>. Those are two different searches.</p>
+  <div class="story"><b class="lbl">The big library</b>“Where is the book <i>Wings of Fire</i>?” is a question for the library catalogue: it tells you the shelf. “Which book mentions Pokhran?” is a different question: you have to look <i>inside</i> the books. <mark><code>find</code> is the catalogue (where is the file?); <code>grep</code> reads the pages (which file has this text?).</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Searching splits into two: find a file or directory, answering where is it, using find; or find text inside files, answering which file has it, using grep">
+      <g class="rough">
+        <rect class="box f-yellow" x="270" y="10" width="180" height="50" rx="12"/>
+        <rect class="box f-blue" x="20" y="96" width="320" height="190" rx="14"/>
+        <rect class="box f-green" x="380" y="96" width="320" height="190" rx="14"/>
+        <path class="ln" d="M330 62 C 280 75, 200 80, 180 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M390 62 C 440 75, 520 80, 540 90" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="360" y="44" text-anchor="middle">SEARCHING</text>
+      <text class="t" x="180" y="126" text-anchor="middle">find a FILE / DIRECTORY</text>
+      <text class="tr" x="180" y="158" text-anchor="middle">“Where is report.txt?”</text>
+      <text class="tm" x="60" y="196">documents/</text>
+      <text class="tm" x="60" y="220">projects/report.txt</text>
+      <text class="tb" x="230" y="220">← FOUND</text>
+      <text class="tm" x="60" y="244">backup/</text>
+      <text class="th" x="180" y="276" text-anchor="middle">find</text>
+      <text class="t" x="540" y="126" text-anchor="middle">find TEXT / CONTENT</text>
+      <text class="tr" x="540" y="158" text-anchor="middle">“Which file has ERROR?”</text>
+      <text class="tm" x="400" y="196">app.log    INFO …</text>
+      <text class="tm" x="400" y="220">server.log ERROR…</text>
+      <text class="tb" x="570" y="220">← FOUND</text>
+      <text class="tm" x="400" y="244">system.log INFO …</text>
+      <text class="th" x="540" y="276" text-anchor="middle">grep</text>
+    </svg></div>
+    <figcaption>Know the name but not the place → <code>find</code>. Know the text but not the file → <code>grep</code>.</figcaption>
+  </figure>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="find">
+  <h2><code>find</code> · search for files and directories</h2>
+  <p>If you know something about an item, such as its <b>name, type, size, age or permissions</b>, <code>find</code> can locate it. Take this structure:</p>
+  <pre class="out"><code>/home/ubuntu/
+├── documents/
+│   ├── report.txt
+│   └── notes.txt
+├── projects/
+│   ├── app/
+│   │   └── config.txt
+│   └── website/
+└── backup/
+    └── report.txt</code></pre>
+  <p>To locate <code>report.txt</code> by hand you would run <code>ls /home/ubuntu/</code>, <code>ls /home/ubuntu/documents/</code>, <code>ls /home/ubuntu/projects/</code>, <code>ls /home/ubuntu/backup/</code>… That gets painful fast. <code>find</code> walks the whole directory hierarchy for you.</p>
+  <div class="flow"><span>large directory tree</span><span class="op">find</span><span>visits every folder</span><span class="ok">prints matching items</span></div>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Walks hierarchies</h4><p>Goes into every subfolder below the starting point.</p></div>
+    <div class="card t2 tilt-b"><h4>Locates items</h4><p>Prints the path of every file or directory that matches.</p></div>
+    <div class="card t5 tilt-a"><h4>Uses conditions</h4><p>Name, type, size, time… and combinations of them.</p></div>
+  </div>
+  <h3>Basic syntax</h3>
+  <div class="anatomy"><span class="a1">find</span> <span class="a2">.</span> <span class="a3">-name</span> <span class="a4">"file.txt"</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>the command: search for files and directories</p></div>
+    <div><span class="sw a2"></span><p><b>[location]</b>: where the search starts. <code>.</code> = the current directory</p></div>
+    <div><span class="sw a3"></span><p><b>[condition]</b>: what to test. <code>-name</code> = match on the name</p></div>
+    <div><span class="sw a4"></span><p>the value for the condition: the file name (or pattern) to look for</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="find-name">
+  <h2>Search by name</h2>
+  <p>Suppose your current directory is <code>/home/ubuntu/project</code>:</p>
+  <pre class="out"><code>project/
+├── file.txt
+├── notes.txt
+└── documents/
+    └── file.txt</code></pre>
+  <pre><code class="language-bash">pwd                       # /home/ubuntu/project
+find . -name "file.txt"</code></pre>
+  <pre class="out"><code>./file.txt
+./documents/file.txt</code></pre>
+  <p>Each result starts with <code>./</code> because you started the search at <code>.</code>, which here stands for <code>/home/ubuntu/project</code>. Notice that <code>find</code> found the copy inside <code>documents/</code> too.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="find starts at dot, visits file.txt (match), notes.txt (no), documents folder, then documents/file.txt (match)">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="90" width="110" height="50" rx="12"/>
+        <rect class="box f-green" x="220" y="16" width="170" height="44" rx="10"/>
+        <rect class="box f-grey" x="220" y="92" width="170" height="44" rx="10"/>
+        <rect class="box f-blue" x="220" y="168" width="170" height="44" rx="10"/>
+        <rect class="box f-green" x="490" y="168" width="200" height="44" rx="10"/>
+        <path class="ln" d="M135 105 C 170 80, 185 45, 214 40" marker-end="url(#ah)"/>
+        <path class="ln" d="M135 115 L 214 114" marker-end="url(#ah)"/>
+        <path class="ln" d="M135 125 C 170 150, 185 185, 214 188" marker-end="url(#ah)"/>
+        <path class="ln" d="M395 190 L 484 190" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="75" y="120" text-anchor="middle">.</text>
+      <text class="ts" x="75" y="160" text-anchor="middle">start here</text>
+      <text class="tm" x="305" y="43" text-anchor="middle">file.txt</text>
+      <text class="tb" x="410" y="44">✓ match</text>
+      <text class="tm" x="305" y="119" text-anchor="middle">notes.txt</text>
+      <text class="ts" x="410" y="119">✗ name differs</text>
+      <text class="tm" x="305" y="195" text-anchor="middle">documents/</text>
+      <text class="tm" x="590" y="195" text-anchor="middle">file.txt</text>
+      <text class="tb" x="590" y="152" text-anchor="middle">✓ match</text>
+    </svg></div>
+    <figcaption><code>find</code> checks every item at every level below the start and prints each match.</figcaption>
+  </figure>
+
+  <h3>All files with an extension</h3>
+  <pre><code class="language-bash">find . -name "*.txt"     # * = anything, then .txt</code></pre>
+  <p>The <code>*</code> wildcard means “any characters”, so the pattern matches every name ending in <code>.txt</code> at any depth below the current directory.</p>
+  <div class="sticky warn l"><strong>Quote the pattern</strong> Always write <code>"*.txt"</code> in quotes. Without them, the shell may expand <code>*.txt</code> to the files in the <i>current</i> folder before <code>find</code> even runs, and you get wrong results or an error.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="find-iname">
+  <h2>Case-insensitive search with <code>-iname</code></h2>
+  <p>Linux file names are <b>case-sensitive</b>: <code>file.txt</code>, <code>File.txt</code> and <code>FILE.TXT</code> are three different names. Given:</p>
+  <pre class="out"><code>notes.txt
+report.txt
+README.TXT</code></pre>
+  <div class="two">
+    <div><pre><code class="language-bash">find . -name "*.txt"</code></pre>
+    <pre class="out"><code>./notes.txt
+./report.txt</code></pre></div>
+    <div><pre><code class="language-bash">find . -iname "*.txt"</code></pre>
+    <pre class="out"><code>./notes.txt
+./report.txt
+./README.TXT</code></pre></div>
+  </div>
+  <p><code>README.TXT</code> is skipped by <code>-name</code> because its extension is uppercase. <mark><code>-iname</code> ignores upper and lower case.</mark></p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="find-type">
+  <h2>Only files, or only directories: <code>-type</code></h2>
+  <p>By default <code>find</code> returns both files and directories. <code>-type</code> narrows it: <code>f</code> = regular <b>file</b>, <code>d</code> = <b>directory</b>.</p>
+  <pre class="out"><code>project/
+├── notes.txt
+├── report.pdf
+├── logs/
+│   ├── app.log
+│   └── error.log
+└── documents/</code></pre>
+  <div class="two">
+    <div><pre><code class="language-bash">find . -type f      # files only</code></pre>
+    <pre class="out"><code>./notes.txt
+./report.pdf
+./logs/app.log
+./logs/error.log</code></pre></div>
+    <div><pre><code class="language-bash">find . -type d      # directories only</code></pre>
+    <pre class="out"><code>.
+./logs
+./documents</code></pre></div>
+  </div>
+  <p>With <code>-type f</code>, the folders <code>./logs</code> and <code>./documents</code> are <b>not</b> displayed. With <code>-type d</code>, even the starting point <code>.</code> is listed, because it is a directory too.</p>
+
+  <h3>Combine name and type</h3>
+  <p>Conditions stack up, and an item must pass <b>all</b> of them. “Only files whose names end with <code>.log</code>”:</p>
+  <div class="anatomy"><span class="a1">find</span> <span class="a2">.</span> <span class="a3">-type f</span> <span class="a4">-name "*.log"</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p>start from the current directory</p></div>
+    <div><span class="sw a3"></span><p>condition 1: must be a regular file</p></div>
+    <div><span class="sw a4"></span><p>condition 2: its name must end with .log</p></div>
+  </div>
+  <div class="two">
+    <pre class="out"><code>project/
+├── notes.txt
+├── app.log
+├── report.pdf
+├── logs/
+│   ├── server.log
+│   └── error.log
+└── documents/</code></pre>
+    <div><pre><code class="language-bash">find . -type f -name "*.log"</code></pre>
+    <pre class="out"><code>./app.log
+./logs/server.log
+./logs/error.log</code></pre></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="find-size-time">
+  <h2>Search by size and by time</h2>
+  <p><code>find</code> can also test how big a file is and when it was last changed. A <code>+</code> means “more than”, a <code>-</code> means “less than”.</p>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>Finds</th></tr>
+    <tr><td><code>find . -size +10M</code></td><td>files larger than 10 MB (units: <code>k</code>, <code>M</code>, <code>G</code>)</td></tr>
+    <tr><td><code>find . -mtime -1</code></td><td>files modified within the last day (24 hours)</td></tr>
+    <tr><td><code>find . -mmin -30</code></td><td>files modified within the last 30 minutes</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> “The disk is full!” is a classic customer call. <code>find / -type f -size +500M 2&gt;/dev/null</code> lists the giant files, and <code>find /var/log -mmin -30</code> shows which logs are being written right now, i.e. where to look first after an incident.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="grep">
+  <h2><code>grep</code> · search inside files</h2>
+  <p><code>app.log</code> has 10,000 lines and you want the ones mentioning <code>ERROR</code>. Reading them all would take ages. Instead:</p>
+  <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
+  <p><mark><code>grep</code> reads the file and prints only the lines that contain the matching text.</mark></p>
+  <div class="anatomy"><span class="a1">grep</span> <span class="a2">"pattern"</span> <span class="a3">file</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p>the text (or pattern) to search for</p></div>
+    <div><span class="sw a3"></span><p>the file to search in</p></div>
+  </div>
+  <h3>Search for a word in a file</h3>
+  <div class="codebox"><span class="cap">config.txt</span><pre><code class="language-plaintext">server=web01
+port=8080
+server=database01
+timeout=30</code></pre></div>
+  <pre><code class="language-bash">grep "server" config.txt</code></pre>
+  <pre class="out"><code>server=web01
+server=database01</code></pre>
+
+  <h3>grep returns whole lines, not just the word</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Four lines of app.log go through grep ERROR; only the two lines containing ERROR come out, printed in full">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="30" width="250" height="160" rx="12"/>
+        <path class="box f-yellow" d="M310 60 L 410 60 L 380 160 L 340 160 Z"/>
+        <rect class="box f-card" x="450" y="60" width="250" height="100" rx="12"/>
+        <path class="ln" d="M275 110 L 318 110" marker-end="url(#ah)"/>
+        <path class="lr" d="M406 110 L 444 110" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="145" y="20" text-anchor="middle">app.log</text>
+      <text class="tm" x="34" y="66">INFO: Server started</text>
+      <text class="tm" x="34" y="102">ERROR: Database failed</text>
+      <text class="tm" x="34" y="138">INFO: User logged in</text>
+      <text class="tm" x="34" y="174">ERROR: Conn. timeout</text>
+      <text class="th" x="360" y="104" text-anchor="middle">grep</text>
+      <text class="ts" x="360" y="190" text-anchor="middle">"ERROR"</text>
+      <text class="tm" x="464" y="102">ERROR: Database failed</text>
+      <text class="tm" x="464" y="134">ERROR: Conn. timeout</text>
+    </svg></div>
+    <figcaption>grep is a sieve for lines: matching lines pass through whole, the rest are dropped.</figcaption>
+  </figure>
+  <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
+  <pre class="out"><code>ERROR: Database failed
+ERROR: Connection timeout</code></pre>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="grep-options">
+  <h2>Case, line numbers and multiple files</h2>
+  <h3>Case sensitivity and <code>-i</code></h3>
+  <p>Like file names, <code>grep</code> is <b>case-sensitive</b> by default. Suppose <code>app.log</code> contains <code>Server started</code>, <code>server stopped</code> and <code>SERVER restarted</code>:</p>
+  <div class="two">
+    <div><pre><code class="language-bash">grep "server" app.log</code></pre>
+    <pre class="out"><code>server stopped</code></pre></div>
+    <div><pre><code class="language-bash">grep -i "server" app.log</code></pre>
+    <pre class="out"><code>Server started
+server stopped
+SERVER restarted</code></pre></div>
+  </div>
+  <h3>Line numbers with <code>-n</code></h3>
+  <p>To know <i>where</i> in the file each match is, add <code>-n</code> (back to the 4-line <code>app.log</code>):</p>
+  <pre><code class="language-bash">grep -n "ERROR" app.log</code></pre>
+  <pre class="out"><code>2:ERROR: Database failed
+4:ERROR: Connection timeout</code></pre>
+  <h3>Several files at once</h3>
+  <div class="two">
+    <div class="codebox"><span class="cap">app.log</span><pre><code class="language-plaintext">INFO: Server started
+ERROR: Database failed
+INFO: User logged in
+ERROR: Connection timeout
+Server started
+server stopped
+SERVER restarted</code></pre></div>
+    <div class="codebox"><span class="cap">server.log</span><pre><code class="language-plaintext">INFO Server running
+ERROR Server unavailable
+INFO Server restarted</code></pre></div>
+  </div>
+  <div class="two">
+    <div><pre><code class="language-bash">grep "ERROR" app.log server.log</code></pre>
+    <pre class="out"><code>app.log:ERROR: Database failed
+app.log:ERROR: Connection timeout
+server.log:ERROR Server unavailable</code></pre></div>
+    <div><pre><code class="language-bash">grep -n "ERROR" app.log server.log</code></pre>
+    <pre class="out"><code>app.log:2:ERROR: Database failed
+app.log:4:ERROR: Connection timeout
+server.log:2:ERROR Server unavailable</code></pre></div>
+  </div>
+  <p>With more than one file, grep puts the <b>file name</b> in front of each match (and the line number after it, with <code>-n</code>).</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="grep-r">
+  <h2>Search a whole folder tree: <code>grep -r</code></h2>
+  <p>When files are spread over many directories, listing each one is impractical. <code>-r</code> (<b>recursive</b>) makes grep search every file in a directory and all its subdirectories.</p>
+  <pre><code class="language-bash">grep -r "ERROR" .        # search everything under the current directory</code></pre>
+  <div class="cmd"><p class="what">Practical example: build a small project</p>
+  <pre><code class="language-bash">mkdir -p grep-recursive/logs/app grep-recursive/logs/server grep-recursive/config
+cd grep-recursive
+
+echo "INFO Application started" &gt; logs/app/app.log
+echo "ERROR Database connection failed" &gt;&gt; logs/app/app.log
+
+echo "INFO Server started" &gt; logs/server/server.log
+echo "ERROR Server unavailable" &gt;&gt; logs/server/server.log
+
+echo "port=8080" &gt; config/settings.txt</code></pre></div>
+  <div class="two">
+    <pre class="out"><code>grep-recursive/
+├── logs/
+│   ├── app/
+│   │   └── app.log
+│   └── server/
+│       └── server.log
+└── config/
+    └── settings.txt</code></pre>
+    <div><pre><code class="language-bash">find . -type f     # check the files</code></pre>
+    <pre class="out"><code>./logs/app/app.log
+./logs/server/server.log
+./config/settings.txt</code></pre></div>
+  </div>
+  <p>Now ask: <b>which files contain ERROR?</b></p>
+  <pre><code class="language-bash">grep -r "ERROR" .</code></pre>
+  <pre class="out"><code>./logs/app/app.log:ERROR Database connection failed
+./logs/server/server.log:ERROR Server unavailable</code></pre>
+  <p><code>settings.txt</code> was searched too, but it has no match, so it doesn’t appear.</p>
+  <div class="sticky tip"><strong>Just the file names</strong> Add <code>-l</code> to print only the names of matching files: <code>grep -rl "ERROR" .</code></div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="grep-vcw">
+  <h2>Invert, count and whole words: <code>-v</code>, <code>-c</code>, <code>-w</code></h2>
+  <p>For the first two, use this <code>app.log</code>:</p>
+  <div class="codebox"><span class="cap">app.log</span><pre><code class="language-plaintext">INFO: Application started.
+INFO: User logged in.
+ERROR: Database connection failed.
+INFO: Loading dashboard.
+ERROR: Image failed to load.</code></pre></div>
+  <h3>Invert the search with <code>-v</code></h3>
+  <p>Normally grep shows lines that <i>contain</i> the word. <code>-v</code> does the exact opposite: <b>show every line that does NOT contain it</b>. It turns grep into a filter that hides what you don’t want to see.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="The same log split two ways: grep ERROR keeps the 2 ERROR lines; grep -v ERROR keeps the 3 INFO lines">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="20" width="330" height="160" rx="14"/>
+        <rect class="box f-green" x="370" y="20" width="330" height="160" rx="14"/>
+      </g>
+      <text class="tm" x="185" y="52" text-anchor="middle">grep "ERROR" app.log</text>
+      <text class="ts" x="40" y="96">ERROR: Database connection…</text>
+      <text class="ts" x="40" y="124">ERROR: Image failed to load.</text>
+      <text class="tr" x="185" y="164" text-anchor="middle">only the problems</text>
+      <text class="tm" x="535" y="52" text-anchor="middle">grep -v "ERROR" app.log</text>
+      <text class="ts" x="390" y="88">INFO: Application started.</text>
+      <text class="ts" x="390" y="112">INFO: User logged in.</text>
+      <text class="ts" x="390" y="136">INFO: Loading dashboard.</text>
+      <text class="tb" x="535" y="164" text-anchor="middle">everything except them</text>
+    </svg></div>
+    <figcaption>Same file, opposite halves.</figcaption>
+  </figure>
+  <div class="two">
+    <div><pre><code class="language-bash">grep "ERROR" app.log</code></pre>
+    <pre class="out"><code>ERROR: Database connection failed.
+ERROR: Image failed to load.</code></pre></div>
+    <div><pre><code class="language-bash">grep -v "ERROR" app.log</code></pre>
+    <pre class="out"><code>INFO: Application started.
+INFO: User logged in.
+INFO: Loading dashboard.</code></pre></div>
+  </div>
+
+  <h3>Count matches with <code>-c</code></h3>
+  <p>Sometimes you don’t care <i>what</i> the lines say, only <b>how many</b> there are:</p>
+  <pre><code class="language-bash">grep -c "ERROR" app.log</code></pre>
+  <pre class="out"><code>2</code></pre>
+  <p><code>-c</code> counts matching <b>lines</b>; a line with ERROR twice still counts once.</p>
+
+  <h3>Match the whole word with <code>-w</code></h3>
+  <p>By default grep looks for the sequence of letters anywhere, so <code>cat</code> also matches <i>category</i> and <i>dedicate</i>. <code>-w</code> only matches the word standing on its own, with spaces or punctuation around it.</p>
+  <div class="codebox"><span class="cap">notes.txt</span><pre><code class="language-plaintext">The system threw an error today.
+Please fix the errors in the code.
+The movie was an absolute terror.</code></pre></div>
+  <div class="two">
+    <div><pre><code class="language-bash">grep "error" notes.txt</code></pre>
+    <pre class="out"><code>The system threw an error today.
+Please fix the errors in the code.
+The movie was an absolute terror.</code></pre></div>
+    <div><pre><code class="language-bash">grep -w "error" notes.txt</code></pre>
+    <pre class="out"><code>The system threw an error today.</code></pre></div>
+  </div>
+  <p>The plain search found all three, because <i>error</i>, <i>errors</i> and <i>terror</i> all contain the letters e-r-r-o-r. With <code>-w</code>, only the standalone word matches.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="cheatsheet">
+  <h2>Cheat sheet: <code>find</code> vs <code>grep</code></h2>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>find</code></th><th><code>grep</code></th></tr>
+    <tr><td>Looks at</td><td>names and properties of files/folders</td><td>the text inside files</td></tr>
+    <tr><td>Question</td><td>“Where is it?”</td><td>“Which file / line has it?”</td></tr>
+    <tr><td>Prints</td><td>paths</td><td>matching lines</td></tr>
+    <tr><td>Case-insensitive</td><td><code>-iname</code></td><td><code>-i</code></td></tr>
+    <tr><td>Goes into subfolders</td><td>always</td><td>with <code>-r</code></td></tr>
+  </table></div>
+  <div class="tbl"><table>
+    <tr><th>grep option</th><th>Meaning</th></tr>
+    <tr><td><code>-i</code></td><td>ignore case</td></tr>
+    <tr><td><code>-n</code></td><td>show line numbers</td></tr>
+    <tr><td><code>-r</code></td><td>search directories recursively</td></tr>
+    <tr><td><code>-v</code></td><td>invert: lines that do NOT match</td></tr>
+    <tr><td><code>-c</code></td><td>count matching lines</td></tr>
+    <tr><td><code>-w</code></td><td>whole word only</td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>Options combine</strong> <code>grep -rin "timeout" /etc/app</code> searches recursively, ignoring case, and shows line numbers, all at once.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>find</dt><dd>Walks a directory tree from a starting location and prints every file or directory that matches the given conditions.</dd></div>
+    <div><dt>-name / -iname</dt><dd>find conditions that match on the file name; -name is case-sensitive, -iname ignores case.</dd></div>
+    <div><dt>-type f / -type d</dt><dd>find conditions that keep only regular files (f) or only directories (d).</dd></div>
+    <div><dt>-size, -mtime, -mmin</dt><dd>find conditions on file size (e.g. +10M) and on last-modified time in days or minutes (e.g. -mtime -1).</dd></div>
+    <div><dt>grep</dt><dd>Searches the text inside files and prints every line that contains a given pattern.</dd></div>
+    <div><dt>Case-sensitive</dt><dd>Treating uppercase and lowercase letters as different, so “server” does not match “Server”. Linux names and grep are case-sensitive by default.</dd></div>
+    <div><dt>Wildcard (*)</dt><dd>A pattern character meaning “any characters”, as in <code>"*.log"</code>. Quote it in find so the shell doesn’t expand it first.</dd></div>
+    <div><dt>grep -r</dt><dd>Recursive grep: searches every file in a directory and all its subdirectories.</dd></div>
+    <div><dt>grep -v</dt><dd>Inverted grep: prints only the lines that do not contain the pattern.</dd></div>
+    <div><dt>grep -w</dt><dd>Matches the pattern only as a whole word, not as part of a longer word.</dd></div>
+  </dl>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>You remember a file is called <code>deploy.sh</code> but not where it is. Which tool?</p>
+      <ol><li><code>grep</code></li><li><code>cat</code></li><li><code>find</code></li><li><code>head</code></li></ol>
+      <p class="why">You know the name, not the location: that is a job for find.</p></div>
+    <div class="q" data-answer="1"><p>Which command lists only directories under the current folder?</p>
+      <ol><li><code>find . -type d</code></li><li><code>find . -type f</code></li><li><code>find . -name d</code></li><li><code>grep -r . -d</code></li></ol>
+      <p class="why"><code>-type d</code> keeps directories; <code>-type f</code> keeps regular files.</p></div>
+    <div class="q" data-answer="4"><p><code>find . -name "*.txt"</code> does not list <code>README.TXT</code>. Why?</p>
+      <ol><li>find skips files starting with R</li><li>The file is hidden</li><li>The pattern needs two stars</li><li>-name is case-sensitive and .TXT is uppercase</li></ol>
+      <p class="why">Use <code>-iname</code> to ignore case.</p></div>
+    <div class="q" data-answer="2"><p>What does <code>grep "ERROR" app.log</code> print?</p>
+      <ol><li>Only the word ERROR, once per match</li><li>Every full line containing ERROR</li><li>The number of ERROR lines</li><li>The file name if it contains ERROR</li></ol>
+      <p class="why">grep returns whole matching lines. <code>-c</code> would count, <code>-l</code> would list file names.</p></div>
+    <div class="q" data-answer="3"><p>You want every line of a log <b>except</b> the DEBUG lines. Which command?</p>
+      <ol><li><code>grep -c "DEBUG" app.log</code></li><li><code>grep -w "DEBUG" app.log</code></li><li><code>grep -v "DEBUG" app.log</code></li><li><code>grep -i "DEBUG" app.log</code></li></ol>
+      <p class="why"><code>-v</code> inverts the match and shows lines that don’t contain the pattern.</p></div>
+    <div class="q" data-answer="1"><p>Which finds ERROR in every file under the current folder, including subfolders?</p>
+      <ol><li><code>grep -r "ERROR" .</code></li><li><code>grep "ERROR"</code></li><li><code>find . -name "ERROR"</code></li><li><code>grep -n "ERROR" .</code></li></ol>
+      <p class="why"><code>-r</code> makes grep descend into directories. find -name matches file names, not content.</p></div>
+    <div class="q" data-answer="4"><p>A file has the lines “error”, “errors” and “terror”. How many does <code>grep -w "error"</code> match?</p>
+      <ol><li>3</li><li>2</li><li>0</li><li>1</li></ol>
+      <p class="why">-w matches only the standalone word; “errors” and “terror” contain it as part of a longer word.</p></div>
+    <div class="q" data-answer="2"><p>Which finds files modified in the last 30 minutes?</p>
+      <ol><li><code>find . -mtime -30</code></li><li><code>find . -mmin -30</code></li><li><code>find . -size -30</code></li><li><code>grep -c 30 .</code></li></ol>
+      <p class="why"><code>-mmin</code> works in minutes; <code>-mtime</code> works in days.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>find</b> answers “<b>where</b> is the file?” by walking the directory tree with conditions like name, type, size and time, and <b>grep</b> answers “<b>which lines</b> contain this text?”, with <b>-i, -n, -r, -v, -c, -w</b> to sharpen the search.</p>
+  <p>Next up: Essential Text Filters, where <code>sort</code>, <code>uniq</code>, <code>cut</code>, <code>wc</code> and friends reshape and summarise the text you find.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

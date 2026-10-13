@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physical Connectivity &amp; Network Types · Networking Basics | AIFDE Notes</title>
+<meta name="description" content="Why computers needed networks, how they physically connect (NIC, cables, Wi-Fi), what hubs, switches, routers, modems and access points do, and how to tell a LAN from a WAN, plus MAN, CAN, PAN, ISP, Intranet and the Web.">
+<meta name="keywords" content="computer network, NIC, hub vs switch, router, modem, access point, LAN vs WAN, Internet vs Web">
+<meta name="date" content="2026-09-09">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="networking/physical-connectivity">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Physical Connectivity &amp; Network Types</h1>
+  <p class="byline">Start from a lonely computer on a desk and end with the whole Internet: how machines physically connect, which box does which job, and how to name any network you meet.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="before-networks">
+  <h2>The world before networking</h2>
+  <div class="story"><b class="lbl">The pen drive relay</b>Your friend needs the project file, so you copy it to a pen drive, walk across the hostel corridor, and copy it again on their laptop. Then they change one line, and now there are two different versions. <mark>Before networks, data moved only when a person carried it.</mark></div>
+  <p>A <b>standalone computer</b> works entirely on its own, with no connection to any other device. It can still do a lot: write documents, run calculations, play music. But everything it uses must <b>already be inside it</b>. It cannot ask another computer for a file, and it cannot print on the printer sitting on someone else’s desk. Its own files, storage, printers and applications are the <i>only</i> resources it can reach.</p>
+
+  <h3>How people shared data</h3>
+  <p>To move a file you had to physically carry it on portable storage:</p>
+  <div class="grid">
+    <div class="card t6 tilt-a"><h4>Floppy disks</h4><p>Early magnetic disks with very small capacity.</p></div>
+    <div class="card t1 tilt-b"><h4>CDs / DVDs</h4><p>Optical discs that held more than floppies.</p></div>
+    <div class="card t2 tilt-a"><h4>USB drives</h4><p>Small pluggable flash storage, still common today.</p></div>
+    <div class="card t3 tilt-b"><h4>External drives</h4><p>Larger portable hard drives for bigger files.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Two standalone computers with no cable between them; a person carries a USB drive from computer A to computer B along a dashed path">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="40" width="140" height="90" rx="10"/>
+        <rect class="box f-card" x="54" y="52" width="112" height="64" rx="6"/>
+        <path class="ln" d="M110 130 L 110 150 M 75 152 L 145 152"/>
+        <rect class="box f-blue" x="540" y="40" width="140" height="90" rx="10"/>
+        <rect class="box f-card" x="554" y="52" width="112" height="64" rx="6"/>
+        <path class="ln" d="M610 130 L 610 150 M 575 152 L 645 152"/>
+        <path class="lr dash" d="M190 110 C 280 190, 440 190, 530 110" marker-end="url(#ahr)"/>
+        <rect class="box f-yellow" x="335" y="150" width="50" height="26" rx="5"/>
+        <rect class="box f-grey" x="385" y="157" width="14" height="12" rx="2"/>
+      </g>
+      <text class="th" x="110" y="94" text-anchor="middle">PC A</text>
+      <text class="th" x="610" y="94" text-anchor="middle">PC B</text>
+      <text class="ts" x="110" y="178" text-anchor="middle">copy file to USB</text>
+      <text class="ts" x="610" y="178" text-anchor="middle">copy file from USB</text>
+      <text class="tm" x="360" y="168" text-anchor="middle">USB</text>
+      <text class="tr" x="360" y="70" text-anchor="middle">no cable, no signal</text>
+      <text class="ts" x="360" y="212" text-anchor="middle">“sneakernet”: the data travels on foot</text>
+    </svg></div>
+    <figcaption>Copy → walk → copy again. Informally this is called <b>sneakernet</b>, because the data travels in someone’s sneakers.</figcaption>
+  </figure>
+
+  <h3>The problems isolated computers created</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:32%">Problem</th><th>What it looked like</th></tr>
+    <tr><td>Difficult file sharing</td><td>Every transfer meant physically moving a storage device.</td></tr>
+    <tr><td>Duplicate copies</td><td>Each computer kept its own copy, and the copies drifted apart.</td></tr>
+    <tr><td>Repeated manual effort</td><td>Even the smallest exchange needed a person to carry something.</td></tr>
+    <tr><td>Hard to collaborate</td><td>Two people could not work on the same document at the same time.</td></tr>
+    <tr><td>Hard to share hardware</td><td>Only one PC had the printer, so everyone else carried files to it.</td></tr>
+    <tr><td>No central access</td><td>No single place where everyone could fetch shared information.</td></tr>
+    <tr><td>Growing management pain</td><td>More computers meant more “who has which file?” confusion.</td></tr>
+  </table></div>
+  <p>All of these point to one idea: <mark>computers should exchange data and share resources directly, without a person in the middle.</mark> That is the birth of computer networking, so that <b>data</b> can be shared instantly and <b>resources</b> (one printer, one storage box, one internet connection) can serve many computers. The question “How can computers communicate directly?” drives this entire module.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what-is-a-network">
+  <h2>From two computers to a computer network</h2>
+  <p>The simplest network is two computers joined by a cable. One is the <b>sender</b> (gives out information), the other is the <b>receiver</b> (gets it), and whatever carries the data between them is the <b>communication medium</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Sender computer on the left, receiver computer on the right, joined by a cable labelled communication medium, with data flowing from sender to receiver">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="40" width="160" height="80" rx="12"/>
+        <rect class="box f-green" x="530" y="40" width="160" height="80" rx="12"/>
+        <path class="ln" d="M190 80 L 530 80"/>
+        <path class="lr" d="M250 62 L 470 62" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="110" y="90" text-anchor="middle">Sender</text>
+      <text class="th" x="610" y="90" text-anchor="middle">Receiver</text>
+      <text class="tr" x="360" y="50" text-anchor="middle">data</text>
+      <text class="t" x="360" y="106" text-anchor="middle">communication medium</text>
+      <text class="ts" x="360" y="128" text-anchor="middle">(a cable, or Wi-Fi radio waves)</text>
+      <text class="ts" x="110" y="148" text-anchor="middle">gives out information</text>
+      <text class="ts" x="610" y="148" text-anchor="middle">gets the information</text>
+    </svg></div>
+    <figcaption>Every network communication, however big, has these three: a sender, a receiver and a medium between them.</figcaption>
+  </figure>
+
+  <h3>More than two computers</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Node</h4><p>Any device connected to the network: PC, phone, printer, server.</p></div>
+    <div class="card t2 tilt-b"><h4>Link</h4><p>One physical or wireless connection between two nodes.</p></div>
+    <div class="card t5 tilt-a"><h4>Communication path</h4><p>The full route data takes from one node to another, possibly over several links.</p></div>
+  </div>
+
+  <h3>Why “cable everyone to everyone” fails</h3>
+  <p>One idea: run a separate cable between every pair of computers (a <b>full mesh</b>). Two computers need 1 cable, three need 3, but the count explodes. For <code>n</code> computers you need <code>n × (n − 1) ÷ 2</code> cables.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="Left: 4 computers fully connected need 6 cables. Right: 6 computers fully connected need 15 cables. The tangle grows very quickly.">
+      <g class="rough">
+        <path class="ln" d="M110 60 L 250 60 M 110 200 L 250 200 M 110 60 L 110 200 M 250 60 L 250 200 M 110 60 L 250 200 M 250 60 L 110 200"/>
+        <circle class="box f-blue" cx="110" cy="60" r="16"/><circle class="box f-blue" cx="250" cy="60" r="16"/>
+        <circle class="box f-blue" cx="110" cy="200" r="16"/><circle class="box f-blue" cx="250" cy="200" r="16"/>
+        <path class="lr" d="M620 130 L 580 199 L 500 199 L 460 130 L 500 61 L 580 61 Z M620 130 L 500 199 M620 130 L 460 130 M620 130 L 500 61 M580 199 L 460 130 M580 199 L 500 61 M580 199 L 580 61 M500 199 L 500 61 M500 199 L 580 61 M460 130 L 580 61"/>
+        <circle class="box f-orange" cx="620" cy="130" r="16"/><circle class="box f-orange" cx="580" cy="199" r="16"/>
+        <circle class="box f-orange" cx="500" cy="199" r="16"/><circle class="box f-orange" cx="460" cy="130" r="16"/>
+        <circle class="box f-orange" cx="500" cy="61" r="16"/><circle class="box f-orange" cx="580" cy="61" r="16"/>
+      </g>
+      <text class="th" x="180" y="250" text-anchor="middle">4 PCs → 6 cables</text>
+      <text class="th" x="540" y="250" text-anchor="middle">6 PCs → 15 cables</text>
+      <text class="ts" x="360" y="280" text-anchor="middle">10 PCs → 45 cables · 100 PCs → 4,950 cables</text>
+    </svg></div>
+    <figcaption>A full mesh does not scale: cables multiply, adding one PC means cabling it to <i>every</i> other PC, and troubleshooting becomes a nightmare.</figcaption>
+  </figure>
+  <p>So we need a more <b>centralized</b> way to connect many computers. That need produces the network devices in the next sections.</p>
+
+  <h3>Definition</h3>
+  <p>A <mark>computer network is a group of two or more computers (or other devices) connected together so they can communicate and share resources such as files, applications and hardware.</mark> Three ingredients:</p>
+  <div class="flow"><span>connected devices</span><span>communication (send + receive)</span><span class="ok">resource sharing</span></div>
+  <h3>What networks are actually used for</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>File sharing</h4><p>Open or transfer files directly, no pen drives.</p></div>
+    <div class="card t2 tilt-b"><h4>Hardware sharing</h4><p>One printer, scanner or storage box for many PCs.</p></div>
+    <div class="card t3 tilt-a"><h4>Apps &amp; services</h4><p>Use software hosted elsewhere, e.g. a shared database.</p></div>
+    <div class="card t4 tilt-b"><h4>Communication</h4><p>Messages, email and calls between people.</p></div>
+    <div class="card t5 tilt-a"><h4>Centralized services</h4><p>Keep important data in one place everyone can reach.</p></div>
+    <div class="card t8 tilt-b"><h4>Internet access</h4><p>Join the global network of networks.</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="interface-and-medium">
+  <h2>How a computer physically connects</h2>
+  <p>Before a computer can send anything, it needs a <b>network interface</b>: a <mark>doorway between the computer and the network</mark>. Without one, a computer is stuck being standalone, even if other computers sit right next to it.</p>
+  <p>The hardware is the <b>Network Interface Card (NIC)</b>. In old computers it was a separate card plugged in; today it is usually <b>built into the motherboard</b> (the main board inside the computer), but we still call it a NIC. It comes in two flavours:</p>
+  <div class="two">
+    <div class="card t3 tilt-a"><h4>Ethernet interface</h4><p>For connecting with a <b>network cable</b>. You see its square socket on laptops, desktops and servers.</p></div>
+    <div class="card t1 tilt-b"><h4>Wireless interface</h4><p>For connecting <b>without a cable</b>, using Wi-Fi radio signals. Built into every phone and laptop.</p></div>
+  </div>
+
+  <h3>The three ways bits travel</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Copper cable carries electrical pulses, fiber-optic cable carries pulses of light, and Wi-Fi carries radio waves through the air">
+      <g class="rough">
+        <rect class="box f-orange" x="150" y="40" width="350" height="26" rx="13"/>
+        <path class="lr" d="M170 60 L 190 60 L 190 46 L 220 46 L 220 60 L 250 60 L 250 46 L 265 46 L 265 60 L 310 60 L 310 46 L 340 46 L 340 60 L 360 60 L 360 46 L 400 46 L 400 60 L 420 60 L 420 46 L 440 46 L 440 60 L 480 60"/>
+        <rect class="box f-yellow" x="150" y="112" width="350" height="26" rx="13"/>
+        <path class="lb" d="M170 125 L 200 125 M 230 125 L 250 125 M 290 125 L 330 125 M 360 125 L 375 125 M 410 125 L 450 125" marker-end="url(#ahb)"/>
+        <path class="ln" d="M175 230 L 175 190 M 160 190 L 190 190"/>
+        <path class="lr" d="M200 182 Q 215 200 200 218 M 220 172 Q 245 200 220 228 M 240 162 Q 275 200 240 238"/>
+        <rect class="box f-blue" x="440" y="180" width="60" height="42" rx="8"/>
+      </g>
+      <text class="th" x="20" y="62">Copper</text>
+      <text class="th" x="20" y="134">Fiber</text>
+      <text class="th" x="20" y="206">Wi-Fi</text>
+      <text class="t" x="520" y="52">electrical signals</text>
+      <text class="ts" x="520" y="72">cheap, common in offices</text>
+      <text class="t" x="520" y="124">pulses of light</text>
+      <text class="ts" x="520" y="144">faster, longer, pricier</text>
+      <text class="t" x="520" y="196">radio waves</text>
+      <text class="ts" x="520" y="216">no cable, move freely</text>
+      <text class="ts" x="470" y="206" text-anchor="middle">phone</text>
+      <text class="ts" x="330" y="206" text-anchor="middle">through the air</text>
+    </svg></div>
+    <figcaption>Wired networks send electrical or light signals through a cable; wireless networks send radio signals through the air.</figcaption>
+  </figure>
+  <h3>Wired networking</h3>
+  <p>Devices are joined by cables. The most common standard for wired local networks is <b>Ethernet</b>, which defines how devices format and send data over the cable. <b>Copper</b> cables carry electrical signals and are inexpensive; <b>fiber-optic</b> cables carry light through thin glass or plastic strands, giving much higher speeds over much longer distances at a higher price. Wired is the choice for offices, data centers and anywhere a stable, fast, always-on connection matters more than moving around.</p>
+  <h3>Wireless networking</h3>
+  <p>Devices talk over radio signals with no cable. The familiar form is <b>Wi-Fi</b>: laptops and phones join as long as they are within range. Because it uses radio, the device needs a <b>wireless network interface</b>, not an Ethernet one. Wireless suits homes, cafes, public spaces and anything that moves.</p>
+  <div class="tbl"><table>
+    <tr><th>Aspect</th><th>Wired</th><th>Wireless</th></tr>
+    <tr><td>Physical connection</td><td>Needs a cable</td><td>No cable; radio signals</td></tr>
+    <tr><td>Mobility</td><td>Stays where the cable reaches</td><td>Moves freely within range</td></tr>
+    <tr><td>Speed</td><td>Generally faster and more stable</td><td>Can be slower and less consistent</td></tr>
+    <tr><td>Reliability</td><td>Little interference</td><td>Affected by walls, distance, interference</td></tr>
+    <tr><td>Typical use</td><td>Offices, data centers, fixed desktops</td><td>Homes, public spaces, mobile devices</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a demo on a customer site is flaky, ask first: “Wi-Fi or cable?” Plugging the laptop into Ethernet removes a whole class of problems (interference, roaming, weak signal) before you start debugging your own code.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="hub">
+  <h2>Hub: the first central box</h2>
+  <p>The fix for the cable explosion is a <b>central device</b>: every computer connects to it once, and the device takes care of getting data to the right place. This is called a <b>star</b> layout. The earliest such device was the <b>hub</b>.</p>
+  <div class="story"><b class="lbl">The loudspeaker</b>A hub is like the railway-station loudspeaker. A message is meant for one passenger, but the announcement goes to <i>everyone</i> on the platform, and each person decides whether it was for them. <mark>A hub does not know who the receiver is, so it repeats the data out of every port.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="PC A sends to a hub; the hub copies the data to PC B, PC C and PC D. Only C accepts it; B and D ignore it.">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="102" width="130" height="56" rx="12"/>
+        <rect class="box f-yellow" x="270" y="102" width="130" height="56" rx="12"/>
+        <rect class="box f-grey" x="490" y="20" width="110" height="56" rx="12"/>
+        <rect class="box f-green" x="490" y="102" width="110" height="56" rx="12"/>
+        <rect class="box f-grey" x="490" y="184" width="110" height="56" rx="12"/>
+        <path class="lr" d="M162 130 L 264 130" marker-end="url(#ahr)"/>
+        <path class="lr" d="M402 118 C 440 100, 450 50, 484 48" marker-end="url(#ahr)"/>
+        <path class="lr" d="M402 130 L 484 130" marker-end="url(#ahr)"/>
+        <path class="lr" d="M402 142 C 440 160, 450 210, 484 212" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="95" y="139" text-anchor="middle">PC A</text>
+      <text class="ts" x="95" y="180" text-anchor="middle">sends to C</text>
+      <text class="th" x="335" y="139" text-anchor="middle">HUB</text>
+      <text class="ts" x="335" y="180" text-anchor="middle">copies to all</text>
+      <text class="th" x="545" y="57" text-anchor="middle">PC B</text>
+      <text class="th" x="545" y="139" text-anchor="middle">PC C</text>
+      <text class="th" x="545" y="221" text-anchor="middle">PC D</text>
+      <text class="ts" x="610" y="52">ignores it</text>
+      <text class="tb" x="610" y="138">accepts ✓</text>
+      <text class="ts" x="610" y="216">ignores it</text>
+    </svg></div>
+    <figcaption>Data meant for C still reaches B and D. That is wasteful, and anyone listening can see it.</figcaption>
+  </figure>
+  <h3>Problems with a hub</h3>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Wasted traffic</h4><p>Every PC receives data that isn’t for it.</p></div>
+    <div class="card t6 tilt-b"><h4>Slow when busy</h4><p>All devices share one connection, so they wait their turn. More devices, slower network.</p></div>
+    <div class="card t4 tilt-a"><h4>Collisions</h4><p>Two PCs sending at once interfere with each other, and both must wait and resend.</p></div>
+    <div class="card t5 tilt-b"><h4>Privacy risk</h4><p>Data reaches devices it wasn’t meant for. They normally ignore it, but they <i>could</i> read it.</p></div>
+  </div>
+  <p>Because of this, hubs are basically not used in modern networks. They were replaced by the <b>switch</b>.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="switch">
+  <h2>Switch: a smarter central box</h2>
+  <p>From outside a switch looks like a hub: a box with many sockets (<b>ports</b>). Inside, it is smarter: <mark>a switch sends data only out of the port where the intended receiver is connected.</mark></p>
+  <p>How does it know? Every network interface has a unique hardware ID called a <b>MAC address</b> (the next note explains it fully). The switch remembers <b>which MAC address lives on which port</b> in a small table, then uses that table to forward each piece of data to exactly one port.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 310" role="img" aria-label="PC A on port 1 sends to PC C on port 3. The switch looks up its MAC table and forwards only to port 3. PC B on port 2 and PC D on port 4 receive nothing.">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="20" width="140" height="62" rx="12"/>
+        <rect class="box f-grey" x="30" y="110" width="140" height="62" rx="12"/>
+        <rect class="box f-green" x="550" y="20" width="140" height="62" rx="12"/>
+        <rect class="box f-grey" x="550" y="110" width="140" height="62" rx="12"/>
+        <rect class="box f-teal" x="270" y="66" width="180" height="60" rx="12"/>
+        <path class="ln dash" d="M172 141 L 268 112"/>
+        <path class="ln dash" d="M452 112 L 548 141"/>
+        <path class="lr" d="M172 51 L 264 80" marker-end="url(#ahr)"/>
+        <path class="lr" d="M452 80 L 544 51" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M360 128 L 360 172"/>
+        <rect class="box f-card" x="220" y="176" width="280" height="122" rx="12"/>
+      </g>
+      <text class="th" x="100" y="50" text-anchor="middle">PC A</text>
+      <text class="ts" x="100" y="72" text-anchor="middle">port 1 · sender</text>
+      <text class="th" x="100" y="140" text-anchor="middle">PC B</text>
+      <text class="ts" x="100" y="162" text-anchor="middle">port 2 · quiet</text>
+      <text class="th" x="620" y="50" text-anchor="middle">PC C</text>
+      <text class="ts" x="620" y="72" text-anchor="middle">port 3 · receiver</text>
+      <text class="th" x="620" y="140" text-anchor="middle">PC D</text>
+      <text class="ts" x="620" y="162" text-anchor="middle">port 4 · quiet</text>
+      <text class="th" x="360" y="105" text-anchor="middle">SWITCH</text>
+      <text class="tr" x="360" y="202" text-anchor="middle">MAC table</text>
+      <text class="tm" x="240" y="226">port 1  00:1A:2B:3C:4D:01</text>
+      <text class="tm" x="240" y="246">port 2  00:1A:2B:3C:4D:02</text>
+      <text class="tm" x="240" y="266">port 3  00:1A:2B:3C:4D:03</text>
+      <text class="tm" x="240" y="286">port 4  00:1A:2B:3C:4D:04</text>
+    </svg></div>
+    <figcaption>“For C? C is on port 3.” Only port 3 gets the data. B and D never see it.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="flow v"><span class="hl">Hub</span><span>A sends for C</span><span class="bad">B, C, D all receive</span></div>
+    <div class="flow v"><span class="hl">Switch</span><span>A sends for C</span><span class="ok">only C receives</span></div>
+  </div>
+  <h3>Why a switch beats a hub</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Less traffic</h4><p>Data normally goes only to the device that needs it.</p></div>
+    <div class="card t1 tilt-b"><h4>Better performance</h4><p>Many conversations can happen at once without flooding everyone.</p></div>
+    <div class="card t8 tilt-a"><h4>Far fewer collisions</h4><p>Each device gets its own connection to the switch.</p></div>
+    <div class="card t5 tilt-b"><h4>Better privacy</h4><p>Other PCs don’t normally receive your data.</p></div>
+  </div>
+  <div class="sticky warn"><strong>A switch is not a security system</strong> It improves privacy compared to a hub, but it doesn’t make a network secure by itself. You still need passwords, encryption, firewalls and so on.</div>
+  <p>Switches are what modern wired networks use to connect computers, printers and servers <b>within the same local network</b>.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="router">
+  <h2>Router: connecting different networks</h2>
+  <p>A switch connects 20 PCs in a college lab to each other. But when a student opens YouTube or sends a WhatsApp message, the other end is <b>not inside the lab’s network</b>. A switch alone cannot send data to a different network. <mark>A router’s job is to connect different networks and move data from one network to another.</mark></p>
+  <h3>The default gateway</h3>
+  <p>When a device wants to reach something outside its own network, it hands the data to a device that can carry it to other networks: a <b>gateway</b>. At home and in offices the router plays this role, and because it is the gateway your device <i>normally</i> uses, it is called the <b>default gateway</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Inside the home network, a laptop and a phone send data to the router, the default gateway. The router sends it into the Internet, which carries it to the friend's network and phone.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="220" height="200" rx="18"/>
+        <rect class="box f-card" x="45" y="80" width="100" height="44" rx="8"/>
+        <rect class="box f-card" x="45" y="150" width="100" height="44" rx="8"/>
+        <circle class="box f-yellow" cx="310" cy="130" r="38"/>
+        <ellipse class="box f-grey" cx="470" cy="130" rx="78" ry="52"/>
+        <rect class="box f-green" x="580" y="50" width="120" height="160" rx="16"/>
+        <rect class="box f-card" x="595" y="130" width="90" height="44" rx="8"/>
+        <path class="lr" d="M147 102 C 200 102, 240 122, 268 126" marker-end="url(#ahr)"/>
+        <path class="lr" d="M147 172 C 200 172, 240 142, 268 136" marker-end="url(#ahr)"/>
+        <path class="lr" d="M350 130 L 386 130" marker-end="url(#ahr)"/>
+        <path class="lr" d="M550 130 L 574 140" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="130" y="60" text-anchor="middle">Home network</text>
+      <text class="t" x="95" y="108" text-anchor="middle">laptop</text>
+      <text class="t" x="95" y="178" text-anchor="middle">phone</text>
+      <text class="t" x="310" y="136" text-anchor="middle">router</text>
+      <text class="ts" x="310" y="190" text-anchor="middle">default gateway</text>
+      <text class="th" x="470" y="140" text-anchor="middle">Internet</text>
+      <text class="t" x="640" y="80" text-anchor="middle">Friend’s</text>
+      <text class="t" x="640" y="100" text-anchor="middle">network</text>
+      <text class="t" x="640" y="158" text-anchor="middle">phone</text>
+      <text class="ts" x="360" y="258" text-anchor="middle">“Is the destination on my own network? No → send it to the default gateway.”</text>
+    </svg></div>
+    <figcaption>Your laptop first checks whether the destination is local. Your friend’s phone isn’t, so the data goes to the default gateway (your router), which sends it on toward the other network.</figcaption>
+  </figure>
+  <h3>Routing</h3>
+  <p>The router’s decision about where to send data next is called <b>routing</b>. To decide, it looks at the destination’s <b>network-layer address</b> (the IP address, explained in the next note). A switch, by contrast, mainly uses the MAC address to deliver within one local network. Routing tables and how routers choose paths come in a later, dedicated module.</p>
+  <div class="two">
+    <div class="card t8 tilt-a"><h4>Switch</h4><p>Connects devices <b>within the same local network</b>. Uses <b>MAC addresses</b>.</p></div>
+    <div class="card t7 tilt-b"><h4>Router</h4><p>Connects <b>different networks</b> and moves data between them. Uses <b>IP addresses</b>.</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="modem">
+  <h2>Modem: talking to your Internet provider</h2>
+  <p>Your router moves data toward other networks, but your home network still needs a link to your <b>Internet Service Provider (ISP)</b>, the company that sells you Internet access, such as Jio, Airtel or BSNL. That link usually enters your home as a fiber cable, cable line or telephone line.</p>
+  <div class="story"><b class="lbl">The translator</b>A translator turns your Hindi into Japanese for a client, then turns the client’s reply back into Hindi. <mark>A modem converts your network’s digital data into the kind of signal your ISP’s line can carry, and converts incoming signals back again.</mark> (The name comes from <b>mo</b>dulator–<b>dem</b>odulator.)</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Outgoing: device to router to modem, which converts data into a line signal for the ISP. Incoming: ISP signal to modem, converted back to data, to router, to device.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="130" height="70" rx="12"/>
+        <rect class="box f-yellow" x="185" y="30" width="130" height="70" rx="12"/>
+        <rect class="box f-orange" x="350" y="30" width="130" height="70" rx="12"/>
+        <rect class="box f-grey" x="560" y="30" width="140" height="70" rx="12"/>
+        <path class="lr" d="M152 52 L 179 52" marker-end="url(#ahr)"/>
+        <path class="lr" d="M317 52 L 344 52" marker-end="url(#ahr)"/>
+        <path class="lr" d="M484 52 Q 496 40 508 52 Q 520 64 532 52 Q 544 40 553 50" marker-end="url(#ahr)"/>
+        <path class="lb" d="M556 80 Q 544 92 532 80 Q 520 68 508 80 Q 496 92 487 82" marker-end="url(#ahb)"/>
+        <path class="lb" d="M344 80 L 321 80" marker-end="url(#ahb)"/>
+        <path class="lb" d="M179 80 L 156 80" marker-end="url(#ahb)"/>
+        <path class="ln dash" d="M20 130 L 478 130"/>
+        <path class="ln dash" d="M352 160 L 700 160"/>
+      </g>
+      <text class="th" x="85" y="64" text-anchor="middle">Device</text>
+      <text class="ts" x="85" y="88" text-anchor="middle">laptop / phone</text>
+      <text class="th" x="250" y="64" text-anchor="middle">Router</text>
+      <text class="ts" x="250" y="88" text-anchor="middle">default gateway</text>
+      <text class="th" x="415" y="64" text-anchor="middle">Modem</text>
+      <text class="ts" x="415" y="88" text-anchor="middle">the translator</text>
+      <text class="th" x="630" y="64" text-anchor="middle">ISP</text>
+      <text class="ts" x="630" y="88" text-anchor="middle">Jio · Airtel · BSNL</text>
+      <text class="ts" x="250" y="150" text-anchor="middle">digital network data</text>
+      <text class="ts" x="526" y="182" text-anchor="middle">signal on fiber / cable / phone line</text>
+      <text class="tr" x="20" y="196">→ out</text>
+      <text class="tb" x="90" y="196">← back in</text>
+    </svg></div>
+    <figcaption>Out: device → router → modem (data → signal) → ISP. Back: ISP → modem (signal → data) → router → device.</figcaption>
+  </figure>
+  <h3>Modem vs router</h3>
+  <p>Many home boxes contain both, so people use the words interchangeably, but they do different jobs:</p>
+  <div class="tbl"><table>
+    <tr><th>Aspect</th><th>Modem</th><th>Router</th></tr>
+    <tr><td>Main role</td><td>Connects your network to the ISP and converts data into the right signal for the ISP’s line</td><td>Connects different networks and sends data in the right direction</td></tr>
+    <tr><td>Works with</td><td>The ISP’s connection type: fiber, cable, telephone line</td><td>Network addresses that identify networks and devices</td></tr>
+    <tr><td>Without it</td><td>No link to the ISP over a line that needs a modem</td><td>Nothing to forward data properly between networks</td></tr>
+  </table></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="access-point">
+  <h2>Wireless access point, and the all-in-one home box</h2>
+  <p>A switch is great for <b>wired</b> devices. For phones and laptops on Wi-Fi you need a <b>Wireless Access Point (AP)</b>. It broadcasts a Wi-Fi signal that wireless devices (Wi-Fi clients) join, extending the wired network out into the air around it.</p>
+  <div class="two">
+    <div class="card t5 tilt-a"><h4>Access point</h4><p>Lets wireless devices <b>join</b> the network.</p></div>
+    <div class="card t7 tilt-b"><h4>Router</h4><p>Directs traffic <b>between</b> different networks.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="One home Wi-Fi box containing four separate jobs: modem, router, switch and access point. The ISP fiber enters on the left; Wi-Fi waves go to phones on the right; a cable goes to a desktop below.">
+      <g class="rough">
+        <rect class="box f-none dash" x="120" y="30" width="490" height="170" rx="18"/>
+        <rect class="box f-orange" x="140" y="80" width="100" height="70" rx="10"/>
+        <rect class="box f-yellow" x="257" y="80" width="100" height="70" rx="10"/>
+        <rect class="box f-teal" x="374" y="80" width="100" height="70" rx="10"/>
+        <rect class="box f-purple" x="491" y="80" width="100" height="70" rx="10"/>
+        <path class="ln" d="M20 115 L 134 115" marker-end="url(#ah)"/>
+        <path class="lr" d="M620 95 Q 632 115 620 135 M 636 85 Q 655 115 636 145 M 652 75 Q 678 115 652 155"/>
+        <path class="ln" d="M424 152 L 424 222" marker-end="url(#ah)"/>
+      </g>
+      <text class="tr" x="365" y="62" text-anchor="middle">one box, four jobs</text>
+      <text class="t" x="190" y="121" text-anchor="middle">Modem</text>
+      <text class="t" x="307" y="121" text-anchor="middle">Router</text>
+      <text class="t" x="424" y="121" text-anchor="middle">Switch</text>
+      <text class="t" x="541" y="112" text-anchor="middle">Access</text>
+      <text class="t" x="541" y="132" text-anchor="middle">point</text>
+      <text class="ts" x="190" y="176" text-anchor="middle">talks to ISP</text>
+      <text class="ts" x="307" y="176" text-anchor="middle">between nets</text>
+      <text class="ts" x="541" y="176" text-anchor="middle">Wi-Fi</text>
+      <text class="ts" x="60" y="104" text-anchor="middle">ISP fiber</text>
+      <text class="ts" x="690" y="182" text-anchor="middle">phones</text>
+      <text class="ts" x="436" y="220">wired desktop</text>
+    </svg></div>
+    <figcaption>The cheap box from your ISP is usually a modem + router + switch + access point in one case. Physically one box; conceptually four separate jobs.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Device</th><th>Job in one line</th><th>Works with</th></tr>
+    <tr><td>Hub</td><td>Repeats data to every port</td><td>Nothing (no addresses)</td></tr>
+    <tr><td>Switch</td><td>Delivers to the right device in the same network</td><td>MAC addresses</td></tr>
+    <tr><td>Router</td><td>Moves data between different networks</td><td>IP addresses</td></tr>
+    <tr><td>Modem</td><td>Converts data ↔ line signal for the ISP</td><td>Fiber, cable or phone line</td></tr>
+    <tr><td>Access point</td><td>Lets Wi-Fi devices join the network</td><td>Radio signals</td></tr>
+  </table></div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="lan-wan">
+  <h2>LAN vs WAN: the one rule</h2>
+  <p>Now zoom out. Different situations need different setups, so we classify networks. Beginners are often handed a long list (LAN, WAN, MAN, PAN, CAN…) to memorize as unrelated categories. The course’s simpler view: there are really <b>two</b> fundamental types, and everything else is one of them at a different scale, or a related idea.</p>
+  <div class="story"><b class="lbl">The course’s rule of thumb</b>Ask one question about the conversation: <i>does the data travel over the public Internet?</i> <mark>If it never touches the public Internet, treat it as LAN-style (private). If it depends on the public Internet, it is WAN-style, even if the two devices sit side by side.</mark></div>
+  <div class="sticky warn"><strong>How this fits the textbook definitions</strong> Standard textbooks classify by <b>geographic area</b>: a LAN covers a home, office or building, and a WAN spans cities or countries. So a company’s private cable between Pune and Hyderabad is normally called a <b>private WAN</b> (a leased line), not a LAN. The rule above is really about <b>private vs public</b>, which is the question that matters most in practice. Learn both, and use the textbook words in interviews and documentation.</div>
+
+  <h3>LAN-style: no public Internet involved</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>The textbook case</b>At Ravi Electronics in Pune, a laptop, the office printer and the accounts PC share one switch. A print job goes straight across the office network and never touches the Internet. A classic LAN. <span class="tag">→ LAN</span></div></li>
+    <li><span class="dot">2</span><div><b>The surprising case</b>Ravi Electronics opens a second office in Hyderabad and links the two with its <b>own private cable</b> that never passes through the public Internet. Hundreds of km apart, yet the traffic stays private. <span class="tag">→ private (textbook: private WAN)</span></div></li>
+    <li><span class="dot">3</span><div><b>The cloud case</b>Flipkart runs two virtual machines in two different countries on Azure or AWS, and they talk over the cloud provider’s <b>private internal network</b>, not the public Internet. <span class="tag">→ private network</span></div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Pune office and Hyderabad office joined by the company's own private cable. The public Internet cloud below is marked not used.">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="40" width="190" height="100" rx="16"/>
+        <rect class="box f-blue" x="500" y="40" width="190" height="100" rx="16"/>
+        <path class="lb" d="M222 90 L 498 90"/>
+        <ellipse class="box f-grey dash" cx="360" cy="180" rx="90" ry="34"/>
+      </g>
+      <text class="th" x="125" y="88" text-anchor="middle">Pune</text>
+      <text class="ts" x="125" y="114" text-anchor="middle">office network</text>
+      <text class="th" x="595" y="88" text-anchor="middle">Hyderabad</text>
+      <text class="ts" x="595" y="114" text-anchor="middle">office network</text>
+      <text class="tb" x="360" y="76" text-anchor="middle">company’s own private cable</text>
+      <text class="ts" x="360" y="116" text-anchor="middle">hundreds of km, still private</text>
+      <text class="t" x="360" y="186" text-anchor="middle">public Internet</text>
+      <text class="tr" x="540" y="190">not used ✗</text>
+    </svg></div>
+    <figcaption>Distance doesn’t decide whether traffic is private. The path does.</figcaption>
+  </figure>
+
+  <h3>WAN: the public Internet is involved</h3>
+  <p>Rohit and Aman sit in the <b>same hostel room</b> in Bengaluru, chatting on Instagram. The messages do not hop from phone to phone. Each one goes out through Rohit’s mobile network, across the Internet to Instagram’s servers (which could be anywhere in the world), and back down to Aman. Because the conversation depends on the Internet, it is a WAN conversation, even though the two are a metre apart.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Rohit's phone sends a message up through the Internet to Instagram's server, which sends it back through the Internet to Aman's phone in the same room">
+      <g class="rough">
+        <rect class="box f-yellow" x="30" y="140" width="290" height="110" rx="16"/>
+        <rect class="box f-blue" x="55" y="160" width="100" height="48" rx="10"/>
+        <rect class="box f-blue" x="195" y="160" width="100" height="48" rx="10"/>
+        <ellipse class="box f-grey" cx="360" cy="62" rx="92" ry="42"/>
+        <rect class="box f-pink" x="560" y="30" width="140" height="64" rx="12"/>
+        <path class="lr" d="M105 156 C 110 100, 200 70, 264 64" marker-end="url(#ahr)"/>
+        <path class="lr" d="M454 56 L 554 56" marker-end="url(#ahr)"/>
+        <path class="lb" d="M630 98 C 630 210, 420 215, 300 190" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="105" y="190" text-anchor="middle">Rohit</text>
+      <text class="t" x="245" y="190" text-anchor="middle">Aman</text>
+      <text class="ts" x="175" y="236" text-anchor="middle">same hostel room, Bengaluru</text>
+      <text class="th" x="360" y="72" text-anchor="middle">Internet</text>
+      <text class="t" x="630" y="60" text-anchor="middle">Instagram</text>
+      <text class="ts" x="630" y="80" text-anchor="middle">servers</text>
+      <text class="tr" x="140" y="96">1</text>
+      <text class="tr" x="500" y="44">2</text>
+      <text class="tb" x="520" y="176">3</text>
+    </svg></div>
+    <figcaption>One metre apart, but the message travels out to the Internet and back. That is WAN traffic.</figcaption>
+  </figure>
+  <p>The same goes for nearly everything you do daily: opening Google, checking Gmail, watching YouTube, uploading to Google Drive. All depend on the public Internet.</p>
+  <div class="tbl"><table>
+    <tr><th>Point</th><th>LAN</th><th>WAN</th></tr>
+    <tr><td>Course rule</td><td>Communication avoids the public Internet</td><td>Communication depends on the public Internet</td></tr>
+    <tr><td>Textbook definition</td><td>Small area: home, office, building</td><td>Large area: cities, countries, the world</td></tr>
+    <tr><td>Examples</td><td>Office laptop → printer through a switch</td><td>Instagram chat in the same room; Gmail; Google search</td></tr>
+    <tr><td>Common wrong belief</td><td>“Two nearby devices always talk over the LAN”</td><td>“Only far-apart devices use the WAN”</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> The first question in any customer integration call: “Does our service reach your system over the public Internet, or over a private link (VPN, private peering, the cloud’s internal network)?” The answer decides firewall rules, which IP addresses you whitelist, latency, and what the security team will ask you.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="scales">
+  <h2>PAN, LAN, CAN, MAN: the same idea at different sizes</h2>
+  <p>Terms like MAN and PAN are not brand-new kinds of network. They are <mark>private, local-style networks described by how much area they cover</mark>. The idea stays the same; only the size changes.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Nested boxes: PAN inside LAN inside CAN inside MAN, from a few metres around you up to a whole city">
+      <g class="rough">
+        <rect class="box f-purple" x="20" y="20" width="680" height="262" rx="22"/>
+        <rect class="box f-green" x="45" y="56" width="480" height="206" rx="20"/>
+        <rect class="box f-blue" x="70" y="92" width="315" height="150" rx="18"/>
+        <rect class="box f-yellow" x="95" y="128" width="160" height="94" rx="14"/>
+      </g>
+      <text class="th" x="175" y="170" text-anchor="middle">PAN</text>
+      <text class="ts" x="175" y="194" text-anchor="middle">phone + earbuds</text>
+      <text class="ts" x="175" y="212" text-anchor="middle">a few metres</text>
+      <text class="th" x="320" y="150" text-anchor="middle">LAN</text>
+      <text class="ts" x="320" y="174" text-anchor="middle">one office</text>
+      <text class="ts" x="320" y="194" text-anchor="middle">or building</text>
+      <text class="th" x="455" y="130" text-anchor="middle">CAN</text>
+      <text class="ts" x="455" y="154" text-anchor="middle">one campus,</text>
+      <text class="ts" x="455" y="174" text-anchor="middle">many buildings</text>
+      <text class="ts" x="455" y="194" text-anchor="middle">TCS Siruseri</text>
+      <text class="th" x="612" y="110" text-anchor="middle">MAN</text>
+      <text class="ts" x="612" y="134" text-anchor="middle">a whole city</text>
+      <text class="ts" x="612" y="154" text-anchor="middle">Infosys offices</text>
+      <text class="ts" x="612" y="174" text-anchor="middle">across Bengaluru</text>
+    </svg></div>
+    <figcaption>PAN → your personal devices · LAN → one building · CAN → several buildings on one campus · MAN → locations across a city.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t7 tilt-a"><h4>PAN · Personal Area Network</h4><p>The smallest: your own devices connected directly over a few metres, e.g. phone ↔ Bluetooth earbuds, smartwatch syncing with your phone. No Internet needed.</p></div>
+    <div class="card t1 tilt-b"><h4>LAN · Local Area Network</h4><p>A small area such as one office, home or building.</p></div>
+    <div class="card t2 tilt-a"><h4>CAN · Campus Area Network</h4><p>Several buildings of the <b>same organization</b> on one campus, joined into one private network. Bigger than a LAN, smaller than a MAN. Example: TCS Siruseri in Chennai.</p></div>
+    <div class="card t5 tilt-b"><h4>MAN · Metropolitan Area Network</h4><p>Several LANs joined privately across a city, e.g. Infosys linking three Bengaluru offices with its own fiber, with no traffic over the public Internet.</p></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="internet-web">
+  <h2>ISP, Internet, Intranet and the Web</h2>
+  <p>A few more words describe how networks <b>connect to each other</b> and what <b>runs on top</b> of them:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="A home LAN connects through its ISP into the Internet, a cloud made of many interconnected networks. A company Intranet on the right also connects through its ISP but keeps its internal network private.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="80" width="120" height="90" rx="14"/>
+        <rect class="box f-yellow" x="170" y="100" width="80" height="50" rx="10"/>
+        <ellipse class="box f-grey" cx="360" cy="125" rx="95" ry="85"/>
+        <circle class="box f-card" cx="330" cy="80" r="16"/><circle class="box f-card" cx="395" cy="90" r="16"/>
+        <circle class="box f-card" cx="310" cy="160" r="16"/><circle class="box f-card" cx="400" cy="170" r="16"/>
+        <path class="ln" d="M345 82 L 380 88 M 332 96 L 314 144 M 392 106 L 400 154 M 326 162 L 384 168 M 342 92 L 388 158"/>
+        <rect class="box f-yellow" x="470" y="100" width="80" height="50" rx="10"/>
+        <rect class="box f-green" x="580" y="70" width="125" height="110" rx="14"/>
+        <path class="ln" d="M140 125 L 170 125 M 250 125 L 268 125 M 452 125 L 470 125 M 550 125 L 580 125"/>
+      </g>
+      <text class="t" x="80" y="118" text-anchor="middle">Home</text>
+      <text class="t" x="80" y="140" text-anchor="middle">LAN</text>
+      <text class="t" x="210" y="131" text-anchor="middle">ISP</text>
+      <text class="t" x="510" y="131" text-anchor="middle">ISP</text>
+      <text class="tr" x="360" y="235" text-anchor="middle">Internet: a network of networks</text>
+      <text class="t" x="642" y="110" text-anchor="middle">Company</text>
+      <text class="t" x="642" y="132" text-anchor="middle">Intranet</text>
+      <text class="ts" x="642" y="156" text-anchor="middle">staff only</text>
+    </svg></div>
+    <figcaption>Each small network reaches the Internet through an ISP. The Internet itself is just countless networks joined together.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t7 tilt-a"><h4>ISP</h4><p>Internet Service Provider: the company and infrastructure (Jio, Airtel, BSNL) that connects your LAN to the wider Internet.</p></div>
+    <div class="card t6 tilt-b"><h4>The Internet</h4><p>The enormous global network of interconnected networks: the infrastructure that lets data travel between devices anywhere.</p></div>
+    <div class="card t2 tilt-a"><h4>Intranet</h4><p>A private, organization-only network built with Internet-style technology (websites, portals) but open only to its own people.</p></div>
+    <div class="card t3 tilt-b"><h4>The Web (WWW)</h4><p>Not a network at all: a <b>service</b> of linked websites stored on web servers and viewed in browsers, running on top of the Internet.</p></div>
+  </div>
+  <h3>Internet vs World Wide Web</h3>
+  <div class="story"><b class="lbl">Roads and traffic</b>The Internet is the road system. The Web is one kind of traffic on those roads: websites. Email, video calls and file transfers also drive on the same roads but are not part of the Web. (Or: the Internet is the electricity grid, and the Web is one appliance, say a TV, plugged into it.) <mark>The Internet is the infrastructure; the Web is one service that runs on it.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Four services sit on top of one base layer called the Internet: the Web, email, video calls and file transfer">
+      <g class="rough">
+        <rect class="box f-orange" x="30" y="30" width="150" height="70" rx="12"/>
+        <rect class="box f-green" x="200" y="30" width="150" height="70" rx="12"/>
+        <rect class="box f-pink" x="370" y="30" width="150" height="70" rx="12"/>
+        <rect class="box f-teal" x="540" y="30" width="150" height="70" rx="12"/>
+        <path class="ln" d="M105 102 L 105 136 M 275 102 L 275 136 M 445 102 L 445 136 M 615 102 L 615 136"/>
+        <rect class="box f-grey" x="20" y="138" width="680" height="54" rx="14"/>
+      </g>
+      <text class="th" x="105" y="66" text-anchor="middle">The Web</text>
+      <text class="ts" x="105" y="88" text-anchor="middle">websites</text>
+      <text class="th" x="275" y="66" text-anchor="middle">Email</text>
+      <text class="ts" x="275" y="88" text-anchor="middle">not the Web</text>
+      <text class="th" x="445" y="66" text-anchor="middle">Video calls</text>
+      <text class="ts" x="445" y="88" text-anchor="middle">not the Web</text>
+      <text class="th" x="615" y="66" text-anchor="middle">File transfer</text>
+      <text class="ts" x="615" y="88" text-anchor="middle">not the Web</text>
+      <text class="th" x="360" y="174" text-anchor="middle">The Internet · the roads</text>
+    </svg></div>
+    <figcaption>Many services share the same Internet. The Web is just one of them.</figcaption>
+  </figure>
+  <h3>Every term on one page</h3>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Term</th><th>What it actually is</th></tr>
+    <tr><td>1</td><td><b>LAN</b></td><td>Fundamental type: local, private communication with no public Internet involved</td></tr>
+    <tr><td>2</td><td><b>WAN</b></td><td>Fundamental type: communication across wide areas, typically over the Internet</td></tr>
+    <tr><td>3</td><td><b>MAN</b></td><td>Not a new type: the LAN idea at city scale</td></tr>
+    <tr><td>4</td><td><b>CAN</b></td><td>Not a new type: the LAN idea at campus scale</td></tr>
+    <tr><td>5</td><td><b>PAN</b></td><td>Not a new type: the LAN idea at personal, short-range scale</td></tr>
+    <tr><td>6</td><td><b>ISP</b></td><td>Infrastructure that connects a LAN to the wider Internet</td></tr>
+    <tr><td>7</td><td><b>Internet</b></td><td>The global “network of networks” formed by countless interconnected networks</td></tr>
+    <tr><td>8</td><td><b>Intranet</b></td><td>A private, organization-only network built on Internet-like technology</td></tr>
+    <tr><td>9</td><td><b>Web (WWW)</b></td><td>Not a network: a service (websites) running on top of the Internet</td></tr>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Standalone computer</dt><dd>A computer with no connection to any other device; it can use only the files, storage and hardware inside it.</dd></div>
+    <div><dt>Sneakernet</dt><dd>Informal name for moving data by physically carrying storage devices (USB drives, discs) from one computer to another.</dd></div>
+    <div><dt>Computer network</dt><dd>Two or more devices connected so they can communicate and share resources such as files, applications and hardware.</dd></div>
+    <div><dt>Node</dt><dd>Any device connected to a network, such as a computer, phone, printer, switch or router.</dd></div>
+    <div><dt>NIC (Network Interface Card)</dt><dd>The hardware that connects a device to a network, either through a cable (Ethernet) or wirelessly (Wi-Fi); usually built into the motherboard today.</dd></div>
+    <div><dt>Ethernet</dt><dd>The most common standard for wired local networks, defining how devices format and send data over a cable.</dd></div>
+    <div><dt>Hub</dt><dd>An old central device that repeats incoming data out of every port, causing wasted traffic, collisions and privacy problems.</dd></div>
+    <div><dt>Switch</dt><dd>A central device that learns which MAC address is on which port and forwards data only to the intended device within the same local network.</dd></div>
+    <div><dt>Router</dt><dd>A device that connects different networks and forwards data between them using IP addresses.</dd></div>
+    <div><dt>Default gateway</dt><dd>The device (usually the router) that a computer sends traffic to whenever the destination is outside its own local network.</dd></div>
+    <div><dt>Modem</dt><dd>A device that converts digital network data into the signal type an ISP’s line carries (fiber, cable, telephone) and back again.</dd></div>
+    <div><dt>Wireless access point</dt><dd>A device that broadcasts a Wi-Fi signal so wireless devices can join a network.</dd></div>
+    <div><dt>LAN / WAN</dt><dd>A LAN is a local, private network (one home, office or building); a WAN spans wide areas, and the Internet is the biggest example.</dd></div>
+    <div><dt>ISP</dt><dd>Internet Service Provider: the company whose infrastructure connects your network to the Internet, such as Jio or Airtel.</dd></div>
+    <div><dt>World Wide Web</dt><dd>A service of linked websites, stored on web servers and viewed in browsers, that runs on top of the Internet; it is not itself a network.</dd></div>
+  </dl>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>An office wants to fully mesh 10 computers with direct cables. How many cables is that?</p>
+      <ol><li>10</li><li>20</li><li>45</li><li>100</li></ol>
+      <p class="why">n × (n − 1) ÷ 2 = 10 × 9 ÷ 2 = 45. This explosion is why we use central devices instead.</p></div>
+    <div class="q" data-answer="2"><p>PC A sends data meant for PC C. With a <b>hub</b>, who receives it?</p>
+      <ol><li>Only PC C</li><li>Every other connected PC</li><li>Only the router</li><li>Nobody until C asks for it</li></ol>
+      <p class="why">A hub doesn’t know who the receiver is, so it repeats the data to every port. Only C keeps it; the rest ignore it.</p></div>
+    <div class="q" data-answer="4"><p>How does a switch decide which port to send data out of?</p>
+      <ol><li>It sends to all ports, like a hub</li><li>It asks the ISP</li><li>It uses the destination IP address and a routing table</li><li>It looks up the destination MAC address in its MAC-to-port table</li></ol>
+      <p class="why">A switch learns which MAC address sits on which port, then forwards only to that port. IP-based decisions are a router’s job.</p></div>
+    <div class="q" data-answer="1"><p>Your laptop wants to reach a server that is not on your home network. Where does it send the data first?</p>
+      <ol><li>The default gateway (your router)</li><li>Directly to the server’s switch</li><li>The modem’s MAC table</li><li>Every device on the LAN</li></ol>
+      <p class="why">For any destination outside the local network, a device hands the traffic to its default gateway, usually the home router.</p></div>
+    <div class="q" data-answer="3"><p>Which device converts your network’s data into a signal that the ISP’s fiber or phone line can carry?</p>
+      <ol><li>Switch</li><li>Access point</li><li>Modem</li><li>Hub</li></ol>
+      <p class="why">The modem is the translator between your network and the ISP’s line, in both directions.</p></div>
+    <div class="q" data-answer="2"><p>Rohit and Aman sit in the same room chatting on Instagram. Why is this WAN traffic?</p>
+      <ol><li>Because phones can’t form a LAN</li><li>Because each message travels over the Internet to Instagram’s servers and back</li><li>Because they use mobile data, which is always a MAN</li><li>Because Bluetooth is too slow</li></ol>
+      <p class="why">What matters is the path the data takes, not the distance between the people. The chat depends on the Internet.</p></div>
+    <div class="q" data-answer="4"><p>Your phone syncing with your smartwatch over Bluetooth is best described as a…</p>
+      <ol><li>MAN</li><li>CAN</li><li>WAN</li><li>PAN</li></ol>
+      <p class="why">A Personal Area Network connects your own devices over a few metres.</p></div>
+    <div class="q" data-answer="1"><p>Which statement about the Internet and the Web is correct?</p>
+      <ol><li>The Web is a service that runs on top of the Internet</li><li>They are two names for the same thing</li><li>The Internet runs on top of the Web</li><li>Email is part of the Web</li></ol>
+      <p class="why">The Internet is the infrastructure (the roads); the Web (websites) is one kind of traffic on it, alongside email, calls and more.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Networks exist because <b>standalone computers</b> can’t share; a <b>NIC</b> plus a cable or Wi-Fi joins a device, a <b>switch</b> delivers inside one network by MAC, a <b>router</b> moves data <b>between networks</b> by IP, a <b>modem</b> links you to your ISP, and every network is either <b>private/local (LAN)</b> or <b>wide/public (WAN)</b> at some scale.</p>
+  <p>Next up: <b>Device Identification &amp; Core Protocols</b>, where the MAC and IP addresses used here get properly explained, along with ports, TCP, UDP, DNS and DHCP.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

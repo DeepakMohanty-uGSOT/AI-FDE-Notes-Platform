@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Common HTML Elements · Web &amp; HTML | AIFDE Notes</title>
+<meta name="description" content="The everyday HTML elements: six heading levels and why they matter, paragraphs, line breaks, and the formatting tags b, strong, i, em, mark, small, del, ins, s, sub, sup and the obsolete big.">
+<meta name="keywords" content="headings h1-h6, paragraph, line break, formatting tags, b vs strong, i vs em, del ins s, sub and sup">
+<meta name="date" content="2026-09-21">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="web/common-html-elements">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Common HTML Elements</h1>
+  <p class="byline">Fill a page with real content: headings at the right level, paragraphs, line breaks, and the formatting tags that make words bold, italic, highlighted, crossed out, raised or lowered.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="headings">
+  <h2>Heading tags: <code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code></h2>
+  <div class="story"><b class="lbl">The newspaper</b>Open any newspaper: a huge headline on top, smaller section titles below it, and even smaller sub-titles over each story. You can scan the page in seconds. <mark>Headings are the titles and subtitles of a web page; they show what each part is about.</mark></div>
+  <p>Look at any Wikipedia article: the article name is the biggest title, then section names, then smaller sub-sections inside them. HTML gives you <b>six heading levels</b> for exactly this:</p>
+  <div class="flow"><span class="hl">&lt;h1&gt; biggest · main title</span><span>&lt;h2&gt; sub-title</span><span>&lt;h3&gt;</span><span>&lt;h4&gt;</span><span>&lt;h5&gt;</span><span class="skip">&lt;h6&gt; smallest</span></div>
+  <div class="codebox"><span class="cap">index.html</span><pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+    &lt;h2&gt;About Me&lt;/h2&gt;
+    &lt;h3&gt;My Hobbies&lt;/h3&gt;
+    &lt;h4&gt;Reading&lt;/h4&gt;
+    &lt;h5&gt;Comics&lt;/h5&gt;
+    &lt;h6&gt;Favorite Characters&lt;/h6&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div>
+  <p>What the browser shows (default sizes: <code>h1</code> is 2× normal text, <code>h6</code> is about two-thirds of it):</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 340" role="img" aria-label="Browser output: six bold headings, each smaller than the one before, from Welcome to My Website at the top down to Favorite Characters at the bottom">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="320" rx="14"/>
+        <rect class="box f-grey" x="20" y="10" width="680" height="44" rx="14"/>
+        <rect class="box f-card" x="36" y="20" width="140" height="34" rx="8"/>
+      </g>
+      <text class="t" x="50" y="43">Document</text>
+      <text class="t" x="50" y="104" style="font-size:32px;font-weight:700">Welcome to My Website</text>
+      <text class="t" x="50" y="150" style="font-size:24px;font-weight:700">About Me</text>
+      <text class="t" x="50" y="190" style="font-size:19px;font-weight:700">My Hobbies</text>
+      <text class="t" x="50" y="228" style="font-size:16px;font-weight:700">Reading</text>
+      <text class="t" x="50" y="264" style="font-size:13px;font-weight:700">Comics</text>
+      <text class="t" x="50" y="298" style="font-size:11px;font-weight:700">Favorite Characters</text>
+      <text class="tm" x="672" y="104" text-anchor="end">h1</text>
+      <text class="tm" x="672" y="150" text-anchor="end">h2</text>
+      <text class="tm" x="672" y="190" text-anchor="end">h3</text>
+      <text class="tm" x="672" y="228" text-anchor="end">h4</text>
+      <text class="tm" x="672" y="264" text-anchor="end">h5</text>
+      <text class="tm" x="672" y="298" text-anchor="end">h6</text>
+    </svg></div>
+    <figcaption>All headings are bold by default; each level is a little smaller than the one above.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Built-in spacing</strong> Browsers automatically add some white space (a <b>margin</b>) before and after every heading, so you don’t need empty lines around them.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why-headings">
+  <h2>Why heading tags matter</h2>
+  <p>Headings are not just “big text”. They help both <b>people</b> and <b>machines</b> understand your page.</p>
+  <h3>1 · Structure: clear organisation</h3>
+  <p>Headings divide content into small, clear parts, just like a book:</p>
+  <pre><code class="language-html">&lt;h1&gt;My Website&lt;/h1&gt;
+&lt;h2&gt;About Me&lt;/h2&gt;
+&lt;h3&gt;My Hobbies&lt;/h3&gt;</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="A book outline: h1 is the book title, h2 are chapters under it, h3 are sections inside a chapter">
+      <g class="rough">
+        <rect class="box f-purple" x="250" y="14" width="220" height="50" rx="12"/>
+        <rect class="box f-blue" x="90" y="94" width="200" height="46" rx="10"/>
+        <rect class="box f-blue" x="430" y="94" width="200" height="46" rx="10"/>
+        <rect class="box f-green" x="20" y="172" width="150" height="42" rx="10"/>
+        <rect class="box f-green" x="200" y="172" width="150" height="42" rx="10"/>
+        <path class="ln" d="M330 66 L 210 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M390 66 L 510 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M170 142 L 110 168" marker-end="url(#ah)"/>
+        <path class="ln" d="M210 142 L 268 168" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="360" y="48" text-anchor="middle">Book title</text>
+      <text class="t" x="190" y="123" text-anchor="middle">Chapter: About Me</text>
+      <text class="t" x="530" y="123" text-anchor="middle">Chapter: Contact</text>
+      <text class="t" x="95" y="199" text-anchor="middle">My Hobbies</text>
+      <text class="t" x="275" y="199" text-anchor="middle">My Family</text>
+      <text class="tr" x="490" y="44">h1</text>
+      <text class="tr" x="645" y="123">h2</text>
+      <text class="tr" x="370" y="199">h3</text>
+    </svg></div>
+    <figcaption><code>h1</code> = book title, <code>h2</code> = chapter, <code>h3</code> = section inside a chapter. Visitors find what they want quickly.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>2 · SEO</h4><p><b>Search Engine Optimisation.</b> Google reads your headings to learn what the page is about, so clear headings help it show your page to the <b>right people</b>.</p></div>
+    <div class="card t2 tilt-b"><h4>3 · Accessibility</h4><p>People using <b>screen readers</b> (tools that read text aloud) can jump from heading to heading to find what they need.</p></div>
+  </div>
+  <div class="sticky tip"><strong>Accessibility means…</strong> making your website <b>usable by everyone</b>, including people with disabilities. Good habit: one <code>&lt;h1&gt;</code> per page, and don’t skip levels (go <code>h2</code> → <code>h3</code>, not <code>h2</code> → <code>h5</code>).</div>
+  <div class="sticky warn l"><strong>Don’t pick a heading for its size</strong> If you just want bigger text, that is a job for CSS. Choose the heading level by its place in the outline.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="paragraphs">
+  <h2>The paragraph tag <code>&lt;p&gt;</code></h2>
+  <p>The paragraph tag holds <b>normal text</b>, just like a paragraph in your notebook. Everything between <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code> becomes one paragraph.</p>
+  <div class="anatomy"><span class="a1">&lt;p&gt;</span><span class="a4">This is my first paragraph in HTML.</span><span class="a5">&lt;/p&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Opening tag</b> · a new paragraph starts</p></div>
+    <div><span class="sw a4"></span><p><b>Content</b> · the paragraph’s text</p></div>
+    <div><span class="sw a5"></span><p><b>Closing tag</b> · the paragraph ends</p></div>
+  </div>
+  <div class="codebox"><span class="cap">inside &lt;body&gt;</span><pre><code class="language-html">&lt;body&gt;
+    &lt;p&gt;This is my first paragraph in HTML.&lt;/p&gt;
+    &lt;p&gt;HTML helps to display text clearly on a web page.&lt;/p&gt;
+&lt;/body&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="Browser output: two paragraphs on separate lines with a gap between them created automatically by the browser">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="170" rx="14"/>
+        <rect class="box f-blue" x="40" y="34" width="420" height="40" rx="6"/>
+        <rect class="box f-blue" x="40" y="114" width="420" height="40" rx="6"/>
+        <path class="lr" d="M500 78 L 500 110" marker-end="url(#ahr)"/>
+        <path class="lr" d="M500 110 L 500 78" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="52" y="60">This is my first paragraph in HTML.</text>
+      <text class="t" x="52" y="140">HTML helps to display text clearly on a web page.</text>
+      <text class="tr" x="516" y="100">automatic space</text>
+    </svg></div>
+    <figcaption>Each <code>&lt;p&gt;</code> starts a new paragraph, and the browser adds space before and after it.</figcaption>
+  </figure>
+  <div class="sticky info"><strong>Spaces and Enter are ignored</strong> Inside HTML, pressing <kbd>Enter</kbd> or typing many spaces in your code does <b>not</b> create new lines on the page. The browser collapses them into a single space. That is why we need <code>&lt;p&gt;</code> and <code>&lt;br&gt;</code>.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="line-break">
+  <h2>Line break <code>&lt;br&gt;</code></h2>
+  <p>The <code>&lt;br&gt;</code> tag creates a <b>line break</b>: whatever follows it starts on a new line, <i>inside the same paragraph</i>.</p>
+  <div class="codebox"><span class="cap">br example</span><pre><code class="language-html">&lt;h2&gt;Using the br tag&lt;/h2&gt;
+&lt;p&gt;
+  My name is Abhi.&lt;br&gt;
+  I am learning HTML.&lt;br&gt;
+  I love creating web pages.
+&lt;/p&gt;</code></pre></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 200" role="img" aria-label="Browser output: heading Using the br tag, then three lines of one paragraph, each starting on a new line">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="480" height="180" rx="14"/>
+        <path class="lr dash" d="M184 106 L 290 106"/>
+        <path class="lr dash" d="M210 132 L 290 132"/>
+      </g>
+      <text class="t" x="40" y="54" style="font-size:24px;font-weight:700">Using the br tag</text>
+      <text class="tm" x="40" y="110">My name is Abhi.</text>
+      <text class="tm" x="40" y="136">I am learning HTML.</text>
+      <text class="tm" x="40" y="162">I love creating web pages.</text>
+      <text class="tr" x="298" y="112">&lt;br&gt;</text>
+      <text class="tr" x="298" y="138">&lt;br&gt;</text>
+    </svg></div>
+    <figcaption>Each <code>&lt;br&gt;</code> pushes the next words onto a new line, with no extra paragraph gap.</figcaption>
+  </figure>
+  <div class="sticky tip l"><strong>A void element</strong> <code>&lt;br&gt;</code> has no closing tag (you may also see it written <code>&lt;br /&gt;</code>). Use it for line breaks that belong to the content, like addresses or poems, not for adding space between blocks.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="formatting">
+  <h2>Formatting tags: making words stand out</h2>
+  <div class="story"><b class="lbl">Exam notes</b>When you make notes before an exam, you <b>bold</b> key terms, slant a book title, run a highlighter over the formula you must remember, and cross out a wrong answer. <mark>HTML formatting tags do the same to text on a web page.</mark></div>
+  <p>Some formatting tags only change <b>how text looks</b>. Others also tell the browser, search engines and screen readers <b>what the text means</b> (for example, “this is important”). That difference is the most important idea in this section.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Two groups. Looks only: b and i change the appearance. Looks plus meaning: strong and em change the appearance and also tell screen readers and search engines the words are important or stressed.">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="44" width="320" height="190" rx="16"/>
+        <rect class="box f-purple" x="380" y="44" width="320" height="190" rx="16"/>
+        <rect class="box f-card" x="44" y="80" width="120" height="60" rx="10"/>
+        <rect class="box f-card" x="196" y="80" width="120" height="60" rx="10"/>
+        <rect class="box f-card" x="404" y="80" width="120" height="60" rx="10"/>
+        <rect class="box f-card" x="556" y="80" width="120" height="60" rx="10"/>
+      </g>
+      <text class="th" x="180" y="32" text-anchor="middle">Looks only</text>
+      <text class="th" x="540" y="32" text-anchor="middle">Looks + meaning</text>
+      <text class="tm" x="104" y="108" text-anchor="middle">&lt;b&gt;</text>
+      <text class="t" x="104" y="130" text-anchor="middle" style="font-weight:700">bold</text>
+      <text class="tm" x="256" y="108" text-anchor="middle">&lt;i&gt;</text>
+      <text class="t" x="256" y="130" text-anchor="middle" style="font-style:italic">italic</text>
+      <text class="tm" x="464" y="108" text-anchor="middle">&lt;strong&gt;</text>
+      <text class="t" x="464" y="130" text-anchor="middle" style="font-weight:700">important</text>
+      <text class="tm" x="616" y="108" text-anchor="middle">&lt;em&gt;</text>
+      <text class="t" x="616" y="130" text-anchor="middle" style="font-style:italic">stressed</text>
+      <text class="ts" x="180" y="176" text-anchor="middle">style for the eyes</text>
+      <text class="ts" x="180" y="200" text-anchor="middle">no extra meaning</text>
+      <text class="ts" x="540" y="176" text-anchor="middle">same look, plus a signal to</text>
+      <text class="ts" x="540" y="200" text-anchor="middle">screen readers and search engines</text>
+    </svg></div>
+    <figcaption>Same appearance, different message. Pick the tag for what you <i>mean</i>.</figcaption>
+  </figure>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="bold-strong">
+  <h2>Bold: <code>&lt;b&gt;</code> and <code>&lt;strong&gt;</code></h2>
+  <h3><code>&lt;b&gt;</code> · bold for style</h3>
+  <p><code>&lt;b&gt;</code> makes text <b>bold</b>. It catches the eye but adds <b>no extra meaning</b>; it only changes the appearance.</p>
+  <pre><code class="language-html">&lt;p&gt;This is a &lt;b&gt;bold&lt;/b&gt; word.&lt;/p&gt;</code></pre>
+  <pre class="out"><code>This is a <b>bold</b> word.</code></pre>
+  <h3><code>&lt;strong&gt;</code> · bold because it is important</h3>
+  <p><code>&lt;strong&gt;</code> also displays bold, but it tells browsers, search engines and screen readers that the text is <b>important, serious or urgent</b>.</p>
+  <pre><code class="language-html">&lt;p&gt;&lt;strong&gt;Warning:&lt;/strong&gt; Don't touch the hot surface!&lt;/p&gt;</code></pre>
+  <pre class="out"><code><strong>Warning:</strong> Don't touch the hot surface!</code></pre>
+  <p>On a safety notice, “Warning” is not bold for decoration. It is bold because it <b>matters</b>. That is <code>&lt;strong&gt;</code>.</p>
+  <div class="sticky warn"><strong>Remember (VIP)</strong> <code>&lt;b&gt;</code> just makes text <i>look</i> bold. <code>&lt;strong&gt;</code> makes it bold <b>and</b> says “this part is important!”</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="italic-em">
+  <h2>Italic: <code>&lt;i&gt;</code> and <code>&lt;em&gt;</code></h2>
+  <h3><code>&lt;i&gt;</code> · italic for style</h3>
+  <p><code>&lt;i&gt;</code> makes text <i>italic</i>, slanting slightly to the right. Use it to set a word apart in style: <b>book titles, foreign words, special terms</b>.</p>
+  <pre><code class="language-html">&lt;p&gt;This is an &lt;i&gt;italicized&lt;/i&gt; word.&lt;/p&gt;</code></pre>
+  <pre class="out"><code>This is an <i>italicized</i> word.</code></pre>
+  <h3><code>&lt;em&gt;</code> · italic because it is stressed</h3>
+  <p><code>&lt;em&gt;</code> (emphasis) also shows italic, but it tells the browser: <i>“Hey, stress this word. Give it special attention!”</i> Screen readers can change their voice for it.</p>
+  <pre><code class="language-html">&lt;p&gt;I said I wanted &lt;em&gt;coffee&lt;/em&gt;, not tea!&lt;/p&gt;</code></pre>
+  <pre class="out"><code>I said I wanted <em>coffee</em>, not tea!</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Tag</th><th>Looks like</th><th>Adds meaning?</th><th>Use for</th></tr>
+    <tr><td><code>&lt;i&gt;</code></td><td><i>italic</i></td><td>No, style only</td><td>book titles, foreign words, terms</td></tr>
+    <tr><td><code>&lt;em&gt;</code></td><td><em>italic</em></td><td>Yes: stress</td><td>the word you would say louder</td></tr>
+  </table></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="mark-small">
+  <h2>Highlight and fine print: <code>&lt;mark&gt;</code> and <code>&lt;small&gt;</code></h2>
+  <h3><code>&lt;mark&gt;</code> · highlighter pen</h3>
+  <p><code>&lt;mark&gt;</code> highlights text, usually with a yellow background, to draw attention to relevant information, such as search terms or key findings in a document.</p>
+  <pre><code class="language-html">&lt;p&gt;This is &lt;mark&gt;highlighted&lt;/mark&gt; text.&lt;/p&gt;</code></pre>
+  <h3><code>&lt;small&gt;</code> · the small print</h3>
+  <p><code>&lt;small&gt;</code> makes text <b>smaller</b> than the normal text. It is like a small note under the main text: a disclaimer, copyright line or condition.</p>
+  <pre><code class="language-html">&lt;p&gt;Free delivery on all orders. &lt;small&gt;Conditions apply.&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;&lt;small&gt;© 2026 My Website&lt;/small&gt;&lt;/p&gt;</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Browser output: the word highlighted has a yellow background; Conditions apply and the copyright line are in smaller text">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="150" rx="14"/>
+        <rect class="f-yellow" x="109" y="36" width="97" height="24" rx="2"/>
+      </g>
+      <text class="tm" x="44" y="53">This is highlighted text.</text>
+      <text class="tm" x="44" y="98">Free delivery on all orders.</text>
+      <text class="ts" x="290" y="98">Conditions apply.</text>
+      <text class="ts" x="44" y="136">© 2026 My Website</text>
+      <text class="tr" x="470" y="53">&lt;mark&gt;</text>
+      <text class="tr" x="470" y="98">&lt;small&gt;</text>
+    </svg></div>
+    <figcaption><code>&lt;mark&gt;</code> paints a highlight; <code>&lt;small&gt;</code> shrinks side comments.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Neither changes importance</strong> <code>&lt;mark&gt;</code> draws the eye (often to “what is relevant right now”), and <code>&lt;small&gt;</code> marks side comments and fine print. If you mean “important”, use <code>&lt;strong&gt;</code>.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="del-ins-s">
+  <h2>Edits and outdated text: <code>&lt;del&gt;</code>, <code>&lt;ins&gt;</code>, <code>&lt;s&gt;</code></h2>
+  <div class="story"><b class="lbl">The sabzi-wala’s board</b>When tomato prices drop, the vendor crosses out the old price on his board and writes the new one beside it. <mark>Strike-through says “no longer valid”; underline says “newly added”.</mark></div>
+  <div class="grid">
+    <div class="card t4 tilt-a"><h4><code>&lt;del&gt;</code> · deleted</h4><p>Text that was <b>removed or replaced</b>. Shown with a line through it, like crossing out a word in your notebook.</p></div>
+    <div class="card t2 tilt-b"><h4><code>&lt;ins&gt;</code> · inserted</h4><p>Text that was <b>added</b>. Usually shown <b>underlined</b> to flag new or updated content.</p></div>
+    <div class="card t6 tilt-a"><h4><code>&lt;s&gt;</code> · no longer true</h4><p>Text that is <b>outdated or no longer accurate</b>, but not a document edit. Also shown with a line through.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">del and ins together</span><pre><code class="language-html">&lt;p&gt;The old price was &lt;del&gt;$100&lt;/del&gt; now it's &lt;ins&gt;$80&lt;/ins&gt;.&lt;/p&gt;</code></pre></div>
+  <div class="codebox"><span class="cap">s for outdated info</span><pre><code class="language-html">&lt;p&gt;The old price was &lt;s&gt;$50&lt;/s&gt; now it's $30.&lt;/p&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 180" role="img" aria-label="Browser output: first line shows $100 struck through and $80 underlined; second line shows $50 struck through followed by plain $30">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="160" rx="14"/>
+        <path class="ln" d="M193 64 L 231 64"/>
+        <path class="ln" d="M312 73 L 339 73"/>
+        <path class="ln" d="M193 126 L 223 126"/>
+      </g>
+      <text class="tm" x="44" y="68">The old price was $100 now it's $80.</text>
+      <text class="tm" x="44" y="130">The old price was $50 now it's $30.</text>
+      <text class="tr" x="470" y="68">&lt;del&gt; + &lt;ins&gt;</text>
+      <text class="tr" x="470" y="130">&lt;s&gt;</text>
+    </svg></div>
+    <figcaption>Default rendering: <code>del</code> and <code>s</code> strike through; <code>ins</code> underlines.</figcaption>
+  </figure>
+  <div class="sticky warn"><strong><code>&lt;del&gt;</code> or <code>&lt;s&gt;</code>?</strong> They look the same. Use <code>&lt;del&gt;</code> when you actually <b>removed or replaced</b> something in the document. Use <code>&lt;s&gt;</code> when something is simply <b>no longer true</b>, like an old price or outdated info.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="sub-sup">
+  <h2>Below and above the line: <code>&lt;sub&gt;</code> and <code>&lt;sup&gt;</code></h2>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4><code>&lt;sub&gt;</code> · subscript</h4><p>Small text written <b>slightly below</b> the normal line. Chemical formulas like H₂O, or math like x₂.</p></div>
+    <div class="card t3 tilt-b"><h4><code>&lt;sup&gt;</code> · superscript</h4><p>Small text written <b>slightly above</b> the normal line. Powers like x², dates like 1<sup>st</sup>, footnote numbers.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">sub</span><pre><code class="language-html">&lt;p&gt;Water formula is H&lt;sub&gt;2&lt;/sub&gt;O.&lt;/p&gt;</code></pre></div>
+  <div class="codebox"><span class="cap">sup</span><pre><code class="language-html">&lt;p&gt;The area of a square is a&lt;sup&gt;2&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;E = mc&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="H2O with the 2 sitting below the baseline, and a squared and m c squared with the 2 raised above the line. A dashed baseline shows the normal line of text.">
+      <path class="lb dash" d="M60 110 L 300 110"/>
+      <path class="lr dash" d="M400 110 L 680 110"/>
+      <text class="th" x="180" y="38" text-anchor="middle">&lt;sub&gt; drops</text>
+      <text class="th" x="540" y="38" text-anchor="middle">&lt;sup&gt; lifts</text>
+      <text class="t" x="180" y="110" text-anchor="middle" style="font-size:44px">H<tspan dy="12" style="font-size:26px">2</tspan><tspan dy="-12">O</tspan></text>
+      <text class="t" x="470" y="110" text-anchor="middle" style="font-size:44px">a<tspan dy="-20" style="font-size:26px">2</tspan></text>
+      <text class="t" x="600" y="110" text-anchor="middle" style="font-size:44px">mc<tspan dy="-20" style="font-size:26px">2</tspan></text>
+      <text class="ts" x="180" y="164" text-anchor="middle">Water formula is H₂O</text>
+      <text class="ts" x="540" y="164" text-anchor="middle">a squared, E = mc squared</text>
+      <text class="ts" x="60" y="134">baseline</text>
+    </svg></div>
+    <figcaption>The dashed line is the normal baseline of the text.</figcaption>
+  </figure>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="big">
+  <h2>The obsolete <code>&lt;big&gt;</code> tag</h2>
+  <p><code>&lt;big&gt;</code> was part of older HTML versions. It made the enclosed text one size larger than the text around it.</p>
+  <pre><code class="language-html">&lt;p&gt;This is a &lt;big&gt;bigger&lt;/big&gt; word.&lt;/p&gt;</code></pre>
+  <div class="sticky warn l"><strong>Don’t use it</strong> <code>&lt;big&gt;</code> is <b>obsolete in HTML5</b>. Browsers still display it, but it is not valid modern HTML. To change size, use CSS (for example <code>font-size</code>), which you’ll learn later.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer apps often show AI output, search results or price changes. The semantic tags are the clean way to do it: <code>&lt;mark&gt;</code> for matched search terms, <code>&lt;del&gt;</code>/<code>&lt;ins&gt;</code> for a “what changed” diff view, <code>&lt;strong&gt;</code> for warnings. Screen readers, search engines and enterprise accessibility audits all read that meaning.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="cheat-sheet">
+  <h2>Formatting tags at a glance</h2>
+  <div class="tbl"><table>
+    <tr><th>Tag</th><th>Default look</th><th>Meaning</th><th>Example use</th></tr>
+    <tr><td><code>&lt;b&gt;</code></td><td><b>bold</b></td><td>style only</td><td>product names in a review</td></tr>
+    <tr><td><code>&lt;strong&gt;</code></td><td><strong>bold</strong></td><td>important / urgent</td><td>“Warning:”</td></tr>
+    <tr><td><code>&lt;i&gt;</code></td><td><i>italic</i></td><td>style only</td><td>book titles, foreign words</td></tr>
+    <tr><td><code>&lt;em&gt;</code></td><td><em>italic</em></td><td>stress</td><td>“I wanted <em>coffee</em>”</td></tr>
+    <tr><td><code>&lt;mark&gt;</code></td><td>highlighted</td><td>relevant, draw attention</td><td>search terms</td></tr>
+    <tr><td><code>&lt;small&gt;</code></td><td><small>smaller</small></td><td>side comment, fine print</td><td>copyright, conditions</td></tr>
+    <tr><td><code>&lt;del&gt;</code></td><td><del>struck through</del></td><td>removed from the document</td><td>old price replaced</td></tr>
+    <tr><td><code>&lt;ins&gt;</code></td><td><ins>underlined</ins></td><td>added to the document</td><td>new price</td></tr>
+    <tr><td><code>&lt;s&gt;</code></td><td><s>struck through</s></td><td>no longer accurate</td><td>outdated info</td></tr>
+    <tr><td><code>&lt;sub&gt;</code></td><td>H<sub>2</sub>O</td><td>subscript</td><td>chemical formulas</td></tr>
+    <tr><td><code>&lt;sup&gt;</code></td><td>x<sup>2</sup></td><td>superscript</td><td>powers, footnotes</td></tr>
+    <tr><td><code>&lt;big&gt;</code></td><td>larger</td><td>obsolete</td><td>don’t use; use CSS</td></tr>
+  </table></div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Heading tags</dt><dd>The six elements <code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code> for titles and subtitles; <code>h1</code> is the most important and largest, <code>h6</code> the least.</dd></div>
+    <div><dt>SEO</dt><dd>Search Engine Optimisation: making a page easy for search engines like Google to understand, so it reaches the right searchers. Clear headings help.</dd></div>
+    <div><dt>Accessibility</dt><dd>Making a website usable by everyone, including people with disabilities who use tools such as screen readers.</dd></div>
+    <div><dt>Screen reader</dt><dd>Software that reads a web page aloud; users can jump between headings and hear emphasis from tags like <code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code>.</dd></div>
+    <div><dt>Paragraph (<code>&lt;p&gt;</code>)</dt><dd>A block element for normal text; the browser adds space before and after each one.</dd></div>
+    <div><dt>Line break (<code>&lt;br&gt;</code>)</dt><dd>A void element that moves the following content onto a new line within the same block, without a paragraph gap.</dd></div>
+    <div><dt>Formatting tags</dt><dd>Inline tags that change how text looks, and in some cases what it means, such as bold, italic, highlighted or struck-through text.</dd></div>
+    <div><dt>Semantic tag</dt><dd>A tag that carries meaning, not just style, for example <code>&lt;strong&gt;</code> (important) or <code>&lt;em&gt;</code> (stressed), compared with <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code>.</dd></div>
+    <div><dt><code>&lt;del&gt;</code> vs <code>&lt;s&gt;</code></dt><dd>Both draw a line through text; <code>&lt;del&gt;</code> marks content removed from the document, <code>&lt;s&gt;</code> marks content that is no longer accurate.</dd></div>
+    <div><dt>Subscript / superscript</dt><dd>Small text placed below (<code>&lt;sub&gt;</code>) or above (<code>&lt;sup&gt;</code>) the normal line, as in H₂O or x².</dd></div>
+    <div><dt>Obsolete tag</dt><dd>A tag from older HTML that is no longer valid in HTML5, such as <code>&lt;big&gt;</code>; use CSS instead.</dd></div>
+  </dl>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>How many heading levels does HTML have?</p>
+      <ol><li>3</li><li>6</li><li>8</li><li>As many as you like</li></ol>
+      <p class="why"><code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>: six levels, from most to least important.</p></div>
+    <div class="q" data-answer="4"><p>You want slightly bigger text for a note that is <i>not</i> a section title. What should you do?</p>
+      <ol><li>Wrap it in <code>&lt;h3&gt;</code></li><li>Wrap it in <code>&lt;h1&gt;</code></li><li>Use <code>&lt;big&gt;</code></li><li>Keep it in <code>&lt;p&gt;</code> and change the size with CSS</li></ol>
+      <p class="why">Headings describe the outline of the page, not font size, and <code>&lt;big&gt;</code> is obsolete. Size is a CSS job.</p></div>
+    <div class="q" data-answer="1"><p>Which tag says “this text is important”, not just “make it bold”?</p>
+      <ol><li><code>&lt;strong&gt;</code></li><li><code>&lt;b&gt;</code></li><li><code>&lt;mark&gt;</code></li><li><code>&lt;i&gt;</code></li></ol>
+      <p class="why"><code>&lt;strong&gt;</code> looks bold and also carries the meaning “important” for screen readers and search engines.</p></div>
+    <div class="q" data-answer="3"><p>You write three lines of an address in one <code>&lt;p&gt;</code>, pressing Enter after each line in your code. How does the browser show it?</p>
+      <ol><li>Three lines</li><li>Three paragraphs</li><li>One line, with the line breaks collapsed into spaces</li><li>An error</li></ol>
+      <p class="why">HTML collapses Enter and extra spaces into a single space. Add <code>&lt;br&gt;</code> where each new line should start.</p></div>
+    <div class="q" data-answer="2"><p>Which line correctly shows the chemical formula for water?</p>
+      <ol><li><code>H&lt;sup&gt;2&lt;/sup&gt;O</code></li><li><code>H&lt;sub&gt;2&lt;/sub&gt;O</code></li><li><code>H&lt;small&gt;2&lt;/small&gt;O</code></li><li><code>H&lt;br&gt;2O</code></li></ol>
+      <p class="why">The 2 in H₂O sits below the line, so it is subscript: <code>&lt;sub&gt;</code>.</p></div>
+    <div class="q" data-answer="4"><p>A shop page shows a price that was changed from ₹500 to ₹450. Which pair fits best?</p>
+      <ol><li><code>&lt;mark&gt;</code> and <code>&lt;small&gt;</code></li><li><code>&lt;b&gt;</code> and <code>&lt;i&gt;</code></li><li><code>&lt;sub&gt;</code> and <code>&lt;sup&gt;</code></li><li><code>&lt;del&gt;</code> for ₹500 and <code>&lt;ins&gt;</code> for ₹450</li></ol>
+      <p class="why"><code>&lt;del&gt;</code> marks removed content (struck through) and <code>&lt;ins&gt;</code> marks inserted content (underlined).</p></div>
+    <div class="q" data-answer="3"><p>What is the difference between <code>&lt;i&gt;</code> and <code>&lt;em&gt;</code>?</p>
+      <ol><li><code>&lt;em&gt;</code> is bold, <code>&lt;i&gt;</code> is italic</li><li>None at all</li><li>Both look italic, but <code>&lt;em&gt;</code> also marks the word as stressed</li><li><code>&lt;i&gt;</code> is obsolete</li></ol>
+      <p class="why">They look the same by default; <code>&lt;em&gt;</code> adds meaning that screen readers can voice.</p></div>
+    <div class="q" data-answer="1"><p>Why do headings help people who use screen readers?</p>
+      <ol><li>They can jump from heading to heading to find a section</li><li>Headings are read louder</li><li>Screen readers skip everything except headings</li><li>Headings change the page colour</li></ol>
+      <p class="why">Screen readers list the headings so users can navigate a page by its outline instead of listening to everything.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Use <b>h1–h6</b> to build the page’s outline, <b>&lt;p&gt;</b> for text and <b>&lt;br&gt;</b> for line breaks, and choose <b>formatting tags</b> by meaning: <b>strong/em</b> for importance and stress, <b>b/i</b> for style, plus mark, small, del, ins, s, sub and sup for their special jobs.</p>
+  <p>Next up: HTML Lists &amp; Images, where you organise items into lists and put pictures on the page.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

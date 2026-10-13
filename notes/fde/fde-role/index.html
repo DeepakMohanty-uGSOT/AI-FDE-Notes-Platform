@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The FDE Role · The Forward Deployed Engineer | AIFDE Notes</title>
+<meta name="description" content="What a Forward Deployed Engineer is, why the role exists, a four-stage walkthrough of real FDE work, and how the FDE differs from Software, AI, Applied AI, Solutions and Implementation Engineers and Consultants.">
+<meta name="keywords" content="forward deployed engineer, FDE vs software engineer, FDE vs AI engineer, solutions engineer, consultant, implementation engineer, system integration">
+<meta name="date" content="2026-09-15">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="fde/fde-role">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>The FDE Role</h1>
+  <p class="byline">Welcome to the course! By the end of this first note you will be able to explain what a Forward Deployed Engineer does, why companies need one, and how the role differs from six jobs it is often confused with.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what">
+  <h2>What is Forward Deployed Engineering?</h2>
+  <div class="story"><b class="lbl">From the army to the office</b>The term <b>“forward deployed”</b> comes from the military. When troops are forward deployed, they are sent closer to the <b>front line</b>, where the real action is happening, instead of staying back at the main base.</div>
+  <p>In technology the idea is the same:</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>The base</h4><p>The software company’s engineering team, where the main product is built.</p></div>
+    <div class="card t3 tilt-b"><h4>The front line</h4><p>The place where the <b>customer actually uses the product</b> and runs into real problems.</p></div>
+  </div>
+  <p><mark>A Forward Deployed Engineer (FDE) is an engineer who works close to the customer to understand their problems and build technical solutions that work in their real environment.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Left box: the base, the company engineering team that builds the core product. Right box: the front line, the customer's real world. An arrow labelled FDE goes forward points from the base to the front line.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="40" width="240" height="140" rx="16"/>
+        <rect class="box f-orange" x="460" y="40" width="240" height="140" rx="16"/>
+        <path class="lr" d="M266 110 L 452 110" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="140" y="88" text-anchor="middle">The base</text>
+      <text class="t" x="140" y="120" text-anchor="middle">company engineering team</text>
+      <text class="ts" x="140" y="148" text-anchor="middle">builds the core product</text>
+      <text class="th" x="580" y="88" text-anchor="middle">The front line</text>
+      <text class="t" x="580" y="120" text-anchor="middle">the customer’s world</text>
+      <text class="ts" x="580" y="148" text-anchor="middle">real data, real problems</text>
+      <text class="tr" x="359" y="94" text-anchor="middle">FDE goes</text>
+      <text class="tr" x="359" y="140" text-anchor="middle">forward</text>
+      <text class="ts" x="360" y="214" text-anchor="middle">“Forward” means close to the customer’s problems, not necessarily inside their office.</text>
+    </svg></div>
+    <figcaption>The FDE carries the company’s technology from the base to the front line.</figcaption>
+  </figure>
+  <h3>A simple example</h3>
+  <p>A software company builds an AI platform. Its engineering team builds the main product:</p>
+  <div class="flow"><span>Software company</span><span>builds the product</span><span class="ok">AI platform</span></div>
+  <p>But a customer has a unique problem: <i>“We want to connect your AI platform to our existing database and use our internal data.”</i> That needs <b>custom coding</b>, <b>APIs</b>, <b>data integration</b>, <b>cloud configuration</b> and <b>testing</b>. The FDE works directly with that customer to make it happen.</p>
+  <div class="sticky info l"><strong>Forward ≠ on site</strong> “Forward deployed” does not mean the engineer must physically sit in the customer’s office. It means the engineer is <b>closely connected to the customer and their real-world technical problems</b>. Many FDEs work remotely for most of a project.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why">
+  <h2>Why does the role exist?</h2>
+  <div class="story"><b class="lbl">The new AC and the old house</b>You buy a brilliant new air conditioner. But your house has old wiring, an odd-shaped window and a society rule about where outdoor units may hang. The AC is fine. Someone still has to <b>make it fit your house</b>. <mark>An FDE is that person for software.</mark></div>
+  <p>Imagine a large hospital wants a new <b>AI system</b> to manage and analyse patient data. The AI product may be powerful, but the hospital has its own:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Existing databases</h4><p>Patient records already live somewhere.</p></div>
+    <div class="card t6 tilt-b"><h4>Old / legacy systems</h4><p>Software from years ago that still runs daily work.</p></div>
+    <div class="card t7 tilt-a"><h4>Different data formats</h4><p>Dates, names and codes stored in many styles.</p></div>
+    <div class="card t2 tilt-b"><h4>Internal applications</h4><p>Tools the staff already use every day.</p></div>
+    <div class="card t4 tilt-a"><h4>Security requirements</h4><p>Who may see which patient’s data.</p></div>
+    <div class="card t5 tilt-b"><h4>Compliance rules</h4><p>Laws about storing and sharing medical data.</p></div>
+    <div class="card t8 tilt-a"><h4>Unique business processes</h4><p>The hospital’s own way of getting things done.</p></div>
+  </div>
+  <p>So the hospital cannot simply install the AI product and start using it. Someone has to make the company’s technology work inside the hospital’s existing environment.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="The standard AI product on the left, the FDE in the middle adapting and integrating it, and the hospital's environment on the right with databases, legacy systems, data formats, internal apps, security, compliance and processes">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="100" width="180" height="90" rx="14"/>
+        <rect class="box f-purple" x="250" y="105" width="200" height="80" rx="14"/>
+        <rect class="box f-yellow" x="500" y="15" width="200" height="270" rx="16"/>
+        <path class="lr" d="M204 145 L 244 145" marker-end="url(#ahr)"/>
+        <path class="lr" d="M454 145 L 494 145" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="110" y="142" text-anchor="middle">AI product</text>
+      <text class="ts" x="110" y="168" text-anchor="middle">standard, powerful</text>
+      <text class="th" x="350" y="145" text-anchor="middle">FDE</text>
+      <text class="ts" x="350" y="170" text-anchor="middle">adapts &amp; integrates</text>
+      <text class="th" x="600" y="50" text-anchor="middle">Hospital</text>
+      <text class="t" x="600" y="84" text-anchor="middle">existing databases</text>
+      <text class="t" x="600" y="111" text-anchor="middle">legacy systems</text>
+      <text class="t" x="600" y="138" text-anchor="middle">data formats</text>
+      <text class="t" x="600" y="165" text-anchor="middle">internal apps</text>
+      <text class="t" x="600" y="192" text-anchor="middle">security rules</text>
+      <text class="t" x="600" y="219" text-anchor="middle">compliance</text>
+      <text class="t" x="600" y="246" text-anchor="middle">own processes</text>
+    </svg></div>
+    <figcaption>The product is the same for everyone. Every customer’s environment is different.</figcaption>
+  </figure>
+  <p><mark class="g">FDE exists because real customers have unique and complicated environments that the standard product alone cannot always handle.</mark> The FDE takes the company’s <b>core product</b> and <b>adapts, integrates and extends</b> it to solve the customer’s specific problem.</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="product-vs-forward">
+  <h2>Product-facing vs forward deployed engineering</h2>
+  <p>To understand an FDE better, compare it with a traditional <b>product engineer</b>. Engineers in both roles <b>write code and solve technical problems</b>. The difference is <mark>what problem they solve and who they work closely with</mark>.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Product-facing engineer</h4><p>Works on the company’s <b>core product</b>, built for <b>many customers</b>. In an AI-platform company they might improve the AI model, build new features, fix bugs, improve performance, and make the system more reliable and scalable.</p><p><b>Main question:</b> “How can we make our product better for many customers?”</p></div>
+    <div class="card t5 tilt-b"><h4>Forward deployed engineer</h4><p>Starts with <b>one customer’s specific problem</b> and works directly with them to understand their business problem, existing software, databases, APIs, cloud environment, data and security requirements.</p><p><b>Main question:</b> “How can we make our technology work for this customer’s particular situation?”</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">Product engineer</th><th style="width:50%">FDE</th></tr>
+    <tr><td>Starts with the product</td><td>Starts with the customer</td></tr>
+    <tr><td>Improves the core product</td><td>Applies the product to a customer problem</td></tr>
+    <tr><td>Thinks about many customers</td><td>Focuses first on one specific customer</td></tr>
+    <tr><td>Works mainly with internal engineering and product teams</td><td>Works closely with customers</td></tr>
+    <tr><td>Builds reusable product features</td><td>Builds integrations and customer solutions</td></tr>
+    <tr><td>Product-focused</td><td>Customer- and problem-focused</td></tr>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="position">
+  <h2>Where the FDE sits</h2>
+  <p>Put the pieces together and you get the FDE’s unique position: <mark>a bridge between the customer, the product team and the core engineering team</mark>. Problems and needs flow in from the customer; working solutions flow back out. Lessons from the field flow to the product and engineering teams; new features and fixes flow back to the FDE.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 340" role="img" aria-label="The FDE in the centre. On the left, the customer sends needs to the FDE and receives solutions. On the right, the FDE sends field feedback to the product team and bug and integration reports to engineering, and receives features and fixes back. Product and engineering are linked to each other.">
+      <g class="rough">
+        <rect class="box f-orange" x="10" y="115" width="180" height="110" rx="16"/>
+        <ellipse class="box f-purple" cx="360" cy="170" rx="95" ry="52"/>
+        <rect class="box f-blue" x="500" y="20" width="200" height="100" rx="16"/>
+        <rect class="box f-green" x="500" y="220" width="200" height="100" rx="16"/>
+        <path class="lr" d="M195 155 L 261 155" marker-end="url(#ahr)"/>
+        <path class="lb" d="M263 187 L 197 187" marker-end="url(#ahb)"/>
+        <path class="lr" d="M372 117 C 382 72, 430 56, 494 56" marker-end="url(#ahr)"/>
+        <path class="lb" d="M497 102 L 450 138" marker-end="url(#ahb)"/>
+        <path class="lr" d="M372 223 C 382 268, 430 284, 494 284" marker-end="url(#ahr)"/>
+        <path class="lb" d="M497 238 L 450 202" marker-end="url(#ahb)"/>
+        <path class="ln dash" d="M600 124 L 600 216"/>
+      </g>
+      <text class="th" x="100" y="160" text-anchor="middle">Customer</text>
+      <text class="ts" x="100" y="186" text-anchor="middle">real problems</text>
+      <text class="ts" x="100" y="206" text-anchor="middle">data &amp; systems</text>
+      <text class="th" x="360" y="170" text-anchor="middle">FDE</text>
+      <text class="ts" x="360" y="194" text-anchor="middle">the bridge</text>
+      <text class="th" x="600" y="62" text-anchor="middle">Product</text>
+      <text class="ts" x="600" y="90" text-anchor="middle">roadmap &amp; features</text>
+      <text class="th" x="600" y="262" text-anchor="middle">Engineering</text>
+      <text class="ts" x="600" y="290" text-anchor="middle">core platform</text>
+      <text class="tr" x="228" y="143" text-anchor="middle">needs</text>
+      <text class="tb" x="228" y="214" text-anchor="middle">solutions</text>
+      <text class="ts" x="372" y="62" text-anchor="end">field feedback</text>
+      <text class="ts" x="372" y="290" text-anchor="end">bugs, integration asks</text>
+      <text class="tb" x="462" y="176">fixes</text>
+      <text class="ts" x="612" y="174">build</text>
+    </svg></div>
+    <figcaption>Violet arrows carry problems and lessons; teal arrows carry solutions, features and fixes.</figcaption>
+  </figure>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Because you see many customers’ real environments, you often notice a pattern before anyone at headquarters does. Telling the product team “every customer struggles with X” is part of the job, not a side task.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="walkthrough">
+  <h2>A practical walkthrough: four stages</h2>
+  <p>FDE work can be understood in <b>four major stages</b>. We will follow one example the whole way: a customer who says <i>“We need to stop fraudulent user registrations, but our current system is too slow.”</i></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 235" role="img" aria-label="Four stages in a row: understand the problem, translate business into technology, build and integrate, deploy and iterate, with a loop arrow from stage four back to stage one">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="55" width="150" height="90" rx="14"/>
+        <rect class="box f-yellow" x="195" y="55" width="150" height="90" rx="14"/>
+        <rect class="box f-blue" x="370" y="55" width="150" height="90" rx="14"/>
+        <rect class="box f-green" x="545" y="55" width="150" height="90" rx="14"/>
+        <path class="ln" d="M172 100 L 191 100" marker-end="url(#ah)"/>
+        <path class="ln" d="M347 100 L 366 100" marker-end="url(#ah)"/>
+        <path class="ln" d="M522 100 L 541 100" marker-end="url(#ah)"/>
+        <path class="lr" d="M620 150 C 620 205, 95 205, 95 156" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="95" y="44" text-anchor="middle">Stage 1</text>
+      <text class="ts" x="270" y="44" text-anchor="middle">Stage 2</text>
+      <text class="ts" x="445" y="44" text-anchor="middle">Stage 3</text>
+      <text class="ts" x="620" y="44" text-anchor="middle">Stage 4</text>
+      <text class="th" x="95" y="100" text-anchor="middle">Understand</text>
+      <text class="ts" x="95" y="126" text-anchor="middle">the problem</text>
+      <text class="th" x="270" y="100" text-anchor="middle">Translate</text>
+      <text class="ts" x="270" y="126" text-anchor="middle">business → tech</text>
+      <text class="th" x="445" y="100" text-anchor="middle">Build</text>
+      <text class="ts" x="445" y="126" text-anchor="middle">&amp; integrate</text>
+      <text class="th" x="620" y="100" text-anchor="middle">Deploy</text>
+      <text class="ts" x="620" y="126" text-anchor="middle">&amp; iterate</text>
+      <text class="tr" x="360" y="226" text-anchor="middle">feedback starts the cycle again</text>
+    </svg></div>
+    <figcaption>The four stages form a loop, not a straight line.</figcaption>
+  </figure>
+
+  <h3>Stage 1 · Understanding the problem</h3>
+  <p>The customer may not explain the problem technically. “Stop fraud, but keep it fast” is a <b>business problem</b>. The FDE’s job is to discover what is actually happening technically, so the FDE asks:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>How does registration work?</b>Walk through the steps a new user goes through.</div></li>
+    <li><span class="dot">2</span><div><b>Where is registration data stored?</b>Which tables or collections hold new users.</div></li>
+    <li><span class="dot">3</span><div><b>How is fraud currently detected?</b>Rules, manual review, or nothing at all.</div></li>
+    <li><span class="dot">4</span><div><b>Which API handles registration?</b>The exact endpoint and service.</div></li>
+    <li><span class="dot">5</span><div><b>Which database is being used?</b>Its type, size and limits.</div></li>
+    <li><span class="dot">6</span><div><b>Why is the current system slow?</b>Measure before guessing. <span class="tag">→ the real cause</span></div></li>
+  </ol>
+  <p>The FDE is moving from <mark>“Something is wrong.”</mark> to <mark class="g">“Here is exactly what is wrong.”</mark></p>
+  <div class="flow"><span class="bad">Business complaint</span><span>Questions</span><span>Look at systems &amp; data</span><span class="ok">Exact technical problem</span></div>
+
+  <h3>Stage 2 · Translating business into technology</h3>
+  <p>Next, the FDE converts the business requirement into a <b>technical solution</b>.</p>
+  <div class="two">
+    <div class="card t3 tilt-a"><h4>Customer says</h4><p>“Stop fraudulent registrations without making registration slow.”</p></div>
+    <div class="card t2 tilt-b"><h4>FDE translates</h4><p>“We need to add a <b>fast fraud-detection step</b> before saving a new user.”</p></div>
+  </div>
+  <div class="flow"><span class="hl">Business requirement</span><span>FDE translation</span><span class="ok">Technical blueprint</span></div>
+
+  <h3>Stage 3 · Building and integrating</h3>
+  <p>With the blueprint ready, the FDE rolls up their sleeves and writes real code. <mark>FDEs are not just advisors; they are hands-on software engineers.</mark> Depending on the need, an FDE will:</p>
+  <ul>
+    <li><b>Write APIs and backend services</b> to handle new requests.</li>
+    <li><b>Write custom scripts</b> (often Python or JavaScript/TypeScript) to automate tasks.</li>
+    <li><b>Clean and transform data</b> so it is in the right format for the new system.</li>
+    <li><b>Configure cloud infrastructure</b> so the new code has a place to run.</li>
+    <li><b>Integrate AI/ML models</b> into the customer’s existing apps.</li>
+  </ul>
+  <p>In the fraud example, the old system saves anyone who clicks “register” straight to the database. The FDE builds a <b>detour</b>: registration data must pass through the AI model before it may reach the database.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 245" role="img" aria-label="Before: frontend, Node.js backend, MongoDB. After: frontend, Node.js backend, new fraud detection API, new AI model, then MongoDB">
+      <g class="rough">
+        <rect class="box f-card" x="15" y="40" width="118" height="62" rx="12"/>
+        <rect class="box f-card" x="155" y="40" width="118" height="62" rx="12"/>
+        <rect class="box f-card" x="575" y="40" width="118" height="62" rx="12"/>
+        <path class="ln" d="M135 71 L 151 71" marker-end="url(#ah)"/>
+        <path class="ln" d="M275 71 L 571 71" marker-end="url(#ah)"/>
+        <rect class="box f-card" x="15" y="160" width="118" height="62" rx="12"/>
+        <rect class="box f-card" x="155" y="160" width="118" height="62" rx="12"/>
+        <rect class="box f-green" x="295" y="160" width="118" height="62" rx="12"/>
+        <rect class="box f-green" x="435" y="160" width="118" height="62" rx="12"/>
+        <rect class="box f-card" x="575" y="160" width="118" height="62" rx="12"/>
+        <path class="ln" d="M135 191 L 151 191" marker-end="url(#ah)"/>
+        <path class="lr" d="M275 191 L 291 191" marker-end="url(#ahr)"/>
+        <path class="lr" d="M415 191 L 431 191" marker-end="url(#ahr)"/>
+        <path class="lr" d="M555 191 L 571 191" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="15" y="28">Before: anyone is saved straight away</text>
+      <text class="tr" x="15" y="148">After: every sign-up is checked first</text>
+      <text class="t" x="74" y="76" text-anchor="middle">Frontend</text>
+      <text class="t" x="214" y="67" text-anchor="middle">Node.js</text>
+      <text class="t" x="214" y="88" text-anchor="middle">backend</text>
+      <text class="t" x="634" y="76" text-anchor="middle">MongoDB</text>
+      <text class="t" x="74" y="196" text-anchor="middle">Frontend</text>
+      <text class="t" x="214" y="187" text-anchor="middle">Node.js</text>
+      <text class="t" x="214" y="208" text-anchor="middle">backend</text>
+      <text class="t" x="354" y="187" text-anchor="middle">Fraud API</text>
+      <text class="ts" x="354" y="208" text-anchor="middle">new</text>
+      <text class="t" x="494" y="187" text-anchor="middle">AI model</text>
+      <text class="ts" x="494" y="208" text-anchor="middle">new</text>
+      <text class="t" x="634" y="196" text-anchor="middle">MongoDB</text>
+    </svg></div>
+    <figcaption>The FDE’s new pieces (green) sit between the backend and the database.</figcaption>
+  </figure>
+
+  <h3>Stage 4 · Deploying and iterating</h3>
+  <p>Writing the code is only half the battle. A solution is not finished until it runs in the customer’s real environment and works smoothly.</p>
+  <div class="flow"><span class="op">Code</span><span class="op">Docker</span><span class="op">AWS / Azure</span><span class="ok">Running application</span></div>
+  <p>The customer starts using it, and the first version may not be perfect: <i>“Fraud detection works, but registration has become slower.”</i> The FDE investigates again and optimises the slow step:</p>
+  <div class="two">
+    <div class="flow v"><span>Registration</span><span>Fraud API</span><span class="bad">Wait</span><span>Database</span></div>
+    <div class="flow v"><span>Registration</span><span class="ok">Fast fraud check</span><span>Database</span></div>
+  </div>
+  <p>The customer tests it again. This repeating process is called <mark>iteration</mark>:</p>
+  <div class="flow"><span>Build</span><span>Deploy</span><span>Customer uses it</span><span class="hl">Feedback</span><span>Improve</span><span class="ok">Deploy again</span></div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="typical-work">
+  <h2>Typical FDE work, day to day</h2>
+  <p>Across projects, FDE work keeps returning to the same seven kinds of task. (The next note, <i>FDE Responsibilities</i>, walks through the full end-to-end journey in depth.)</p>
+
+  <h3>1 · Customer communication</h3>
+  <p>The FDE talks directly with the customer and keeps asking questions until the real problem is clear:</p>
+  <div class="tbl"><table>
+    <tr><th style="width:22%">Who</th><th>Says</th></tr>
+    <tr><td>Customer</td><td>“Our process is too slow.”</td></tr>
+    <tr><td>FDE</td><td>“What part is slow?”</td></tr>
+    <tr><td>Customer</td><td>“Generating the report.”</td></tr>
+    <tr><td>FDE</td><td>“Where does the report data come from?”</td></tr>
+    <tr><td>Customer</td><td>“Three different databases.”</td></tr>
+    <tr><td>FDE</td><td>“How are you combining them today?”</td></tr>
+  </table></div>
+
+  <h3>2 · Technical problem solving</h3>
+  <p>Once the symptom is clear, the FDE dives into the customer’s architecture to find the bottleneck.</p>
+  <div class="flow"><span class="bad">Symptom: API takes 10 s</span><span class="hl">Discovery: 5 separate DB calls instead of 1</span><span class="ok">Fix: redesign the API logic</span></div>
+
+  <h3>3 · Writing code</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>APIs</h4><p>To connect systems to each other.</p></div>
+    <div class="card t2 tilt-b"><h4>Scripts</h4><p>Often Python or JavaScript/Node.js, to automate manual tasks.</p></div>
+    <div class="card t8 tilt-a"><h4>Data pipelines</h4><p>To move information safely between systems.</p></div>
+    <div class="card t7 tilt-b"><h4>Prototypes</h4><p>To quickly show a customer how a solution <i>could</i> look.</p></div>
+  </div>
+
+  <h3>4 · Working with customer data</h3>
+  <p>Customer data is rarely clean or consistent. The same person can appear three ways:</p>
+  <div class="tbl"><table>
+    <tr><th>Name</th><th>Phone</th></tr>
+    <tr><td>Chandra</td><td><code>9876543210</code></td></tr>
+    <tr><td>CHANDRA</td><td><code>+91-9876543210</code></td></tr>
+    <tr><td>chandra</td><td><code>9876543210</code></td></tr>
+  </table></div>
+  <p>The FDE cleans it up step by step before it is loaded anywhere:</p>
+  <div class="flow"><span>Clean</span><span>Transform</span><span>Format</span><span>Validate</span><span class="ok">Load</span></div>
+
+  <h3>5 · Cloud infrastructure</h3>
+  <p>The FDE may also set up the infrastructure the solution needs to run, on AWS, Azure or Google Cloud depending on the customer:</p>
+  <div class="flow"><span class="op">Code</span><span class="op">Container</span><span>Compute (VM / service)</span><span>Network &amp; access</span><span class="ok">Running in the cloud</span></div>
+
+  <h3>6 · System integration</h3>
+  <p>The FDE connects the <b>customer’s existing technology</b> with the company’s product. <mark>This is one of the most common types of FDE work.</mark></p>
+  <div class="flow"><span>Customer application</span><span>Customer API</span><span class="hl">FDE integration</span><span>Company product</span><span class="ok">AI / ML</span></div>
+
+  <h3>7 · Training the customer’s team</h3>
+  <p>Once the system works, the FDE explains it to the customer’s technical team so they can run it themselves:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Explain the system</b>What each part does and how they connect.</div></li>
+    <li><span class="dot">2</span><div><b>Show how to use it</b>Walk through real tasks.</div></li>
+    <li><span class="dot">3</span><div><b>Explain configuration</b>Which settings exist and when to change them.</div></li>
+    <li><span class="dot">4</span><div><b>Show basic troubleshooting</b>What to check first when something fails.</div></li>
+    <li><span class="dot">5</span><div><b>Explain maintenance</b>What needs regular care.</div></li>
+  </ol>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="vs-swe">
+  <h2>FDE vs Software Engineer</h2>
+  <p>Both are highly technical developers. Both write code, debug errors, build APIs and manage databases. The difference is not <i>what</i> skills they have, but <b>where they apply them</b>.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Software Engineer</h4><p><b>Builds and improves the product.</b> Works behind the scenes on the company’s core software: new features for everyone, bug fixes, performance, security, and scaling so it doesn’t crash when thousands log in at once.</p><p><i>“How can we build a reliable, high-quality product that works for many different users right out of the box?”</i></p></div>
+    <div class="card t5 tilt-b"><h4>FDE</h4><p><b>Makes the product work in a specific customer’s environment.</b> Out in the real world, figuring out how to plug the product into a customer’s often messy setup, one client at a time.</p><p><i>“How do I make the company’s technology work correctly in this customer’s environment?”</i></p></div>
+  </div>
+  <p>For example, a customer wants the company’s AI platform to use their existing database. Their environment has an existing application, an internal API, a database and cloud infrastructure. The AI platform is separate, so the FDE connects them:</p>
+  <div class="flow"><span>Customer database</span><span>Customer API</span><span class="hl">FDE integration</span><span>Company AI platform</span><span class="ok">AI model</span></div>
+
+  <h3>Product development vs customer-specific solutions</h3>
+  <div class="two">
+    <div><p><b>Software Engineer:</b> “Let’s build a notification system that all customers can use.”</p>
+      <div class="flow v"><span>Product team</span><span>Notification feature</span><span>Core product</span><span class="ok">Many customers</span></div></div>
+    <div><p><b>FDE:</b> “This customer already has a notification system. How can we connect our product to it?”</p>
+      <div class="flow v"><span>Customer system</span><span>Customer requirement</span><span class="hl">FDE</span><span>Integration</span><span class="ok">Company product</span></div></div>
+  </div>
+
+  <h3>Who they talk to</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">Software Engineer works mainly with</th><th style="width:50%">FDE works with</th></tr>
+    <tr><td>Software engineers, product managers, designers, QA engineers, DevOps/platform teams</td><td>Customer developers, customer IT teams, customer data teams, business teams, <b>plus</b> product managers, software engineers and cloud/platform teams</td></tr>
+    <tr><td>Typical question: “How should we build and improve the product?”</td><td>Typical questions: “How does your existing system work?” “Where is your data stored?” “How does this API behave?” “What happens when this process fails?”</td></tr>
+  </table></div>
+
+  <h3>Debugging in different contexts</h3>
+  <div class="two">
+    <div><p><b>Software Engineer</b> gets: <i>“Users are getting a 500 error.”</i> They check logs, code, database queries, tests and infrastructure, and fix it for all users.</p>
+      <div class="flow v"><span>API</span><span>Backend</span><span>Database</span><span class="bad">Error</span></div></div>
+    <div><p><b>FDE</b> gets: <i>“It works normally, but fails when connected to our internal system.”</i> The FDE must understand <b>both sides</b>.</p>
+      <div class="flow v"><span>Customer system</span><span>Customer API</span><span>Integration</span><span>Company product</span><span class="bad">Error</span></div></div>
+  </div>
+  <p>An FDE’s integration bug may come from: customer-specific data, API differences, authentication configuration, network restrictions, data formats, cloud configuration, or existing legacy systems.</p>
+
+  <h3>System integration</h3>
+  <p>A Software Engineer might build the company’s API (<b>Frontend → Company API → Company database</b>). The FDE then connects that API to the customer’s world:</p>
+  <div class="flow"><span>Customer application</span><span>Customer API</span><span class="hl">FDE integration</span><span>Company API</span><span class="ok">Company platform</span></div>
+
+  <h3>How they work together</h3>
+  <p>FDEs and Software Engineers rely on each other. Their workflow is a continuous feedback loop:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 225" role="img" aria-label="The FDE tells the software engineer about a universal problem; the software engineer builds it into the core product; result: less custom work and a better product">
+      <g class="rough">
+        <rect class="box f-purple" x="20" y="65" width="200" height="95" rx="16"/>
+        <rect class="box f-blue" x="500" y="65" width="200" height="95" rx="16"/>
+        <path class="lr" d="M225 88 C 300 35, 420 35, 495 88" marker-end="url(#ahr)"/>
+        <path class="lb" d="M495 138 C 420 192, 300 192, 225 138" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="120" y="110" text-anchor="middle">FDE</text>
+      <text class="ts" x="120" y="136" text-anchor="middle">at the front line</text>
+      <text class="th" x="600" y="110" text-anchor="middle">Software Eng.</text>
+      <text class="ts" x="600" y="136" text-anchor="middle">at the base</text>
+      <text class="tr" x="360" y="30" text-anchor="middle">1 · “every client needs this script”</text>
+      <text class="tb" x="360" y="214" text-anchor="middle">2 · builds it into the core product</text>
+      <text class="t" x="360" y="108" text-anchor="middle">3 · less custom work</text>
+      <text class="t" x="360" y="132" text-anchor="middle">+ a better product</text>
+    </svg></div>
+    <figcaption>Field feedback turns one-off fixes into product features.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>FDE → SWE (feedback)</b>The FDE notices every customer struggles to format their data: “I am writing the same data-cleaning script for every client. This is a universal problem.”</div></li>
+    <li><span class="dot">2</span><div><b>SWE → FDE (product update)</b>The Software Engineer builds an automated data-cleaning feature into the core product.</div></li>
+    <li><span class="dot">3</span><div><b>The result</b>The FDE no longer writes that script by hand, the next deployment is faster, and the product is more valuable for everyone.</div></li>
+  </ol>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="vs-ai">
+  <h2>FDE vs AI Engineer</h2>
+  <p>Both can work with AI systems, APIs, databases, cloud platforms and production applications. The main difference is their <b>focus</b>.</p>
+  <div class="story"><b class="lbl">The brain and its job</b>The <b>AI Engineer builds the brain</b>: they create, train and refine AI models and AI systems so they are smart, accurate and fast. <mark>The FDE gives the brain a job</mark>: they plug that ready-made brain into a specific customer’s business, decide how to feed it data and what to do with its answers.</div>
+
+  <h3>What does an AI Engineer do?</h3>
+  <p>An AI Engineer builds AI systems and integrates them into software applications. Their work can include:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Models &amp; LLMs</h4><p>Working with AI/ML models and LLMs, choosing and evaluating models.</p></div>
+    <div class="card t2 tilt-b"><h4>Data &amp; RAG</h4><p>Preparing data for AI systems and building RAG (retrieval) systems.</p></div>
+    <div class="card t8 tilt-a"><h4>Pipelines &amp; APIs</h4><p>Designing AI pipelines and building APIs around models.</p></div>
+    <div class="card t3 tilt-b"><h4>Run it</h4><p>Deploying AI systems, evaluating and monitoring them in production.</p></div>
+  </div>
+  <p><b>Main question:</b> “How can we build an AI system that works reliably in a production application?” For a company chatbot, they might design:</p>
+  <div class="flow"><span>User</span><span>Chat application</span><span>Backend API</span><span class="hl">RAG system</span><span class="hl">LLM</span><span class="ok">Response</span></div>
+  <p>They work on the AI pipeline, prompts, retrieval, model selection, evaluation and architecture. The focus is <b>building the AI capability</b>.</p>
+
+  <h3>What does an FDE do with AI?</h3>
+  <p>A company already has an AI platform. A customer says: <i>“We want to use your AI to search our internal company documents.”</i> The FDE needs to understand where the documents are stored, what format they use, how the customer accesses them, what database they have, what security rules apply, how users will reach the AI, and where it should be deployed. Then the FDE builds the integration:</p>
+  <div class="flow"><span>Customer documents</span><span>Customer system</span><span class="hl">FDE integration</span><span>Company AI platform</span><span>AI / LLM</span><span class="ok">Customer application</span></div>
+
+  <h3>Building the model vs applying the model</h3>
+  <p>The easiest way to separate them: look at how each treats the AI model. <mark>One builds it, the other applies it.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Two lanes. AI Engineer development loop: raw data, training, model, evaluation, deployment. FDE integration loop: existing model, glue code, customer data, customer app.">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="32" width="700" height="80" rx="16"/>
+        <rect class="box f-card" x="22" y="50" width="110" height="44" rx="10"/>
+        <rect class="box f-card" x="160" y="50" width="110" height="44" rx="10"/>
+        <rect class="box f-card" x="298" y="50" width="110" height="44" rx="10"/>
+        <rect class="box f-card" x="436" y="50" width="110" height="44" rx="10"/>
+        <rect class="box f-card" x="574" y="50" width="110" height="44" rx="10"/>
+        <path class="ln" d="M134 72 L 156 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M272 72 L 294 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M410 72 L 432 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M548 72 L 570 72" marker-end="url(#ah)"/>
+        <rect class="box f-purple" x="10" y="160" width="700" height="80" rx="16"/>
+        <rect class="box f-card" x="26" y="178" width="140" height="44" rx="10"/>
+        <rect class="box f-card" x="202" y="178" width="140" height="44" rx="10"/>
+        <rect class="box f-card" x="378" y="178" width="140" height="44" rx="10"/>
+        <rect class="box f-card" x="554" y="178" width="140" height="44" rx="10"/>
+        <path class="ln" d="M168 200 L 198 200" marker-end="url(#ah)"/>
+        <path class="ln" d="M344 200 L 374 200" marker-end="url(#ah)"/>
+        <path class="ln" d="M520 200 L 550 200" marker-end="url(#ah)"/>
+      </g>
+      <text class="tr" x="14" y="24">AI Engineer · the development loop</text>
+      <text class="tr" x="14" y="152">FDE · the integration loop</text>
+      <text class="t" x="77" y="77" text-anchor="middle">Raw data</text>
+      <text class="t" x="215" y="77" text-anchor="middle">Training</text>
+      <text class="t" x="353" y="77" text-anchor="middle">The model</text>
+      <text class="t" x="491" y="77" text-anchor="middle">Evaluation</text>
+      <text class="t" x="629" y="77" text-anchor="middle">Deployment</text>
+      <text class="t" x="96" y="205" text-anchor="middle">Existing model</text>
+      <text class="t" x="272" y="205" text-anchor="middle">Glue code</text>
+      <text class="t" x="448" y="205" text-anchor="middle">Customer data</text>
+      <text class="t" x="624" y="205" text-anchor="middle">Customer app</text>
+    </svg></div>
+    <figcaption>For the AI Engineer the model is the product. For the FDE it is one tool among many, like a database or an external API.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>AI Engineer cares about</h4><p><b>Performance:</b> is inference fast enough?<br><b>Accuracy:</b> is the training or fine-tuning working?<br><b>Architecture:</b> are we using the right ML frameworks?</p></div>
+    <div class="card t5 tilt-b"><h4>FDE cares about</h4><p><b>Connection:</b> how do I pass the customer’s data into this model securely?<br><b>Compatibility:</b> does the model’s output match what the customer’s application expects?</p></div>
+  </div>
+  <h3>Example: AI fraud detection</h3>
+  <ul>
+    <li><b>The AI Engineer’s job:</b> train a model on millions of rows of historical data to recognise what a fake user looks like. Their job finishes when the model is wrapped in an API, ready to accept requests.</li>
+    <li><b>The FDE’s job:</b> a client says “We want this fraud detection on our website.” The FDE does not train a new model. They write backend code (for example, Node.js middleware) that takes the user’s input from the registration form, sends it to the AI Engineer’s API for a quick check, then either blocks the user or saves them to the database.</li>
+  </ul>
+  <div class="sticky info l"><strong>Titles vary</strong> Job titles are not used the same way everywhere. At some companies “AI Engineer” means model training and research; at others it means building LLM apps. Compare the <b>focus</b> of the work, not just the title.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="vs-applied-ai">
+  <h2>FDE vs Applied AI Engineer</h2>
+  <p>These two can look very similar. Both may work with AI models, APIs, data, RAG, AI agents, the cloud, backend systems and integrations. The difference is their <b>primary focus</b>.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Applied AI Engineer · the app builder</h4><p><b>Starting point:</b> “We have a real-world problem. How can we build an AI solution to solve it?”</p><p><b>Does:</b> tests different models (“Does Model A or Model B answer more accurately?”), builds the core RAG pipeline (chunking documents, creating embeddings, setting up vector databases), designs prompts and AI agents.</p><p><b>Finish line:</b> a working AI application that gives accurate answers in a <b>controlled environment</b>.</p></div>
+    <div class="card t5 tilt-b"><h4>FDE · the deployer</h4><p><b>Starting point:</b> a customer’s problem, e.g. “We want an AI assistant, but our documents are stored in our internal system.”</p><p><b>Does:</b> investigates the customer environment (internal documents → internal database → internal API → company application), then connects it to the AI platform.</p><p><b>Finish line:</b> the AI application working inside the customer’s <b>messy, real-world environment</b>.</p></div>
+  </div>
+  <div class="flow"><span>Customer system</span><span>Customer API</span><span class="hl">FDE integration</span><span>AI platform</span><span>RAG / LLM</span><span class="ok">Customer application</span></div>
+  <p><mark>The Applied AI Engineer makes the AI smart; the FDE makes the smart AI work for one particular customer.</mark></p>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="vs-se">
+  <h2>FDE vs Solutions Engineer</h2>
+  <p>A <b>Solutions Engineer (SE)</b> and an FDE both work closely with customers and need strong technical knowledge. The biggest difference is <mark>when and why they work with the customer</mark>.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Solutions Engineer · the “before”</h4><p>Proves the product <b>can</b> work, so the customer decides to buy it.</p></div>
+    <div class="card t5 tilt-b"><h4>FDE · the “after”</h4><p>Does the hands-on engineering to make it <b>actually</b> work in the customer’s real environment.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 235" role="img" aria-label="A timeline split by the purchase decision. Before it, the solutions engineer does discovery, demo, proof of concept and evaluation. After it, the FDE does implementation, integration, deployment and iteration.">
+      <g class="rough">
+        <rect class="box f-blue" x="15" y="30" width="320" height="160" rx="16"/>
+        <rect class="box f-purple" x="385" y="30" width="320" height="160" rx="16"/>
+        <path class="ln" d="M30 135 L 690 135"/>
+        <path class="box f-yellow" d="M360 112 L 383 135 L 360 158 L 337 135 Z"/>
+        <circle class="box f-card" cx="60" cy="135" r="7"/>
+        <circle class="box f-card" cx="140" cy="135" r="7"/>
+        <circle class="box f-card" cx="220" cy="135" r="7"/>
+        <circle class="box f-card" cx="300" cy="135" r="7"/>
+        <circle class="box f-card" cx="420" cy="135" r="7"/>
+        <circle class="box f-card" cx="500" cy="135" r="7"/>
+        <circle class="box f-card" cx="580" cy="135" r="7"/>
+        <circle class="box f-card" cx="660" cy="135" r="7"/>
+      </g>
+      <text class="th" x="175" y="68" text-anchor="middle">Solutions Engineer</text>
+      <text class="ts" x="175" y="94" text-anchor="middle">pre-sales: help them decide</text>
+      <text class="th" x="545" y="68" text-anchor="middle">FDE</text>
+      <text class="ts" x="545" y="94" text-anchor="middle">post-sales: build &amp; run it</text>
+      <text class="ts" x="60" y="166" text-anchor="middle">Discovery</text>
+      <text class="ts" x="140" y="166" text-anchor="middle">Demo</text>
+      <text class="ts" x="220" y="166" text-anchor="middle">PoC</text>
+      <text class="ts" x="300" y="166" text-anchor="middle">Evaluate</text>
+      <text class="ts" x="420" y="166" text-anchor="middle">Implement</text>
+      <text class="ts" x="500" y="166" text-anchor="middle">Integrate</text>
+      <text class="ts" x="580" y="166" text-anchor="middle">Deploy</text>
+      <text class="ts" x="660" y="166" text-anchor="middle">Iterate</text>
+      <text class="tr" x="360" y="222" text-anchor="middle">▲ the purchase decision</text>
+    </svg></div>
+    <figcaption>The purchase decision is the hand-off point between the two roles.</figcaption>
+  </figure>
+
+  <h3>What a Solutions Engineer does</h3>
+  <p>The SE is the technical face of the sales team. When a customer is thinking about buying, they have many technical questions; the SE answers them.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Technical discovery</h4><p>Interviews the customer to learn their environment: “What database are you using? Do you have an API? Where is your application hosted? How do users log in? What security restrictions do you have?”</p></div>
+    <div class="card t2 tilt-b"><h4>Product demos</h4><p>Shows how the product looks and solves the problem, often with a realistic example based on the customer’s use case.</p></div>
+    <div class="card t7 tilt-a"><h4>Proof of Concept</h4><p>Builds a tiny, simplified prototype on a small sample of the customer’s data to prove “Yes, our AI can read your documents.”</p></div>
+  </div>
+  <p>Example: a potential customer says <i>“We want AI to search our internal documents.”</i> The SE asks:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>What type of documents do you have?</b></div></li>
+    <li><span class="dot">2</span><div><b>Where are they stored?</b></div></li>
+    <li><span class="dot">3</span><div><b>How many documents?</b></div></li>
+    <li><span class="dot">4</span><div><b>Who needs access?</b></div></li>
+    <li><span class="dot">5</span><div><b>What kind of questions should users ask?</b></div></li>
+    <li><span class="dot">6</span><div><b>What security requirements do you have?</b></div></li>
+  </ol>
+  <p>Discovery combines two things into a possible solution: <b>customer requirements + customer environment → possible solution</b>. Then the SE demonstrates it:</p>
+  <div class="flow"><span>Customer documents</span><span>AI platform</span><span>Search / RAG</span><span class="ok">AI answer</span></div>
+  <p>The message is: <i>“Here is how our product can solve your problem.”</i></p>
+
+  <h3>Pre-sales</h3>
+  <p><b>Pre-sales</b> means everything that happens <b>before the customer buys</b>. The SE supplies the technical knowledge along the way:</p>
+  <div class="flow"><span>Potential customer</span><span>Sales conversation</span><span>Technical discovery</span><span>Demo</span><span>Proof of concept</span><span>Customer evaluation</span><span class="ok">Purchase decision</span></div>
+  <p>During this, the SE may explain how the product works, how it integrates with existing systems, which APIs are available, what architecture could be used, what security capabilities exist, and what implementation might look like.</p>
+
+  <h3>The Proof of Concept (PoC)</h3>
+  <p>A <b>Proof of Concept</b> is a small implementation that shows a technical approach can work. Suppose the customer asks: <i>“Our company uses a very old, custom-built database. Can your modern AI platform connect to it and read it?”</i> The SE does not build a perfect system for all 10 million files; that would take months. Instead they build a quick, temporary bridge:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Take a tiny sample</b>Just 10 files from the old database.</div></li>
+    <li><span class="dot">2</span><div><b>Write a quick connection</b>Link those 10 files to the AI platform.</div></li>
+    <li><span class="dot">3</span><div><b>Ask the AI a question</b>Get a sample answer. <span class="tag">→ “Yes, this will work.”</span></div></li>
+  </ol>
+  <p>A PoC is a rough draft, not the finished product. Its only job is to answer one question with confidence.</p>
+
+  <h3>Where the FDE comes in</h3>
+  <p>Once the customer says <i>“Okay, we want this for our entire organisation,”</i> the work changes, and the FDE turns the demo into a <b>real production solution</b>:</p>
+  <div class="two">
+    <div><p><b>What the SE demonstrated</b></p><div class="flow v"><span>Customer database</span><span>AI platform</span><span class="hl">Sample result</span></div></div>
+    <div><p><b>What the FDE builds</b></p><div class="flow v"><span>Customer database</span><span>Production integration</span><span>Security</span><span>Data pipeline</span><span>AI platform</span><span>Customer application</span><span class="ok">Real users</span></div></div>
+  </div>
+  <p>The FDE deals with the <b>messy details of making it work in the real environment</b>, through implementation, integration, deployment, testing, production and iteration.</p>
+
+  <h3>Architecture guidance vs hands-on engineering</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">Solutions Engineer</th><th style="width:50%">FDE</th></tr>
+    <tr><td>Designs or recommends an architecture: <i>Customer application → API → AI platform → Database</i></td><td>Builds and deploys it: <i>Customer application → Customer API → FDE integration service → AI platform → Database</i></td></tr>
+    <tr><td>“This architecture should let your application talk to our platform.”</td><td>“Let’s build and deploy it.”</td></tr>
+    <tr><td>Helps the customer <b>decide and understand</b></td><td>Helps the customer <b>implement and operate</b></td></tr>
+  </table></div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="vs-consultant">
+  <h2>FDE vs Consultant</h2>
+  <p>Both work with customers, understand the business, identify problems and suggest solutions. The difference is <mark>what they do after understanding the problem</mark>.</p>
+  <div class="two">
+    <div class="card t7 tilt-a"><h4>Consultant · the advisor</h4><p>Studies business processes, current systems, costs, performance, organisational problems, requirements and risks. Delivers <b>recommendations, strategy, roadmaps, process improvements and plans</b>.</p><p><i>“What is the best advice I can give this customer so they can fix their problem?”</i></p></div>
+    <div class="card t5 tilt-b"><h4>FDE · the builder</h4><p>Figures out the problem and then <b>actually builds it</b>: designs the solution, writes the code, connects the systems and puts it live.</p></div>
+  </div>
+  <p>Example: a hospital says <i>“Our patient-data process is slow and inefficient.”</i> The consultant studies the current process, understands the problems, analyses data, identifies gaps, recommends improvements and writes an implementation roadmap, e.g. <i>“Automate data collection and introduce an AI-based document-processing system.”</i></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Consultant row: problem, analysis, recommend, plan, then the remaining steps are dashed because they are not the consultant's job. FDE row: problem, analysis, design, code, integrate, deploy, working solution.">
+      <g class="rough">
+        <path class="ln" d="M20 72 L 700 72"/>
+        <rect class="box f-yellow" x="15" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-yellow" x="115" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-yellow" x="215" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-yellow" x="315" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-card dash" x="415" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-card dash" x="515" y="47" width="88" height="50" rx="10"/>
+        <rect class="box f-card dash" x="615" y="47" width="88" height="50" rx="10"/>
+        <path class="ln" d="M20 177 L 700 177"/>
+        <rect class="box f-purple" x="15" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-purple" x="115" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-purple" x="215" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-purple" x="315" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-purple" x="415" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-purple" x="515" y="152" width="88" height="50" rx="10"/>
+        <rect class="box f-green" x="615" y="152" width="88" height="50" rx="10"/>
+      </g>
+      <text class="tr" x="15" y="36">Consultant: the job ends at the plan</text>
+      <text class="tr" x="15" y="141">FDE: the job ends at a working solution</text>
+      <text class="t" x="59" y="78" text-anchor="middle">Problem</text>
+      <text class="t" x="159" y="78" text-anchor="middle">Analysis</text>
+      <text class="t" x="259" y="78" text-anchor="middle">Recommend</text>
+      <text class="t" x="359" y="78" text-anchor="middle">Plan</text>
+      <text class="ts" x="459" y="77" text-anchor="middle">Code</text>
+      <text class="ts" x="559" y="77" text-anchor="middle">Deploy</text>
+      <text class="ts" x="659" y="77" text-anchor="middle">Working</text>
+      <text class="t" x="59" y="183" text-anchor="middle">Problem</text>
+      <text class="t" x="159" y="183" text-anchor="middle">Analysis</text>
+      <text class="t" x="259" y="183" text-anchor="middle">Design</text>
+      <text class="t" x="359" y="183" text-anchor="middle">Code</text>
+      <text class="t" x="459" y="183" text-anchor="middle">Integrate</text>
+      <text class="t" x="559" y="183" text-anchor="middle">Deploy</text>
+      <text class="t" x="659" y="183" text-anchor="middle">Working</text>
+    </svg></div>
+    <figcaption>The consultant hands over a blueprint; the FDE carries it to the finish line.</figcaption>
+  </figure>
+  <h3>Technical implementation vs advisory work</h3>
+  <p>A consultant may recommend: <i>“Move this application to the cloud.”</i> The FDE takes that requirement and actually does it:</p>
+  <div class="flow"><span>Existing application</span><span class="op">Containerise</span><span>Cloud configuration</span><span>Networking</span><span>Database</span><span>Deployment</span><span class="ok">Production</span></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="vs-implementation">
+  <h2>FDE vs Implementation Engineer</h2>
+  <p>Both work directly with customers to get a company’s software working in their environment. The difference:</p>
+  <div class="two">
+    <div class="card t8 tilt-a"><h4>Implementation Engineer · the configurator</h4><p>Sets up the existing product using the <b>features, tools and configuration options it already has</b>.</p><p><i>“How do we implement our existing product correctly for this customer?”</i></p></div>
+    <div class="card t5 tilt-b"><h4>FDE · the custom builder</h4><p>Steps in when the customer’s problem <b>cannot be fully solved</b> with standard product capabilities and needs additional engineering.</p></div>
+  </div>
+  <p>Imagine a SaaS product that already has login, a dashboard, reports, user management, an API and notifications. After a customer buys it, the Implementation Engineer helps them create users, configure settings, connect existing systems, set up APIs and integrations, import data, configure workflows, deploy, test, and train the customer.</p>
+  <p>Example: a customer buys a new <b>CRM (Customer Relationship Management)</b> platform but still has its data in an old CRM:</p>
+  <div class="flow"><span>Old CRM</span><span>Data migration</span><span>New CRM</span><span>Configure workflows</span><span class="ok">Customer starts using it</span></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="The existing product with built-in features: login, dashboard, reports, user management, API and notifications, configured by the implementation engineer. On the right, an FDE-built service connects in when configuration is not enough.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="25" width="420" height="215" rx="16"/>
+        <rect class="box f-card" x="40" y="85" width="120" height="42" rx="10"/>
+        <rect class="box f-card" x="170" y="85" width="120" height="42" rx="10"/>
+        <rect class="box f-card" x="300" y="85" width="120" height="42" rx="10"/>
+        <rect class="box f-card" x="40" y="140" width="120" height="42" rx="10"/>
+        <rect class="box f-card" x="170" y="140" width="120" height="42" rx="10"/>
+        <rect class="box f-card" x="300" y="140" width="120" height="42" rx="10"/>
+        <rect class="box f-purple" x="520" y="95" width="180" height="80" rx="14"/>
+        <path class="lr" d="M515 135 L 446 135" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="230" y="64" text-anchor="middle">Existing product</text>
+      <text class="ts" x="100" y="111" text-anchor="middle">Login</text>
+      <text class="ts" x="230" y="111" text-anchor="middle">Dashboard</text>
+      <text class="ts" x="360" y="111" text-anchor="middle">Reports</text>
+      <text class="ts" x="100" y="166" text-anchor="middle">User mgmt</text>
+      <text class="ts" x="230" y="166" text-anchor="middle">API</text>
+      <text class="ts" x="360" y="166" text-anchor="middle">Notifications</text>
+      <text class="tb" x="230" y="220" text-anchor="middle">Implementation Engineer configures these</text>
+      <text class="t" x="610" y="130" text-anchor="middle">FDE-built service</text>
+      <text class="ts" x="610" y="154" text-anchor="middle">config not enough</text>
+      <text class="tr" x="610" y="80" text-anchor="middle">FDE builds new</text>
+    </svg></div>
+    <figcaption>Configure what exists first; build something new only when that is not enough.</figcaption>
+  </figure>
+  <h3>Configuration vs custom engineering</h3>
+  <p>Requirement: <i>“Managers must approve new customer records.”</i></p>
+  <div class="two">
+    <div><p><b>Implementation Engineer:</b> the product already has an approval workflow, so configure it.</p><div class="flow v"><span>Existing product</span><span>Approval workflow</span><span>Configure rules</span><span class="ok">Customer uses it</span></div></div>
+    <div><p><b>FDE:</b> the customer’s approval system is completely different from anything the product supports, so build a bridge.</p><div class="flow v"><span>Customer system</span><span>Custom API</span><span class="hl">FDE-built service</span><span class="ok">Company product</span></div></div>
+  </div>
+  <p><mark>Implementation Engineer → configure what already exists. FDE → build what is needed when existing capabilities are not enough.</mark></p>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="compare-all">
+  <h2>All seven roles at a glance</h2>
+  <p>Here is everything from this note in one place. Keep it handy: these titles come up constantly in job posts and interviews.</p>
+  <div class="tbl"><table>
+    <tr><th>Role</th><th>Starts from</th><th>Main question</th><th>Main output</th><th>When</th></tr>
+    <tr><td><b>Software Engineer</b></td><td>The product</td><td>How do we make the product better for many users?</td><td>Reusable product features and fixes</td><td>All the time, internally</td></tr>
+    <tr><td><b>AI Engineer</b></td><td>The AI capability</td><td>How do we build an AI system that works reliably?</td><td>Models, AI pipelines, AI APIs</td><td>Product build phase</td></tr>
+    <tr><td><b>Applied AI Engineer</b></td><td>A real-world problem</td><td>How do we build an AI app that solves it?</td><td>A working AI app in a controlled environment</td><td>Product / solution build</td></tr>
+    <tr><td><b>Solutions Engineer</b></td><td>A prospective buyer</td><td>Can our product solve their problem?</td><td>Discovery, demos, PoCs</td><td>Before the sale</td></tr>
+    <tr><td><b>Consultant</b></td><td>A business problem</td><td>What is the best advice for this customer?</td><td>Recommendations, roadmaps, plans</td><td>Planning stage</td></tr>
+    <tr><td><b>Implementation Engineer</b></td><td>A purchased product</td><td>How do we set up our product correctly for them?</td><td>A configured, working product</td><td>After the sale</td></tr>
+    <tr><td><b>FDE</b></td><td>One customer’s real problem</td><td>How do we make our technology work in this customer’s environment?</td><td>Custom integrations and production solutions</td><td>After the sale, end to end</td></tr>
+  </table></div>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>SWE</h4><p>Builds the product.</p></div>
+    <div class="card t2 tilt-b"><h4>AI / Applied AI</h4><p>Builds the AI brain or AI app.</p></div>
+    <div class="card t3 tilt-a"><h4>Solutions Eng.</h4><p>“Here is how we can solve it.”</p></div>
+    <div class="card t7 tilt-b"><h4>Consultant</h4><p>“Here is what you should do.”</p></div>
+    <div class="card t8 tilt-a"><h4>Implementation</h4><p>“Let’s configure what exists.”</p></div>
+    <div class="card t5 tilt-b"><h4>FDE</h4><p>“Let’s build it, deploy it and make it work here.”</p></div>
+  </div>
+  <div class="sticky warn"><strong>Common mix-up</strong> An FDE is not a salesperson and not just an advisor. If a role never writes or ships production code, it is probably closer to Solutions Engineer or Consultant than to FDE.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Forward Deployed Engineer (FDE)</dt><dd>An engineer who works close to the customer to understand their problems and build technical solutions that work in the customer’s real environment.</dd></div>
+    <div><dt>Forward deployed</dt><dd>Borrowed from the military: placed near the “front line”. In tech it means closely connected to the customer’s real problems, not necessarily sitting in their office.</dd></div>
+    <div><dt>Product-facing engineer</dt><dd>An engineer who builds and improves the company’s core product so it works for many customers.</dd></div>
+    <div><dt>System integration</dt><dd>Connecting a customer’s existing applications, APIs and data with a company’s product so they exchange data correctly. One of the most common kinds of FDE work.</dd></div>
+    <div><dt>Iteration</dt><dd>The repeating cycle of build, deploy, get feedback and improve, used until a solution truly works for the customer.</dd></div>
+    <div><dt>Solutions Engineer (SE)</dt><dd>A technical pre-sales role that runs discovery, demos and proofs of concept to show a prospective customer that the product can solve their problem.</dd></div>
+    <div><dt>Pre-sales</dt><dd>All activities that happen before a customer buys a product, such as discovery, demos, PoCs and evaluation.</dd></div>
+    <div><dt>Proof of Concept (PoC)</dt><dd>A small, quick implementation on sample data that shows a technical approach can work. It is a rough draft, not the final product.</dd></div>
+    <div><dt>Implementation Engineer</dt><dd>A role that sets up, configures and connects an existing product for a customer using the features and options the product already has.</dd></div>
+    <div><dt>Applied AI Engineer</dt><dd>An engineer who builds AI-powered applications (testing models, building RAG pipelines, designing prompts and agents) that work accurately in a controlled environment.</dd></div>
+    <div><dt>Consultant</dt><dd>An advisor who studies a customer’s problem and delivers recommendations, strategy and implementation plans, but usually does not build the solution.</dd></div>
+    <div><dt>Glue code</dt><dd>Code an FDE writes to connect existing pieces, such as passing customer data into an AI model’s API and returning its result to the customer’s application.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What does “forward deployed” mean for an engineer?</p>
+      <ol><li>They must work from the customer’s office every day</li><li>They work only on the company’s newest product</li><li>They work closely with the customer’s real-world technical problems</li><li>They travel to sell the product</li></ol>
+      <p class="why">It is about closeness to the customer’s problems, not physical location.</p></div>
+    <div class="q" data-answer="1"><p>Why can’t the hospital in the example just install the AI product and start using it?</p>
+      <ol><li>It has its own databases, legacy systems, data formats, security and compliance rules</li><li>The AI product is not powerful enough</li><li>Hospitals are not allowed to use AI</li><li>The product has no API</li></ol>
+      <p class="why">The product is fine; the customer’s unique environment is what needs engineering work.</p></div>
+    <div class="q" data-answer="4"><p>A customer says “Stop fraudulent sign-ups, but keep registration fast.” Which is the best FDE translation?</p>
+      <ol><li>“Buy a bigger server.”</li><li>“Retrain the AI model from scratch.”</li><li>“Ask users to verify by post.”</li><li>“Add a fast fraud-detection step before saving a new user.”</li></ol>
+      <p class="why">Stage 2 turns the business request into a concrete technical change that meets both needs.</p></div>
+    <div class="q" data-answer="2"><p>An app works normally but fails only when connected to the customer’s internal system. Who is best placed to debug it, and why?</p>
+      <ol><li>A Software Engineer, because the product must be broken</li><li>An FDE, because they understand both sides of the integration</li><li>A Consultant, because they write the roadmap</li><li>A Solutions Engineer, because they ran the demo</li></ol>
+      <p class="why">Integration bugs often come from customer-specific data, auth, network or formats, which the FDE knows.</p></div>
+    <div class="q" data-answer="3"><p>Which statement best separates an AI Engineer from an FDE?</p>
+      <ol><li>Only the FDE writes code</li><li>Only the AI Engineer talks to customers</li><li>The AI Engineer builds the model; the FDE applies an existing model to a customer’s environment</li><li>They are the same job</li></ol>
+      <p class="why">Development loop vs integration loop: one builds the brain, the other gives it a job.</p></div>
+    <div class="q" data-answer="1"><p>Before the sale, a technical person runs discovery, demos the product and builds a PoC on 10 sample files. What is their role?</p>
+      <ol><li>Solutions Engineer</li><li>FDE</li><li>Implementation Engineer</li><li>Product engineer</li></ol>
+      <p class="why">Pre-sales discovery, demos and PoCs are the Solutions Engineer’s core work.</p></div>
+    <div class="q" data-answer="4"><p>The product already has an approval workflow and the customer only needs rules set up. Who handles it?</p>
+      <ol><li>An FDE, by building a new service</li><li>A Consultant, by writing a roadmap</li><li>An AI Engineer, by training a model</li><li>An Implementation Engineer, by configuring the existing feature</li></ol>
+      <p class="why">Configure what already exists; the FDE steps in only when existing capabilities are not enough.</p></div>
+    <div class="q" data-answer="2"><p>An FDE writes the same data-cleaning script for every client. What should happen next?</p>
+      <ol><li>Keep writing it; that is the job</li><li>Tell the software engineers, so it can become a core product feature</li><li>Ask the consultant to recommend a new roadmap</li><li>Stop cleaning data</li></ol>
+      <p class="why">Field feedback to the product team turns repeated custom work into a reusable feature.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A <b>Forward Deployed Engineer</b> takes a company’s technology to the <b>front line</b> and does the hands-on engineering to make it <b>work in one customer’s real environment</b>, while others build the product (SWE, AI engineers), sell it (Solutions Engineers), advise (Consultants) or configure it (Implementation Engineers).</p>
+  <p>Next up: <b>FDE Responsibilities</b>, where you follow one FDE through ten stages of a real project, from the first customer conversation to proven business value.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LangChain Fundamentals · LangChain | AIFDE Notes</title>
+<meta name="description" content="Why raw provider SDKs get messy, and how LangChain gives you one interface for every model plus building blocks: chat models, messages, prompt templates, output parsers, LCEL chains, retrievers, tools and the wider ecosystem.">
+<meta name="keywords" content="LangChain, init_chat_model, prompt templates, output parsers, LCEL chains, messages, tools, LangGraph &amp; LangSmith">
+<meta name="date" content="2026-10-08">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="langchain/langchain-fundamentals">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>LangChain Fundamentals</h1>
+  <p class="byline">Write one piece of code that works with any LLM provider, and snap together prompts, models, parsers and chains like building blocks.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>One piece of code for any LLM?</h2>
+  <div class="story"><b class="lbl">The phone charger abroad</b>You fly from Bengaluru to London, then to Tokyo. Your phone charger is the same, but every country has a different wall socket. You don’t buy a new phone for each trip, you carry a <b>universal travel adapter</b>. <mark>LangChain is that adapter: your app stays the same, and LangChain handles each AI provider’s “socket”.</mark></div>
+  <p>That is the problem this note solves: <b>what if one piece of code could work with any LLM provider?</b></p>
+  <p>To see why LangChain is useful, we will first call two LLMs the “raw” way, with each company’s own official library. Then we will feel the pain, and fix it with LangChain.</p>
+  <div class="flow"><span>Raw SDK calls</span><span class="bad">the problem</span><span class="ok">LangChain</span><span>components</span><span>ecosystem</span><span>your own project</span></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="sdk-calls">
+  <h2>Calling LLMs with their official SDKs</h2>
+  <p>The simplest way to use an LLM from Python is the company’s own <b>SDK</b>. An <mark>SDK (Software Development Kit) is a company’s official Python library for using its service</mark>. OpenAI gives us <code>openai</code>; Google gives us <code>google-genai</code>.</p>
+
+  <h3>OpenAI SDK: the basic template</h3>
+  <p>This is the basic template from the official OpenAI documentation (developers.openai.com → Libraries → Python): install the SDK, create a client, and send a request with the <b>Responses API</b>. We add two lines to load our API key from a <code>.env</code> file.</p>
+  <pre><code class="language-bash">pip install openai python-dotenv</code></pre>
+  <div class="codebox"><span class="cap">openai_basic.py</span><pre><code class="language-python">from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()  # reads OPENAI_API_KEY from the .env file
+
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-5",
+    input="Write a one-sentence bedtime story about a unicorn.",
+)
+
+print(response.output_text)</code></pre></div>
+  <pre><code class="language-bash">python openai_basic.py</code></pre>
+  <pre class="out"><code>Under a silver moon, a little unicorn named Luna wished every child sweet dreams.</code></pre>
+  <div class="tbl"><table>
+    <tr><th style="width:38%">Line</th><th>What it does</th></tr>
+    <tr><td><code>from openai import OpenAI</code></td><td>Imports the OpenAI client class from the SDK.</td></tr>
+    <tr><td><code>load_dotenv()</code></td><td>Loads <code>OPENAI_API_KEY</code> from <code>.env</code> into the environment.</td></tr>
+    <tr><td><code>client = OpenAI()</code></td><td>Creates a client. It finds the API key automatically.</td></tr>
+    <tr><td><code>client.responses.create(...)</code></td><td>Sends the request. <code>model</code> picks the GPT model, <code>input</code> is our prompt.</td></tr>
+    <tr><td><code>response.output_text</code></td><td>The final text answer from the model.</td></tr>
+  </table></div>
+
+  <h3>Gemini SDK: the basic template</h3>
+  <p>Now the same job with Google’s Gemini, using the official <code>google-genai</code> SDK and an API key from Google AI Studio. This time we also ask the user for the question.</p>
+  <pre><code class="language-bash">pip install google-genai python-dotenv</code></pre>
+  <div class="codebox"><span class="cap">gemini_basic.py</span><pre><code class="language-python">import os
+from dotenv import load_dotenv
+from google import genai
+
+load_dotenv()
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+question = input("Ask Gemini: ")
+
+response = client.models.generate_content(
+    model="gemini-3.6-flash",
+    contents=question,
+)
+
+print(response.text)</code></pre></div>
+  <pre><code class="language-bash">python gemini_basic.py</code></pre>
+  <pre class="out"><code>Ask Gemini: What is the capital of Karnataka?
+The capital of Karnataka is Bengaluru (formerly Bangalore).</code></pre>
+  <div class="tbl"><table>
+    <tr><th style="width:38%">Line</th><th>What it does</th></tr>
+    <tr><td><code>from google import genai</code></td><td>Imports Google’s Gen AI SDK.</td></tr>
+    <tr><td><code>load_dotenv()</code></td><td>Loads <code>GEMINI_API_KEY</code> from <code>.env</code>.</td></tr>
+    <tr><td><code>genai.Client(api_key=...)</code></td><td>Creates a Gemini client with your key. (With no argument it also looks for <code>GEMINI_API_KEY</code> on its own.)</td></tr>
+    <tr><td><code>client.models.generate_content(...)</code></td><td>Sends the request. <code>model</code> picks the Gemini model, <code>contents</code> is our prompt.</td></tr>
+    <tr><td><code>response.text</code></td><td>The final text answer from the model.</td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>Model names change often</strong> Strings like <code>"gpt-5"</code> or <code>"gemini-3.6-flash"</code> are examples. Providers release and retire models every few months, so always copy the current name from the provider’s model list.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="sdk-problem">
+  <h2>The problem with raw SDK calls</h2>
+  <p>Both programs work. But put them side by side and a problem appears: they do <b>exactly the same job</b> (send a prompt, print the answer), yet almost every line is different.</p>
+  <div class="tbl"><table>
+    <tr><th></th><th>OpenAI SDK</th><th>Gemini SDK</th></tr>
+    <tr><td><b>Install</b></td><td><code>pip install openai</code></td><td><code>pip install google-genai</code></td></tr>
+    <tr><td><b>Import</b></td><td><code>from openai import OpenAI</code></td><td><code>from google import genai</code></td></tr>
+    <tr><td><b>Client</b></td><td><code>OpenAI()</code></td><td><code>genai.Client()</code></td></tr>
+    <tr><td><b>Send a request</b></td><td><code>client.responses.create(...)</code></td><td><code>client.models.generate_content(...)</code></td></tr>
+    <tr><td><b>Prompt argument</b></td><td><code>input=</code></td><td><code>contents=</code></td></tr>
+    <tr><td><b>Read the answer</b></td><td><code>response.output_text</code></td><td><code>response.text</code></td></tr>
+    <tr><td><b>API key name</b></td><td><code>OPENAI_API_KEY</code></td><td><code>GEMINI_API_KEY</code></td></tr>
+  </table></div>
+  <p>Imagine your company built a chatbot with OpenAI, and the manager now says: <i>“Gemini is cheaper, let’s switch.”</i> You must <b>rewrite every model call</b> in the app. Add Claude next month and you learn a <b>third</b> library. <mark>Every provider has its own library, function names and response format.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Left: without LangChain, your app is wired separately to the openai, google-genai and anthropic SDKs. Right: with LangChain, your app talks to LangChain, which connects to OpenAI, Gemini and Claude.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="120" width="100" height="60" rx="12"/>
+        <rect class="box f-card" x="200" y="45" width="140" height="50" rx="10"/>
+        <rect class="box f-card" x="200" y="125" width="140" height="50" rx="10"/>
+        <rect class="box f-card" x="200" y="205" width="140" height="50" rx="10"/>
+        <path class="ln" d="M122 140 C 160 120, 170 80, 196 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M122 150 L 196 150" marker-end="url(#ah)"/>
+        <path class="ln" d="M122 160 C 160 180, 170 220, 196 228" marker-end="url(#ah)"/>
+        <path class="ln dash" d="M360 40 L 360 280"/>
+        <rect class="box f-blue" x="380" y="120" width="90" height="60" rx="12"/>
+        <rect class="box f-purple" x="495" y="105" width="90" height="90" rx="12"/>
+        <rect class="box f-card" x="615" y="45" width="95" height="50" rx="10"/>
+        <rect class="box f-card" x="615" y="125" width="95" height="50" rx="10"/>
+        <rect class="box f-card" x="615" y="205" width="95" height="50" rx="10"/>
+        <path class="lr" d="M472 150 L 491 150" marker-end="url(#ahr)"/>
+        <path class="lr" d="M587 130 C 600 110, 600 80, 611 72" marker-end="url(#ahr)"/>
+        <path class="lr" d="M587 150 L 611 150" marker-end="url(#ahr)"/>
+        <path class="lr" d="M587 170 C 600 190, 600 220, 611 228" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="180" y="28" text-anchor="middle">Without LangChain</text>
+      <text class="tr" x="545" y="28" text-anchor="middle">With LangChain</text>
+      <text class="t" x="70" y="156" text-anchor="middle">Your app</text>
+      <text class="tm" x="270" y="75" text-anchor="middle">openai SDK</text>
+      <text class="tm" x="270" y="155" text-anchor="middle">google-genai</text>
+      <text class="tm" x="270" y="235" text-anchor="middle">anthropic SDK</text>
+      <text class="ts" x="180" y="288" text-anchor="middle">3 libraries, 3 styles of code</text>
+      <text class="t" x="425" y="156" text-anchor="middle">Your app</text>
+      <text class="t" x="540" y="156" text-anchor="middle">LangChain</text>
+      <text class="t" x="662" y="76" text-anchor="middle">OpenAI</text>
+      <text class="t" x="662" y="156" text-anchor="middle">Gemini</text>
+      <text class="t" x="662" y="236" text-anchor="middle">Claude</text>
+      <text class="ts" x="545" y="288" text-anchor="middle">1 interface, swap freely</text>
+    </svg></div>
+    <figcaption>Raw SDKs tie your code to one provider. A common layer lets you swap providers without rewriting the app.</figcaption>
+  </figure>
+  <h3>A real app needs much more than one call</h3>
+  <p>Switching providers is only the first problem. A real LLM application, like a support chatbot or a document assistant, also needs:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Reusable prompts</h4><p>The same prompt with different inputs, like a form with blanks.</p></div>
+    <div class="card t2 tilt-b"><h4>Easy model switching</h4><p>Try GPT today and Gemini tomorrow without rewriting the app.</p></div>
+    <div class="card t3 tilt-a"><h4>Connected steps</h4><p>Prompt → model → clean output → next step.</p></div>
+    <div class="card t4 tilt-b"><h4>Memory</h4><p>Remembering earlier messages in a conversation.</p></div>
+    <div class="card t5 tilt-a"><h4>Tools</h4><p>Letting the model search the web, call an API or use a calculator.</p></div>
+    <div class="card t8 tilt-b"><h4>Your own documents</h4><p>Answering questions from PDFs and company files.</p></div>
+  </div>
+  <p>With raw SDKs you write all of this <b>yourself</b>, separately for <b>every provider</b>. That is a lot of repeated work, and a lot of places for bugs.</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="what-is">
+  <h2>LangChain: the solution</h2>
+  <p>Developers kept writing the same plumbing code again and again, so a framework was created to provide it ready-made.</p>
+  <p><mark><b>LangChain</b> is an open-source framework for building applications powered by Large Language Models (LLMs).</mark> It does <b>not</b> create its own AI model. Instead, it helps your application connect with and work with different AI models and other components.</p>
+  <div class="grid">
+    <div class="card t5 tilt-a"><h4>One interface</h4><p>Work with different AI providers using the same LangChain style of code.</p></div>
+    <div class="card t1 tilt-b"><h4>Building blocks</h4><p>Ready components you combine into an app: models, prompts, tools, chains and more.</p></div>
+    <div class="card t2 tilt-a"><h4>Chains</h4><p>Connect multiple steps together so the output of one feeds the next.</p></div>
+  </div>
+  <h3>Why LLM apps need it</h3>
+  <p>An LLM on its own is a text-in, text-out brain. On its own it:</p>
+  <ul>
+    <li>forgets earlier messages (it is <b>stateless</b>),</li>
+    <li>doesn’t know your private data (PDFs, databases),</li>
+    <li>can’t use live tools (weather, calculator, search),</li>
+    <li>has a different API for every provider (Gemini, GPT, Claude),</li>
+    <li>and multi-step workflows get messy to code by hand.</li>
+  </ul>
+  <p><b>LangChain solves each of these with a ready-made component:</b></p>
+  <div class="tbl"><table>
+    <tr><th>Problem</th><th>LangChain solution</th></tr>
+    <tr><td>Different APIs for each provider</td><td><b>Models</b>: one standard interface</td></tr>
+    <tr><td>Hard-coded, repeated instructions</td><td><b>Prompts</b>: reusable templates</td></tr>
+    <tr><td>Messy multi-step workflows</td><td><b>Chains</b>: connect steps with <code>|</code></td></tr>
+    <tr><td>AI doesn’t know your data</td><td><b>Indexes / Retrievers</b>: connect your documents</td></tr>
+    <tr><td>AI forgets the conversation</td><td><b>Memory</b>: keeps past messages</td></tr>
+    <tr><td>AI can only produce text</td><td><b>Tools and Agents</b>: the AI decides and acts</td></tr>
+    <tr><td>Messy text output</td><td><b>Output Parsers</b>: clean, structured results</td></tr>
+  </table></div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="first-program">
+  <h2>Your first LangChain program: one interface, two models</h2>
+  <p>Let’s ask <b>the same question to both OpenAI and Gemini, with the same code</b>. Install LangChain and its connectors (called <i>integrations</i>) for the two providers:</p>
+  <pre><code class="language-bash">pip install langchain langchain-openai langchain-google-genai python-dotenv</code></pre>
+  <div class="codebox"><span class="cap">one_interface.py</span><pre><code class="language-python">from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+
+load_dotenv()  # OPENAI_API_KEY and GOOGLE_API_KEY from .env
+
+openai_model = init_chat_model("openai:gpt-4o")
+gemini_model = init_chat_model("google_genai:gemini-2.5-flash")
+
+question = "Explain what an API is in one sentence."
+
+print("OpenAI :", openai_model.invoke(question).text)
+print("Gemini :", gemini_model.invoke(question).text)</code></pre></div>
+  <pre class="out"><code>OpenAI : An API is a set of rules that lets one program use another’s data or services.
+Gemini : An API is a contract that lets different software systems talk to each other.</code></pre>
+  <div class="anatomy"><span class="a1">openai</span><span class="a7">:</span><span class="a2">gpt-4o</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Provider</b>: which integration to use (<code>openai</code>, <code>google_genai</code>, <code>anthropic</code>, <code>ollama</code>…).</p></div>
+    <div><span class="sw a2"></span><p><b>Model name</b>: the exact model at that provider.</p></div>
+  </div>
+  <ul>
+    <li><code>init_chat_model("openai:gpt-4o")</code> creates an OpenAI chat model; <code>"google_genai:gemini-2.5-flash"</code> creates a Gemini one.</li>
+    <li>Both are used in <b>exactly the same way</b>: <code>.invoke(question)</code> sends the question and <code>.text</code> gives the answer text.</li>
+    <li>To switch provider, you change <mark>only the model string</mark>. The “manager wants Gemini” problem is now a one-line change.</li>
+  </ul>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customers often have a mandated provider (an Azure OpenAI contract, a Vertex AI account, an on-prem Ollama box). Keep the model string in config or an environment variable, e.g. <code>init_chat_model(os.environ["CHAT_MODEL"])</code>, and the same code ships to every customer.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="workflow">
+  <h2>A basic LangChain workflow</h2>
+  <p>Suppose an employee asks your company assistant: <b>“What is the leave policy in my company?”</b> LangChain <mark>manages the flow between the components</mark>:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Five steps left to right: receive the question, prepare the prompt with instructions, get information from a PDF, database or website, send question plus information to the LLM, return the answer to the user">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="60" width="122" height="84" rx="12"/>
+        <rect class="box f-green" x="155" y="60" width="122" height="84" rx="12"/>
+        <rect class="box f-teal" x="300" y="60" width="122" height="84" rx="12"/>
+        <rect class="box f-purple" x="445" y="60" width="122" height="84" rx="12"/>
+        <rect class="box f-yellow" x="590" y="60" width="122" height="84" rx="12"/>
+        <path class="lr" d="M134 102 L 151 102" marker-end="url(#ahr)"/>
+        <path class="lr" d="M279 102 L 296 102" marker-end="url(#ahr)"/>
+        <path class="lr" d="M424 102 L 441 102" marker-end="url(#ahr)"/>
+        <path class="lr" d="M569 102 L 586 102" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="71" y="46" text-anchor="middle">1</text>
+      <text class="tr" x="216" y="46" text-anchor="middle">2</text>
+      <text class="tr" x="361" y="46" text-anchor="middle">3</text>
+      <text class="tr" x="506" y="46" text-anchor="middle">4</text>
+      <text class="tr" x="651" y="46" text-anchor="middle">5</text>
+      <text class="t" x="71" y="98" text-anchor="middle">Question</text>
+      <text class="ts" x="71" y="122" text-anchor="middle">leave policy?</text>
+      <text class="t" x="216" y="98" text-anchor="middle">Prompt</text>
+      <text class="ts" x="216" y="122" text-anchor="middle">+ instructions</text>
+      <text class="t" x="361" y="98" text-anchor="middle">Get info</text>
+      <text class="ts" x="361" y="122" text-anchor="middle">PDF · DB · web</text>
+      <text class="t" x="506" y="98" text-anchor="middle">LLM</text>
+      <text class="ts" x="506" y="122" text-anchor="middle">question + info</text>
+      <text class="t" x="651" y="98" text-anchor="middle">Answer</text>
+      <text class="ts" x="651" y="122" text-anchor="middle">back to user</text>
+      <text class="ts" x="360" y="180" text-anchor="middle">LangChain wires each step’s output into the next step’s input</text>
+    </svg></div>
+    <figcaption>The LLM is only one box. LangChain organises everything around it.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Receive the question</b>“What is the leave policy?”</div></li>
+    <li><span class="dot">2</span><div><b>Prepare the prompt</b>The question is combined with instructions for the LLM. <span class="tag">→ prompt template</span></div></li>
+    <li><span class="dot">3</span><div><b>Get information</b>The app may search a PDF, database, website or other source. <span class="tag">→ retriever</span></div></li>
+    <li><span class="dot">4</span><div><b>Send it to the LLM</b>Question + relevant information go to the model. <span class="tag">→ chat model</span></div></li>
+    <li><span class="dot">5</span><div><b>Generate the final answer</b>The LLM produces a clear answer, which goes back to the user. <span class="tag">→ output parser</span></div></li>
+  </ol>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="sdk-vs-langchain">
+  <h2>Raw SDK calls vs LangChain</h2>
+  <p>We have now built the same kind of program both ways. Let’s compare them properly.</p>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4>Direct SDK approach</h4><p>Your code talks straight to one provider using its own library.</p><ul><li><b>Simple</b>: one package, a few lines, done.</li><li><b>Fast and light</b>: no extra layer, fewest dependencies.</li><li><b>Newest features first</b>: new provider features appear in their own SDK on day one.</li><li><b>But</b> every provider needs different code, and everything beyond one call (prompts, memory, tools, steps) is hand-written.</li></ul></div>
+    <div class="card t5 tilt-b"><h4>What LangChain adds</h4><p>It keeps the model call but adds ready-made blocks around it.</p><ul><li><b>One standard interface</b> for all providers (<code>.invoke()</code>, <code>.text</code>).</li><li><b>Prompt templates</b> reused with different inputs.</li><li><b>Output parsers</b> for clean text or structured data.</li><li><b>Chains</b> that connect steps with the <code>|</code> pipe.</li><li>Ready support for <b>memory, tools, documents and agents</b> as the app grows.</li></ul></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Choose…</th><th>When…</th></tr>
+    <tr><td>The raw SDK</td><td>One provider, one simple call, or you need a brand-new provider feature today.</td></tr>
+    <tr><td>LangChain</td><td>Multiple providers, multi-step flows, templates, tools, retrieval or agents.</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> It is not all-or-nothing. A common production pattern is LangChain for the pipeline (prompts, retrieval, parsing) with a raw SDK call in the one place you need a provider-only feature. Pick the simpler tool per job, and be ready to explain the choice to the customer’s engineers.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="components">
+  <h2>LangChain components: the building blocks</h2>
+  <p>LangChain gives you a small kit of <b>components</b>. <mark>Each component does one job, and you join them like LEGO bricks to make an LLM app.</mark> There are seven you must know:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Seven LEGO bricks: bottom row Models, Prompts, Output parsers, Messages; top row Chains, Retrievers, Tools">
+      <g class="rough">
+        <rect class="box f-purple" x="105" y="62" width="160" height="72" rx="6"/>
+        <rect class="box f-teal" x="280" y="62" width="160" height="72" rx="6"/>
+        <rect class="box f-pink" x="455" y="62" width="160" height="72" rx="6"/>
+        <rect class="box f-purple" x="135" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-purple" x="205" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-teal" x="310" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-teal" x="380" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-pink" x="485" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-pink" x="555" y="48" width="30" height="14" rx="3"/>
+        <rect class="box f-blue" x="20" y="150" width="160" height="72" rx="6"/>
+        <rect class="box f-green" x="195" y="150" width="160" height="72" rx="6"/>
+        <rect class="box f-orange" x="370" y="150" width="160" height="72" rx="6"/>
+        <rect class="box f-yellow" x="545" y="150" width="160" height="72" rx="6"/>
+      </g>
+      <text class="th" x="185" y="96" text-anchor="middle">Chains</text>
+      <text class="ts" x="185" y="120" text-anchor="middle">join the steps</text>
+      <text class="th" x="360" y="96" text-anchor="middle">Retrievers</text>
+      <text class="ts" x="360" y="120" text-anchor="middle">find your data</text>
+      <text class="th" x="535" y="96" text-anchor="middle">Tools</text>
+      <text class="ts" x="535" y="120" text-anchor="middle">act in the world</text>
+      <text class="th" x="100" y="184" text-anchor="middle">Models</text>
+      <text class="ts" x="100" y="208" text-anchor="middle">talk to the LLM</text>
+      <text class="th" x="275" y="184" text-anchor="middle">Prompts</text>
+      <text class="ts" x="275" y="208" text-anchor="middle">reusable inputs</text>
+      <text class="th" x="450" y="184" text-anchor="middle">Parsers</text>
+      <text class="ts" x="450" y="208" text-anchor="middle">clean the reply</text>
+      <text class="th" x="625" y="184" text-anchor="middle">Messages</text>
+      <text class="ts" x="625" y="208" text-anchor="middle">who said what</text>
+      <text class="tr" x="360" y="26" text-anchor="middle">snap the blocks together to build an app</text>
+    </svg></div>
+    <figcaption>The bottom row handles a single model call; the top row connects that call to steps, data and actions.</figcaption>
+  </figure>
+  <p>The next sections take each brick in turn, with code. All imports come from <code>langchain_core</code> (the shared basics) or a provider integration such as <code>langchain_google_genai</code>.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="models">
+  <h2>Models</h2>
+  <p>The <b>model</b> component communicates with the AI model. <mark>Your application never talks to Gemini, GPT or Claude directly. It talks to LangChain’s model interface, and LangChain handles the provider details.</mark> LangChain has three kinds of models:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Three model types: a chat model takes a list of messages and returns an AIMessage; an LLM text model takes a string and returns a string; an embedding model takes text and returns a list of numbers">
+      <g class="rough">
+        <rect class="box f-card" x="30" y="20" width="180" height="40" rx="10"/>
+        <rect class="box f-blue" x="30" y="95" width="180" height="60" rx="12"/>
+        <rect class="box f-card" x="30" y="190" width="180" height="40" rx="10"/>
+        <rect class="box f-card" x="270" y="20" width="180" height="40" rx="10"/>
+        <rect class="box f-grey" x="270" y="95" width="180" height="60" rx="12"/>
+        <rect class="box f-card" x="270" y="190" width="180" height="40" rx="10"/>
+        <rect class="box f-card" x="510" y="20" width="180" height="40" rx="10"/>
+        <rect class="box f-teal" x="510" y="95" width="180" height="60" rx="12"/>
+        <rect class="box f-card" x="510" y="190" width="180" height="40" rx="10"/>
+        <path class="ln" d="M120 62 L 120 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M120 157 L 120 185" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 62 L 360 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 157 L 360 185" marker-end="url(#ah)"/>
+        <path class="ln" d="M600 62 L 600 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M600 157 L 600 185" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="120" y="45" text-anchor="middle">[messages]</text>
+      <text class="th" x="120" y="134" text-anchor="middle">Chat model</text>
+      <text class="tm" x="120" y="215" text-anchor="middle">AIMessage</text>
+      <text class="tm" x="360" y="45" text-anchor="middle">"a string"</text>
+      <text class="th" x="360" y="134" text-anchor="middle">LLM (text)</text>
+      <text class="tm" x="360" y="215" text-anchor="middle">"a string"</text>
+      <text class="tm" x="600" y="45" text-anchor="middle">"some text"</text>
+      <text class="th" x="600" y="134" text-anchor="middle">Embedding</text>
+      <text class="tm" x="600" y="215" text-anchor="middle">[0.12, -0.45, …]</text>
+    </svg></div>
+    <figcaption>Chat models are what you will use 95% of the time; embeddings power search by meaning.</figcaption>
+  </figure>
+
+  <h3>1. Chat models</h3>
+  <p>A <b>chat model</b> is an AI you talk to like a conversation. Instead of one plain sentence, you send it a <b>list of messages</b>, and each message says <b>who is speaking</b>:</p>
+  <ul>
+    <li><b>System</b>: the rules for the AI (“You are a friendly teacher”).</li>
+    <li><b>Human</b>: what the user says.</li>
+    <li><b>AI</b>: what the model replied earlier.</li>
+  </ul>
+  <p>Because the model knows who said what, it can follow the conversation and understand follow-ups like “give me an example”.</p>
+  <pre><code class="language-python">from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+
+response = chat_model.invoke([
+    SystemMessage(content="You are a friendly teacher."),
+    HumanMessage(content="What is a variable?"),
+])
+print(response.text)     # response is an AIMessage</code></pre>
+
+  <h3>2. LLMs (text-completion models)</h3>
+  <p>The older, simpler style. They take <b>one string</b> and return <b>one string</b>, with no roles and no message list.</p>
+  <pre><code class="language-python">from langchain_openai import OpenAI       # the text-completion class, not ChatOpenAI
+
+llm = OpenAI(model="gpt-3.5-turbo-instruct")
+llm.invoke("Hi")            # → 'Hello! How can I help you today?'  (a plain str)
+
+chat_model.invoke([HumanMessage(content="Hi")])   # chat model, for contrast → AIMessage</code></pre>
+  <div class="sticky warn l"><strong>Use chat models for new work</strong> Almost every modern model is served as a chat model. The plain-text LLM classes still exist for a few older completion models, but you will rarely pick one.</div>
+
+  <h3>3. Embedding models</h3>
+  <p>An <b>embedding model</b> takes text and returns a <b>vector</b>: a list of numbers that captures its meaning. Texts with similar meaning get similar vectors, which is how search by meaning and retrievers work.</p>
+  <pre><code class="language-python">from langchain_openai import OpenAIEmbeddings
+
+emb = OpenAIEmbeddings(model="text-embedding-3-small")
+emb.embed_query("Hi")       # → [0.12, -0.45, ...]  (1,536 numbers)</code></pre>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="messages">
+  <h2>Messages</h2>
+  <p>A <b>message</b> is one piece of a conversation. Each message has two things: a <b>role</b> (who is speaking) and <b>content</b> (what they said).</p>
+  <div class="tbl"><table>
+    <tr><th>Type</th><th>Class</th><th>Meaning</th></tr>
+    <tr><td>System</td><td><code>SystemMessage</code></td><td>Rules for the AI (“You are a teacher”)</td></tr>
+    <tr><td>Human</td><td><code>HumanMessage</code></td><td>What the user says</td></tr>
+    <tr><td>AI</td><td><code>AIMessage</code></td><td>What the model replied</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="A conversation as messages: a system message on top, then a human question, an AI answer, and a human follow-up">
+      <g class="rough">
+        <rect class="box f-grey" x="110" y="15" width="500" height="44" rx="10"/>
+        <rect class="box f-blue" x="370" y="75" width="330" height="44" rx="18"/>
+        <rect class="box f-green" x="20" y="135" width="490" height="44" rx="18"/>
+        <rect class="box f-blue" x="370" y="195" width="330" height="44" rx="18"/>
+      </g>
+      <text class="t" x="360" y="43" text-anchor="middle">SYSTEM · You are a friendly teacher.</text>
+      <text class="t" x="535" y="103" text-anchor="middle">HUMAN · What is a variable?</text>
+      <text class="t" x="265" y="163" text-anchor="middle">AI · A variable is a named box that stores a value.</text>
+      <text class="t" x="535" y="223" text-anchor="middle">HUMAN · Give me an example.</text>
+      <text class="ts" x="360" y="275" text-anchor="middle">the model reads the whole list, so “an example” means an example of a variable</text>
+    </svg></div>
+    <figcaption>A chat model is stateless: the history only exists because you send the whole list every time.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">messages.py</span><pre><code class="language-python">from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+messages = [
+    SystemMessage(content="You are a friendly teacher."),
+    HumanMessage(content="What is a variable?"),
+    AIMessage(content="A variable is a named box that stores a value."),
+    HumanMessage(content="Give me an example."),
+]
+
+chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+
+response = chat_model.invoke(messages)
+print(response.text)     # the answer text
+print(type(response))    # &lt;class 'langchain_core.messages.ai.AIMessage'&gt;</code></pre></div>
+  <h3>Shortcut: tuples</h3>
+  <p>You can write messages as simple <code>(role, content)</code> pairs instead of classes:</p>
+  <pre><code class="language-python">messages = [
+    ("system", "You are a friendly teacher."),
+    ("human", "What is a variable?"),
+]
+response = chat_model.invoke(messages)</code></pre>
+  <div class="sticky info"><strong><code>.text</code> or <code>.content</code>?</strong> <code>response.content</code> is the raw content, which some providers return as a <b>list of content blocks</b> (text, reasoning, images) rather than a plain string. <code>response.text</code> always gives you just the text as a string, so prefer it when you want to print or store the answer.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="prompts">
+  <h2>Prompts and prompt templates</h2>
+  <p>A <b>prompt</b> is the instruction or input you give the AI. “Explain Python” is a prompt. Hard-coding a new sentence every time is messy, so LangChain lets you build <mark>reusable, dynamic prompts called <b>prompt templates</b>: a prompt with <code>{blanks}</code> that you fill in later</mark>.</p>
+  <div class="story"><b class="lbl">The railway reservation form</b>The form is printed once: <i>Name ____ From ____ To ____</i>. Lakhs of passengers fill in their own blanks. A prompt template is that printed form, and each <code>invoke</code> is one passenger filling it in.</div>
+  <div class="anatomy"><span class="a7">Explain </span><span class="a1">{topic}</span><span class="a7"> in a </span><span class="a2">{tone}</span><span class="a7"> tone.</span></div>
+  <div class="legend">
+    <div><span class="sw a7"></span><p>Fixed text, written once.</p></div>
+    <div><span class="sw a1"></span><p><code>{topic}</code> = <code>"Python"</code></p></div>
+    <div><span class="sw a2"></span><p><code>{tone}</code> = <code>"simple"</code> → “Explain Python in a simple tone.”</p></div>
+  </div>
+
+  <h3>1. PromptTemplate (plain-text prompt)</h3>
+  <p>Produces a <b>single string</b>. It matches the text-style LLM.</p>
+  <pre><code class="language-python">from langchain_core.prompts import PromptTemplate
+
+prompt = PromptTemplate.from_template("Explain {topic} in a {tone} tone.")
+
+filled = prompt.invoke({"topic": "Python", "tone": "simple"})
+print(filled.to_string())   # Explain Python in a simple tone.</code></pre>
+
+  <h3>2. ChatPromptTemplate (message-based prompt)</h3>
+  <p>Produces a <b>list of messages</b> with roles. <mark>This is the one to use with chat models</mark>, since they expect system, human and AI messages.</p>
+  <pre><code class="language-python">from langchain_core.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a {role}."),
+    ("human", "Explain {topic} in a {tone} tone."),
+])
+
+messages = prompt.invoke({
+    "role": "friendly teacher",
+    "topic": "Python",
+    "tone": "simple",
+})
+# → [SystemMessage("You are a friendly teacher."),
+#    HumanMessage("Explain Python in a simple tone.")]</code></pre>
+  <p>For a single human message there is a shortcut: <code>ChatPromptTemplate.from_template("Explain {topic} in one line.")</code>.</p>
+
+  <h3>3. MessagesPlaceholder (for conversation history)</h3>
+  <p>A normal <code>{input}</code> holds <b>one piece of text</b>. A <code>MessagesPlaceholder</code> is a reserved spot that holds a <b>list of messages</b>, so the past chat can be sent to the model along with the new question. This is how the AI “remembers”.</p>
+  <pre><code class="language-python">from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant."),
+    MessagesPlaceholder("history"),     # old messages go here
+    ("human", "{input}"),
+])
+
+prompt.invoke({
+    "history": [("human", "Hi, I'm Asha."), ("ai", "Hello Asha!")],
+    "input": "What's my name?",
+})</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Left: a template with a system line, a MessagesPlaceholder called history, and a human input line. Right: the filled prompt where history expanded into two earlier messages">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="30" width="290" height="46" rx="10"/>
+        <rect class="box f-yellow dash" x="20" y="96" width="290" height="60" rx="10"/>
+        <rect class="box f-blue" x="20" y="176" width="290" height="46" rx="10"/>
+        <path class="lr" d="M325 125 L 400 125" marker-end="url(#ahr)"/>
+        <rect class="box f-grey" x="420" y="20" width="280" height="38" rx="10"/>
+        <rect class="box f-none dash" x="410" y="70" width="300" height="104" rx="12"/>
+        <rect class="box f-blue" x="420" y="80" width="280" height="38" rx="10"/>
+        <rect class="box f-green" x="420" y="126" width="280" height="38" rx="10"/>
+        <rect class="box f-blue" x="420" y="206" width="280" height="38" rx="10"/>
+      </g>
+      <text class="tr" x="165" y="20" text-anchor="middle">template</text>
+      <text class="t" x="165" y="59" text-anchor="middle">system · helpful assistant</text>
+      <text class="tm" x="165" y="131" text-anchor="middle">MessagesPlaceholder</text>
+      <text class="ts" x="165" y="148" text-anchor="middle">"history"</text>
+      <text class="t" x="165" y="205" text-anchor="middle">human · {input}</text>
+      <text class="tr" x="362" y="112" text-anchor="middle">invoke</text>
+      <text class="t" x="560" y="44" text-anchor="middle">system · helpful assistant</text>
+      <text class="t" x="560" y="104" text-anchor="middle">human · Hi, I’m Asha.</text>
+      <text class="t" x="560" y="150" text-anchor="middle">ai · Hello Asha!</text>
+      <text class="t" x="560" y="230" text-anchor="middle">human · What’s my name?</text>
+      <text class="ts" x="560" y="195" text-anchor="middle">↑ history expanded here</text>
+    </svg></div>
+    <figcaption>One placeholder slot becomes as many past messages as you pass in.</figcaption>
+  </figure>
+  <div class="sticky warn l"><strong>Literal braces</strong> In a template, <code>{</code> and <code>}</code> mean “a blank”. If your prompt contains real JSON like <code>{"name": "..."}</code>, double the braces: <code>{{"name": "..."}}</code>, or LangChain will complain about a missing variable.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="parsers">
+  <h2>Output parsers and structured output</h2>
+  <p>A chat model returns an <code>AIMessage</code> object, not clean text. <mark>An <b>output parser</b> converts the model’s raw output into the format you actually need</mark>: a plain string, a list, JSON, or a Python object.</p>
+  <div class="flow"><span class="op">AIMessage</span><span class="hl">output parser</span><span class="ok">str · dict · object</span></div>
+
+  <h3>1. StrOutputParser: message → plain string</h3>
+  <p>Takes the <code>AIMessage</code> and returns just the text as a <code>str</code>. This is the most used parser. Here we run each step by hand so you can see what happens:</p>
+  <pre><code class="language-python">from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+prompt = ChatPromptTemplate.from_template("Explain {topic} in one line.")
+
+formatted_prompt = prompt.invoke({"topic": "Python"})   # 1. create the prompt
+response = chat_model.invoke(formatted_prompt)          # 2. send it to Gemini
+parser = StrOutputParser()
+result = parser.invoke(response)                        # 3. AIMessage → str
+print(result)</code></pre>
+  <pre class="out"><code>Python is a simple, readable, general-purpose programming language.</code></pre>
+
+  <h3>2. JsonOutputParser: text → Python dict</h3>
+  <p>Turns the model’s JSON reply into a Python <b>dictionary</b>. Its <code>get_format_instructions()</code> gives you text to paste into the prompt, telling the model to answer in JSON.</p>
+  <pre><code class="language-python">from langchain_core.output_parsers import JsonOutputParser
+
+parser = JsonOutputParser()
+prompt = ChatPromptTemplate.from_template(
+    "Give name and age of a famous scientist.\n{format_instructions}"
+)
+
+formatted_prompt = prompt.invoke({
+    "format_instructions": parser.get_format_instructions()
+})
+response = chat_model.invoke(formatted_prompt)
+result = parser.invoke(response)      # → {'name': 'Albert Einstein', 'age': 76}
+print(result["name"])</code></pre>
+
+  <h3>3. Structured output with Pydantic (best for real apps)</h3>
+  <p>Often we don’t want a long, free-form answer. We want a <b>fixed format</b>. Think of it like a <b>form</b>: you give the model a form with blanks (name, age, field) and it must fill in each blank. You describe the form as a Pydantic class, and you get back a clean Python <b>object</b>.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Make the form</b>A Pydantic class lists each field, its type and a description.</div></li>
+    <li><span class="dot">2</span><div><b>Give the form to the model</b><code>with_structured_output(Person)</code> wraps the model.</div></li>
+    <li><span class="dot">3</span><div><b>Ask your question</b>You get a <code>Person</code> object back, not text.</div></li>
+  </ol>
+  <div class="codebox"><span class="cap">structured.py</span><pre><code class="language-python">from pydantic import BaseModel, Field
+
+# Step 1: make the form
+class Person(BaseModel):
+    name: str = Field(description="Full name")
+    age: int = Field(description="Age in years")
+    field: str = Field(description="Area of work")
+
+# Step 2: give the form to the model
+structured_model = chat_model.with_structured_output(Person)
+
+# Step 3: ask your question
+result = structured_model.invoke("Tell me about Marie Curie.")
+
+print(result.name)    # Marie Curie
+print(result.age)     # 66
+print(result.field)   # Physics and Chemistry</code></pre></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer systems (CRMs, ticketing tools, databases) need exact fields, not prose. <code>with_structured_output</code> uses the provider’s native JSON or tool-calling mode, so it is far more reliable than asking nicely for JSON. Still validate: catch errors and retry or flag the record instead of letting a bad row into the customer’s system.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="chains">
+  <h2>Chains and the <code>|</code> pipe (LCEL)</h2>
+  <p>A <b>chain</b> connects multiple steps into one workflow. <mark>The output of one step automatically becomes the input of the next.</mark> In the previous section we passed each result by hand; with a chain, LangChain handles the connections.</p>
+  <div class="story"><b class="lbl">The dosa counter</b>At a busy darshini, one person spreads the batter, the next adds the masala, the last folds and plates it. Nobody walks the dosa around by hand; the counter moves it along. <code>prompt | model | parser</code> is that counter.</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="A conveyor belt carrying data through three stations, Prompt, Model and Parser, joined by pipe symbols. A dict becomes a PromptValue, then an AIMessage, then a string">
+      <g class="rough">
+        <rect class="box f-green" x="100" y="40" width="130" height="80" rx="12"/>
+        <rect class="box f-blue" x="295" y="40" width="130" height="80" rx="12"/>
+        <rect class="box f-orange" x="490" y="40" width="130" height="80" rx="12"/>
+        <path class="lr" d="M262 58 L 262 102"/>
+        <path class="lr" d="M457 58 L 457 102"/>
+        <path class="ln" d="M165 122 L 165 160"/>
+        <path class="ln" d="M360 122 L 360 160"/>
+        <path class="ln" d="M555 122 L 555 160"/>
+        <path class="ln" d="M10 162 L 710 162"/>
+        <path class="ln" d="M10 196 L 710 196"/>
+        <circle class="box f-grey" cx="40" cy="179" r="11"/>
+        <circle class="box f-grey" cx="240" cy="179" r="11"/>
+        <circle class="box f-grey" cx="440" cy="179" r="11"/>
+        <circle class="box f-grey" cx="640" cy="179" r="11"/>
+        <path class="lr" d="M60 179 L 220 179" marker-end="url(#ahr)"/>
+        <path class="lr" d="M260 179 L 420 179" marker-end="url(#ahr)"/>
+        <path class="lr" d="M460 179 L 620 179" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="165" y="80" text-anchor="middle">Prompt</text>
+      <text class="ts" x="165" y="104" text-anchor="middle">fill the blanks</text>
+      
+      <text class="th" x="360" y="80" text-anchor="middle">Model</text>
+      <text class="ts" x="360" y="104" text-anchor="middle">call the LLM</text>
+      
+      <text class="th" x="555" y="80" text-anchor="middle">Parser</text>
+      <text class="ts" x="555" y="104" text-anchor="middle">clean the reply</text>
+      <text class="tm" x="60" y="225" text-anchor="middle">{"topic":…}</text>
+      <text class="tm" x="262" y="225" text-anchor="middle">PromptValue</text>
+      <text class="tm" x="457" y="225" text-anchor="middle">AIMessage</text>
+      <text class="tm" x="670" y="225" text-anchor="middle">str</text>
+    </svg></div>
+    <figcaption>Each <code>|</code> hands one station’s output to the next station as its input.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">langchain_chain.py</span><pre><code class="language-python">from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+load_dotenv()
+
+chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+parser = StrOutputParser()
+prompt = ChatPromptTemplate.from_template("Explain {topic} in one line.")
+
+chain = prompt | chat_model | parser
+
+print(chain.invoke({"topic": "Python"}))</code></pre></div>
+  <div class="flow"><span class="op">{topic}</span><span>Prompt</span><span>Chat model</span><span>Parser</span><span class="ok">text</span></div>
+  <p>This <code>|</code> style is called <b>LCEL</b>, the LangChain Expression Language. Every block (prompt, model, parser, retriever…) is a <b>Runnable</b>, so they all share the same methods:</p>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>What it does</th></tr>
+    <tr><td><code>chain.invoke(x)</code></td><td>Run once on one input, return the result.</td></tr>
+    <tr><td><code>chain.batch([x1, x2, …])</code></td><td>Run on many inputs, in parallel where possible.</td></tr>
+    <tr><td><code>chain.stream(x)</code></td><td>Yield the answer piece by piece as it is generated, for chat UIs.</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Swap one brick</strong> Because every block has the same shape, changing <code>chat_model</code> to an OpenAI or Claude model changes nothing else in the chain.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="retrievers-tools">
+  <h2>Retrievers and tools</h2>
+  <h3>Retrievers</h3>
+  <p>A <b>retriever</b> <mark>finds the most relevant information from your stored data, based on the user’s question</mark>. Think of it as a search assistant. Suppose you have a 500-page company PDF and the user asks, “What is the company’s leave policy?” Instead of giving the entire PDF to the AI, the retriever pulls out just the leave-policy section:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The user question goes to a retriever, which searches a 500-page PDF and returns only the leave policy section; that section goes to the AI model, which produces the answer">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="30" width="120" height="70" rx="12"/>
+        <rect class="box f-teal" x="160" y="30" width="120" height="70" rx="12"/>
+        <rect class="box f-yellow" x="310" y="30" width="140" height="70" rx="12"/>
+        <rect class="box f-purple" x="480" y="30" width="110" height="70" rx="12"/>
+        <rect class="box f-green" x="620" y="30" width="90" height="70" rx="12"/>
+        <path class="lr" d="M132 65 L 156 65" marker-end="url(#ahr)"/>
+        <path class="lr" d="M282 65 L 306 65" marker-end="url(#ahr)"/>
+        <path class="lr" d="M452 65 L 476 65" marker-end="url(#ahr)"/>
+        <path class="lr" d="M592 65 L 616 65" marker-end="url(#ahr)"/>
+        <rect class="box f-card" x="190" y="160" width="90" height="70" rx="4"/>
+        <rect class="box f-card" x="180" y="168" width="90" height="70" rx="4"/>
+        <rect class="box f-yellow" x="170" y="176" width="90" height="66" rx="4"/>
+        <path class="lb dash" d="M220 172 L 220 104" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="70" y="62" text-anchor="middle">Question</text>
+      <text class="ts" x="70" y="84" text-anchor="middle">leave policy?</text>
+      <text class="t" x="220" y="70" text-anchor="middle">Retriever</text>
+      <text class="t" x="380" y="62" text-anchor="middle">Leave section</text>
+      <text class="ts" x="380" y="84" text-anchor="middle">2 relevant pages</text>
+      <text class="t" x="535" y="70" text-anchor="middle">AI model</text>
+      <text class="t" x="665" y="70" text-anchor="middle">Answer</text>
+      <text class="ts" x="215" y="214" text-anchor="middle">PDF</text>
+      <text class="ts" x="300" y="200">500-page company PDF</text>
+      <text class="tb" x="240" y="140">searches</text>
+    </svg></div>
+    <figcaption>The model only sees the few relevant pages: cheaper, faster and more accurate than pasting the whole PDF.</figcaption>
+  </figure>
+  <p>Retrievers usually sit on top of <b>embeddings</b> stored in a vector store. A tiny in-memory example:</p>
+  <pre><code class="language-python">from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_openai import OpenAIEmbeddings
+
+store = InMemoryVectorStore.from_texts(
+    ["Employees get 24 days of paid leave per year.",
+     "Office hours are 9:30 to 6:00.",
+     "Laptops are refreshed every 3 years."],
+    embedding=OpenAIEmbeddings(model="text-embedding-3-small"),
+)
+retriever = store.as_retriever(search_kwargs={"k": 1})
+
+retriever.invoke("What is the leave policy?")
+# → [Document(page_content='Employees get 24 days of paid leave per year.')]</code></pre>
+  <p>You will build full retrieval pipelines (loading, chunking, vector databases) in the RAG module.</p>
+
+  <h3>Tools</h3>
+  <p>A <b>tool</b> is a Python function that the AI can <b>choose</b> to call. A chat model on its own can only produce text: it cannot check live weather, do exact maths, or search your database. Tools give it those abilities.</p>
+  <div class="flow"><span>Question</span><span class="hl">AI decides</span><span class="op">asks for tool call</span><span>your code runs it</span><span>result back to AI</span><span class="ok">final answer</span></div>
+  <div class="sticky warn l"><strong>The AI does not run the tool</strong> It only <b>asks</b> for a tool call: the tool’s name plus arguments. Your code (or an agent loop) actually runs the function and sends the result back.</div>
+  <pre><code class="language-python">from langchain_core.tools import tool
+
+@tool
+def multiply(a: float, b: float) -&gt; float:
+    """Multiply two numbers."""
+    return a * b
+
+model_with_tools = chat_model.bind_tools([multiply])
+msg = model_with_tools.invoke("What is 12.5 times 8?")
+
+print(msg.tool_calls)
+# [{'name': 'multiply', 'args': {'a': 12.5, 'b': 8}, 'id': '...', 'type': 'tool_call'}]
+
+multiply.invoke(msg.tool_calls[0]["args"])   # → 100.0  (your code runs it)</code></pre>
+  <p>The docstring and type hints matter: LangChain turns them into the tool description the model reads to decide when and how to call it.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Tools are how an assistant touches a customer’s real systems: “look up order 4512”, “create a Jira ticket”. Give each tool a narrow job, a clear docstring, and validate the arguments before acting. Anything that writes or spends money should need a human approval step.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="ecosystem">
+  <h2>The LangChain ecosystem</h2>
+  <p>LangChain is not just one package: it is a <b>family of tools</b> that work together, from basic building blocks up to full agents and monitoring.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="Stack: LangChain Core at the bottom, integrations for openai, google-genai, anthropic and ollama in the middle, LangChain and LangGraph on top, and LangSmith at the side tracing everything">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="250" height="60" rx="12"/>
+        <rect class="box f-blue" x="290" y="20" width="250" height="60" rx="12"/>
+        <rect class="box f-yellow" x="20" y="100" width="520" height="80" rx="12"/>
+        <rect class="box f-card" x="32" y="134" width="118" height="34" rx="8"/>
+        <rect class="box f-card" x="160" y="134" width="118" height="34" rx="8"/>
+        <rect class="box f-card" x="288" y="134" width="118" height="34" rx="8"/>
+        <rect class="box f-card" x="416" y="134" width="114" height="34" rx="8"/>
+        <rect class="box f-orange" x="20" y="200" width="520" height="70" rx="12"/>
+        <rect class="box f-purple" x="580" y="20" width="120" height="250" rx="12"/>
+        <path class="lr dash" d="M576 145 L 546 145" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="145" y="46" text-anchor="middle">langchain</text>
+      <text class="ts" x="145" y="68" text-anchor="middle">chains, agents, helpers</text>
+      <text class="t" x="415" y="46" text-anchor="middle">LangGraph</text>
+      <text class="ts" x="415" y="68" text-anchor="middle">branches, loops, state</text>
+      <text class="t" x="280" y="124" text-anchor="middle">Integrations</text>
+      <text class="ts" x="91" y="156" text-anchor="middle">openai</text>
+      <text class="ts" x="219" y="156" text-anchor="middle">google-genai</text>
+      <text class="ts" x="347" y="156" text-anchor="middle">anthropic</text>
+      <text class="ts" x="473" y="156" text-anchor="middle">ollama</text>
+      <text class="t" x="280" y="228" text-anchor="middle">LangChain Core</text>
+      <text class="ts" x="280" y="252" text-anchor="middle">messages · prompts · model interface · parsers · |</text>
+      <text class="t" x="640" y="110" text-anchor="middle">LangSmith</text>
+      <text class="ts" x="640" y="140" text-anchor="middle">traces</text>
+      <text class="ts" x="640" y="162" text-anchor="middle">debugs</text>
+      <text class="ts" x="640" y="184" text-anchor="middle">evaluates</text>
+    </svg></div>
+    <figcaption>Core defines the shapes, integrations plug in providers, LangChain and LangGraph build apps, LangSmith watches them run.</figcaption>
+  </figure>
+
+  <h3>LangChain Core</h3>
+  <p><b>LangChain Core</b> (<code>langchain-core</code>) is the bottom of the stack: the basic building blocks every other part uses.</p>
+  <ul>
+    <li><b>Messages</b>: system, human and AI messages.</li>
+    <li><b>Prompt templates</b>: like our <code>ChatPromptTemplate</code>.</li>
+    <li><b>Chat model interface</b>: the common <code>.invoke()</code> style shared by all models.</li>
+    <li><b>Output parsers</b>: like our <code>StrOutputParser</code>.</li>
+    <li><b>The <code>|</code> pipe</b>: how blocks are joined into chains (<b>LCEL</b>).</li>
+  </ul>
+  <p>Look back at <code>langchain_chain.py</code>: we imported <code>ChatPromptTemplate</code> and <code>StrOutputParser</code> from <code>langchain_core</code>. We were already using LangChain Core.</p>
+
+  <h3>Integrations</h3>
+  <p>Core defines <b>how</b> a chat model should behave, but not how to reach a specific company’s model. That is the job of <b>integrations</b>: small packages that each connect LangChain to one provider or tool.</p>
+  <div class="tbl"><table>
+    <tr><th>Integration package</th><th>Connects LangChain to</th></tr>
+    <tr><td><code>langchain-openai</code></td><td>OpenAI GPT models</td></tr>
+    <tr><td><code>langchain-google-genai</code></td><td>Google Gemini models</td></tr>
+    <tr><td><code>langchain-anthropic</code></td><td>Anthropic Claude models</td></tr>
+    <tr><td><code>langchain-ollama</code></td><td>Free open models running on your own laptop</td></tr>
+  </table></div>
+  <p>Integrations are not only for models. There are also integrations for <b>vector databases</b>, <b>document loaders</b> (PDF, websites, Google Drive) and <b>tools</b> (web search, calculators). When we wrote <code>init_chat_model("google_genai:...")</code>, LangChain used <code>langchain-google-genai</code> behind the scenes.</p>
+
+  <h3>LangGraph</h3>
+  <p>Our chain ran in a <b>straight line</b>: prompt → model → parser. Many real tasks don’t. A support assistant may need to <b>decide</b> what kind of ticket it is, <b>take an action</b>, <b>check</b> whether the answer is good, and <b>try again</b> if it is not.</p>
+  <p><b>LangGraph</b> is for building these <mark>agents and multi-step workflows</mark>. You describe the app as a <b>graph</b>, like a flowchart: boxes are steps, and arrows can branch and loop.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Branching</h4><p>Refund question → check the order; bug report → search the docs.</p></div>
+    <div class="card t3 tilt-b"><h4>Loops</h4><p>If the answer isn’t good enough, go back and try again.</p></div>
+    <div class="card t2 tilt-a"><h4>Memory and state</h4><p>Remember what happened in earlier steps.</p></div>
+    <div class="card t4 tilt-b"><h4>Human in the loop</h4><p>Pause and ask a person to approve an action.</p></div>
+  </div>
+  <p>LangChain’s own agents are built on top of LangGraph, which is why <code>pip install langchain</code> also installs <code>langgraph</code>. You will build agents in a later module.</p>
+
+  <h3>LangSmith</h3>
+  <p>As apps get more steps, a new problem appears: when the answer is wrong, <b>which step caused it?</b> The prompt? The model? A tool? <b>LangSmith</b> is the platform for <mark>tracing, debugging and evaluating</mark> LLM apps. Once switched on, it records every step of every request:</p>
+  <ul>
+    <li><b>The exact prompt</b> that was sent to the model.</li>
+    <li><b>The model’s answer</b>, tokens used, time taken and cost.</li>
+    <li><b>Each step’s input and output</b>, so you can find where things went wrong.</li>
+  </ul>
+  <pre><code class="language-bash"># .env — turning on LangSmith tracing needs no code changes
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=your_langsmith_key</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer says “the bot gave a wrong answer on Tuesday”, a trace lets you open that exact request and see the prompt, the retrieved documents and the model output. Check the customer’s data policy first: traces contain their data, so they may require a self-hosted setup or tracing switched off in production.</div>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="setup">
+  <h2>Installation and provider setup</h2>
+  <p>Now set up your own LangChain project from scratch, using Gemini.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a project folder</b>Make a folder called <code>langchain-project</code> and open it in VS Code.</div></li>
+    <li><span class="dot">2</span><div><b>Open the terminal</b>In VS Code: <b>Terminal → New Terminal</b>. You should be inside the project folder (<code>langchain-project&gt;</code>).</div></li>
+    <li><span class="dot">3</span><div><b>Create a virtual environment</b><code>python -m venv .venv</code>. The <code>.venv</code> folder keeps this project’s packages separate from other projects.</div></li>
+    <li><span class="dot">4</span><div><b>Activate it</b>Windows: <code>.venv\Scripts\activate</code> · macOS/Linux: <code>source .venv/bin/activate</code>. Your prompt now starts with <code>(.venv)</code>.</div></li>
+    <li><span class="dot">5</span><div><b>Install packages</b><code>pip install langchain langchain-google-genai python-dotenv</code></div></li>
+    <li><span class="dot">6</span><div><b>Create <code>main.py</code></b>An empty Python file in the project folder.</div></li>
+    <li><span class="dot">7</span><div><b>Get a Gemini API key</b>From Google AI Studio. Then create a file named <code>.env</code>.</div></li>
+    <li><span class="dot">8</span><div><b>Add the key to <code>.env</code></b><code>GOOGLE_API_KEY=your_api_key_here</code></div></li>
+  </ol>
+  <div class="cmd"><p class="what">Steps 3 to 5 in the terminal (Windows)</p>
+  <pre><code class="language-bash">python -m venv .venv
+.venv\Scripts\activate
+pip install langchain langchain-google-genai python-dotenv</code></pre></div>
+  <pre class="out"><code>(.venv) PS C:\Users\you\langchain-project&gt;</code></pre>
+  <p>Your project should now look like this:</p>
+  <pre class="out"><code>langchain-project/
+│
+├── .venv/
+├── .env          ← GOOGLE_API_KEY=your_api_key_here
+└── main.py</code></pre>
+  <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+load_dotenv()
+
+model = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
+
+response = model.invoke("Explain LangChain in one sentence.")
+
+print(response.text)</code></pre></div>
+  <pre><code class="language-bash">python main.py</code></pre>
+  <pre class="out"><code>LangChain is an open-source framework for building apps powered by large language models.</code></pre>
+  <div class="sticky warn l"><strong>Never commit <code>.env</code></strong> Add <code>.env</code> and <code>.venv/</code> to <code>.gitignore</code> before your first commit. A leaked API key can be used by anyone, on your bill.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer’s machine, pin versions (<code>pip freeze &gt; requirements.txt</code>). LangChain moves fast, and an unpinned install next month can break imports that worked today.</div>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>SDK</dt><dd>Software Development Kit: a company’s official library for using its service, such as <code>openai</code> or <code>google-genai</code>.</dd></div>
+    <div><dt>LangChain</dt><dd>An open-source framework for building LLM-powered applications. It gives one interface to many model providers plus reusable building blocks; it is not a model itself.</dd></div>
+    <div><dt>init_chat_model</dt><dd>A LangChain helper that creates a chat model from a <code>"provider:model"</code> string, so switching providers is a one-line change.</dd></div>
+    <div><dt>Chat model</dt><dd>A model that takes a list of role-tagged messages and returns an <code>AIMessage</code>. The standard way to use modern LLMs.</dd></div>
+    <div><dt>Embedding model</dt><dd>A model that turns text into a vector (a list of numbers) capturing its meaning, used for search by meaning.</dd></div>
+    <div><dt>Message</dt><dd>One turn of a conversation with a role (system, human or AI) and content.</dd></div>
+    <div><dt>Prompt template</dt><dd>A reusable prompt with <code>{placeholders}</code> that are filled in at run time. <code>ChatPromptTemplate</code> produces a list of messages for chat models.</dd></div>
+    <div><dt>MessagesPlaceholder</dt><dd>A slot in a chat prompt template that holds a whole list of messages, typically the conversation history.</dd></div>
+    <div><dt>Output parser</dt><dd>A component that converts a model’s raw output into a usable format such as a string, a dict or a Python object.</dd></div>
+    <div><dt>Structured output</dt><dd>Making a model fill a predefined schema (for example a Pydantic class) via <code>with_structured_output</code>, returning a typed object.</dd></div>
+    <div><dt>Chain / LCEL</dt><dd>Steps joined with the <code>|</code> pipe so each step’s output becomes the next step’s input; LCEL is the LangChain Expression Language that defines this.</dd></div>
+    <div><dt>Retriever</dt><dd>A component that finds the most relevant pieces of your stored data for a question, so only those are sent to the model.</dd></div>
+    <div><dt>Tool</dt><dd>A Python function the model can ask to call, with a name and arguments; your code runs it and returns the result.</dd></div>
+    <div><dt>LangGraph</dt><dd>The part of the LangChain ecosystem for agents and workflows that branch, loop, keep state and pause for human approval.</dd></div>
+    <div><dt>LangSmith</dt><dd>A platform for tracing, debugging and evaluating LLM apps by recording each step’s inputs, outputs, tokens, time and cost.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Your manager wants to move the app from OpenAI to Gemini. With <code>init_chat_model</code>, what must change?</p>
+      <ol><li>Every <code>.invoke()</code> call</li><li>The prompt templates</li><li>Only the model string, e.g. <code>"google_genai:…"</code></li><li>The output parser</li></ol>
+      <p class="why">LangChain gives every provider the same interface, so only the provider:model string changes (plus installing the integration and setting its key).</p></div>
+    <div class="q" data-answer="1"><p>Which statement about LangChain is true?</p>
+      <ol><li>It connects your app to models from many providers; it is not a model itself</li><li>It is a new LLM trained by the LangChain company</li><li>It only works with OpenAI</li><li>It replaces the need for API keys</li></ol>
+      <p class="why">LangChain is a framework. The intelligence still comes from the provider’s model, reached with your key.</p></div>
+    <div class="q" data-answer="4"><p>What does <code>prompt | chat_model | parser</code> return when invoked with <code>StrOutputParser</code>?</p>
+      <ol><li>A PromptValue</li><li>An AIMessage</li><li>A list of messages</li><li>A plain string</li></ol>
+      <p class="why">The prompt makes a PromptValue, the model turns it into an AIMessage, and StrOutputParser turns that into a <code>str</code>.</p></div>
+    <div class="q" data-answer="2"><p>You want the bot to remember the earlier conversation. Which piece holds the past messages in the prompt?</p>
+      <ol><li><code>PromptTemplate</code></li><li><code>MessagesPlaceholder</code></li><li><code>StrOutputParser</code></li><li><code>@tool</code></li></ol>
+      <p class="why">A MessagesPlaceholder is a slot that expands into a whole list of past messages.</p></div>
+    <div class="q" data-answer="3"><p>The model “calls” your <code>multiply</code> tool. Who actually runs the function?</p>
+      <ol><li>The LLM provider’s servers</li><li>LangSmith</li><li>Your code (or an agent loop)</li><li>Nobody, the model guesses the result</li></ol>
+      <p class="why">The model only returns a tool call (name + arguments). Your application executes it and sends the result back.</p></div>
+    <div class="q" data-answer="1"><p>You need the model’s answer as an object with <code>name</code>, <code>age</code> and <code>field</code> to save in a database. Best choice?</p>
+      <ol><li><code>with_structured_output</code> with a Pydantic class</li><li>Print <code>response.text</code> and split on commas</li><li>A longer system message</li><li>An embedding model</li></ol>
+      <p class="why">Structured output makes the model fill a typed schema and gives you a validated object.</p></div>
+    <div class="q" data-answer="4"><p>A support assistant must classify a ticket, act, check its answer and retry if needed. Which part of the ecosystem fits best?</p>
+      <ol><li>An integration package</li><li>A single straight-line chain</li><li>An embedding model</li><li>LangGraph</li></ol>
+      <p class="why">Branching, loops and state are exactly what LangGraph’s graphs are for.</p></div>
+    <div class="q" data-answer="2"><p>Why use a retriever instead of pasting a 500-page PDF into the prompt?</p>
+      <ol><li>Models cannot read PDFs at all</li><li>It sends only the relevant pages, which is cheaper, faster and more focused</li><li>Retrievers make the model larger</li><li>It removes the need for a model</li></ol>
+      <p class="why">The retriever finds the few relevant chunks, so the model works with less, better-targeted text.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">LangChain gives you <b>one interface</b> for every model provider plus <b>building blocks</b> (models, messages, prompt templates, output parsers, retrievers and tools) that you snap together into <b>chains</b> with <code>|</code>, while <b>LangGraph</b> handles agents and <b>LangSmith</b> shows you what happened.</p>
+  <p>Next up: the module wraps here. Continue with Model Selection to learn how to choose which model to plug into these blocks.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+{
+  "site": {
+    "name": "AIFDE Notes",
+    "fullName": "Forward Deployed AI Engineer · Notes",
+    "author": "Vishwa Mohan",
+    "tagline": "Become a Forward Deployed AI Engineer, one sketched page at a time.",
+    "course": "Forward Deployed AI Engineer · 9 months · 36 weeks",
+    "links": { "github": "", "youtube": "", "linkedin": "" }
+  },
+  "stages": [
+    { "id": "start", "title": "Start here" },
+    { "id": "foundations", "title": "Developer foundations" },
+    { "id": "python", "title": "Python & backend" },
+    { "id": "genai", "title": "Generative AI" },
+    { "id": "next", "title": "Coming next" }
+  ],
+  "modules": [
+    {
+      "slug": "fde", "order": 1, "stage": "start", "icon": "🧭",
+      "title": "The Forward Deployed Engineer", "folder": "FORWARD DEPLOYED ENGINEER",
+      "summary": "What an FDE actually does, how the role differs from SWE, AI and solutions engineers, the end-to-end responsibilities, and the mindset that makes FDEs effective at customer sites.",
+      "notes": [
+        { "slug": "fde-role", "title": "The FDE Role", "drive": "1Fz5XiOmEKukZ-aER8pN06j4OK5yZ1flIXcj81Imco1U" },
+        { "slug": "fde-responsibilities", "title": "FDE Responsibilities", "drive": "1fSVD2ip6mPCzutUbG3MK3TkNeT6Sg44SLMVTvh4wxuI" },
+        { "slug": "fde-mindset", "title": "The FDE Mindset", "drive": "14BNgyeU4FPTphWr5jpL3LKycj1GnQol_8lJubgVIIs4" }
+      ]
+    },
+    {
+      "slug": "linux", "order": 2, "stage": "foundations", "icon": "🐧",
+      "title": "Linux", "folder": "Linux",
+      "summary": "Living in the terminal: what Linux is, how it is built, the file system tree, moving around, reading and searching files, text filters, pipes, redirection and command chaining.",
+      "notes": [
+        { "slug": "intro-unix-linux", "title": "Introduction to UNIX & Linux", "drive": "1Onjx-QeePhx7b-_FIsTZu9zMly4ycTiYz_C8h0uQSYY" },
+        { "slug": "linux-architecture", "title": "Linux Architecture", "drive": "1dE7gy9QtbNU9j3VaSgwSJ_L9xG9v6FvZf7hCSwfxojM" },
+        { "slug": "environment-setup", "title": "Environment Setup", "drive": "1Qw_9OI8ruePEk2UaK5cw9Gscpv-8H7tNCUVOH3KDUmI" },
+        { "slug": "terminal-and-shell", "title": "Linux Terminal and Shell", "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg" },
+        { "slug": "file-system-structure", "title": "The Linux File System Structure", "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo" },
+        { "slug": "files-and-directories", "title": "Files & Directories", "drive": "1xJNHx2ZOa6CoKUh28h9iV_V0TQh_cVOqwevn82A1H1M" },
+        { "slug": "reading-files", "title": "Reading Files", "drive": "101ipcrowp4SNObS37EK0pjdfUS-RCQ2KmQPuvnCEecs" },
+        { "slug": "searching-files", "title": "Searching Files & Content", "drive": "1Ivf5qxUNbA036kQke91o2XMaYvHiUrhScDS5FMy2AIo" },
+        { "slug": "text-filters", "title": "Essential Text Filters", "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg" },
+        { "slug": "pipes-and-redirection", "title": "Pipes & Redirection", "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk" },
+        { "slug": "command-chaining", "title": "Command Chaining", "drive": "1pyE8sQmjkH5Wd7yyGMiRqdDSDSay1wOoMgdunF3U-tQ" }
+      ]
+    },
+    {
+      "slug": "networking", "order": 3, "stage": "foundations", "icon": "🌐",
+      "title": "Networking Basics", "folder": "Networking Basic",
+      "summary": "How machines find and talk to each other: cables and network types, MAC and IP, core protocols, the OSI model, IP addressing, subnetting and CIDR.",
+      "notes": [
+        { "slug": "physical-connectivity", "title": "Physical Connectivity & Network Types", "drive": "1k7IVPGvXWHSmf557Rmo1UUQhnJENaAUu0pXHpSY3EBo" },
+        { "slug": "device-identification-protocols", "title": "Device Identification & Core Protocols", "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU" },
+        { "slug": "osi-model", "title": "OSI Model & Data Communication", "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk" },
+        { "slug": "ip-address-fundamentals", "title": "IP Address Fundamentals", "drive": "1FDYwr59XXKDTWRzGxm_Owm9kJrVT9SftWDVKRPgqNTQ" },
+        { "slug": "subnetting-cidr", "title": "Subnetting & CIDR", "drive": "1zPzHSur0nullH9MfNC7DEXJM-8BqLBqDhkDWRWA8Jwg" }
+      ]
+    },
+    {
+      "slug": "git", "order": 4, "stage": "foundations", "icon": "🌿",
+      "title": "Git & GitHub", "folder": "Git & GitHub Basic",
+      "summary": "Why version control exists, how Git tracks snapshots, and the everyday workflow of commits, branches and remotes on GitHub.",
+      "notes": [
+        { "slug": "version-control", "title": "Version Control Systems", "drive": "13SJ18Xn0FMO44fgyZOuQOX_qZDGnUamPgAg_4N3ClSs" },
+        { "slug": "git-fundamentals", "title": "Git Fundamentals", "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU" },
+        { "slug": "git-workflows", "title": "Git in Real Projects & .gitignore", "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo" },
+        { "slug": "github", "title": "GitHub, Pull Requests & GitHub Desktop", "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo" }
+      ]
+    },
+    {
+      "slug": "web", "order": 5, "stage": "foundations", "icon": "🧱",
+      "title": "Web & HTML", "folder": "Web & APIs",
+      "summary": "The building blocks of every web page: HTML syntax and document structure, common elements, lists and images, and forms that collect user input.",
+      "notes": [
+        { "slug": "html-syntax-structure", "title": "HTML Syntax and Structure", "drive": "1YcIMjouA5XHNzf5rlFhmTm3IIerQqqzJMWJ2n02kYI4" },
+        { "slug": "common-html-elements", "title": "Common HTML Elements", "drive": "19bVbhvyiGHiaI3eEp0tf8um32UVOlwuV11A9atJAebo" },
+        { "slug": "html-lists-images", "title": "HTML Lists & Images", "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg" },
+        { "slug": "forms-and-inputs", "title": "Forms and Inputs", "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw" }
+      ]
+    },
+    {
+      "slug": "python-fundamentals", "order": 6, "stage": "python", "icon": "🐍",
+      "title": "Python Fundamentals", "folder": "Python Fundamentals",
+      "summary": "Python from zero to object-oriented: variables and types, control flow, data structures, functions, modules, working with files and data, error handling, classes, inheritance and overriding.",
+      "notes": [
+        { "slug": "python-basics-1", "title": "Python Basics · Part 1", "drive": "14ZKx9Ei2nTKVRsPxX8EZimqsVVnBgL089wfyE7mrOsA", "code": "1rWvkkM8UJA-DCCFwVUzWR0M9RtnQ-8h5wBtToF-ltFU" },
+        { "slug": "python-basics-2", "title": "Python Basics · Part 2", "drive": "13KTAdv_l_-_d1IYOFAC9DSi_pGXfNs-f02ynSL40qo0", "code": "1dUccy36LJChWZKTIdceV8YQZcl6hT8IyOvzKfw1HTTU" },
+        { "slug": "control-flow", "title": "Control Flow", "drive": "1I6OxMXLj5mBPNkdwYtCWImRqMSyoYPQUlAjpC8ldipQ", "code": "1ZmGNxzWBAXnvJBw1A_VLx272eb7VJGAHtC36s-tkY4g" },
+        { "slug": "data-structures", "title": "Data Structures", "drive": "1sQupZ4jdcaeK6XvH1MdJIo6piYmkfGqQO_8kdFwxBYQ", "code": "12BL8XoQCpVVZPjGUIZWununAEwXypaRNk2t8fZOLN6s" },
+        { "slug": "functions", "title": "Functions", "drive": "1UGrONBYjQcltdwKUxsRKjBYTJmJrpQ43KiRgvXVae4c", "code": "1QyJwBjxkJ6w_Uya_4cqlC3bCVM-3YwAP00iNTX0EaMc" },
+        { "slug": "modules-packages", "title": "Modules & Packages", "drive": "17U9tbVrW3HZ6byDiGrY_5G25HaTWt7Hf1FIMsQzLIW8", "code": "1kEDyEFM9n0iViOqFBX5CQAxYgJtH-Tjnf2w1t-BlUq0" },
+        { "slug": "working-with-data", "title": "Working with Data", "drive": "1F5jA2ESuLMAyz1mX4L6nz8zjw5RajM_lmkCo5ZWGYcI", "code": "1cG9AjkHE4YYq09tBjdYk41L-XJhQAwwDKhU991TizKc" },
+        { "slug": "error-handling", "title": "Error Handling", "drive": "1CyJYI0gbHvAy9WyBsVcwABN6as7MZAemhZhBV5bTBt8", "code": "1duuH7oZn_l6-t5s_WF3hi3xYQsAri0eddc-ysETAF3I" },
+        { "slug": "oops-1", "title": "Intro to OOP · Part 1", "drive": "1ViaWM-SsGz5xuuH5VodoNNkq2l4oHx3Pnoc_Py2emE8", "code": "1dSZVOvy7iU8CbUO04ukok_z7F7k_r6oVmmfMvl2pyjE" },
+        { "slug": "oops-2", "title": "Intro to OOP · Part 2", "drive": "1oDLYBjlrafCaRo-3Uz3aJ1tCh9EopkA4lcCZNTag7EE", "code": "16-8dFnSRsfQrbmVpbHettb6Phv6rdVRq7WEa9V5SR7k" },
+        { "slug": "inheritance", "title": "Inheritance", "drive": "1GbVsqWjm3Ak-YRz05HjuZGktbfrgwld-lBnSJAZ23uo", "code": "1xuIWTd98O5pbpkZZZCgjaReCuehnlevsM_TnreKJWAI" },
+        { "slug": "method-overriding", "title": "Method Overriding", "drive": "1n4dNRRq8GBblKKcKyMdI07OsE5MHis-eiifm2tukPQg", "code": "1IOV5FTiCoPNv6lmV0g6KLCnlvjHZbAOCLMhOZJTD11A" }
+      ]
+    },
+    {
+      "slug": "python-advanced", "order": 7, "stage": "python", "icon": "⚡",
+      "title": "Python Advanced & FastAPI", "folder": "Python Advanced",
+      "summary": "From scripts to services: structuring real Python projects, how APIs work, FastAPI setup, Pydantic validation, path operations, HTTP methods, path and query parameters.",
+      "notes": [
+        { "slug": "project-development", "title": "Python Project Development", "drive": "1i1l55HLG3JQfiVcPlppXS6keDnrOA__UatSotRGiQ0g" },
+        { "slug": "api-basics", "title": "API Basics", "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM" },
+        { "slug": "fastapi-fundamentals", "title": "FastAPI Fundamentals, Setup & Project Structure", "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA" },
+        { "slug": "pydantic", "title": "Pydantic: Validating Data", "drive": "1uSBnwTpwPGJS2wqKobXmMFqCMQFK9y6dH8HLYJJDyG0" },
+        { "slug": "path-operations-http-methods", "title": "Path Operations & HTTP Methods", "drive": "1QpNGo32aynyfTHiTlcvUIJQsI3U5jPqtN0Y7aDY_X40" },
+        { "slug": "path-query-parameters", "title": "Path & Query Parameters", "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E" }
+      ]
+    },
+    {
+      "slug": "sql", "order": 8, "stage": "python", "icon": "🗄️",
+      "title": "SQL", "folder": "SQL", "status": "soon",
+      "summary": "Querying relational data like an investigator: SELECT, filtering, joins, aggregation and real case-study projects.",
+      "upcoming": ["Tables, keys & relationships", "SELECT, WHERE, ORDER BY", "GROUP BY & aggregates", "Joins", "Subqueries & CTEs", "Investigation projects"],
+      "notes": []
+    },
+    {
+      "slug": "llm-engineering", "order": 9, "stage": "genai", "icon": "🧠",
+      "title": "LLM Engineering", "folder": "LLM ENGINEERING",
+      "summary": "How large language models work from an engineer's point of view: tokens, context windows, sampling, APIs, costs and building reliable LLM features.",
+      "notes": [
+        { "slug": "llm-engineering", "title": "LLM Engineering", "drive": "1vQPVegWYDtmeN406pMejn7heef2TISDaKRfdduFO4Yo" }
+      ]
+    },
+    {
+      "slug": "prompt-context", "order": 10, "stage": "genai", "icon": "✍️",
+      "title": "Prompt & Context Engineering", "folder": "PROMPT & CONTEXT ENGINEERING",
+      "summary": "Writing instructions models follow: prompt patterns, structure, examples, and engineering the whole context window the model sees.",
+      "notes": [
+        { "slug": "prompt-context-engineering", "title": "Prompt & Context Engineering", "drive": "1BSR8p--HS3l0pHNNGYqbsq7_xXmq1uj6aGiUaE-xXtQ" }
+      ]
+    },
+    {
+      "slug": "langchain", "order": 11, "stage": "genai", "icon": "🔗",
+      "title": "LangChain", "folder": "Langchain",
+      "summary": "Composing LLM apps with LangChain: models, prompts, chains, output parsers and the building blocks behind agents and RAG.",
+      "notes": [
+        { "slug": "langchain-fundamentals", "title": "LangChain Fundamentals", "drive": "1Gwg9eLyT_BqdSiODfRPQI4xUt1V3yAifC5iuRVjs-GQ" }
+      ]
+    },
+    {
+      "slug": "model-selection", "order": 12, "stage": "genai", "icon": "⚖️",
+      "title": "Model Selection", "folder": "Model Selection",
+      "summary": "Choosing the right model for the job: capability, latency, cost, context length, open vs closed models and how to evaluate the trade-offs.",
+      "notes": [
+        { "slug": "model-selection", "title": "Model Selection", "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I" }
+      ]
+    },
+    { "slug": "rag", "order": 13, "stage": "next", "icon": "📚", "title": "RAG & Knowledge AI", "status": "soon",
+      "summary": "Grounding models in your own documents.",
+      "upcoming": ["Embeddings", "Vector databases", "Document ingestion & chunking", "Semantic, BM25 & hybrid search", "Re-ranking"], "notes": [] },
+    { "slug": "agents", "order": 14, "stage": "next", "icon": "🤖", "title": "AI Agents", "status": "soon",
+      "summary": "Models that plan, call tools and act.",
+      "upcoming": ["Agent workflows", "LangGraph: state & memory", "Planning, ReAct & routers", "Multi-agent systems", "Human-in-the-loop"], "notes": [] },
+    { "slug": "mcp", "order": 15, "stage": "next", "icon": "🔌", "title": "Model Context Protocol (MCP)", "status": "soon",
+      "summary": "A standard plug for connecting models to tools and data.",
+      "upcoming": ["MCP client & server", "Tools, resources & prompts", "Tool schemas"], "notes": [] },
+    { "slug": "data-engineering", "order": 16, "stage": "next", "icon": "🏗️", "title": "Data Engineering", "status": "soon",
+      "summary": "Moving and shaping data at scale.",
+      "upcoming": ["PostgreSQL", "ETL vs ELT", "PySpark", "dbt"], "notes": [] },
+    { "slug": "enterprise-integration", "order": 17, "stage": "next", "icon": "🏢", "title": "Enterprise AI Integration", "status": "soon",
+      "summary": "Wiring AI into the systems companies already run.",
+      "upcoming": ["REST, SOAP & XML", "Webhooks, OAuth 2.0 & JWT", "CRM, Jira & ticketing", "Slack & email", "Knowledge bases"], "notes": [] },
+    { "slug": "frontend", "order": 18, "stage": "next", "icon": "🖥️", "title": "Frontend for AI Apps", "status": "soon",
+      "summary": "Interfaces for streaming AI products.",
+      "upcoming": ["JavaScript", "React", "WebSockets & SSE"], "notes": [] },
+    { "slug": "cloud", "order": 19, "stage": "next", "icon": "☁️", "title": "Cloud & Deployment", "status": "soon",
+      "summary": "Shipping it to production on AWS.",
+      "upcoming": ["Docker", "EC2, ECS & RDS", "S3, VPC & IAM", "Load balancers", "CloudWatch & Secrets Manager"], "notes": [] }
+  ]
+}

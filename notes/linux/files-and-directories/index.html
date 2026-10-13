@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Files &amp; Directories · Linux | AIFDE Notes</title>
+<meta name="description" content="Create, copy, move, rename and delete files and folders from the Linux terminal with touch, mkdir, cp, mv, rm and rmdir, and learn to use rm -rf safely.">
+<meta name="keywords" content="touch, mkdir -p, cp, mv, rm -rf, rmdir, safe deletion, renaming">
+<meta name="date" content="2026-09-07">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/files-and-directories">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Files &amp; Directories</h1>
+  <p class="byline">Create, copy, move, rename and delete files and folders straight from the terminal, and do it without ever losing something by accident.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="recap">
+  <h2>Quick recap before we start</h2>
+  <div class="story"><b class="lbl">Your study table</b>Notebooks are your <b>files</b>, the shelf boxes labelled “Maths” and “Physics” are your <b>directories</b>, and “second box from the left, top notebook” is the <b>path</b>. Until now you have only <i>looked</i> at the shelf. <mark>This note is about changing it: adding, copying, moving and throwing things away.</mark></div>
+  <p>The previous notes (The Linux File System Structure and the navigation commands) covered these ideas in detail. Here is the short version:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>File</h4><p>A named container of data: text, configuration, a log or a program. In Linux, “everything is a file”.</p></div>
+    <div class="card t2 tilt-b"><h4>Directory</h4><p>A folder that groups related files. Directories nest inside each other to form a tree.</p></div>
+    <div class="card t5 tilt-a"><h4>Path</h4><p>The address of a file or folder. <b>Absolute</b> starts at <code>/</code>; <b>relative</b> starts from where you are now.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>Answers the question</th></tr>
+    <tr><td><code>pwd</code></td><td>Where am I?</td></tr>
+    <tr><td><code>ls</code></td><td>What is here?</td></tr>
+    <tr><td><code>cd</code></td><td>Take me somewhere else.</td></tr>
+    <tr><td><code>ls -l</code></td><td>Show details (size, owner, date).</td></tr>
+    <tr><td><code>ls -a</code></td><td>Show hidden files too (names starting with <code>.</code>).</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong>Not comfortable yet?</strong> If any of these five commands feel unfamiliar, review the earlier notes first. Everything below assumes you can move around with <code>pwd</code>, <code>ls</code> and <code>cd</code>.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="touch">
+  <h2><code>touch</code> · creating files</h2>
+  <p>Program location: <code>/usr/bin/touch</code>. Imagine starting a new project that needs these files:</p>
+  <pre class="out"><code>project/
+├── README.md
+├── notes.txt
+├── config.txt
+└── script.sh</code></pre>
+  <p>You could open an editor and save each one. Linux gives you a faster way: <mark><code>touch</code> creates an empty file directly from the terminal.</mark></p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">touch filename
+touch notes.txt     # touch = command, notes.txt = file name</code></pre></div>
+  <div class="cmd"><p class="what">Try it</p>
+  <pre><code class="language-bash">pwd                # first, check where you are
+touch file.txt     # create one empty file here
+ls                 # check that it exists</code></pre></div>
+  <pre class="out"><code>file.txt</code></pre>
+
+  <h3>How do you know the file is empty?</h3>
+  <pre><code class="language-bash">ls -l file.txt</code></pre>
+  <pre class="out"><code>-rw-rw-r-- 1 ubuntu ubuntu 0 Sep  7 14:20 file.txt</code></pre>
+  <p>Look at the <b>0</b>. That column is the file size in bytes, so 0 means the file holds no data yet. <code>touch</code> creates the file; it does <b>not</b> write any text into it.</p>
+
+  <h3>Many files at once</h3>
+  <pre><code class="language-bash">touch app.txt config.txt notes.txt
+ls</code></pre>
+  <pre class="out"><code>app.txt  config.txt  file.txt  notes.txt</code></pre>
+  <p>All three appear from one command, much faster than running <code>touch</code> three times.</p>
+
+  <h3>A file inside another directory</h3>
+  <p>To create <code>/home/ubuntu/students/notes.txt</code>, either enter the folder first or give the path directly:</p>
+  <pre><code class="language-bash">cd students
+touch notes.txt
+
+# or, without moving:
+touch students/notes.txt</code></pre>
+
+  <h3>What if the file already exists?</h3>
+  <p>Suppose <code>file.txt</code> already contains <code>Hello Linux</code>, and you run <code>touch file.txt</code> again.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="touch on an existing file: the content Hello Linux stays the same, only the modified time changes to now">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="40" width="250" height="120" rx="14"/>
+        <rect class="box f-card" x="450" y="40" width="250" height="120" rx="14"/>
+        <path class="lr" d="M280 100 L 440 100" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="145" y="30" text-anchor="middle">file.txt (before)</text>
+      <text class="t" x="145" y="88" text-anchor="middle">Hello Linux</text>
+      <text class="ts" x="145" y="128" text-anchor="middle">modified: 10:05</text>
+      <text class="tr" x="360" y="88" text-anchor="middle">touch file.txt</text>
+      <text class="tm" x="575" y="30" text-anchor="middle">file.txt (after)</text>
+      <text class="t" x="575" y="88" text-anchor="middle">Hello Linux</text>
+      <text class="tb" x="575" y="132" text-anchor="middle">modified: now</text>
+    </svg></div>
+    <figcaption>On an existing file, <code>touch</code> keeps the content and only updates the timestamps.</figcaption>
+  </figure>
+  <div class="sticky info"><strong>Where does the name come from?</strong> <code>touch</code> was built to “touch” a file, i.e. refresh its access and modification times. Creating the file when it doesn’t exist is a side effect that turned out to be very handy.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="mkdir">
+  <h2><code>mkdir</code> · creating directories</h2>
+  <p>Full form: <b>make directory</b>. Program location: <code>/bin/mkdir</code>. Files need organisation. Picture 500 of these in one place:</p>
+  <pre class="out"><code>notes.txt  image.jpg  app.py  data.csv  resume.pdf  config.txt  ...</code></pre>
+  <p>Finding anything becomes painful. Instead we organise them into folders:</p>
+  <pre class="out"><code>project/
+├── documents/
+├── scripts/
+├── data/
+└── images/</code></pre>
+  <div class="cmd"><p class="what">The four ways you will use mkdir</p>
+  <pre><code class="language-bash">mkdir project                   # one folder in the current location
+mkdir docs images backup        # three folders side by side
+mkdir project/src               # src inside project (project must already exist)
+mkdir -p project2/src2/main     # build the whole path, creating missing parents</code></pre></div>
+  <p>Without <code>-p</code>, <code>mkdir project/src</code> fails if <code>project</code> doesn’t exist, because Linux won’t guess that you also wanted the parent:</p>
+  <pre class="out"><code>mkdir: cannot create directory 'project/src': No such file or directory</code></pre>
+  <p>The <code>-p</code> (<b>parents</b>) option tells Linux: <mark>create any missing parent directories as well.</mark> It also stays quiet if the folder already exists.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="mkdir -p project2/src2/main creates project2, then src2 inside it, then main inside that">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="80" width="170" height="60" rx="12"/>
+        <rect class="box f-green" x="270" y="80" width="170" height="60" rx="12"/>
+        <rect class="box f-yellow" x="520" y="80" width="170" height="60" rx="12"/>
+        <path class="lr" d="M195 110 L 262 110" marker-end="url(#ahr)"/>
+        <path class="lr" d="M445 110 L 512 110" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="360" y="40" text-anchor="middle">mkdir -p project2/src2/main</text>
+      <text class="th" x="105" y="118" text-anchor="middle">project2</text>
+      <text class="th" x="355" y="118" text-anchor="middle">src2</text>
+      <text class="th" x="605" y="118" text-anchor="middle">main</text>
+      <text class="ts" x="105" y="168" text-anchor="middle">1. created if missing</text>
+      <text class="ts" x="355" y="168" text-anchor="middle">2. created inside it</text>
+      <text class="ts" x="605" y="168" text-anchor="middle">3. created inside that</text>
+    </svg></div>
+    <figcaption>One line, three levels deep.</figcaption>
+  </figure>
+  <h3>Verify with a recursive listing</h3>
+  <pre><code class="language-bash">ls -R project2</code></pre>
+  <pre class="out"><code>project2:
+src2
+
+project2/src2:
+main
+
+project2/src2/main:</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="cp">
+  <h2><code>cp</code> · copying files</h2>
+  <p>Full form: <b>copy</b>. Program location: <code>/bin/cp</code>. Before editing <code>report.txt</code>, you want a backup:</p>
+  <pre><code class="language-bash">cp report.txt report_backup.txt</code></pre>
+  <p>Now there are <b>two</b> files. The original <code>report.txt</code> is untouched, and a new copy <code>report_backup.txt</code> exists next to it.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cp SOURCE DESTINATION
+# SOURCE      = what you want to copy
+# DESTINATION = where the copy goes / what to call it</code></pre></div>
+  <div class="cmd"><p class="what">Practical example</p>
+  <pre><code class="language-bash">touch file1.txt
+echo "This is my first file" &gt; file1.txt   # &gt; writes text into the file
+cat file1.txt                               # check the content
+cp file1.txt file2.txt                      # copy it
+ls
+cat file2.txt                               # same content in the copy</code></pre></div>
+  <pre class="out"><code>This is my first file
+file1.txt  file2.txt
+This is my first file</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Goal</th><th>Command</th><th>Result</th></tr>
+    <tr><td>Copy into a folder</td><td><code>cp file1.txt documents/</code></td><td><code>documents/file1.txt</code></td></tr>
+    <tr><td>Copy and rename at once</td><td><code>cp file1.txt documents/report.txt</code></td><td><code>documents/report.txt</code></td></tr>
+    <tr><td>Copy several files</td><td><code>cp file1.txt file2.txt file3.txt documents/</code></td><td>all three inside <code>documents/</code> (last argument must be a folder)</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Copying a whole folder</strong> <code>cp</code> skips directories unless you add <code>-r</code> (recursive): <code>cp -r project project_backup</code> copies the folder and everything inside it.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="mv">
+  <h2><code>mv</code> · moving and renaming</h2>
+  <p>Program location: <code>/bin/mv</code>. <code>mv</code> does two jobs: <b>move</b> a file or directory somewhere else, and <b>rename</b> it. Unlike <code>cp</code>, it never makes a second copy.</p>
+  <div class="story"><b class="lbl">Shifting the tiffin</b>When you move your tiffin box from the kitchen table to your bag, there is no tiffin left on the table. <mark><code>mv</code> physically relocates the item; after the move it is no longer at the original place.</mark></div>
+  <div class="codebox"><span class="cap">syntax (same pattern as cp)</span><pre><code class="language-bash">mv SOURCE DESTINATION
+# SOURCE      = the file or folder to move or rename
+# DESTINATION = where it should end up / what it should be called</code></pre></div>
+  <div class="two">
+    <pre class="out"><code># before
+.
+├── file1.txt
+└── documents/</code></pre>
+    <pre class="out"><code># after: mv file1.txt documents/
+.
+└── documents/
+    └── file1.txt</code></pre>
+  </div>
+  <div class="cmd"><p class="what">Try it</p>
+  <pre><code class="language-bash">touch file1.txt
+echo "This is my first file" &gt; file1.txt
+mkdir documents
+ls                       # file1.txt  documents
+mv file1.txt documents/
+ls                       # documents   (file1.txt is gone from here)
+cd documents/
+ls                       # file1.txt
+cat file1.txt            # This is my first file</code></pre></div>
+
+  <h3>Moving a directory</h3>
+  <p><code>mv</code> moves whole folders too, with no extra option needed:</p>
+  <div class="two">
+    <pre class="out"><code># before
+project/
+├── app.txt
+└── config.txt
+backup/</code></pre>
+    <pre class="out"><code># after: mv project backup/
+backup/
+└── project/
+    ├── app.txt
+    └── config.txt</code></pre>
+  </div>
+
+  <h3>Renaming files and folders</h3>
+  <pre><code class="language-bash">mv old_name.txt new_name.txt    # same file, same content, same timestamps, new label
+mv old_project new_project      # the folder and everything inside it get the new name</code></pre>
+
+  <h3>Move and rename in one step</h3>
+  <p>You have <code>report_draft.txt</code> and a <code>documents/</code> folder. You want it inside <code>documents</code>, renamed to <code>final_report.txt</code>:</p>
+  <pre><code class="language-bash">mv report_draft.txt documents/final_report.txt</code></pre>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="destination">
+  <h2>How <code>mv</code> reads the destination</h2>
+  <p>The same command does different things depending on what already exists at the destination:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="mv source dest: if dest is an existing directory the source moves inside it; if dest does not exist the source is renamed to it; if dest is an existing file it is overwritten">
+      <g class="rough">
+        <rect class="box f-blue" x="250" y="12" width="220" height="50" rx="12"/>
+        <path class="box f-yellow" d="M360 82 L 440 118 L 360 154 L 280 118 Z"/>
+        <rect class="box f-green" x="10" y="200" width="220" height="86" rx="12"/>
+        <rect class="box f-blue" x="250" y="200" width="220" height="86" rx="12"/>
+        <rect class="box f-orange" x="490" y="200" width="220" height="86" rx="12"/>
+        <path class="ln" d="M360 64 L 360 78" marker-end="url(#ah)"/>
+        <path class="lb" d="M290 128 C 200 150, 130 170, 120 194" marker-end="url(#ahb)"/>
+        <path class="ln" d="M360 156 L 360 194" marker-end="url(#ah)"/>
+        <path class="lr" d="M430 128 C 520 150, 590 170, 600 194" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="360" y="42" text-anchor="middle">mv SOURCE DEST</text>
+      <text class="t" x="360" y="124" text-anchor="middle">DEST is…</text>
+      <text class="tb" x="235" y="182" text-anchor="middle">a folder</text>
+      <text class="ts" x="400" y="184" text-anchor="middle">missing</text>
+      <text class="tr" x="490" y="182" text-anchor="middle">a file</text>
+      <text class="t" x="120" y="236" text-anchor="middle">moved inside it,</text>
+      <text class="t" x="120" y="262" text-anchor="middle">keeps its name</text>
+      <text class="t" x="360" y="236" text-anchor="middle">moved and</text>
+      <text class="t" x="360" y="262" text-anchor="middle">renamed to DEST</text>
+      <text class="t" x="600" y="236" text-anchor="middle">DEST overwritten,</text>
+      <text class="t" x="600" y="262" text-anchor="middle">no warning!</text>
+    </svg></div>
+    <figcaption>Check what the destination is before you press Enter.</figcaption>
+  </figure>
+  <div class="sticky warn"><strong>Silent overwrite</strong> If the destination is an existing file, <code>mv</code> replaces it without asking, and there is no undo. Use <code>mv -i</code> to be asked first, and double-check the destination name.</div>
+
+  <h3><code>cp</code> vs <code>mv</code></h3>
+  <p>Both use the same <i>source → destination</i> syntax and both can rename on the way. The difference is what happens to the original. <mark>A simple way to remember it: cp leaves two, mv leaves one.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="cp: source stays and a new copy appears at destination, two files. mv: source disappears and appears at destination, one file">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="680" height="84" rx="14"/>
+        <rect class="box f-blue" x="20" y="120" width="680" height="84" rx="14"/>
+        <rect class="box f-card" x="150" y="40" width="150" height="44" rx="10"/>
+        <rect class="box f-card" x="470" y="40" width="150" height="44" rx="10"/>
+        <rect class="box f-none dash" x="150" y="140" width="150" height="44" rx="10"/>
+        <rect class="box f-card" x="470" y="140" width="150" height="44" rx="10"/>
+        <path class="lb" d="M305 62 L 462 62" marker-end="url(#ahb)"/>
+        <path class="lr" d="M305 162 L 462 162" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="70" y="72" text-anchor="middle">cp</text>
+      <text class="th" x="70" y="172" text-anchor="middle">mv</text>
+      <text class="tm" x="225" y="67" text-anchor="middle">a.txt</text>
+      <text class="tm" x="545" y="67" text-anchor="middle">b.txt</text>
+      <text class="ts" x="225" y="167" text-anchor="middle">(gone)</text>
+      <text class="tm" x="545" y="167" text-anchor="middle">b.txt</text>
+      <text class="tb" x="665" y="70" text-anchor="middle">2</text>
+      <text class="tr" x="665" y="170" text-anchor="middle">1</text>
+    </svg></div>
+    <figcaption><code>cp</code> duplicates; <code>mv</code> relocates.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>cp</code></th><th><code>mv</code></th></tr>
+    <tr><td>Original afterwards</td><td>stays exactly where it was</td><td>no longer exists at the old location</td></tr>
+    <tr><td>Files at the end</td><td>two independent files</td><td>one file</td></tr>
+    <tr><td>Folders</td><td>needs <code>-r</code></td><td>works directly</td></tr>
+    <tr><td>Typical use</td><td>backups, templates</td><td>organising, renaming</td></tr>
+  </table></div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="rm">
+  <h2><code>rm</code> · removing files</h2>
+  <p>Program location: <code>/bin/rm</code>. <code>rm</code> removes files (and, with an option, directories).</p>
+  <div class="sticky warn l"><strong>No Recycle Bin</strong> Desktop file managers move deleted files to a Trash. <code>rm</code> doesn’t. <mark>Once a file is removed with rm, it is gone; there is no built-in undo.</mark></div>
+  <div class="two">
+    <pre class="out"><code># before
+.
+├── file1.txt
+└── file2.txt</code></pre>
+    <pre class="out"><code># after: rm file1.txt
+.
+└── file2.txt</code></pre>
+  </div>
+  <div class="cmd"><p class="what">Try it</p>
+  <pre><code class="language-bash">touch file1.txt
+echo "This file will be removed" &gt; file1.txt
+cat file1.txt
+rm file1.txt
+ls                                  # file1.txt no longer appears</code></pre></div>
+
+  <h3>Several files, or a pattern</h3>
+  <pre><code class="language-bash">rm file1.txt file2.txt file3.txt    # all three in one go
+rm *.txt                            # every file ending in .txt in this folder</code></pre>
+
+  <h3>The options that change rm’s behaviour</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4><code>-i</code> · interactive</h4><p>Asks before deleting each file. Type <b>y</b> + Enter to confirm; anything else cancels.</p></div>
+    <div class="card t3 tilt-b"><h4><code>-f</code> · force</h4><p>Never asks and hides most errors (e.g. for missing files). Useful in scripts, where no one can answer a prompt.</p></div>
+    <div class="card t4 tilt-a"><h4><code>-r</code> / <code>-R</code> · recursive</h4><p>Goes inside a directory and removes its files and subfolders, then the directory itself.</p></div>
+  </div>
+  <pre><code class="language-bash">rm -i report.txt</code></pre>
+  <pre class="out"><code>rm: remove regular file 'report.txt'? y</code></pre>
+  <pre><code class="language-bash">rm -f old_file.txt      # no question, no complaint if it is missing</code></pre>
+  <p>Removing a whole directory tree:</p>
+  <div class="two">
+    <pre class="out"><code>project/
+├── app.txt
+└── images/
+    ├── logo.png
+    └── photo.jpg</code></pre>
+    <pre><code class="language-bash">rm -r project
+# project, app.txt, images/ and both
+# pictures are all deleted</code></pre>
+  </div>
+  <div class="sticky tip"><strong>Make -i a habit</strong> One confirmation prompt is a small price for avoiding an unrecoverable mistake. Keep <code>-f</code> for scripts and situations where you are already certain.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="rm-rf">
+  <h2>The risk of <code>rm -rf</code></h2>
+  <p>Combine recursive and force and you get:</p>
+  <pre><code class="language-bash">rm -rf foldername</code></pre>
+  <p>This deletes a folder and everything inside it <b>without asking at any step</b>. It is one of the most powerful and most dangerous commands in Linux:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>No confirmation</b>A typo in the path is executed immediately.</div></li>
+    <li><span class="dot">2</span><div><b>No recycle bin</b>The deletion cannot be undone.</div></li>
+    <li><span class="dot">3</span><div><b>One stray space changes everything</b>You meant <code>folder/subfolder</code>, but typed a space before the slash.</div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="rm -rf folder/subfolder deletes one subfolder; rm -rf folder / with a space becomes two targets: folder and the whole root file system">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="330" height="160" rx="14"/>
+        <rect class="box f-orange" x="370" y="20" width="330" height="160" rx="14"/>
+      </g>
+      <text class="tb" x="185" y="52" text-anchor="middle">intended</text>
+      <text class="tm" x="185" y="92" text-anchor="middle">rm -rf folder/subfolder</text>
+      <text class="t" x="185" y="132" text-anchor="middle">1 target: subfolder</text>
+      <text class="tr" x="535" y="52" text-anchor="middle">typed</text>
+      <text class="tm" x="535" y="92" text-anchor="middle">rm -rf folder /</text>
+      <text class="t" x="535" y="132" text-anchor="middle">2 targets: folder AND /</text>
+      <text class="ts" x="535" y="160" text-anchor="middle">/ is the entire file system</text>
+    </svg></div>
+    <figcaption>The shell splits arguments on spaces, so <code>folder /</code> is two separate things to delete.</figcaption>
+  </figure>
+  <div class="sticky info"><strong>A small safety net</strong> Modern GNU <code>rm</code> refuses to operate on <code>/</code> itself unless you add <code>--no-preserve-root</code>. Don’t rely on it: <code>rm -rf folder /*</code> would still wipe everything it is allowed to.</div>
+  <h3>Safe removal practices</h3>
+  <ul>
+    <li><b>Preview before deleting.</b> Run <code>ls</code> on the exact target first (e.g. <code>ls *.log</code> before <code>rm *.log</code>).</li>
+    <li><b>Prefer <code>-i</code> for anything important.</b></li>
+    <li><b>Avoid <code>-f</code> out of habit.</b> If unsure, run the command without <code>-f</code> first.</li>
+    <li><b>Be extra careful with wildcards and variables.</b> <code>rm -rf *.log</code> from the wrong folder matches different files; an empty variable in a script can turn <code>rm -rf "$DIR"/*</code> into <code>rm -rf /*</code>.</li>
+    <li><b>Keep backups of anything irreplaceable.</b> <code>rm</code> never checks whether a copy exists elsewhere.</li>
+  </ul>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer’s production server you are a guest. Before any delete, run <code>pwd</code> and <code>ls</code> on the target, and take a quick backup (<code>cp -r logs logs.bak</code> or a tarball). Cleaning up disk space is a classic request, and a careless <code>rm -rf</code> there can end a project.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="rmdir">
+  <h2><code>rmdir</code> · removing empty directories</h2>
+  <p>Program location: <code>/bin/rmdir</code>. One very important rule: <mark><code>rmdir</code> can remove only empty directories.</mark></p>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 250" role="img" aria-label="rmdir asks: is the directory empty? Yes, it is removed. No, it cannot be removed and shows an error">
+      <g class="rough">
+        <rect class="box f-blue" x="160" y="10" width="200" height="54" rx="12"/>
+        <path class="box f-yellow" d="M260 90 L 340 130 L 260 170 L 180 130 Z"/>
+        <rect class="box f-green" x="20" y="186" width="170" height="54" rx="12"/>
+        <rect class="box f-orange" x="310" y="186" width="190" height="54" rx="12"/>
+        <path class="ln" d="M260 66 L 260 86" marker-end="url(#ah)"/>
+        <path class="lb" d="M185 140 C 140 150, 110 165, 105 180" marker-end="url(#ahb)"/>
+        <path class="lr" d="M335 140 C 380 150, 400 165, 405 180" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="260" y="42" text-anchor="middle">rmdir temp</text>
+      <text class="t" x="260" y="136" text-anchor="middle">empty?</text>
+      <text class="tb" x="140" y="126" text-anchor="middle">YES</text>
+      <text class="tr" x="380" y="126" text-anchor="middle">NO</text>
+      <text class="t" x="105" y="218" text-anchor="middle">removed</text>
+      <text class="t" x="405" y="218" text-anchor="middle">error, kept</text>
+    </svg></div>
+    <figcaption><code>rmdir</code> never deletes anything you forgot was inside.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">rmdir DIRECTORY</code></pre></div>
+  <pre><code class="language-bash">rmdir temp                  # temp is empty: removed, no flags needed
+ls                          # temp is gone
+rmdir docs images backup    # several empty folders at once</code></pre>
+  <p>If one of several folders still has something in it, <code>rmdir</code> removes the empty ones and reports an error only for that one; it doesn’t stop the whole command.</p>
+  <h3>Why it refuses non-empty folders</h3>
+  <pre class="out"><code>project/
+├── notes.txt
+└── src/</code></pre>
+  <pre><code class="language-bash">rmdir project</code></pre>
+  <pre class="out"><code>rmdir: failed to remove 'project': Directory not empty</code></pre>
+  <p>This is deliberate. <code>rmdir</code> is a <b>safe cleanup</b> command. To remove a directory together with its contents you need <code>rm -r</code>.</p>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>rmdir</code></th><th><code>rm -r</code></th></tr>
+    <tr><td>Removes</td><td>only empty directories</td><td>a directory and everything inside it</td></tr>
+    <tr><td>If something is inside</td><td>refuses with an error</td><td>deletes all files and subfolders</td></tr>
+    <tr><td>Deletes plain files?</td><td>no</td><td>yes</td></tr>
+    <tr><td>Risk</td><td>safe by design</td><td>powerful and easy to misuse</td></tr>
+  </table></div>
+  <div class="sticky tip l"><strong>Good habit</strong> Reach for <code>rmdir</code> when tidying up empty folders, and keep <code>rm -r</code> for when you really mean to delete everything a folder contains.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>touch</dt><dd>Creates an empty file if it doesn’t exist; on an existing file it only updates the timestamps and leaves the content alone.</dd></div>
+    <div><dt>mkdir -p</dt><dd>Creates a directory along with any missing parent directories in its path, and does not complain if it already exists.</dd></div>
+    <div><dt>cp</dt><dd>Copies a file to a new location or name, leaving the original in place. Needs <code>-r</code> to copy directories.</dd></div>
+    <div><dt>mv</dt><dd>Moves or renames a file or directory. No copy is made; the original location no longer holds it.</dd></div>
+    <div><dt>rm</dt><dd>Permanently deletes files (no Recycle Bin). With <code>-r</code> it deletes directories and everything inside them.</dd></div>
+    <div><dt>rm -i</dt><dd>Interactive removal: asks for confirmation before deleting each file.</dd></div>
+    <div><dt>rm -rf</dt><dd>Recursive, forced removal: deletes a directory tree with no prompts and no undo. Powerful and dangerous.</dd></div>
+    <div><dt>rmdir</dt><dd>Removes a directory only if it is empty; otherwise it fails with “Directory not empty”.</dd></div>
+    <div><dt>Wildcard (*)</dt><dd>A pattern character that matches any text in file names, e.g. <code>*.txt</code> matches every file ending in .txt.</dd></div>
+    <div><dt>Recursive</dt><dd>Applying an operation to a directory, then to everything inside it, then everything inside those, all the way down.</dd></div>
+  </dl>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p><code>notes.txt</code> contains “Hello”. What does <code>touch notes.txt</code> do?</p>
+      <ol><li>Empties the file</li><li>Creates a second file called notes.txt</li><li>Keeps the content and updates the timestamps</li><li>Shows an “already exists” error</li></ol>
+      <p class="why">On an existing file, touch only refreshes the access and modification times.</p></div>
+    <div class="q" data-answer="1"><p>Nothing exists yet. Which command creates <code>app/src/main</code> in one go?</p>
+      <ol><li><code>mkdir -p app/src/main</code></li><li><code>mkdir app/src/main</code></li><li><code>touch app/src/main</code></li><li><code>mkdir -r app/src/main</code></li></ol>
+      <p class="why"><code>-p</code> creates any missing parent directories. Without it mkdir fails because <code>app</code> doesn’t exist.</p></div>
+    <div class="q" data-answer="4"><p>After <code>mv a.txt b.txt</code>, how many of these files exist?</p>
+      <ol><li>Two: a.txt and b.txt</li><li>None</li><li>Only a.txt</li><li>Only b.txt</li></ol>
+      <p class="why">mv renames; it doesn’t copy. cp leaves two, mv leaves one.</p></div>
+    <div class="q" data-answer="2"><p><code>report.txt</code> already exists. What happens with <code>mv draft.txt report.txt</code>?</p>
+      <ol><li>mv asks before replacing it</li><li>report.txt is silently overwritten by draft.txt</li><li>draft.txt is moved inside report.txt</li><li>The command fails</li></ol>
+      <p class="why">If the destination is an existing file, mv overwrites it without warning (unless you use <code>-i</code>).</p></div>
+    <div class="q" data-answer="3"><p><code>rmdir project</code> prints “Directory not empty”. How do you remove it with its contents?</p>
+      <ol><li><code>rmdir -f project</code></li><li><code>rm project</code></li><li><code>rm -r project</code></li><li><code>mv project /dev</code></li></ol>
+      <p class="why">rmdir only removes empty folders. <code>rm -r</code> removes a directory and everything in it.</p></div>
+    <div class="q" data-answer="1"><p>Why is <code>rm -rf folder /</code> so dangerous?</p>
+      <ol><li>The space makes <code>/</code> a separate target: the whole file system</li><li>It moves the folder to the root</li><li>It only deletes hidden files</li><li>It asks too many questions</li></ol>
+      <p class="why">The shell splits on spaces, so rm receives two targets: <code>folder</code> and <code>/</code>.</p></div>
+    <div class="q" data-answer="2"><p>Which command copies a whole directory?</p>
+      <ol><li><code>cp project backup</code></li><li><code>cp -r project backup</code></li><li><code>mv -r project backup</code></li><li><code>mkdir -p project backup</code></li></ol>
+      <p class="why">cp skips directories unless you pass <code>-r</code> (recursive).</p></div>
+    <div class="q" data-answer="4"><p>What does <code>rm -i</code> add?</p>
+      <ol><li>It deletes faster</li><li>It ignores missing files</li><li>It deletes folders recursively</li><li>It asks for confirmation before each deletion</li></ol>
+      <p class="why"><code>-i</code> = interactive. Only <b>y</b> confirms; anything else cancels.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>touch</b> and <b>mkdir</b> create, <b>cp</b> duplicates, <b>mv</b> moves or renames, and <b>rm</b> / <b>rmdir</b> delete, <b>permanently</b>, so always look before you remove.</p>
+  <p>Next up: Reading Files, where you’ll open these files and look inside them with <code>cat</code>, <code>less</code> and <code>head</code>.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reading Files · Linux | AIFDE Notes</title>
+<meta name="description" content="Look inside files from the terminal: cat for small files, less to scroll and search big logs, and head to peek at the first lines.">
+<meta name="keywords" content="cat, cat -n, less, head, head -n, log files, searching in less">
+<meta name="date" content="2026-09-07">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/reading-files">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Reading Files</h1>
+  <p class="byline">See what is inside any file from the terminal, and pick the right tool for a 5-line note, a 50,000-line log, or just a quick peek at the top.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why we need file-reading commands</h2>
+  <p>So far you have used <code>touch</code>, <code>mkdir</code>, <code>cp</code>, <code>mv</code> and <code>rm</code> to <b>create and manage</b> files. But given a file like <code>app.txt</code>, the obvious next question is: <b>what is actually inside it?</b> We need commands that show file contents right in the terminal.</p>
+  <div class="story"><b class="lbl">Reading the newspaper</b>A one-line SMS you read in full. The Sunday newspaper you flip through page by page, jumping to the sports section. A thick exam guide you only check the contents page of. <mark>You don’t always want to read an entire file, so Linux gives you a different tool for each situation.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Small file of 5 lines: use cat to see everything. Large file of 50,000 lines: use less to scroll and search. Only need the beginning of a 100,000 line file: use head">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="210" height="130" rx="14"/>
+        <rect class="box f-blue" x="255" y="20" width="210" height="130" rx="14"/>
+        <rect class="box f-yellow" x="490" y="20" width="210" height="130" rx="14"/>
+        <path class="ln" d="M125 155 L 125 190" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 155 L 360 190" marker-end="url(#ah)"/>
+        <path class="ln" d="M595 155 L 595 190" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="125" y="54" text-anchor="middle">app.txt</text>
+      <text class="t" x="125" y="88" text-anchor="middle">5 lines</text>
+      <text class="ts" x="125" y="120" text-anchor="middle">“show me everything”</text>
+      <text class="tm" x="360" y="54" text-anchor="middle">server.log</text>
+      <text class="t" x="360" y="88" text-anchor="middle">50,000 lines</text>
+      <text class="ts" x="360" y="120" text-anchor="middle">“scroll and search”</text>
+      <text class="tm" x="595" y="54" text-anchor="middle">users.txt</text>
+      <text class="t" x="595" y="88" text-anchor="middle">100,000 lines</text>
+      <text class="ts" x="595" y="120" text-anchor="middle">“just the beginning”</text>
+      <text class="th" x="125" y="226" text-anchor="middle">cat</text>
+      <text class="th" x="360" y="226" text-anchor="middle">less</text>
+      <text class="th" x="595" y="226" text-anchor="middle">head</text>
+    </svg></div>
+    <figcaption>Three situations, three tools.</figcaption>
+  </figure>
+  <p>For the big log you want to <b>read, scroll, search, go backward and go forward</b>:</p>
+  <div class="flow"><span>read</span><span>scroll</span><span>search</span><span>go backward</span><span>go forward</span></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="cat">
+  <h2><code>cat</code> · display the complete file</h2>
+  <p>Full form: <b>concatenate</b>. Program location: <code>/bin/cat</code>. <code>cat</code> prints a file’s contents straight into the terminal, all at once. <mark>It is the most convenient choice for small files.</mark></p>
+  <div class="flow"><span>file</span><span class="op">cat</span><span class="ok">entire content appears</span></div>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cat filename</code></pre></div>
+  <p>Suppose <code>app.txt</code> contains three lines. Run:</p>
+  <pre><code class="language-bash">cat app.txt</code></pre>
+  <pre class="out"><code>Linux is an operating system.
+Linux is widely used on servers.
+Linux is important in DevOps.</code></pre>
+  <p>What happened? Linux <b>opened</b> <code>app.txt</code>, <b>read</b> its contents and <b>sent</b> them to the terminal.</p>
+  <div class="flow"><span>open app.txt</span><span>read contents</span><span class="ok">send to terminal</span></div>
+
+  <h3>Line numbers with <code>-n</code></h3>
+  <p>Sometimes you need to know <i>which line</i> contains something, for example when an error message says “line 2”. The <code>-n</code> option numbers every line:</p>
+  <pre><code class="language-bash">cat -n app.txt</code></pre>
+  <pre class="out"><code>     1  Linux is an operating system.
+     2  Linux is widely used on servers.
+     3  Linux is important in DevOps.</code></pre>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="cat-multiple">
+  <h2>Reading and combining several files</h2>
+  <p><code>cat</code> isn’t limited to one file. Given these two:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">file1.txt</span><pre><code class="language-plaintext">Hello
+Welcome to Linux</code></pre></div>
+    <div class="codebox"><span class="cap">file2.txt</span><pre><code class="language-plaintext">Linux is powerful
+Linux is flexible</code></pre></div>
+  </div>
+  <pre><code class="language-bash">cat file1.txt file2.txt</code></pre>
+  <pre class="out"><code>Hello
+Welcome to Linux
+Linux is powerful
+Linux is flexible</code></pre>
+  <p>Notice the order: all of <code>file1.txt</code>, then all of <code>file2.txt</code>, joined end to end. That joining is where the name <i>concatenate</i> comes from.</p>
+  <h3>Saving the combined result</h3>
+  <p>Because <code>cat</code> produces <i>file1 content + file2 content</i>, you can redirect that output into a new file with <code>&gt;</code>:</p>
+  <pre><code class="language-bash">cat file1.txt file2.txt &gt; combined.txt</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="file1.txt and file2.txt both flow into cat, which writes combined.txt containing file1 followed by file2">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="160" height="54" rx="12"/>
+        <rect class="box f-green" x="20" y="116" width="160" height="54" rx="12"/>
+        <rect class="box f-yellow" x="290" y="72" width="130" height="56" rx="12"/>
+        <rect class="box f-card" x="520" y="40" width="180" height="120" rx="12"/>
+        <path class="ln" d="M185 57 C 230 60, 250 85, 284 95" marker-end="url(#ah)"/>
+        <path class="ln" d="M185 143 C 230 140, 250 115, 284 105" marker-end="url(#ah)"/>
+        <path class="lr" d="M425 100 L 512 100" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M535 100 L 685 100"/>
+      </g>
+      <text class="tm" x="100" y="62" text-anchor="middle">file1.txt</text>
+      <text class="tm" x="100" y="148" text-anchor="middle">file2.txt</text>
+      <text class="th" x="355" y="109" text-anchor="middle">cat</text>
+      <text class="tr" x="468" y="88" text-anchor="middle">&gt;</text>
+      <text class="tm" x="610" y="30" text-anchor="middle">combined.txt</text>
+      <text class="ts" x="610" y="78" text-anchor="middle">file1 content</text>
+      <text class="ts" x="610" y="130" text-anchor="middle">file2 content</text>
+    </svg></div>
+    <figcaption><code>combined.txt</code> holds file1 followed immediately by file2.</figcaption>
+  </figure>
+  <div class="sticky warn"><strong>&gt; replaces</strong> If <code>combined.txt</code> already exists, <code>&gt;</code> overwrites it. Use <code>&gt;&gt;</code> to append instead. The Pipes &amp; Redirection note covers both in detail.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="cat-limit">
+  <h2>The limitation of <code>cat</code></h2>
+  <p>Now try <code>cat server.log</code> on a log with <b>thousands of lines</b>:</p>
+  <pre class="out"><code>line 1
+line 2
+line 3
+...
+line 5000
+line 5001
+line 5002
+...</code></pre>
+  <p>The output races past your screen and you are left looking at the last few lines. <code>cat</code> isn’t broken. <mark>The problem is that you asked it to show everything, when you don’t actually want everything at once.</mark> That is where <code>less</code> comes in.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="less">
+  <h2><code>less</code> · browse a file interactively</h2>
+  <p>Program location: <code>/usr/bin/less</code>. <code>less</code> lets you read a large file <b>one screen at a time</b>, like turning the pages of a book.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">less filename
+less server.log</code></pre></div>
+  <p>Instead of printing the whole file, <code>less</code> takes over the terminal, shows one screenful and waits for your keys.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="A tall file with less showing a window of one screen. Space moves the window down one screen, b moves it up, g jumps to the top, G jumps to the end">
+      <g class="rough">
+        <rect class="box f-card" x="60" y="14" width="220" height="272" rx="10"/>
+        <rect class="box f-blue" x="44" y="96" width="252" height="92" rx="10"/>
+        <path class="lb" d="M310 165 C 340 175, 345 205, 330 225" marker-end="url(#ahb)"/>
+        <path class="lr" d="M310 120 C 340 110, 345 80, 330 60" marker-end="url(#ahr)"/>
+        <path class="ln" d="M90 40 L 250 40"/>
+        <path class="ln" d="M90 60 L 230 60"/>
+        <path class="ln" d="M90 220 L 240 220"/>
+        <path class="ln" d="M90 240 L 220 240"/>
+        <path class="ln" d="M90 260 L 250 260"/>
+      </g>
+      <text class="th" x="170" y="135" text-anchor="middle">your screen</text>
+      <text class="ts" x="170" y="164" text-anchor="middle">one page of the file</text>
+      <text class="ts" x="170" y="86" text-anchor="middle">earlier lines</text>
+      <text class="ts" x="170" y="210" text-anchor="middle">later lines</text>
+      <text class="tb" x="360" y="214">Space · next screen</text>
+      <text class="tr" x="360" y="78">b · previous screen</text>
+      <text class="t" x="440" y="30">g · jump to the top</text>
+      <text class="t" x="440" y="286">G · jump to the end</text>
+      <text class="t" x="400" y="150">/word · search forward</text>
+    </svg></div>
+    <figcaption><code>less</code> is a window that slides over the file. You move the window; the file never floods the terminal.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Key</th><th>Purpose</th></tr>
+    <tr><td><kbd>Space</kbd></td><td>Move forward one screen</td></tr>
+    <tr><td><kbd>b</kbd></td><td>Move backward one screen</td></tr>
+    <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Move line by line</td></tr>
+    <tr><td><kbd>g</kbd></td><td>Go to the beginning of the file</td></tr>
+    <tr><td><kbd>G</kbd></td><td>Go to the end of the file</td></tr>
+    <tr><td><kbd>/</kbd>word</td><td>Search forward for “word”</td></tr>
+    <tr><td><kbd>?</kbd>word</td><td>Search backward for “word”</td></tr>
+    <tr><td><kbd>n</kbd></td><td>Jump to the next search result</td></tr>
+    <tr><td><kbd>q</kbd></td><td>Quit and return to the terminal</td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>Why “less”?</strong> An older pager was called <code>more</code> (it could only go forward). <code>less</code> came later and does more, including going backward. Hence the joke: “less is more”.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="less-practice">
+  <h2>Practise <code>less</code> on a log file</h2>
+  <p>First build a small <code>server.log</code>. <code>&gt;</code> creates the file with the first line, and each <code>&gt;&gt;</code> appends one more line:</p>
+  <div class="cmd"><p class="what">Create the practice log</p>
+  <pre><code class="language-bash">echo "Server started" &gt; server.log
+echo "User admin logged in" &gt;&gt; server.log
+echo "Database connected" &gt;&gt; server.log
+echo "Request received" &gt;&gt; server.log
+echo "Request completed" &gt;&gt; server.log
+echo "ERROR database connection failed" &gt;&gt; server.log
+echo "User john logged in" &gt;&gt; server.log
+echo "Database backup started" &gt;&gt; server.log
+echo "Database backup completed" &gt;&gt; server.log
+echo "ERROR network unavailable" &gt;&gt; server.log
+# repeat these lines a few more times to make the file longer than one screen</code></pre></div>
+  <p><code>cat server.log</code> shows every line at once. Now open it with <code>less server.log</code>. For a small file you may not notice much difference; the more lines you add, the more useful it gets.</p>
+
+  <h3>Move through the file</h3>
+  <p>Press <kbd>Space</kbd> to go one screen forward. Went too far? Press <kbd>b</kbd> to go back one screen.</p>
+  <div class="flow"><span>Screen 1</span><span class="op">Space</span><span>Screen 2</span><span class="op">b</span><span>Screen 1</span></div>
+
+  <h3>Find an error</h3>
+  <p>Imagine <code>server.log</code> has <b>10,000 lines</b> and somewhere inside is <code>ERROR database connection failed</code>. Don’t scroll manually. Inside <code>less</code>, type <code>/ERROR</code> and press <kbd>Enter</kbd>. <code>less</code> jumps to the <b>first match</b> and highlights it. Press <kbd>n</kbd> for the next one, and again for the one after:</p>
+  <div class="flow"><span class="op">/ERROR</span><span class="hl">first ERROR</span><span class="op">n</span><span class="hl">next ERROR</span><span class="op">n</span><span class="hl">next ERROR</span></div>
+  <p>Near the end of the file and want to look <b>upwards</b>? Use <code>?ERROR</code> + <kbd>Enter</kbd> to search backward.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4><code>/ERROR</code></h4><p>Search <b>forward</b> (down the file).</p></div>
+    <div class="card t5 tilt-b"><h4><code>?ERROR</code></h4><p>Search <b>backward</b> (up the file).</p></div>
+  </div>
+  <div class="sticky tip"><strong>n follows your direction</strong> After <code>?ERROR</code>, <kbd>n</kbd> keeps searching backward. <kbd>N</kbd> (capital) always goes the opposite way.</div>
+
+  <h3>Jump to the start, the end, and out</h3>
+  <ol class="path">
+    <li><span class="dot">g</span><div><b>Beginning of the file</b>From anywhere in a huge file, <kbd>g</kbd> takes you straight to line 1.</div></li>
+    <li><span class="dot">G</span><div><b>End of the file</b>Logs grow at the bottom, so <kbd>G</kbd> shows you the <b>latest entries</b>.</div></li>
+    <li><span class="dot">q</span><div><b>Quit</b>Leaves <code>less</code> and returns you to your normal terminal prompt.</div></li>
+  </ol>
+  <div class="flow"><span class="op">less server.log</span><span>read / move / search</span><span class="op">q</span><span class="ok">normal terminal</span></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer says “the app crashed around 3 pm”, your first move is often <code>less /var/log/app.log</code>, then <kbd>G</kbd> to jump to the latest lines and <code>?ERROR</code> to walk backward through the failures. It is read-only, so you can’t accidentally edit a production log.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="head">
+  <h2><code>head</code> · read the beginning of a file</h2>
+  <p>Sometimes you only need to know: <i>“What does the start of this file look like?”</i> Is it a CSV with a header? What format are the log lines in? <code>users.txt</code> may hold 1,000 lines (<code>User 1</code> … <code>User 1000</code>), but you only want the first few. <mark><code>head</code> shows you the beginning of a file, quickly.</mark></p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">head filename           # first 10 lines (the default)
+head -n NUMBER filename # first NUMBER lines</code></pre></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 240" role="img" aria-label="A long file of 1000 lines; head takes the top 10 lines and shows them, the rest is not displayed">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="14" width="190" height="212" rx="10"/>
+        <rect class="box f-green" x="20" y="14" width="190" height="70" rx="10"/>
+        <rect class="box f-green" x="320" y="14" width="180" height="70" rx="10"/>
+        <path class="lr" d="M215 49 L 312 49" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="115" y="44" text-anchor="middle">User 1</text>
+      <text class="tm" x="115" y="68" text-anchor="middle">… User 10</text>
+      <text class="ts" x="115" y="130" text-anchor="middle">User 11</text>
+      <text class="ts" x="115" y="160" text-anchor="middle">…</text>
+      <text class="ts" x="115" y="196" text-anchor="middle">User 1000</text>
+      <text class="th" x="262" y="38" text-anchor="middle">head</text>
+      <text class="t" x="410" y="44" text-anchor="middle">first 10 lines</text>
+      <text class="ts" x="410" y="68" text-anchor="middle">on your screen</text>
+      <text class="ts" x="410" y="140" text-anchor="middle">the other 990 lines</text>
+      <text class="ts" x="410" y="162" text-anchor="middle">are not displayed</text>
+    </svg></div>
+    <figcaption>By default, <code>head</code> prints the first 10 lines and stops.</figcaption>
+  </figure>
+  <div class="cmd"><p class="what">Practical example</p>
+  <pre><code class="language-bash">echo "Line 1" &gt; app.log
+echo "Line 2" &gt;&gt; app.log
+echo "Line 3" &gt;&gt; app.log
+# ...keep going up to...
+echo "Line 12" &gt;&gt; app.log
+
+cat app.log      # shows all 12 lines
+head app.log     # shows only the first 10</code></pre></div>
+  <pre class="out"><code>Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+Line 6
+Line 7
+Line 8
+Line 9
+Line 10</code></pre>
+  <p>Ten lines too many, or too few? Tell <code>head</code> exactly how many:</p>
+  <pre><code class="language-bash">head -n 5 app.log</code></pre>
+  <pre class="out"><code>Line 1
+Line 2
+Line 3
+Line 4
+Line 5</code></pre>
+  <div class="sticky info l"><strong>Its twin: tail</strong> <code>tail</code> is the mirror image: it shows the <b>last</b> 10 lines (<code>tail -n 20 app.log</code> for 20). <code>tail -f app.log</code> keeps the file open and prints new lines as they are written, perfect for watching a live log.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="choose">
+  <h2>Choosing the right tool</h2>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>Shows</th><th>Best for</th><th>Interactive?</th></tr>
+    <tr><td><code>cat</code></td><td>the whole file at once</td><td>small files, combining files</td><td>no</td></tr>
+    <tr><td><code>cat -n</code></td><td>the whole file with line numbers</td><td>finding “which line”</td><td>no</td></tr>
+    <tr><td><code>less</code></td><td>one screen at a time</td><td>large files and logs; scrolling and searching</td><td>yes (<kbd>q</kbd> to quit)</td></tr>
+    <tr><td><code>head</code></td><td>the first 10 lines</td><td>checking the format or header</td><td>no</td></tr>
+    <tr><td><code>head -n N</code></td><td>the first N lines</td><td>a custom-sized peek</td><td>no</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Rule of thumb</strong> If you don’t know how big a file is, never start with <code>cat</code>. Use <code>less</code> or <code>head</code> first; <code>wc -l file</code> (from the Text Filters note) tells you the line count.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>cat</dt><dd>Short for concatenate. Prints the full contents of one or more files to the terminal, one after another.</dd></div>
+    <div><dt>cat -n</dt><dd>Prints a file with a line number in front of every line.</dd></div>
+    <div><dt>Concatenate</dt><dd>To join things end to end. <code>cat a b</code> outputs all of a followed by all of b.</dd></div>
+    <div><dt>less</dt><dd>An interactive pager that shows a file one screen at a time and lets you scroll, search and jump; press q to quit.</dd></div>
+    <div><dt>Pager</dt><dd>A program that displays long text one page (screenful) at a time instead of printing it all at once.</dd></div>
+    <div><dt>/pattern and ?pattern</dt><dd>Inside less, search forward (/) or backward (?) for text; n jumps to the next match.</dd></div>
+    <div><dt>head</dt><dd>Prints the first lines of a file, 10 by default; <code>-n N</code> sets how many.</dd></div>
+    <div><dt>tail</dt><dd>Prints the last lines of a file, 10 by default; <code>tail -f</code> keeps following new lines as they are added.</dd></div>
+  </dl>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>You need to scroll through a 50,000-line log and search it. Which command fits best?</p>
+      <ol><li><code>cat server.log</code></li><li><code>less server.log</code></li><li><code>head server.log</code></li><li><code>cat -n server.log</code></li></ol>
+      <p class="why">less shows one screen at a time and supports scrolling and searching. cat would flood the terminal.</p></div>
+    <div class="q" data-answer="4"><p>What does <code>cat a.txt b.txt</code> print?</p>
+      <ol><li>Only a.txt</li><li>The lines of both files interleaved</li><li>b.txt, then a.txt</li><li>All of a.txt, followed by all of b.txt</li></ol>
+      <p class="why">cat concatenates: files are printed whole, in the order you list them.</p></div>
+    <div class="q" data-answer="1"><p>How many lines does <code>head app.log</code> show by default?</p>
+      <ol><li>10</li><li>5</li><li>20</li><li>The whole file</li></ol>
+      <p class="why">head defaults to the first 10 lines. Use <code>-n</code> to change it.</p></div>
+    <div class="q" data-answer="3"><p>Inside <code>less</code>, you searched with <code>/ERROR</code>. How do you jump to the next match?</p>
+      <ol><li><kbd>b</kbd></li><li><kbd>q</kbd></li><li><kbd>n</kbd></li><li><kbd>G</kbd></li></ol>
+      <p class="why">n repeats the last search. b goes back a screen, q quits, G jumps to the end.</p></div>
+    <div class="q" data-answer="2"><p>You want the newest entries at the bottom of a log you opened in <code>less</code>. Which key?</p>
+      <ol><li><kbd>g</kbd></li><li><kbd>G</kbd></li><li><kbd>Space</kbd></li><li><kbd>?</kbd></li></ol>
+      <p class="why">Capital G jumps to the end of the file; lowercase g goes to the beginning.</p></div>
+    <div class="q" data-answer="4"><p>Which command saves the joined contents of two files into a new file?</p>
+      <ol><li><code>cat file1.txt + file2.txt</code></li><li><code>less file1.txt file2.txt</code></li><li><code>head file1.txt file2.txt combined.txt</code></li><li><code>cat file1.txt file2.txt &gt; combined.txt</code></li></ol>
+      <p class="why">cat outputs both files in order, and <code>&gt;</code> redirects that output into combined.txt.</p></div>
+    <div class="q" data-answer="3"><p>Why is <code>cat</code> a poor choice for a huge file?</p>
+      <ol><li>It changes the file</li><li>It can only read files under 1 MB</li><li>It prints everything at once, so the text scrolls past too fast to read</li><li>It deletes lines it can’t show</li></ol>
+      <p class="why">cat works fine; it just shows everything, which is not what you want for a big file.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Use <b>cat</b> to see a small file in full (or join files), <b>less</b> to scroll and <b>search</b> a big one one screen at a time, and <b>head</b> to peek at just the beginning.</p>
+  <p>Next up: Searching Files &amp; Content, where <code>find</code> locates files anywhere on the system and <code>grep</code> finds the lines inside them.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

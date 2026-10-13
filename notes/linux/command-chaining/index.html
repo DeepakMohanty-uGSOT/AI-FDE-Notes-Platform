@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Command Chaining · Linux | AIFDE Notes</title>
+<meta name="description" content="Run several Linux commands on one line and control what happens next with ;, && and ||. Flows, examples and a self-check.">
+<meta name="keywords" content="; operator, && operator, || operator, exit status, combining chains, workflows">
+<meta name="date" content="2026-09-08">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/command-chaining">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Command Chaining</h1>
+  <p class="byline">Put several commands on one line, and decide what happens after each one finishes: run the next one anyway, only on success, or only on failure.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why chain commands?</h2>
+  <div class="story"><b class="lbl">Making tea</b>Boil water <b>and then</b> pour it in the cup. If the kettle doesn’t work, you don’t pour cold water. <mark>Command chaining is that “and then, but only if…” logic for the terminal.</mark></div>
+  <p>Normally we run commands one at a time:</p>
+  <div class="codebox"><span class="cap">three separate commands</span><pre><code class="language-bash">mkdir project
+cd project
+touch app.txt</code></pre></div>
+  <p>Linux lets us put them together on <b>one line</b>:</p>
+  <pre><code class="language-bash">mkdir project &amp;&amp; cd project &amp;&amp; touch app.txt</code></pre>
+  <p>This is <mark>command chaining</mark>. The operator between two commands decides <b>whether the next command should run</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Command 1 runs, then a decision 'should command 2 run?', then command 2, then the same question before command 3">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="70" width="140" height="60" rx="12"/>
+        <rect class="box f-blue" x="290" y="70" width="140" height="60" rx="12"/>
+        <rect class="box f-blue" x="560" y="70" width="140" height="60" rx="12"/>
+        <path class="lr" d="M165 100 L 283 100" marker-end="url(#ahr)"/>
+        <path class="lr" d="M435 100 L 553 100" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="90" y="108" text-anchor="middle">Command 1</text>
+      <text class="th" x="360" y="108" text-anchor="middle">Command 2</text>
+      <text class="th" x="630" y="108" text-anchor="middle">Command 3</text>
+      <text class="tr" x="224" y="60" text-anchor="middle">run next?</text>
+      <text class="tr" x="494" y="60" text-anchor="middle">run next?</text>
+      <text class="ts" x="224" y="150" text-anchor="middle">decided by the operator</text>
+      <text class="ts" x="494" y="150" text-anchor="middle">; · &amp;&amp; · ||</text>
+    </svg></div>
+    <figcaption>Chaining = running multiple commands <i>and controlling what happens next</i>.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t6 tilt-a"><h4><code>;</code> · anyway</h4><p>Run the next command <b>no matter what</b> happened before.</p></div>
+    <div class="card t2 tilt-b"><h4><code>&amp;&amp;</code> · on success</h4><p>Run the next command <b>only if</b> the previous one succeeded.</p></div>
+    <div class="card t3 tilt-a"><h4><code>||</code> · on failure</h4><p>Run the next command <b>only if</b> the previous one failed.</p></div>
+  </div>
+  <div class="sticky info l"><strong>How does Linux know “success”?</strong> Every command finishes with an <b>exit status</b>: <code>0</code> means success, anything else means failure. See the last one with <code>echo $?</code>.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="semicolon">
+  <h2><code>;</code> · run commands one after another</h2>
+  <p>Sometimes we just want to say: <i>“Run this, then run that. I don’t care whether the first one worked.”</i></p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 ; command2</code></pre></div>
+  <div class="cmd"><p class="what">Try it</p>
+  <pre><code class="language-bash">mkdir chaining_practice
+cd chaining_practice
+mkdir project ; echo "Done"</code></pre></div>
+  <p>The first time, <code>project</code> doesn’t exist, so Linux creates it, then prints <code>Done</code>. Now run the <b>same line again</b>:</p>
+  <pre class="out"><code>mkdir: cannot create directory 'project': File exists
+Done</code></pre>
+  <p><code>mkdir</code> <b>failed</b> because the folder already exists, but <code>echo "Done"</code> <mark>still ran</mark>. That is exactly what <code>;</code> means.</p>
+  <div class="flow"><span class="op">mkdir project</span><span class="bad">FAIL</span><span class="op">;</span><span class="ok">echo "Done" runs</span></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="and">
+  <h2><code>&amp;&amp;</code> · run only if the previous command succeeds</h2>
+  <p>New requirement: create a directory → enter it → create a file. If creating the directory fails, we <b>don’t</b> want to continue.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 &amp;&amp; command2      # command2 runs only if command1 succeeds</code></pre></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 250" role="img" aria-label="mkdir project2; if successful, cd project2 runs; if it fails, the chain stops">
+      <g class="rough">
+        <rect class="box f-blue" x="160" y="10" width="200" height="54" rx="12"/>
+        <path class="box f-yellow" d="M260 90 L 330 130 L 260 170 L 190 130 Z"/>
+        <rect class="box f-green" x="20" y="186" width="170" height="54" rx="12"/>
+        <rect class="box f-orange" x="330" y="186" width="170" height="54" rx="12"/>
+        <path class="ln" d="M260 66 L 260 86" marker-end="url(#ah)"/>
+        <path class="lb" d="M195 140 C 140 150, 110 165, 105 180" marker-end="url(#ahb)"/>
+        <path class="lr" d="M325 140 C 380 150, 410 165, 415 180" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="260" y="42" text-anchor="middle">mkdir project2</text>
+      <text class="t" x="260" y="136" text-anchor="middle">worked?</text>
+      <text class="tb" x="120" y="160" text-anchor="middle">YES</text>
+      <text class="tr" x="400" y="160" text-anchor="middle">NO</text>
+      <text class="tm" x="105" y="218" text-anchor="middle">cd project2</text>
+      <text class="th" x="415" y="222" text-anchor="middle">STOP</text>
+    </svg></div>
+    <figcaption><code>&amp;&amp;</code> is a gate: it only opens when the command before it succeeds.</figcaption>
+  </figure>
+  <div class="cmd"><p class="what">See both outcomes</p>
+  <pre><code class="language-bash">mkdir project2 &amp;&amp; cd project2     # works: you are now inside project2
+pwd                                 # check where you are
+cd ..                               # go back
+mkdir project2 &amp;&amp; echo "Created"   # fails: project2 exists, so "Created" never prints</code></pre></div>
+  <div class="two">
+    <div class="flow v"><span class="op">mkdir project2</span><span class="ok">SUCCESS</span><span class="op">cd project2 runs</span></div>
+    <div class="flow v"><span class="op">mkdir project2</span><span class="bad">FAIL</span><span class="hl">&amp;&amp; → STOP</span></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="many-and">
+  <h2>Several <code>&amp;&amp;</code> in a row</h2>
+  <pre><code class="language-bash">mkdir project3 &amp;&amp; cd project3 &amp;&amp; touch app.txt</code></pre>
+  <p>Each command now <mark>depends on the one before it</mark>. The chain stops at the first failure.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:28%">Situation</th><th style="width:24%"><code>mkdir project3</code></th><th style="width:24%"><code>cd project3</code></th><th style="width:24%"><code>touch app.txt</code></th></tr>
+    <tr><td>Everything works</td><td>✅ success</td><td>✅ runs</td><td>✅ runs</td></tr>
+    <tr><td>First command fails</td><td>❌ fail</td><td>⛔ not run</td><td>⛔ not run</td></tr>
+    <tr><td>Second command fails</td><td>✅ success</td><td>❌ fail</td><td>⛔ not run</td></tr>
+  </table></div>
+  <div class="flow"><span class="ok">mkdir ✓</span><span class="bad">cd ✗</span><span class="skip">touch app.txt</span></div>
+  <div class="sticky tip"><strong>Why this matters</strong> Without <code>&amp;&amp;</code>, a failed <code>cd</code> would leave you in the <b>wrong folder</b>, and the next command (say, a delete) would run there. <code>&amp;&amp;</code> keeps a broken step from causing damage further down.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="or">
+  <h2><code>||</code> · run only if the previous command fails</h2>
+  <p>Sometimes we want: <i>“Try the first command. If it fails, do something else.”</i> That is a <b>fallback</b>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 || command2      # command2 runs only if command1 fails</code></pre></div>
+  <pre><code class="language-bash">cd /wrong/path || echo "Directory not found"</code></pre>
+  <pre class="out"><code>bash: cd: /wrong/path: No such file or directory
+Directory not found</code></pre>
+  <div class="two">
+    <div class="flow v"><span class="op">cd /wrong/path</span><span class="bad">FAIL</span><span class="ok">echo runs</span></div>
+    <div class="flow v"><span class="op">cd /tmp</span><span class="ok">SUCCESS</span><span class="hl">|| → STOP (echo skipped)</span></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="difference">
+  <h2>The three operators, side by side</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Three lanes: semicolon always continues; double ampersand continues only on success; double pipe continues only on failure">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="20" width="680" height="62" rx="14"/>
+        <rect class="box f-green" x="20" y="98" width="680" height="62" rx="14"/>
+        <rect class="box f-orange" x="20" y="176" width="680" height="62" rx="14"/>
+        <path class="ln" d="M250 51 L 440 51" marker-end="url(#ah)"/>
+        <path class="lb" d="M250 129 L 440 129" marker-end="url(#ahb)"/>
+        <path class="lr" d="M250 207 L 440 207" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="60" y="60">;</text><text class="t" x="110" y="58">cmd1 ok or fail</text><text class="t" x="460" y="58">cmd2 always runs</text>
+      <text class="th" x="52" y="138">&amp;&amp;</text><text class="t" x="110" y="136">cmd1 succeeds</text><text class="t" x="460" y="136">cmd2 runs (else stop)</text>
+      <text class="th" x="56" y="216">||</text><text class="t" x="110" y="214">cmd1 fails</text><text class="t" x="460" y="214">cmd2 runs (else stop)</text>
+    </svg></div>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Next command runs when…</th><th>Read it as</th><th>Typical use</th></tr>
+    <tr><td><code>;</code></td><td>always</td><td>“then”</td><td>independent steps</td></tr>
+    <tr><td><code>&amp;&amp;</code></td><td>previous succeeded (exit 0)</td><td>“and then, if OK”</td><td>steps that depend on each other</td></tr>
+    <tr><td><code>||</code></td><td>previous failed (exit ≠ 0)</td><td>“or else”</td><td>fallbacks and error messages</td></tr>
+  </table></div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="combining">
+  <h2>Combining chains</h2>
+  <p>You can mix operators to get an “if it worked / if it didn’t” pattern:</p>
+  <pre><code class="language-bash">mkdir reports &amp;&amp; echo "Folder created" || echo "Could not create folder"</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>mkdir succeeds</b><code>&amp;&amp;</code> lets <code>echo "Folder created"</code> run. That echo succeeds, so <code>||</code> skips the last part.</div></li>
+    <li><span class="dot">2</span><div><b>mkdir fails</b><code>&amp;&amp;</code> skips the first echo; the failure reaches <code>||</code>, so “Could not create folder” prints.</div></li>
+  </ol>
+  <div class="sticky warn l"><strong>Careful: it is not a true if/else.</strong> In <code>A &amp;&amp; B || C</code>, <b>C also runs if B fails</b>. When the middle step can fail, use a real <code>if</code> statement in a script.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="workflow">
+  <h2>A practical workflow</h2>
+  <p>Set up a project folder, enter it, create starter files and confirm, stopping at the first problem:</p>
+  <div class="cmd"><p class="what">One line, safe at every step</p>
+  <pre><code class="language-bash">mkdir -p ~/apps/demo &amp;&amp; cd ~/apps/demo &amp;&amp; touch app.py README.md &amp;&amp; ls -l || echo "Setup failed. Check the step above."</code></pre></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Deploy scripts on customer servers lean on this all the time, e.g. <code>git pull &amp;&amp; pip install -r requirements.txt &amp;&amp; systemctl restart app</code>. If the pull fails, nothing restarts on half-updated code.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Command chaining</dt><dd>Writing several commands on one line, joined by operators that control whether each next command runs.</dd></div>
+    <div><dt>Exit status</dt><dd>The number a command returns when it finishes: 0 = success, non-zero = failure. Shown by <code>echo $?</code>.</dd></div>
+    <div><dt>; (semicolon)</dt><dd>Runs the next command regardless of whether the previous one succeeded.</dd></div>
+    <div><dt>&amp;&amp; (AND operator)</dt><dd>Runs the next command only if the previous command succeeded.</dd></div>
+    <div><dt>|| (OR operator)</dt><dd>Runs the next command only if the previous command failed. Used for fallbacks.</dd></div>
+  </dl>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="1"><p>Which operator runs the next command no matter what?</p>
+      <ol><li><code>;</code></li><li><code>&amp;&amp;</code></li><li><code>||</code></li><li><code>|</code></li></ol>
+      <p class="why"><code>;</code> just runs commands in sequence and ignores success or failure.</p></div>
+    <div class="q" data-answer="2"><p><code>project2</code> already exists. What does <code>mkdir project2 &amp;&amp; echo "Created"</code> print?</p>
+      <ol><li>Only “Created”</li><li>Only the mkdir error</li><li>The error and then “Created”</li><li>Nothing at all</li></ol>
+      <p class="why">mkdir fails and prints its error, so <code>&amp;&amp;</code> stops the chain. “Created” never runs.</p></div>
+    <div class="q" data-answer="3"><p>In <code>mkdir a &amp;&amp; cd a &amp;&amp; touch x</code>, the <code>cd</code> fails. What happens to <code>touch x</code>?</p>
+      <ol><li>It runs in folder a</li><li>It runs in the current folder</li><li>It does not run</li><li>It runs twice</li></ol>
+      <p class="why">Every <code>&amp;&amp;</code> needs the step before it to succeed. The chain stops at the first failure.</p></div>
+    <div class="q" data-answer="4"><p>You want a message only when <code>cd /data</code> fails. Which line is right?</p>
+      <ol><li><code>cd /data ; echo "missing"</code></li><li><code>cd /data &amp;&amp; echo "missing"</code></li><li><code>echo "missing" || cd /data</code></li><li><code>cd /data || echo "missing"</code></li></ol>
+      <p class="why"><code>||</code> runs the right-hand side only when the left-hand side fails.</p></div>
+    <div class="q" data-answer="2"><p>What exit status means “success”?</p>
+      <ol><li>1</li><li>0</li><li>-1</li><li>Any positive number</li></ol>
+      <p class="why">0 means success; any non-zero value means some kind of failure.</p></div>
+    <div class="q" data-answer="3"><p>In <code>A &amp;&amp; B || C</code>, when does C run?</p>
+      <ol><li>Only when A fails</li><li>Only when B fails</li><li>When A fails, or when A succeeds but B fails</li><li>Never</li></ol>
+      <p class="why">C sees the result of whatever ran last. A failure in either A or B reaches <code>||</code>, so this is not a true if/else.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>;</b> means <i>then, anyway</i>, <b>&amp;&amp;</b> means <i>then, only if it worked</i>, and <b>||</b> means <i>otherwise</i>. Together they let one line of shell run a whole workflow <b>safely</b>.</p>
+  <p>Next up: the module wraps here. Continue with Networking Basics to learn how the machines you’re typing into talk to each other.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

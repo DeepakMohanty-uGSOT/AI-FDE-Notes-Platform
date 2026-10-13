@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linux Terminal and Shell · Linux | AIFDE Notes</title>
+<meta name="description" content="GUI vs CLI, what a terminal is (GUI terminal, TTY, PTY), what the shell does, the journey of a command, the main Linux shells, reading the prompt, command structure, built-ins vs external commands, PATH and environment variables.">
+<meta name="keywords" content="terminal, shell, Bash, command prompt, TTY and PTY, PATH, built-in commands, environment variables">
+<meta name="date" content="2026-09-10">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/terminal-and-shell">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Linux Terminal and Shell</h1>
+  <p class="byline">Understand the difference between the terminal and the shell, read every part of the prompt, and know exactly what happens each time you press Enter.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="interact">
+  <h2>How users interact with an operating system</h2>
+  <p>The <b>operating system (OS)</b> is the main software that manages the computer’s hardware (CPU, memory, storage, keyboard, mouse, network and other devices) and provides services to applications. Users and apps don’t control that hardware directly; they go through an <b>interface</b>. There are two common kinds:</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>GUI · Graphical User Interface</h4><p><b>How it works:</b> you click icons, open windows and navigate menus with a mouse.</p><p><b>Why use it:</b> intuitive and beginner-friendly. You explore visually without memorising anything.</p></div>
+    <div class="card t6 tilt-b"><h4>CLI · Command-Line Interface</h4><p><b>How it works:</b> you type precise text commands into a terminal.</p><p><b>Why use it:</b> much faster for complex tasks, precise, and easy to automate. Linux servers are built around CLI control to save resources.</p></div>
+  </div>
+  <div class="story"><b class="lbl">Pointing at the menu vs ordering by name</b>At a busy dhaba you can point at pictures on the menu card (GUI): easy, but slow if you want twelve things. Or you can say “two masala dosa, one filter coffee, no sugar” (CLI): <mark>you need to know the words, but once you do, it is fast, exact and repeatable.</mark></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why-cli">
+  <h2>Why the command line exists</h2>
+  <p>A GUI is perfect for browsing the web, but it has hard limits when you manage systems. The CLI is the standard for system administrators, DevOps engineers and cloud work for four reasons:</p>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Speed in repetition</h4><p>Clicking through the same 20 menus every day is slow. A typed command is instantly repeatable.</p></div>
+    <div class="card t1 tilt-b"><h4>Remote access</h4><p>A server in another country has no screen you can see. Sending text over the internet is fast and reliable; streaming a remote desktop can be slow or impossible.</p></div>
+    <div class="card t7 tilt-a"><h4>Saves resources</h4><p>Drawing windows and icons eats memory and CPU. Many servers have no GUI at all, so all the power goes to websites and databases.</p></div>
+    <div class="card t5 tilt-b"><h4>Automation</h4><p>Put commands in a text file (a <b>script</b>) and let it run unattended while you sleep. Automating mouse clicks is extremely hard.</p></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> The customer’s GPU server, their Kubernetes pod, the VM behind their firewall: none of them will give you a desktop. You will get an SSH session and a prompt. <mark class="v">Being calm and fluent at the CLI is a core FDE skill.</mark></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="model">
+  <h2>The basic interaction model</h2>
+  <p>Every action on a computer passes down the same chain:</p>
+  <div class="flow"><span>User</span><span class="hl">Interface</span><span class="op">Operating system</span><span class="ok">Resources</span></div>
+  <div class="tbl"><table>
+    <tr><th style="width:22%">Link</th><th>Role</th></tr>
+    <tr><td><b>User</b></td><td>The person who wants to perform a task.</td></tr>
+    <tr><td><b>Interface</b></td><td>How instructions are sent. The terminal and shell are a <b>text-based</b> interface.</td></tr>
+    <tr><td><b>Operating system</b></td><td>The core software that receives the instruction and orchestrates how it is executed.</td></tr>
+    <tr><td><b>Resources</b></td><td>The hardware (CPU, memory, disks, devices) that actually does the work.</td></tr>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="terminal">
+  <h2>What is a terminal?</h2>
+  <p>A <mark>terminal</mark> is a text-based interface where you <b>enter commands and see the results</b>. Open one and you see a prompt where you can type something like <code>ls</code>. The terminal takes your keyboard input and displays whatever the command prints. Its job is <b>input and output</b>:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Input</h4><p>Receives what you type on the keyboard.</p></div>
+    <div class="card t2 tilt-b"><h4>Output</h4><p>Displays the results on screen.</p></div>
+    <div class="card t3 tilt-a"><h4>Errors</h4><p>Shows error messages when something goes wrong.</p></div>
+    <div class="card t6 tilt-b"><h4>Cursor</h4><p>Shows where the next character will appear.</p></div>
+  </div>
+  <div class="sticky info l"><strong>Important</strong> The terminal does <b>not</b> understand commands. It is a screen and a keyboard. Understanding is the shell’s job (two sections down).</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="terminal-types">
+  <h2>Types of Linux terminals</h2>
+  <p>All of these let you work with text, but they work in different ways.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Three ways to reach a shell. A GUI terminal window on the desktop and a remote SSH session both use a pseudo-terminal (PTY) in software. A virtual console (TTY) opened with Ctrl+Alt+F3 is a full-screen text console provided by the kernel. All three lead to a shell.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="200" height="60" rx="12"/>
+        <rect class="box f-blue" x="20" y="96" width="200" height="60" rx="12"/>
+        <rect class="box f-grey" x="20" y="172" width="200" height="60" rx="12"/>
+        <rect class="box f-purple" x="290" y="56" width="160" height="64" rx="12"/>
+        <rect class="box f-green" x="540" y="96" width="160" height="64" rx="14"/>
+        <path class="ln" d="M224 50 L 284 80" marker-end="url(#ah)"/>
+        <path class="ln" d="M224 126 L 284 100" marker-end="url(#ah)"/>
+        <path class="ln" d="M454 92 C 490 96, 510 110, 534 120" marker-end="url(#ah)"/>
+        <path class="ln" d="M224 202 C 380 210, 480 180, 534 146" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="120" y="47" text-anchor="middle">GUI terminal window</text>
+      <text class="ts" x="120" y="67" text-anchor="middle">GNOME Terminal, Konsole</text>
+      <text class="t" x="120" y="123" text-anchor="middle">SSH session</text>
+      <text class="ts" x="120" y="143" text-anchor="middle">remote login</text>
+      <text class="t" x="120" y="199" text-anchor="middle">virtual console (TTY)</text>
+      <text class="ts" x="120" y="219" text-anchor="middle">Ctrl + Alt + F3</text>
+      <text class="t" x="370" y="86" text-anchor="middle">PTY</text>
+      <text class="ts" x="370" y="106" text-anchor="middle">pseudo-terminal</text>
+      <text class="th" x="620" y="136" text-anchor="middle">shell</text>
+    </svg></div>
+    <figcaption>Windows and SSH sessions get a software “fake” terminal (PTY); a TTY is a real text console built into Linux.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · GUI terminal (terminal emulator)</h4><p><b>What:</b> the ordinary terminal app on your desktop (GNOME Terminal, macOS Terminal, Konsole).</p><p><b>How:</b> runs in a normal window; resize it, copy and paste, open tabs for different tasks.</p><p><b>Idea:</b> the everyday way to use the CLI alongside your browser and other apps.</p></div>
+    <div class="card t6 tilt-b"><h4>2 · Virtual console (TTY)</h4><p><b>What:</b> a pure-text, full-screen terminal built into Linux, separate from the desktop. TTY stands for <b>teletypewriter</b>, an old hardware term.</p><p><b>How:</b> press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F3</kbd> (F1–F6 on many systems) for a black screen with just text.</p><p><b>Idea:</b> if the desktop freezes, switch to a TTY to fix things or reboot, no mouse needed.</p></div>
+    <div class="card t5 tilt-a"><h4>3 · Pseudo-terminal (PTY)</h4><p><b>What:</b> a software-simulated terminal used behind the scenes.</p><p><b>How:</b> a GUI terminal window or an SSH session has no physical keyboard wired to a screen, so software creates a PTY that makes the shell believe it is talking to a real terminal.</p><p><b>Idea:</b> whenever an app <i>simulates</i> a terminal for a shell, it uses a PTY. No need for deeper details yet.</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="shell">
+  <h2>The shell: the program that understands you</h2>
+  <p>The terminal gives you a place to type, but it has no idea what <code>ls</code>, <code>cd</code> or <code>mkdir</code> mean. <mark>The shell is the program that reads your command, interprets it and starts the right program.</mark></p>
+  <p>A <b>shell</b> is a <b>command interpreter</b>, the bridge between you and the operating system. Its main job:</p>
+  <div class="flow"><span class="op">Read</span><span class="op">Interpret</span><span class="op">Run</span><span class="ok">Display</span></div>
+  <div class="story"><b class="lbl">The counter and the cook</b>At a Swiggy cloud kitchen, the order screen (terminal) shows what came in and displays “ready”. It can’t cook. The cook (shell) reads the order, decides what it means and gets the right dishes made. <mark>Terminal = the screen; shell = the one who understands.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Five layers from top to bottom: user, terminal (input and output), shell (interprets), operating system kernel, hardware. Commands go down, results come back up.">
+      <g class="rough">
+        <rect class="box f-yellow" x="190" y="10" width="340" height="44" rx="12"/>
+        <rect class="box f-blue" x="190" y="62" width="340" height="44" rx="12"/>
+        <rect class="box f-green" x="190" y="114" width="340" height="44" rx="12"/>
+        <rect class="box f-purple" x="190" y="166" width="340" height="44" rx="12"/>
+        <rect class="box f-grey" x="190" y="218" width="340" height="44" rx="12"/>
+        <path class="lr" d="M160 20 L 160 252" marker-end="url(#ahr)"/>
+        <path class="lb" d="M560 252 L 560 20" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="360" y="38" text-anchor="middle">User · types ls</text>
+      <text class="t" x="360" y="90" text-anchor="middle">Terminal · input and output</text>
+      <text class="t" x="360" y="142" text-anchor="middle">Shell · interprets, starts programs</text>
+      <text class="t" x="360" y="194" text-anchor="middle">Operating system (kernel)</text>
+      <text class="t" x="360" y="246" text-anchor="middle">Hardware / resources</text>
+      <text class="tr" x="148" y="140" text-anchor="end">command</text>
+      <text class="tb" x="572" y="140">result</text>
+    </svg></div>
+    <figcaption>The complete relationship: the terminal carries text, the shell understands it, the kernel does the work.</figcaption>
+  </figure>
+  <h3>Terminal vs shell</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">The terminal…</th><th>The shell…</th></tr>
+    <tr><td>Accepts your keyboard input</td><td>Reads the commands you type</td></tr>
+    <tr><td>Provides a text-based interface</td><td>Parses them into meaningful pieces</td></tr>
+    <tr><td>Displays output on the screen</td><td>Interprets shell syntax such as variables and wildcards</td></tr>
+    <tr><td>Manages the session (window or tab)</td><td>Finds the actual program to run, and starts it</td></tr>
+    <tr><td></td><td>Handles built-in features such as changing directories</td></tr>
+    <tr><td></td><td>Displays the results of the command</td></tr>
+  </table></div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="journey">
+  <h2>How a Linux command actually works</h2>
+  <p>Knowing this journey makes everything later much less mysterious. Here is what happens when you type <code>ls</code> and press Enter:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Command journey: user types ls, terminal passes the line to the shell, the shell interprets it and asks the kernel by system call to start a process, the kernel works with the file system, memory and devices, and the result travels back through the process and terminal to the user.">
+      <g class="rough">
+        <rect class="box f-yellow" x="10" y="30" width="110" height="56" rx="12"/>
+        <rect class="box f-blue" x="150" y="30" width="120" height="56" rx="12"/>
+        <rect class="box f-green" x="300" y="30" width="120" height="56" rx="12"/>
+        <rect class="box f-purple" x="450" y="30" width="120" height="56" rx="12"/>
+        <rect class="box f-grey" x="600" y="20" width="110" height="76" rx="12"/>
+        <path class="lr" d="M124 58 L 144 58" marker-end="url(#ahr)"/>
+        <path class="lr" d="M274 58 L 294 58" marker-end="url(#ahr)"/>
+        <path class="lr" d="M424 58 L 444 58" marker-end="url(#ahr)"/>
+        <path class="lr" d="M574 58 L 594 58" marker-end="url(#ahr)"/>
+        <path class="lb" d="M655 100 C 640 190, 120 200, 66 96" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="65" y="64" text-anchor="middle">you: ls</text>
+      <text class="t" x="210" y="64" text-anchor="middle">terminal</text>
+      <text class="t" x="360" y="64" text-anchor="middle">shell</text>
+      <text class="t" x="510" y="64" text-anchor="middle">kernel</text>
+      <text class="ts" x="655" y="46" text-anchor="middle">files</text>
+      <text class="ts" x="655" y="64" text-anchor="middle">memory</text>
+      <text class="ts" x="655" y="82" text-anchor="middle">devices</text>
+      <text class="ts" x="435" y="20" text-anchor="middle">system call</text>
+      <text class="tb" x="360" y="200" text-anchor="middle">output travels back up to your screen</text>
+    </svg></div>
+    <figcaption>Down through the layers, then the result comes back the same way.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>You enter a command</b>You type <code>ls</code> and press Enter.</div></li>
+    <li><span class="dot">2</span><div><b>The terminal receives the input</b>It collects each character and passes the finished line to the shell running inside it.</div></li>
+    <li><span class="dot">3</span><div><b>The shell reads the command</b>Bash (our example shell) receives the text <code>ls</code>.</div></li>
+    <li><span class="dot">4</span><div><b>The shell interprets it</b>Which command is it? Is it a <b>built-in</b> (handled inside Bash) or an <b>external</b> program on disk? Which options and arguments came with it?</div></li>
+    <li><span class="dot">5</span><div><b>The shell starts the program</b><code>ls</code> is external, so Bash asks the OS to create a new <b>process</b> and run that program.</div></li>
+    <li><span class="dot">6</span><div><b>System calls</b>To do anything real (start a process, read a file, use memory) a program must ask the kernel through a <b>system call</b>, because ordinary programs may not perform privileged operations. You don’t write syscall code; just know every command relies on calls like “create a new process” or “open this file”. <span class="tag">→ shell → system call → kernel</span></div></li>
+    <li><span class="dot">7</span><div><b>The kernel does the work</b>Only the kernel may control hardware and core resources, so it works with the file system, memory, devices and processes.</div></li>
+    <li><span class="dot">8</span><div><b>The result comes back</b>Kernel → shell / process → terminal → you. The list of files appears on your screen.</div></li>
+  </ol>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="shells">
+  <h2>Different Linux shells</h2>
+  <p>Linux and UNIX have several shells. Each one <b>reads your commands and runs them</b>, but with different features and syntax.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Shell family tree. Bourne-style branch: sh leads to bash, ksh and zsh. C-style branch: csh leads to tcsh.">
+      <g class="rough">
+        <rect class="box f-yellow" x="150" y="20" width="160" height="52" rx="12"/>
+        <rect class="box f-green" x="20" y="150" width="130" height="52" rx="12"/>
+        <rect class="box f-green" x="165" y="150" width="130" height="52" rx="12"/>
+        <rect class="box f-green" x="310" y="150" width="130" height="52" rx="12"/>
+        <rect class="box f-pink" x="520" y="20" width="160" height="52" rx="12"/>
+        <rect class="box f-pink" x="535" y="150" width="130" height="52" rx="12"/>
+        <path class="ln" d="M200 76 C 150 100, 100 120, 88 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M230 76 L 230 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M260 76 C 310 100, 360 120, 372 144" marker-end="url(#ah)"/>
+        <path class="ln" d="M600 76 L 600 144" marker-end="url(#ah)"/>
+        <path class="ln dash" d="M480 30 L 480 210"/>
+      </g>
+      <text class="tm" x="230" y="51" text-anchor="middle">sh (Bourne)</text>
+      <text class="tm" x="85" y="181" text-anchor="middle">bash</text>
+      <text class="tm" x="230" y="181" text-anchor="middle">ksh</text>
+      <text class="tm" x="375" y="181" text-anchor="middle">zsh</text>
+      <text class="tm" x="600" y="51" text-anchor="middle">csh (C shell)</text>
+      <text class="tm" x="600" y="181" text-anchor="middle">tcsh</text>
+      <text class="tr" x="230" y="222" text-anchor="middle">Bourne-style syntax</text>
+      <text class="tr" x="600" y="222" text-anchor="middle">C-style syntax</text>
+    </svg></div>
+    <figcaption>Two families. Scripts for one family usually don’t run unchanged in the other.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="card t7 tilt-a"><h4>1 · Bourne shell (<code>sh</code>)</h4><p>By Stephen Bourne at AT&amp;T Bell Labs, late 1970s. The grandfather of modern shells; it introduced core ideas all shells still use.</p><p><b>Experience:</b> simple and lightweight, but old: no Up-arrow history, no advanced completion.</p><p><b>Why it matters:</b> portability. <code>sh</code> exists on virtually every UNIX/Linux system, so scripts written for it run anywhere. (On Ubuntu, <code>sh</code> is actually <b>dash</b>, a small modern Bourne-compatible shell.)</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Bash (<code>bash</code>)</h4><p>By Brian Fox for the GNU Project: the “<b>Bourne Again SHell</b>”, a compatible, feature-rich replacement for <code>sh</code>.</p><p><b>Key features:</b> command history (<kbd>↑</kbd>/<kbd>↓</kbd>), <kbd>Tab</kbd> completion, aliases (short names for long commands), and powerful scripting with variables and control structures.</p><p><b>Why it matters:</b> the industry standard and the default shell on most Linux distributions and servers.</p></div>
+    <div class="card t1 tilt-a"><h4>3 · Korn shell (<code>ksh</code>)</h4><p>By David Korn at Bell Labs, built to be great at both interactive use and advanced scripting.</p><p><b>Experience:</b> big productivity and scripting improvements over earlier shells.</p><p><b>Why it matters:</b> rarely pre-installed on desktop Linux, but a heavyweight in enterprise UNIX such as IBM AIX.</p></div>
+    <div class="card t4 tilt-b"><h4>4 · C shell (<code>csh</code>)</h4><p>By Bill Joy at the University of California, Berkeley, for programmers.</p><p><b>Experience:</b> introduced interactive features like command history early on. Its syntax is modelled on the C language and differs from Bourne-style shells.</p><p><b>Why it matters:</b> comfortable for developers who already wrote C.</p></div>
+    <div class="card t5 tilt-a"><h4>5 · T shell (<code>tcsh</code>)</h4><p>An enhanced C shell with the same C-like syntax.</p><p><b>Key features:</b> command-line editing (fix typos before Enter), command history and auto-completion.</p><p><b>Why it matters:</b> the go-to on many UNIX systems for people who liked C syntax but wanted a friendlier experience.</p></div>
+    <div class="card t8 tilt-b"><h4>6 · Z shell (<code>zsh</code>)</h4><p>A powerful modern shell for daily use and scripting.</p><p><b>Key features:</b> excellent completion, advanced history, programmable visual prompts, and plugins and themes (e.g. <b>Oh My Zsh</b>).</p><p><b>Why it matters:</b> loved by developers; the default login shell on modern macOS.</p></div>
+  </div>
+  <p>To try any of them (if installed), type its name and press Enter:</p>
+  <pre><code class="language-bash">sh      # Bourne-compatible shell
+bash    # Bourne Again Shell
+ksh     # Korn shell
+csh     # C shell
+tcsh    # T shell
+zsh     # Z shell</code></pre>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="bash">
+  <h2>Bash: starting and identifying your shell</h2>
+  <p><b>Bash</b> (“Bourne Again SHell”) plays two roles at once:</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Interactive command interpreter</h4><p>The shell you type commands into directly.</p></div>
+    <div class="card t1 tilt-b"><h4>Scripting language</h4><p>Save a sequence of commands in a file and run them together as a script.</p></div>
+  </div>
+  <p>It is everywhere in professional work: <b>Linux administration</b> (users, files, services), <b>automation</b> of repetitive tasks, <b>DevOps</b> build and deployment scripts, <b>server management</b>, and reusable <b>shell scripts</b>.</p>
+  <h3>Opening a terminal</h3>
+  <p>When you launch a terminal (or log in over SSH), a shell session, usually Bash, starts automatically inside it.</p>
+  <h3>Which shell is my default?</h3>
+  <pre><code class="language-bash">echo $SHELL</code></pre>
+  <pre class="out"><code>/bin/bash</code></pre>
+  <p><code>$SHELL</code> is an environment variable that usually holds your default <b>login shell</b>, a saved setting.</p>
+  <h3>Which shell is running right now?</h3>
+  <pre><code class="language-bash">ps</code></pre>
+  <pre class="out"><code>    PID TTY          TIME CMD
+   1234 pts/0    00:00:00 bash
+   1250 pts/0    00:00:00 ps</code></pre>
+  <p><code>ps</code> shows the processes actually running in this terminal. The two can differ: if you start <code>zsh</code> by hand, <code>$SHELL</code> still says <code>/bin/bash</code> but <code>ps</code> shows <code>zsh</code>. Notice <code>pts/0</code>: that’s the <b>pseudo-terminal</b> your SSH session is using.</p>
+  <h3>Starting and exiting nested shells</h3>
+  <pre><code class="language-bash">bash     # start a new Bash inside the current one: one level deeper
+exit     # leave it (or press Ctrl+D) and return to the shell before</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 250" role="img" aria-label="A terminal contains Shell 1. Typing bash inside Shell 1 starts Shell 2 nested inside it. Typing exit in Shell 2 returns you to Shell 1; the terminal stays open.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="14" width="480" height="222" rx="16"/>
+        <rect class="box f-green" x="50" y="56" width="420" height="160" rx="14"/>
+        <rect class="box f-yellow" x="90" y="110" width="340" height="80" rx="12"/>
+      </g>
+      <text class="tr" x="260" y="44" text-anchor="middle">terminal</text>
+      <text class="t" x="260" y="86" text-anchor="middle">Shell 1 (login shell)</text>
+      <text class="t" x="260" y="144" text-anchor="middle">Shell 2 (started by bash)</text>
+      <text class="ts" x="260" y="172" text-anchor="middle">exit here → back to Shell 1</text>
+    </svg></div>
+    <figcaption><code>exit</code> closes only the innermost shell. Exiting the last one closes the terminal session.</figcaption>
+  </figure>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="prompt">
+  <h2>The command prompt, explained</h2>
+  <p>Open a terminal on your EC2 server and you see a line like this, the <mark>command prompt</mark>. It isn’t decoration: it tells you <b>who you are, where you are, and how much power you have</b> before you run anything.</p>
+  <div class="anatomy"><span class="a1">ubuntu</span>@<span class="a2">ip-172-31-8-5</span>:<span class="a3">~</span><span class="a4">$</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>username</b>: who is logged in.</p></div>
+    <div><span class="sw a2"></span><p><b>hostname</b>: which machine you’re on.</p></div>
+    <div><span class="sw a3"></span><p><b>current directory</b>: where you are (<code>~</code> = home).</p></div>
+    <div><span class="sw a4"></span><p><b>permission indicator</b>: <code>$</code> normal user, <code>#</code> root.</p></div>
+  </div>
+  <p>The general structure is <code>username@hostname:current_directory$</code>.</p>
+  <h3>1 · Username → <code>ubuntu</code></h3>
+  <p>You are logged in with the user account <b>ubuntu</b>. Linux is <b>multi-user</b>: many users can exist on one system, each with their own files, permissions and settings, and everything you do is tied to your account. On AWS EC2 Ubuntu servers, <code>ubuntu</code> is the default user created at launch.</p>
+  <pre><code class="language-bash">whoami</code></pre>
+  <pre class="out"><code>ubuntu</code></pre>
+  <h3>2 · Hostname → <code>ip-172-31-8-5</code></h3>
+  <p>The name of the computer you’re connected to. AWS builds it from the server’s <b>private IP address</b> <code>172.31.8.5</code>: dots become dashes and <code>ip-</code> goes in front. It identifies the server inside the AWS network, which is very handy when you juggle several servers.</p>
+  <pre><code class="language-bash">hostname</code></pre>
+  <pre class="out"><code>ip-172-31-8-5</code></pre>
+  <h3>3 · Current directory → <code>~</code></h3>
+  <p><code>~</code> is the shortcut for your <b>home directory</b>, your personal working area. For <code>ubuntu</code> that’s <code>/home/ubuntu</code>.</p>
+  <pre><code class="language-bash">pwd</code></pre>
+  <pre class="out"><code>/home/ubuntu</code></pre>
+  <p>Move somewhere else and the prompt follows you:</p>
+  <pre><code class="language-bash">cd /etc</code></pre>
+  <pre class="out"><code>ubuntu@ip-172-31-8-5:/etc$</code></pre>
+  <h3>4 · Permission indicator → <code>$</code></h3>
+  <p><code>$</code> means a <b>normal user</b> with limited permissions, which protects the system from accidental damage: you can’t change critical system files without special administrative privileges. Switch to the <b>root</b> user (for example with <code>sudo -i</code>) and the symbol becomes <code>#</code>:</p>
+  <pre><code class="language-bash">sudo -i</code></pre>
+  <pre class="out"><code>root@ip-172-31-8-5:~#</code></pre>
+  <p>Root has full control: it can change system files, install software, manage users and control the whole system.</p>
+  <div class="sticky warn"><strong>See a <code>#</code>? Slow down.</strong> As root there is no safety net; one wrong <code>rm</code> can break the server. Type <code>exit</code> to return to your normal user as soon as the admin task is done.</div>
+  <h3>What the whole prompt means</h3>
+  <div class="tbl"><table>
+    <tr><th>Part</th><th>Meaning</th><th>Check with</th></tr>
+    <tr><td><code>ubuntu</code></td><td>You are logged in as user “ubuntu”</td><td><code>whoami</code></td></tr>
+    <tr><td><code>ip-172-31-8-5</code></td><td>You are on the server named “ip-172-31-8-5”</td><td><code>hostname</code></td></tr>
+    <tr><td><code>~</code></td><td>Your current directory is <code>/home/ubuntu</code></td><td><code>pwd</code></td></tr>
+    <tr><td><code>$</code></td><td>You are a normal user with standard permissions</td><td><code>id</code></td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>This is a cloud server</strong> The <code>ip-…</code> hostname tells you you’re on an AWS EC2 instance in an AWS data centre, not your laptop. Such servers host websites, run applications, databases and backend services, and are great for learning administration. Every command you run affects <b>that</b> server.</div>
+  <p><b>Why it matters:</b> commands act on files based on your <b>location</b> and <b>permissions</b>. Glancing at the prompt (identity, system, location, power level) before pressing Enter prevents a lot of mistakes.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="structure">
+  <h2>Understanding command structure</h2>
+  <p>Almost every Bash command has the same shape:</p>
+  <div class="codebox"><span class="cap">general form</span><pre><code class="language-plaintext">command [options] [arguments]</code></pre></div>
+  <div class="anatomy"><span class="a1">ls</span> <span class="a2">-l</span> <span class="a3">/home</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>command</b>: the program or built-in to run.</p></div>
+    <div><span class="sw a2"></span><p><b>option</b> (or <b>flag</b>): changes how the command behaves; <code>-l</code> = long listing.</p></div>
+    <div><span class="sw a3"></span><p><b>argument</b>: the thing the command acts on.</p></div>
+  </div>
+  <div class="sticky warn l"><strong>Two rules</strong> Put a <b>space</b> between each part. And Linux is <b>case-sensitive</b>: <code>File.txt</code> and <code>file.txt</code> are two different files, and <code>LS</code> is not <code>ls</code>.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="builtins">
+  <h2>Built-in vs external commands</h2>
+  <p>Some commands live <b>inside Bash itself</b> and run instantly without starting a new program. Others are <b>separate program files</b> on disk that Bash launches as a new process.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Shell built-ins</h4><p>Examples: <code>cd</code>, <code>echo</code>, <code>pwd</code>, <code>export</code>.</p><p>Handled inside Bash for speed, and because some (like <code>cd</code>) must change the <b>shell’s own state</b>, which only Bash can do. A separate program changing <i>its</i> directory wouldn’t move your shell.</p></div>
+    <div class="card t1 tilt-b"><h4>External commands</h4><p>Examples: <code>ls</code>, <code>cat</code>, <code>cp</code>, <code>mv</code>.</p><p>Separate executable files, typically in <code>/bin</code> or <code>/usr/bin</code>. Bash finds them and starts each as a new process.</p></div>
+  </div>
+  <p>Ask Bash how it will treat a name with <code>type</code>:</p>
+  <pre><code class="language-bash">type cd
+type cat
+type ls</code></pre>
+  <pre class="out"><code>cd is a shell builtin
+cat is /usr/bin/cat
+ls is aliased to `ls --color=auto'</code></pre>
+  <p>On Ubuntu, <code>ls</code> is an <b>alias</b> (that’s why folders show in colour). Underneath it is still the external program; <code>type -P ls</code> prints its file: <code>/usr/bin/ls</code>.</p>
+  <div class="sticky info"><strong>/bin or /usr/bin?</strong> On modern distributions, <code>/bin</code> is just a link to <code>/usr/bin</code>, so <code>/bin/ls</code> and <code>/usr/bin/ls</code> are the same file.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="path">
+  <h2>How Bash finds external commands: <code>$PATH</code></h2>
+  <p>When you type <code>ls</code>, Bash must know <i>where</i> that program lives. The answer is the environment variable <mark>PATH</mark>: a list of directories separated by colons (<code>:</code>). Bash searches them <b>in order</b> and runs the first match.</p>
+  <pre><code class="language-bash">echo $PATH</code></pre>
+  <pre class="out"><code>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Bash looks for ls in each PATH directory in order: /usr/local/sbin no, /usr/local/bin no, /usr/sbin no, /usr/bin yes, found /usr/bin/ls and runs it">
+      <g class="rough">
+        <rect class="box f-yellow" x="10" y="70" width="90" height="56" rx="12"/>
+        <rect class="box f-grey" x="130" y="70" width="130" height="56" rx="10"/>
+        <rect class="box f-grey" x="275" y="70" width="130" height="56" rx="10"/>
+        <rect class="box f-grey" x="420" y="70" width="110" height="56" rx="10"/>
+        <rect class="box f-green" x="545" y="70" width="165" height="56" rx="10"/>
+        <path class="lr" d="M104 98 L 124 98" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="55" y="103" text-anchor="middle">ls</text>
+      <text class="tm" x="195" y="96" text-anchor="middle">/usr/local/sbin</text>
+      <text class="tm" x="340" y="96" text-anchor="middle">/usr/local/bin</text>
+      <text class="tm" x="475" y="96" text-anchor="middle">/usr/sbin</text>
+      <text class="tm" x="627" y="96" text-anchor="middle">/usr/bin</text>
+      <text class="ts" x="195" y="116" text-anchor="middle">no</text>
+      <text class="ts" x="340" y="116" text-anchor="middle">no</text>
+      <text class="ts" x="475" y="116" text-anchor="middle">no</text>
+      <text class="tb" x="627" y="118" text-anchor="middle">found!</text>
+      <text class="tr" x="400" y="50" text-anchor="middle">searched left to right, first match wins</text>
+      <text class="tm" x="627" y="160" text-anchor="middle">runs /usr/bin/ls</text>
+    </svg></div>
+    <figcaption>Not in any PATH folder? You get <code>command not found</code>.</figcaption>
+  </figure>
+  <div class="flow"><span class="op">ls</span><span>Bash searches PATH</span><span>finds the executable</span><span class="ok">runs it</span></div>
+  <h3><code>which</code> and <code>command -v</code></h3>
+  <p>Both tell you what a PATH search would find:</p>
+  <pre><code class="language-bash">which ls
+command -v cat</code></pre>
+  <pre class="out"><code>/usr/bin/ls
+/usr/bin/cat</code></pre>
+  <p><code>command -v</code> is built into the shell and also reports aliases and built-ins (try <code>command -v ls</code> and <code>command -v cd</code>); <code>which</code> only searches PATH.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> “<code>python: command not found</code>” or “it runs the wrong Python” on a customer box is almost always a PATH problem. <code>which python3</code> and <code>echo $PATH</code> are the first two commands to run.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="environment">
+  <h2>The Bash environment and variables</h2>
+  <p>The <b>environment</b> is the set of information (variables and settings) available to programs launched from the shell: your home directory, your username, where to look for commands, and so on.</p>
+  <h3>Shell variables</h3>
+  <p>Create your own variable, then read it back with a <code>$</code>:</p>
+  <pre><code class="language-bash">name="John"
+echo $name</code></pre>
+  <pre class="out"><code>John</code></pre>
+  <div class="sticky warn l"><strong>No spaces around =</strong> <code>name = "John"</code> fails: Bash thinks <code>name</code> is a command. Write <code>name="John"</code>. This is the most common beginner mistake.</div>
+  <h3>Environment variables</h3>
+  <div class="tbl"><table>
+    <tr><th>Variable</th><th>Holds</th><th>Example value</th></tr>
+    <tr><td><code>PATH</code></td><td>Where Bash looks for commands</td><td><code>/usr/local/bin:/usr/bin:…</code></td></tr>
+    <tr><td><code>HOME</code></td><td>Your home directory</td><td><code>/home/ubuntu</code></td></tr>
+    <tr><td><code>SHELL</code></td><td>Your default shell</td><td><code>/bin/bash</code></td></tr>
+    <tr><td><code>USER</code></td><td>Your username</td><td><code>ubuntu</code></td></tr>
+  </table></div>
+  <h3>Viewing all environment variables</h3>
+  <pre><code class="language-bash">env
+printenv</code></pre>
+  <pre class="out"><code>SHELL=/bin/bash
+PWD=/home/ubuntu
+HOME=/home/ubuntu
+USER=ubuntu
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+...</code></pre>
+  <p>Both print the full list of environment variables currently set (yours will be longer).</p>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>CLI</dt><dd>Command-Line Interface: working with a computer by typing text commands instead of clicking.</dd></div>
+    <div><dt>GUI</dt><dd>Graphical User Interface: working with a computer through windows, icons and menus with a mouse.</dd></div>
+    <div><dt>Terminal</dt><dd>A text interface that takes your keyboard input and displays output and errors; it does not interpret commands itself.</dd></div>
+    <div><dt>TTY (virtual console)</dt><dd>A full-screen text console built into Linux, reached with keys like Ctrl+Alt+F3, independent of the graphical desktop.</dd></div>
+    <div><dt>PTY (pseudo-terminal)</dt><dd>A software-simulated terminal that GUI terminal windows and SSH sessions use so the shell behaves as if it had a real terminal.</dd></div>
+    <div><dt>Shell</dt><dd>A command interpreter program that reads, interprets and runs your commands, then shows the result; the bridge between you and the OS.</dd></div>
+    <div><dt>Bash</dt><dd>The “Bourne Again SHell” from the GNU Project; the default shell on most Linux systems and a scripting language.</dd></div>
+    <div><dt>Command prompt</dt><dd>The line such as <code>ubuntu@ip-172-31-8-5:~$</code> showing username, hostname, current directory and permission level.</dd></div>
+    <div><dt>Root user</dt><dd>The all-powerful administrator account; its prompt ends with <code>#</code> instead of <code>$</code>.</dd></div>
+    <div><dt>Option (flag)</dt><dd>A modifier such as <code>-l</code> that changes how a command behaves.</dd></div>
+    <div><dt>Argument</dt><dd>The thing a command acts on, such as a file or directory path.</dd></div>
+    <div><dt>Built-in command</dt><dd>A command executed inside the shell itself without starting a new program, such as <code>cd</code> or <code>echo</code>.</dd></div>
+    <div><dt>External command</dt><dd>A separate program file on disk, such as <code>/usr/bin/ls</code>, that the shell starts as a new process.</dd></div>
+    <div><dt>PATH</dt><dd>An environment variable listing colon-separated directories the shell searches, in order, to find external commands.</dd></div>
+    <div><dt>Environment variable</dt><dd>A named value (e.g. <code>HOME</code>, <code>USER</code>, <code>PATH</code>) passed to programs started from the shell; view them with <code>env</code> or <code>printenv</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Which part actually understands what <code>mkdir</code> means?</p>
+      <ol><li>The terminal</li><li>The keyboard driver</li><li>The shell</li><li>The monitor</li></ol>
+      <p class="why">The terminal only carries text in and out. The shell interprets the command and starts the right program.</p></div>
+    <div class="q" data-answer="1"><p>Your desktop freezes. What lets you fix things without the GUI?</p>
+      <ol><li>Switching to a virtual console (TTY) with Ctrl+Alt+F3</li><li>Opening another GUI terminal tab</li><li>Starting zsh</li><li>Running <code>echo $SHELL</code></li></ol>
+      <p class="why">TTYs are text consoles built into Linux, independent of the graphical desktop.</p></div>
+    <div class="q" data-answer="4"><p>Your prompt reads <code>root@web-01:/var/log#</code>. What is true?</p>
+      <ol><li>You are user web-01 in your home directory</li><li>You are a normal user in /var/log</li><li>You are root in your home directory</li><li>You are root, on host web-01, in /var/log</li></ol>
+      <p class="why">username@hostname:directory, and <code>#</code> means root.</p></div>
+    <div class="q" data-answer="2"><p>Why must <code>cd</code> be a shell built-in?</p>
+      <ol><li>It is too small to be a file</li><li>It has to change the shell’s own current directory</li><li>External programs can’t use the disk</li><li>Built-ins are always newer</li></ol>
+      <p class="why">A separate process changing its own directory wouldn’t move your shell. Only Bash can change its own state.</p></div>
+    <div class="q" data-answer="3"><p>You type <code>myscript</code> and get <code>command not found</code>, but the file exists in <code>~/tools</code>. Most likely reason?</p>
+      <ol><li>The terminal is broken</li><li>Bash is case-insensitive</li><li><code>~/tools</code> is not in PATH</li><li>You need a TTY</li></ol>
+      <p class="why">Bash only searches the directories listed in PATH for external commands.</p></div>
+    <div class="q" data-answer="1"><p>In <code>ls -l /home</code>, what is <code>/home</code>?</p>
+      <ol><li>An argument</li><li>An option</li><li>The command</li><li>An environment variable</li></ol>
+      <p class="why">The argument is the thing the command acts on; <code>-l</code> is the option.</p></div>
+    <div class="q" data-answer="4"><p>Which line correctly creates a variable in Bash?</p>
+      <ol><li><code>name = "John"</code></li><li><code>$name="John"</code></li><li><code>set name "John"</code></li><li><code>name="John"</code></li></ol>
+      <p class="why">No spaces around <code>=</code> and no <code>$</code> when assigning; use <code>$name</code> only to read it.</p></div>
+    <div class="q" data-answer="2"><p><code>echo $SHELL</code> says <code>/bin/bash</code>, but <code>ps</code> shows <code>zsh</code>. Why?</p>
+      <ol><li>ps is wrong</li><li>$SHELL is your default login shell; you started zsh by hand</li><li>Bash and zsh are the same program</li><li>The PATH is empty</li></ol>
+      <p class="why"><code>$SHELL</code> is a saved setting; <code>ps</code> shows what is really running now.</p></div>
+    <div class="q" data-answer="3"><p>Which shell is the default on most Linux servers?</p>
+      <ol><li>csh</li><li>ksh</li><li>bash</li><li>tcsh</li></ol>
+      <p class="why">Bash is the industry standard and default on most distributions; zsh is the default on modern macOS.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">The <b>terminal</b> carries your text in and out, the <b>shell</b> (usually <b>Bash</b>) reads and interprets it, finds the program through <b>PATH</b> or runs a <b>built-in</b>, and asks the kernel to do the work, while the <b>prompt</b> constantly tells you who you are, where you are and how much power you have.</p>
+  <p>Next up: <b>The Linux File System Structure</b>, a tour of the directory tree, from <code>/</code> down to your home folder.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

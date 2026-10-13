@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intro to OOP · Part 1 · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Why procedural code struggles as programs grow, and the first building blocks of Object-Oriented Programming in Python: classes, objects, reference variables and self.">
+<meta name="keywords" content="programming paradigms, procedural programming, OOP, class, object, reference variable, self">
+<meta name="date" content="2026-09-29">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/oops-1">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Intro to OOP · Part 1</h1>
+  <p class="byline">See why “just write functions” stops working for big programs, then build your first classes and objects and understand exactly what <code>self</code> is.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="paradigms">
+  <h2>Programming paradigms</h2>
+  <div class="story"><b class="lbl">Same dinner, different kitchens</b>Two cooks can make the same biryani. One follows a long numbered recipe card, step by step. The other sets up stations (rice, masala, garnish), each with its own ingredients and its own job. Same dish, different way of organising the work. <mark>A programming paradigm is a style of organising a program, not a language.</mark></div>
+  <p>A <b>programming paradigm</b> is a <b>method or style of writing programs</b>. It describes how a programmer <b>thinks about a problem</b> and how the solution is <b>structured in code</b>: how the logic, the data and the flow of execution are organised. In one line, a paradigm answers:</p>
+  <p style="text-align:center"><i>“How should a program be written and organised?”</i></p>
+  <h3>Why paradigms are needed</h3>
+  <p>Early programs were small; one person could write and manage the whole thing. Today, programs have thousands or millions of lines, and that size brings problems:</p>
+  <div class="grid">
+    <div class="card t4 tilt-a"><h4>Hard to understand</h4><p>Nobody can hold the whole program in their head.</p></div>
+    <div class="card t3 tilt-b"><h4>Ripple effects</h4><p>A change in one part breaks another part.</p></div>
+    <div class="card t5 tilt-a"><h4>Hard to reuse</h4><p>Code is tied to one program and can’t be lifted out.</p></div>
+    <div class="card t6 tilt-b"><h4>Slow to maintain</h4><p>Fixing and updating software takes more and more time.</p></div>
+  </div>
+  <p>Each paradigm gives a structured way to organise programs so they are easier to write, understand and maintain. This lecture covers three:</p>
+  <div class="tbl"><table>
+    <tr><th>Paradigm</th><th>Organises the program around…</th></tr>
+    <tr><td><b>Procedural</b> (function-oriented)</td><td>functions, or procedures, called in order</td></tr>
+    <tr><td><b>Object-oriented</b> (OOP)</td><td>objects that bundle data and behaviour</td></tr>
+    <tr><td><b>Modular</b></td><td>separate modules (files) that each handle one area</td></tr>
+  </table></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="procedural">
+  <h2>Procedural (function-oriented) programming</h2>
+  <p>Procedural programming is one of the oldest paradigms. The program is split into <b>functions</b>; each does one task, and the program runs by calling them in a particular order. The focus is on <b>steps</b>, not on data: the logic decides how data flows from one function to the next.</p>
+  <div class="codebox"><span class="cap">marks.py · a function-based program</span><pre><code class="language-python">def read_marks():
+    return [70, 80, 90]
+
+def calculate_total(marks):
+    return sum(marks)
+
+def display_result(total):
+    print("Total Marks:", total)
+
+marks = read_marks()
+total = calculate_total(marks)
+display_result(total)</code></pre></div>
+  <pre class="out"><code>Total Marks: 240</code></pre>
+  <div class="flow"><span class="op">read_marks()</span><span class="op">calculate_total(marks)</span><span class="op">display_result(total)</span><span class="ok">Total Marks: 240</span></div>
+  <p>Notice: the program is divided into functions, each does one job, data is <b>passed between</b> them, and the functions control the flow. Data and behaviour are <b>not grouped together</b>.</p>
+  <h3>Real-world version: a shop’s billing program</h3>
+  <pre><code class="language-python">def read_prices():
+    return [120, 45, 300]
+
+def calculate_bill(prices):
+    return sum(prices)
+
+def print_bill(bill_total):
+    print("Bill Total:", bill_total)
+
+prices = read_prices()
+bill_total = calculate_bill(prices)
+print_bill(bill_total)</code></pre>
+  <pre class="out"><code>Bill Total: 465</code></pre>
+  <p>This style works well for <b>small programs</b>. As programs grow, managing many functions and the data they share becomes difficult.</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="pop-limits">
+  <h2>Where procedural programming struggles</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Left: four functions all pointing at one global variable marks equals 80. Right: one Student object box holding its data and its methods together.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="60" width="120" height="42" rx="10"/>
+        <rect class="box f-blue" x="220" y="60" width="120" height="42" rx="10"/>
+        <rect class="box f-blue" x="20" y="200" width="120" height="42" rx="10"/>
+        <rect class="box f-blue" x="220" y="200" width="120" height="42" rx="10"/>
+        <rect class="box f-yellow" x="115" y="126" width="130" height="50" rx="10"/>
+        <path class="lr" d="M90 104 L 140 124" marker-end="url(#ahr)"/>
+        <path class="lr" d="M270 104 L 220 124" marker-end="url(#ahr)"/>
+        <path class="lr" d="M90 198 L 140 178" marker-end="url(#ahr)"/>
+        <path class="lr" d="M270 198 L 220 178" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M362 20 L 362 255"/>
+        <rect class="box f-green" x="395" y="55" width="300" height="195" rx="16"/>
+        <rect class="box f-yellow" x="420" y="105" width="250" height="50" rx="10"/>
+        <rect class="box f-blue" x="420" y="175" width="250" height="50" rx="10"/>
+      </g>
+      <text class="th" x="180" y="36" text-anchor="middle">Procedural</text>
+      <text class="th" x="545" y="36" text-anchor="middle">Object-oriented</text>
+      <text class="tm" x="80" y="86" text-anchor="middle">read()</text>
+      <text class="tm" x="280" y="86" text-anchor="middle">change()</text>
+      <text class="tm" x="80" y="226" text-anchor="middle">update1()</text>
+      <text class="tm" x="280" y="226" text-anchor="middle">update2()</text>
+      <text class="tm" x="180" y="156" text-anchor="middle">marks = 80</text>
+      <text class="t" x="545" y="88" text-anchor="middle">Student object</text>
+      <text class="tm" x="545" y="135" text-anchor="middle">name · roll_no · marks</text>
+      <text class="tm" x="545" y="205" text-anchor="middle">show_details() · update()</text>
+    </svg></div>
+    <figcaption>Procedural: everyone reaches into shared data. OOP: data and the actions on it live together in one unit.</figcaption>
+  </figure>
+  <h3>1 · Large programs are hard to manage</h3>
+  <p>A big program has many functions, and it becomes hard to see which function does what. When something breaks, finding where is difficult. <i>Like a notebook with 200 steps on different pages: if one step is wrong, finding it is confusing.</i></p>
+  <h3>2 · No proper data security</h3>
+  <p>Data is open: any function can change it. Nothing restricts who can read or modify important values. <i>Like keeping your phone unlocked all the time: anyone can change your contacts.</i></p>
+  <pre><code class="language-python">marks = 80
+
+def change_marks():
+    global marks
+    marks = 0   # changed without permission
+
+change_marks()
+print(marks)</code></pre>
+  <pre class="out"><code>0</code></pre>
+  <p>Real-world version: a bank balance stored as a global, so any function can wipe it out.</p>
+  <pre><code class="language-python">account_balance = 25000
+
+def apply_charges():
+    global account_balance
+    account_balance = 0  # balance wiped out without permission</code></pre>
+  <h3>3 · Data can be modified by any function</h3>
+  <p>Because data is shared, any function can change it at any time, and you can’t tell who changed it or why. <i>If five people can write on the same paper, you won’t know who erased your answer.</i></p>
+  <pre><code class="language-python">score = 50
+
+def update1():
+    global score
+    score = 70
+
+def update2():
+    global score
+    score = 30</code></pre>
+  <p>The final value of <code>score</code> depends on which function ran last, so it is unpredictable and confusing.</p>
+  <h3>4 · Poor real-world mapping</h3>
+  <p>Real-world things are objects, but procedural code thinks only in steps. A student has a name, roll number and marks <b>together</b>; here they are three loose variables, not one unit.</p>
+  <pre><code class="language-python">name = "Rahul"
+roll_no = 12
+marks = 85
+
+def print_details():
+    print(name, roll_no, marks)</code></pre>
+  <h3>5 · Code reusability problems</h3>
+  <p>Functions that depend on shared global data only work inside that one program. <i>Like a charger that works in one house and nowhere else.</i></p>
+  <pre><code class="language-python">total = 0
+
+def add(value):
+    global total
+    total += value</code></pre>
+  <p><code>add()</code> needs a global called <code>total</code> to exist, so you can’t copy it into another program on its own.</p>
+  <h3>6 · Maintenance and debugging are hard</h3>
+  <p>Many functions are connected to the same data, so changing one can silently break another. <i>Fixing one wire in a tangled cable disturbs the others.</i></p>
+  <h3>7 · Not suitable for large-scale applications</h3>
+  <p>Procedural style works for small programs but struggles with big systems, which need better structure, control and safety. <i>Running a small shop is easy; running a mall needs proper systems and rules.</i></p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="what-is-oop">
+  <h2>What is Object-Oriented Programming?</h2>
+  <p><b>Object-Oriented Programming (OOP)</b> is a way of writing programs that focuses on <b>organising the program properly</b> instead of writing one long list of steps. You first understand the <b>real-life problem</b>, then shape the program to match it. For now it’s enough to know <mark>OOP is a method of program design, not a set of syntax rules.</mark></p>
+  <p>It was introduced because earlier approaches worked for small programs but ran into the problems above as programs grew. OOP improves structure by:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Keeping related things together</b>Information and the actions on it sit in one place.</div></li>
+    <li><span class="dot">2</span><div><b>Reducing confusion</b>Large programs are split into understandable pieces.</div></li>
+    <li><span class="dot">3</span><div><b>Making code easier to read and modify</b>You know where to look for each thing.</div></li>
+    <li><span class="dot">4</span><div><b>Limiting the impact of changes</b>A change stays inside one part instead of rippling everywhere.</div></li>
+  </ol>
+  <div class="sticky info l"><strong>A paradigm, not a language</strong> OOP is a <b>style</b>. Python, Java, C++ and many other languages support it, but the idea of OOP is independent of any one language.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="class">
+  <h2>Class: the blueprint</h2>
+  <div class="story"><b class="lbl">The cake recipe</b>A recipe tells you how to make a cake: what goes in and what to do. But you can’t eat the recipe. <mark>A class is the recipe: a definition of what objects will have and do, not a usable thing itself.</mark></div>
+  <p>A <b>class</b> is a blueprint, plan, model or design that describes how objects should be created. It specifies:</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Properties</h4><p>What information each object will have, like a name or an age.</p></div>
+    <div class="card t2 tilt-b"><h4>Behaviours</h4><p>What each object can do, like talking or walking. In code these are <b>methods</b>.</p></div>
+  </div>
+  <h3>Nature of a class</h3>
+  <ul>
+    <li><b>Logical existence:</b> it is a description, a definition in your code, not a real entity.</li>
+    <li><b>Holds no object data:</b> a class doesn’t store any particular student’s name or marks. That data lives in the objects.</li>
+    <li><b>Passive:</b> it describes actions that its objects will perform later.</li>
+    <li><b>Blueprint for objects:</b> the “physical reality” built from a class is called an <b>object</b>.</li>
+  </ul>
+  <div class="sticky warn"><strong>Precise note for Python</strong> You will often hear “a class takes no memory”. In Python that isn’t literally true: the class itself is an object in memory (it holds the method definitions). What it doesn’t hold is each object’s own data, such as Rahul’s name. That is the idea the phrase is trying to convey.</div>
+  <h3>Define once, create many</h3>
+  <p>A class is reusable: write the plan <b>once</b>, then create as many objects as you need.</p>
+  <div class="tbl"><table>
+    <tr><th>Plan (class)</th><th>Result (objects)</th></tr>
+    <tr><td>One building blueprint</td><td>Many buildings</td></tr>
+    <tr><td>One TV design</td><td>Thousands of physical TVs</td></tr>
+    <tr><td>One <code>Student</code> class</td><td>Many real students: Rahul, Priya, Amit…</td></tr>
+  </table></div>
+  <h3>Defining a class in Python</h3>
+  <pre><code class="language-python">class Student:
+    """This is a description of the Student class"""
+    # Inside here, we would define properties and behaviours
+    pass</code></pre>
+  <div class="anatomy"><span class="a1">class</span> <span class="a2">Student</span>: <span class="a3">"""docstring"""</span> <span class="a4">pass</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>class</code> — the keyword that tells Python you are creating a blueprint.</p></div>
+    <div><span class="sw a2"></span><p><code>Student</code> — the class name. By convention it starts with a Capital Letter.</p></div>
+    <div><span class="sw a3"></span><p>The docstring — an optional description of the class.</p></div>
+    <div><span class="sw a4"></span><p><code>pass</code> — a placeholder that keeps the class body empty for now.</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="object">
+  <h2>Object: the real thing</h2>
+  <p>An <b>object</b> is the real, usable entity created from a class. The class says <i>how</i> to build something; the object is the thing actually built and used to do work. Creating an object is also called <b>creating an instance</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="One Student class blueprint on the left with three arrows to three separate Student objects on the right, each with its own name and roll number">
+      <g class="rough">
+        <rect class="box f-yellow dash" x="30" y="75" width="200" height="120" rx="14"/>
+        <rect class="box f-green" x="440" y="20" width="260" height="62" rx="12"/>
+        <rect class="box f-green" x="440" y="104" width="260" height="62" rx="12"/>
+        <rect class="box f-green" x="440" y="188" width="260" height="62" rx="12"/>
+        <path class="lr" d="M236 115 L 432 52" marker-end="url(#ahr)"/>
+        <path class="lr" d="M236 135 L 432 135" marker-end="url(#ahr)"/>
+        <path class="lr" d="M236 155 L 432 218" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="130" y="128" text-anchor="middle">Student</text>
+      <text class="ts" x="130" y="156" text-anchor="middle">class · the blueprint</text>
+      <text class="ts" x="130" y="176" text-anchor="middle">no student’s data inside</text>
+      <text class="tr" x="335" y="124" text-anchor="middle">Student(…)</text>
+      <text class="tm" x="570" y="57" text-anchor="middle">name="Rahul"  roll=101</text>
+      <text class="tm" x="570" y="141" text-anchor="middle">name="Priya"  roll=102</text>
+      <text class="tm" x="570" y="225" text-anchor="middle">name="Amit"   roll=103</text>
+    </svg></div>
+    <figcaption>One class, many objects. Each object is a separate thing in memory with its own data.</figcaption>
+  </figure>
+  <h3>Nature of an object</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Physical existence</h4><p>It really exists in the program while it runs.</p></div>
+    <div class="card t1 tilt-b"><h4>Uses memory</h4><p>It occupies space in memory to store its data.</p></div>
+    <div class="card t7 tilt-a"><h4>Actual data</h4><p>It holds real values, like “Rahul” and 101.</p></div>
+    <div class="card t5 tilt-b"><h4>Performs actions</h4><p>It carries out the methods defined in its class.</p></div>
+  </div>
+  <p>Without objects, a program can’t do anything meaningful with a class: the class is only instructions.</p>
+  <div class="tbl"><table>
+    <tr><th>If the class (blueprint) is…</th><th>An object (real entity) could be…</th></tr>
+    <tr><td><code>Student</code></td><td>A student named “Rahul” with roll no. 101</td></tr>
+    <tr><td><code>MobilePhone</code></td><td>Your iPhone, with its own serial number and battery level</td></tr>
+    <tr><td><code>BankAccount</code></td><td>Priya’s account with a balance of ₹500</td></tr>
+    <tr><td><code>Television</code></td><td>The LG TV in your living room with volume set to 20</td></tr>
+  </table></div>
+  <h3>Creating an object in Python</h3>
+  <pre><code class="language-python"># Assuming we have a class named Student
+class Student:
+    pass
+
+# Creating an object
+s = Student()
+print(s)</code></pre>
+  <pre class="out"><code>&lt;__main__.Student object at 0x000002ABDC92C830&gt;</code></pre>
+  <p><code>Student()</code> tells Python to read the blueprint and build a real object. <code>s</code> is the name we use to reach it. (The hex number is the object’s memory location; yours will differ.)</p>
+  <h3>Three analogies</h3>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Building blueprint</h4><p>The architect’s plan sets floors, rooms and windows (class). You can’t live in the paper; only the constructed building is real (object).</p></div>
+    <div class="card t1 tilt-b"><h4>TV design</h4><p>LG’s engineers create one model design (class). You can’t watch the design, but the factory makes thousands of TVs from it (objects).</p></div>
+    <div class="card t4 tilt-a"><h4>Idol mold</h4><p>The festival mold defines the shape (class). The mold isn’t the idol, but it produces many identical idols (objects).</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="reference">
+  <h2>Reference variables</h2>
+  <div class="story"><b class="lbl">TV and remote</b>You don’t control the TV by touching its circuits; you use the remote. The TV is the object, the remote is the reference, and the hand holding the remote is the variable. <mark>A variable doesn’t hold the object; it holds a reference that points to the object.</mark></div>
+  <p>When you create an object, Python doesn’t put the object “inside” the variable. The object lives in memory, and the variable stores a <b>reference</b> (think: address) to it. That variable is a <b>reference variable</b>: a name tag telling Python which object you mean.</p>
+  <div class="sticky tip l"><strong>House and address</strong> The house is the object. Its address is the reference. The paper with the address written on it is the reference variable. You carry the address, not the house.</div>
+  <h3>How a reference variable is created</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name):
+        self.name = name
+
+s1 = Student("Kumar Deepak")
+print(s1.name)</code></pre>
+  <pre class="out"><code>Kumar Deepak</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Student("Kumar Deepak")</b>creates an object in memory.</div></li>
+    <li><span class="dot">2</span><div><b>s1 = …</b><code>s1</code> becomes the reference variable and stores the object’s reference.</div></li>
+    <li><span class="dot">3</span><div><b>s1.name</b>follows the reference to the object; <code>.name</code> reads the data stored inside it.</div></li>
+  </ol>
+  <p>So <code>s1</code> is <b>not the object itself</b>; it points to it. Real-world version: reading a phone’s brand through its reference variable.</p>
+  <pre><code class="language-python">class MobilePhone:
+    def __init__(self, brand):
+        self.brand = brand
+
+my_phone = MobilePhone("Samsung")
+print(my_phone.brand)</code></pre>
+  <pre class="out"><code>Samsung</code></pre>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="shared-refs">
+  <h2>Shared references and reassignment</h2>
+  <h3>Many names, one object</h3>
+  <p>More than one reference variable can point to the <b>same</b> object. The object is created only once; <code>s2 = s1</code> just copies the reference.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name):
+        self.name = name
+
+s1 = Student("Kumar Deepak")
+s2 = s1
+
+s2.name = "Ravi"
+print(s1.name)</code></pre>
+  <pre class="out"><code>Ravi</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 200" role="img" aria-label="Two name tags s1 and s2 both pointing to the same single Student object whose name is Ravi">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="30" width="90" height="46" rx="10"/>
+        <rect class="box f-blue" x="30" y="124" width="90" height="46" rx="10"/>
+        <rect class="box f-green" x="270" y="50" width="220" height="100" rx="14"/>
+        <path class="lr" d="M126 55 L 262 88" marker-end="url(#ahr)"/>
+        <path class="lb" d="M126 146 L 262 114" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="75" y="58" text-anchor="middle">s1</text>
+      <text class="tm" x="75" y="152" text-anchor="middle">s2</text>
+      <text class="t" x="380" y="90" text-anchor="middle">Student object</text>
+      <text class="tm" x="380" y="122" text-anchor="middle">name = "Ravi"</text>
+      <text class="ts" x="380" y="180" text-anchor="middle">only one object exists</text>
+    </svg></div>
+    <figcaption>Change the data through <code>s2</code> and <code>s1</code> sees it too: they point at the same object.</figcaption>
+  </figure>
+  <p>Real-world version: a joint bank account. When mom withdraws money, dad sees the new balance.</p>
+  <pre><code class="language-python">class BankAccount:
+    def __init__(self, balance):
+        self.balance = balance
+
+dad_access = BankAccount(10000)
+mom_access = dad_access
+
+mom_access.balance = 7000
+print(dad_access.balance)</code></pre>
+  <pre class="out"><code>7000</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> This is behind a classic production bug: you pass a config or customer object into a helper, the helper “tweaks” it, and the change leaks back to every other part of the service holding the same reference. If a function should not change the caller’s object, make a copy first.</div>
+  <h3>Zero, one or many references</h3>
+  <p>An object may have one reference variable, several, or none. When <b>no</b> reference points to an object any more, nothing can reach it, so it becomes <b>eligible for garbage collection</b>: Python frees its memory.</p>
+  <h3>Reassigning a reference variable</h3>
+  <pre><code class="language-python">s1 = Student("Kumar Deepak")
+s1 = Student("Ravi")</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="s1 first points to the Kumar Deepak object with a dashed crossed arrow, then points to a new Ravi object. The old object now has no reference and can be garbage collected.">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="86" width="90" height="46" rx="10"/>
+        <rect class="box f-grey dash" x="300" y="20" width="250" height="60" rx="12"/>
+        <rect class="box f-green" x="300" y="140" width="250" height="60" rx="12"/>
+        <path class="ln dash" d="M136 98 L 292 56" marker-end="url(#ah)"/>
+        <path class="lr" d="M136 120 L 292 166" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="85" y="114" text-anchor="middle">s1</text>
+      <text class="tm" x="425" y="55" text-anchor="middle">Student("Kumar Deepak")</text>
+      <text class="tm" x="425" y="175" text-anchor="middle">Student("Ravi")</text>
+      <text class="ts" x="200" y="62" text-anchor="middle">before</text>
+      <text class="tr" x="205" y="170" text-anchor="middle">now</text>
+      <text class="ts" x="562" y="46">no reference left</text>
+      <text class="ts" x="562" y="66">→ garbage collected</text>
+    </svg></div>
+    <figcaption>Reassignment moves the name tag. The old object, with nothing pointing to it, is cleaned up.</figcaption>
+  </figure>
+  <p>Real-world version: a cab app cancels the first cab and points the booking to a new one.</p>
+  <pre><code class="language-python">class Cab:
+    def __init__(self, driver):
+        self.driver = driver
+
+current_cab = Cab("Ramesh")
+current_cab = Cab("Suresh")  # first cab cancelled, new cab assigned
+print(current_cab.driver)</code></pre>
+  <pre class="out"><code>Suresh</code></pre>
+  <h3>Remember</h3>
+  <ul>
+    <li>A reference variable stores a <b>reference</b> to the object, not the object’s data.</li>
+    <li>You reach an object’s data and methods through a reference.</li>
+    <li>Many reference variables can point to the same object.</li>
+    <li>A reference variable can be reassigned to a different object.</li>
+  </ul>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="self">
+  <h2>The <code>self</code> variable</h2>
+  <div class="story"><b class="lbl">“My” on a form</b>A college form says “Write <i>your</i> name, <i>your</i> roll number”. The same form works for every student because “your” always means whoever is filling it in right now. <mark><code>self</code> is “your” for a method: it always means the object the method is running for.</mark></div>
+  <p><code>self</code> is a <b>reference variable that always points to the current object</b>. When an object calls the constructor or an instance method, Python automatically passes that object’s reference as the first argument, and the method receives it in the parameter named <code>self</code>.</p>
+  <h3>Why it’s needed</h3>
+  <p>A class can have many objects, each with its own name, roll number and marks. When a method runs, Python must know <b>whose</b> data to use. <code>self</code> makes sure that:</p>
+  <ul>
+    <li>each object works only with its own data,</li>
+    <li>data of one object never mixes with another’s,</li>
+    <li>the same method behaves differently for different objects.</li>
+  </ul>
+  <h3>Rules</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Always first</h4><p>The first parameter of <code>__init__</code> and of every instance method is <code>self</code>.</p></div>
+    <div class="card t2 tilt-b"><h4>Never passed by you</h4><p>You never write a value for <code>self</code>. Python takes the object reference and passes it for you, on every call.</p></div>
+    <div class="card t3 tilt-a"><h4>Inside the class only</h4><p><code>self</code> exists only in the class’s methods. Outside, you use the object’s reference variable.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="s1.greet() and s2.greet() both call the same greet method; inside the first call self is the Sunny object, inside the second self is the Ravi object">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="35" width="150" height="50" rx="10"/>
+        <rect class="box f-blue" x="20" y="165" width="150" height="50" rx="10"/>
+        <rect class="box f-yellow" x="260" y="85" width="200" height="80" rx="12"/>
+        <rect class="box f-green" x="530" y="35" width="170" height="50" rx="10"/>
+        <rect class="box f-green" x="530" y="165" width="170" height="50" rx="10"/>
+        <path class="lr" d="M174 62 L 254 108" marker-end="url(#ahr)"/>
+        <path class="lb" d="M174 188 L 254 142" marker-end="url(#ahb)"/>
+        <path class="lr" d="M464 108 L 524 66" marker-end="url(#ahr)"/>
+        <path class="lb" d="M464 142 L 524 184" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="95" y="65" text-anchor="middle">s1.greet()</text>
+      <text class="tm" x="95" y="195" text-anchor="middle">s2.greet()</text>
+      <text class="tm" x="360" y="120" text-anchor="middle">def greet(self):</text>
+      <text class="ts" x="360" y="146" text-anchor="middle">one copy of the code</text>
+      <text class="t" x="615" y="66" text-anchor="middle">"Sunny" object</text>
+      <text class="t" x="615" y="196" text-anchor="middle">"Ravi" object</text>
+      <text class="tr" x="615" y="112" text-anchor="middle">self = s1</text>
+      <text class="tb" x="615" y="150" text-anchor="middle">self = s2</text>
+    </svg></div>
+    <figcaption>Same method, different <code>self</code>. Python quietly turns <code>s1.greet()</code> into <code>Student.greet(s1)</code>.</figcaption>
+  </figure>
+  <div class="flow"><span class="op">s1.greet()</span><span class="hl">Python rewrites</span><span class="op">Student.greet(s1)</span><span class="ok">self = s1</span></div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="self-inside-outside">
+  <h2><code>self</code> inside the class, references outside</h2>
+  <h3>Creating instance variables with <code>self</code></h3>
+  <p>Inside the constructor, <code>self.something = value</code> creates an <b>instance variable</b>: a variable that belongs to the object being built.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no):
+        self.name = name
+        self.roll_no = roll_no
+
+s1 = Student("Sunny", 101)</code></pre>
+  <p>When <code>s1</code> is created, an object appears in memory, <code>self.name</code> and <code>self.roll_no</code> become part of it, and the values <code>"Sunny"</code> and <code>101</code> are stored inside. Every new object gets its <b>own separate set</b> of instance variables.</p>
+  <h3>Accessing them inside the class: <code>self.variable</code></h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no):
+        self.name = name
+        self.roll_no = roll_no
+
+    def show_details(self):
+        print("Student Name:", self.name)
+        print("Roll Number:", self.roll_no)
+
+s1 = Student("Sunny", 101)
+s1.show_details()</code></pre>
+  <pre class="out"><code>Student Name: Sunny
+Roll Number: 101</code></pre>
+  <p>Real-world version: a product on a shopping site displays its own name and price.</p>
+  <pre><code class="language-python">class Product:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def show_details(self):
+        print("Product:", self.name)
+        print("Price:", self.price)
+
+p1 = Product("Headphones", 1499)
+p1.show_details()</code></pre>
+  <pre class="out"><code>Product: Headphones
+Price: 1499</code></pre>
+  <h3>Accessing them outside the class: <code>reference.variable</code></h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no):
+        self.name = name
+        self.roll_no = roll_no
+
+s1 = Student("Sunny", 101)
+print("Student Name:", s1.name)
+print("Roll Number:", s1.roll_no)</code></pre>
+  <pre class="out"><code>Student Name: Sunny
+Roll Number: 101</code></pre>
+  <p>Real-world version: a library app reads a book’s title and author from outside the class.</p>
+  <pre><code class="language-python">class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+b1 = Book("Wings of Fire", "A. P. J. Abdul Kalam")
+print("Title:", b1.title)
+print("Author:", b1.author)</code></pre>
+  <pre class="out"><code>Title: Wings of Fire
+Author: A. P. J. Abdul Kalam</code></pre>
+  <div class="two">
+    <div class="flow v"><span class="hl">Inside the class</span><span class="op">self.variable_name</span></div>
+    <div class="flow v"><span class="hl">Outside the class</span><span class="op">reference_variable.variable_name</span></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="current-object">
+  <h2><code>self</code> always means the current object</h2>
+  <p>Two objects can call the same method. The code is identical, but <code>self</code> points to a different object in each call, so the output differs.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name):
+        self.name = name
+
+    def greet(self):
+        print("Hello, my name is", self.name)
+
+s1 = Student("Sunny")
+s2 = Student("Ravi")
+
+s1.greet()
+s2.greet()</code></pre>
+  <pre class="out"><code>Hello, my name is Sunny
+Hello, my name is Ravi</code></pre>
+  <p>Real-world version: two bank customers call the same method and each sees only their own balance.</p>
+  <pre><code class="language-python">class Customer:
+    def __init__(self, name, balance):
+        self.name = name
+        self.balance = balance
+
+    def show_balance(self):
+        print(self.name, "has a balance of", self.balance)
+
+c1 = Customer("Arjun", 5000)
+c2 = Customer("Meera", 12000)
+
+c1.show_balance()
+c2.show_balance()</code></pre>
+  <pre class="out"><code>Arjun has a balance of 5000
+Meera has a balance of 12000</code></pre>
+  <h3><code>self</code> is not a keyword</h3>
+  <p>Technically any name works for the first parameter, because Python passes the object into whatever that first parameter is called. <code>self</code> is a <b>convention</b> that Python developers everywhere follow.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">works, but don’t</span><pre><code class="language-python">class Person:
+    def show(name):  # not 'self'
+        print("Hello")
+
+p = Person()
+p.show()</code></pre></div>
+    <div class="codebox"><span class="cap">standard convention</span><pre><code class="language-python">class Person:
+    def show(self):
+        print("Hello")
+
+p = Person()
+p.show()</code></pre></div>
+  </div>
+  <pre class="out"><code>Hello</code></pre>
+  <p>Both print <code>Hello</code>. In the first, <code>name</code> silently receives the object, which is confusing to read. Always use <code>self</code>.</p>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="self-error">
+  <h2>A common error: constructor arguments</h2>
+  <p>If the constructor takes only <code>self</code> but you pass values while creating the object, Python raises a <code>TypeError</code>.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        self.name = "Kumar Deepak"
+        self.roll_no = 101
+
+s1 = Student("Sunny", 101)</code></pre>
+  <pre class="out"><code>TypeError: Student.__init__() takes 1 positional argument but 3 were given</code></pre>
+  <p>Why “3 were given” when you passed two? Because Python also passes the new object as <code>self</code>: that’s <code>self</code>, <code>"Sunny"</code> and <code>101</code>, but <code>__init__</code> only accepts <code>self</code>.</p>
+  <p>Real-world version: a pizza order class that takes no values, while the app passes a size and a price.</p>
+  <pre><code class="language-python">class PizzaOrder:
+    def __init__(self):
+        self.size = "Medium"
+        self.price = 299
+
+order = PizzaOrder("Large", 499)  # TypeError: the constructor accepts only self</code></pre>
+  <pre class="out"><code>TypeError: PizzaOrder.__init__() takes 1 positional argument but 3 were given</code></pre>
+  <div class="sticky warn l"><strong>Fix it</strong> Make the constructor accept what callers pass: <code>def __init__(self, size, price):</code> and store them with <code>self.size = size</code>, <code>self.price = price</code>.</div>
+  <h3>Points to remember about <code>self</code></h3>
+  <ul>
+    <li>It is a reference variable pointing to the current object, supplied automatically by Python.</li>
+    <li>It is used to create and access instance variables <b>inside</b> the class.</li>
+    <li>Outside the class, use the object’s reference variable instead.</li>
+    <li>It is not a keyword, but always use the name <code>self</code>.</li>
+  </ul>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Programming paradigm</dt><dd>A style of writing and organising programs, such as procedural, object-oriented or modular. It is not a programming language.</dd></div>
+    <div><dt>Procedural programming</dt><dd>A paradigm that splits a program into functions called in order, with data passed between them or shared globally.</dd></div>
+    <div><dt>Object-Oriented Programming (OOP)</dt><dd>A paradigm that organises a program into objects, each keeping related data and the actions on that data together.</dd></div>
+    <div><dt>Class</dt><dd>A blueprint that defines the properties and behaviours its objects will have. It does not hold any individual object’s data.</dd></div>
+    <div><dt>Object (instance)</dt><dd>A real entity created from a class, such as <code>Student("Rahul")</code>. It lives in memory and holds its own data.</dd></div>
+    <div><dt>Reference variable</dt><dd>A variable that stores a reference to an object rather than the object itself. Several reference variables can point to the same object.</dd></div>
+    <div><dt>Instance variable</dt><dd>A variable that belongs to one object, created inside the class with <code>self.name = value</code>.</dd></div>
+    <div><dt>self</dt><dd>The first parameter of the constructor and of every instance method; Python fills it automatically with the object the method is running for.</dd></div>
+    <div><dt>Constructor (__init__)</dt><dd>The special method Python runs automatically when an object is created, used to set up the object’s instance variables.</dd></div>
+    <div><dt>Garbage collection</dt><dd>Python’s automatic freeing of memory for objects that no reference variable points to any more.</dd></div>
+  </dl>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What is a programming paradigm?</p>
+      <ol><li>A Python library</li><li>A type of variable</li><li>A style of organising and writing programs</li><li>A compiler setting</li></ol>
+      <p class="why">A paradigm is a way of thinking about and structuring code. Many languages can follow the same paradigm.</p></div>
+    <div class="q" data-answer="1"><p>Why do global variables cause trouble in large procedural programs?</p>
+      <ol><li>Any function can change them, so you can’t tell who changed the data or why</li><li>They are slower than local variables</li><li>Python doesn’t allow them</li><li>They can only store numbers</li></ol>
+      <p class="why">Shared, unprotected data can be modified from anywhere, which makes bugs hard to track and functions hard to reuse.</p></div>
+    <div class="q" data-answer="4"><p>Which statement about a class and an object is correct?</p>
+      <ol><li>An object is a blueprint for creating classes</li><li>A class stores each student’s own name</li><li>You can only create one object from a class</li><li>A class is the blueprint; each object built from it holds its own data</li></ol>
+      <p class="why">Define once, create many: the class describes, and the objects are the real entities holding data.</p></div>
+    <div class="q" data-answer="2"><p><code>a = Student("Asha")</code>, then <code>b = a</code>, then <code>b.name = "Neha"</code>. What does <code>print(a.name)</code> show?</p>
+      <ol><li>Asha</li><li>Neha</li><li>An error</li><li>None</li></ol>
+      <p class="why"><code>b = a</code> copies the reference, not the object. Both names point to the same object, so the change is visible through <code>a</code>.</p></div>
+    <div class="q" data-answer="3"><p>In <code>s1.greet()</code>, what value does the <code>self</code> parameter receive?</p>
+      <ol><li>Nothing, you must pass it</li><li>The class <code>Student</code></li><li>The object <code>s1</code> refers to</li><li>The string "self"</li></ol>
+      <p class="why">Python automatically passes the calling object as the first argument; it is equivalent to <code>Student.greet(s1)</code>.</p></div>
+    <div class="q" data-answer="2"><p><code>class A:</code> with <code>def __init__(self): ...</code>. What happens on <code>A(5)</code>?</p>
+      <ol><li>5 is ignored</li><li>TypeError: takes 1 positional argument but 2 were given</li><li>5 is stored in self</li><li>The object is created with no data</li></ol>
+      <p class="why">Python passes the new object plus 5, two arguments, but <code>__init__</code> only accepts <code>self</code>.</p></div>
+    <div class="q" data-answer="1"><p>After <code>s1 = Student("X")</code> then <code>s1 = Student("Y")</code>, what happens to the “X” object if nothing else refers to it?</p>
+      <ol><li>It becomes eligible for garbage collection</li><li>It merges with “Y”</li><li>It stays reachable through <code>s1</code></li><li>Python raises an error</li></ol>
+      <p class="why">Reassignment moves the name to the new object. An object with no references can’t be reached, so Python frees it.</p></div>
+    <div class="q" data-answer="4"><p>How do you read an instance variable from <b>outside</b> the class?</p>
+      <ol><li><code>self.name</code></li><li><code>Student.self.name</code></li><li><code>name</code> on its own</li><li><code>s1.name</code>, using the object’s reference variable</li></ol>
+      <p class="why"><code>self</code> only exists inside methods. Outside, you go through a reference variable.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Procedural code gets messy as it grows, so <b>OOP</b> bundles data and behaviour into <b>objects</b> built from a <b>class</b> blueprint; you reach each object through a <b>reference variable</b>, and inside its methods the object refers to itself as <b>self</b>.</p>
+  <p>Next up: Intro to OOP · Part 2, where you’ll meet the constructor in depth, decorators, the three kinds of variables (instance, static, local) and the three kinds of methods.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

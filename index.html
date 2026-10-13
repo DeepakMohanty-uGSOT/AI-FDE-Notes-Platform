@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIFDE Notes | Forward Deployed AI Engineer</title>
+<meta name="description" content="Free, structured, hand-drawn style notes for the Forward Deployed AI Engineer (AIFDE) course by Vishwa Mohan: Linux, networking, Git, web, Python, FastAPI, LLMs, prompts, LangChain and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="./" data-page="home">
+
+<main class="wrap ruled">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <div class="stamp"><b>Vishwa Mohan</b><span>AIFDE notes</span></div>
+      <p class="eyebrow">Forward Deployed AI Engineer · course notes</p>
+      <h1 id="hero-title">AIFDE Notes</h1>
+      <svg class="squiggle" viewBox="0 0 210 15" aria-hidden="true"><path d="M3 9 C 24 2, 44 14, 68 8 S 112 2, 136 9 S 178 14, 207 7"/></svg>
+      <p class="lede">Everything you need to become a <mark>Forward Deployed AI Engineer</mark>, from your first terminal command to shipping LLM features at a customer site. Every page has everyday examples, sketched diagrams, runnable code and a self-check.</p>
+      <div class="actions">
+        <a class="btn primary" id="start-reading" href="notes/index.html">Start reading →</a>
+        <a class="btn" href="#roadmap">See the roadmap</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 420 330">
+        <g class="rough">
+          <rect class="box f-blue" x="20" y="22" width="150" height="74" rx="14"/>
+          <rect class="box f-purple" x="135" y="128" width="150" height="74" rx="14"/>
+          <rect class="box f-green" x="250" y="234" width="150" height="74" rx="14"/>
+          <path class="lr" d="M95 100 C 95 130, 110 160, 128 164" marker-end="url(#ahr)"/>
+          <path class="lb" d="M210 206 C 210 236, 225 266, 243 270" marker-end="url(#ahb)"/>
+          <path class="ln dash" d="M290 40 C 330 40, 380 70, 380 120" />
+          <circle class="box f-yellow" cx="378" cy="146" r="22"/>
+        </g>
+        <text class="th" x="95" y="56" text-anchor="middle">Customer</text>
+        <text class="ts" x="95" y="80" text-anchor="middle">messy real problem</text>
+        <text class="th" x="210" y="162" text-anchor="middle">You, the FDE</text>
+        <text class="ts" x="210" y="186" text-anchor="middle">discover · prototype · build</text>
+        <text class="th" x="325" y="268" text-anchor="middle">AI in prod</text>
+        <text class="ts" x="325" y="292" text-anchor="middle">reliable · measured · adopted</text>
+        <text class="tr" x="378" y="154" text-anchor="middle">✓</text>
+        <text class="ts" x="300" y="30">ship value, fast</text>
+      </svg>
+    </div>
+  </section>
+
+  <section aria-label="Course at a glance">
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section aria-labelledby="how-title">
+    <p class="eyebrow">How every note works</p>
+    <h2 id="how-title">Read · see · try · check</h2>
+    <ol class="steps">
+      <li><b>1 · Read the story</b><p>Each idea starts with an everyday example before any jargon.</p></li>
+      <li><b>2 · See the sketch</b><p>Hand-drawn diagrams and flows show what is really going on.</p></li>
+      <li><b>3 · Try the code</b><p>Copy-ready commands and code, with the output you should see.</p></li>
+      <li><b>4 · Check yourself</b><p>Tick “Got it” per section, then take the scored self-check.</p></li>
+    </ol>
+  </section>
+
+  <section id="roadmap" aria-labelledby="roadmap-title">
+    <p class="eyebrow">The full journey · 9 months · 36 weeks</p>
+    <h2 id="roadmap-title">Roadmap</h2>
+    <p>Modules follow the course order. Each builds on the one before it. Open a stop to see its notes; your ticks show up here as progress (saved in this browser only).</p>
+    <div class="progress" id="road-progress" aria-live="polite"></div>
+    <ol class="road" id="roadmap-list"><li class="empty">Loading roadmap…</li></ol>
+  </section>
+
+  <section aria-labelledby="mods-title">
+    <p class="eyebrow">Jump straight in</p>
+    <h2 id="mods-title">Modules</h2>
+    <ul class="mod-list" id="modules"><li class="empty">Loading modules…</li></ul>
+  </section>
+
+  <section aria-labelledby="latest-title">
+    <p class="eyebrow">Fresh from the notebook</p>
+    <h2 id="latest-title">Latest notes</h2>
+    <ul class="note-list" id="latest"><li class="empty">Loading notes…</li></ul>
+    <div class="actions"><a class="btn" href="notes/index.html">See all notes &amp; search →</a><a class="btn" href="glossary/index.html">Glossary &amp; flashcards →</a></div>
+  </section>
+
+  <section id="about" aria-labelledby="about-title">
+    <div class="about">
+      <h2 id="about-title">About these notes</h2>
+      <p>These are the companion notes to the <b>Forward Deployed AI Engineer</b> course by <b>Vishwa Mohan</b>. A Forward Deployed Engineer sits with the customer, understands the real problem, and ships working AI into their systems. That takes solid fundamentals <i>and</i> modern GenAI skills.</p>
+      <p>Read them in order, tick “Got it” as you go, and use <b>Save as PDF</b> (Ctrl/Cmd + P, turn on <i>Background graphics</i>) for an offline copy with every quiz answer included.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

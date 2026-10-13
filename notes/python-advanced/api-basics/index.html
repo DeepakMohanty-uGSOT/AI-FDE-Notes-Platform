@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>API Basics · Python Advanced &amp; FastAPI | AIFDE Notes</title>
+<meta name="description" content="How one program asks another for data: APIs, client and server, HTTP requests and responses, GET and POST, calling APIs with Python's requests library, reading JSON and handling errors.">
+<meta name="keywords" content="API, client and server, HTTP, GET and POST, requests library, JSON, status codes, error handling">
+<meta name="date" content="2026-10-01">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-advanced/api-basics">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>API Basics</h1>
+  <p class="byline">Learn how your Python program can ask another program for data over the internet, read the JSON answer, and stay calm when something goes wrong.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>The problem: data that lives somewhere else</h2>
+  <p>Until now your programs used data you typed yourself or saved in files. Many real apps need data that lives <b>somewhere else</b>: today’s weather, exchange rates, train timings, the price of a pizza.</p>
+  <p>Say you open a food delivery app and search <b>“Pizza near me”</b>. The app must show which restaurants are available, what pizzas they have, the prices, and whether each restaurant is open right now. All of that lives in the <b>restaurant’s own system</b>. The food app doesn’t have it. How does it get it?</p>
+  <div class="two">
+    <div class="card t4 tilt-a"><h4>Idea 1: type it ourselves</h4><p>Menus and prices change every day and there are thousands of restaurants. We can’t retype all of it again and again.</p></div>
+    <div class="card t4 tilt-b"><h4>Idea 2: open their database directly</h4><p>No restaurant gives strangers full access. Their database may use a format we don’t understand. And one mistake from us could <b>damage or delete</b> their data.</p></div>
+  </div>
+  <p>We need a <b>safe, fixed way</b> to ask. The restaurant decides what we may ask and how; we follow those rules and get an answer. <mark>That fixed way of asking is called an API.</mark></p>
+  <p>This note builds up step by step; each topic uses the one before it:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>What is an API?</b>How can one program ask another for data?</div></li>
+    <li><span class="dot">2</span><div><b>Client and server</b>Who asks and who answers?</div></li>
+    <li><span class="dot">3</span><div><b>HTTP request and response</b>In what format do they talk?</div></li>
+    <li><span class="dot">4</span><div><b>GET and POST</b>How do we ask for data, and how do we send data?</div></li>
+    <li><span class="dot">5</span><div><b>Making API requests</b>How do we do it with Python?</div></li>
+    <li><span class="dot">6</span><div><b>Working with responses</b>What do we get back?</div></li>
+    <li><span class="dot">7</span><div><b>Working with JSON</b>How do we read the data inside it?</div></li>
+    <li><span class="dot">8</span><div><b>Handling API errors</b>What if something goes wrong?</div></li>
+  </ol>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what-is-api">
+  <h2>What is an API?</h2>
+  <p><b>API</b> stands for <b>A</b>pplication <b>P</b>rogramming <b>I</b>nterface:</p>
+  <div class="tbl"><table>
+    <tr><th>Word</th><th>Meaning</th><th>Easy way to remember</th></tr>
+    <tr><td><b>A</b>pplication</td><td>A program: a weather app, a bank app, your own Python code</td><td>the programs that want to talk</td></tr>
+    <tr><td><b>P</b>rogramming</td><td>It is used by code, not by a person clicking buttons</td><td>programs use it</td></tr>
+    <tr><td><b>I</b>nterface</td><td>The point where two things meet and talk</td><td>like the buttons on a TV remote</td></tr>
+  </table></div>
+  <p><mark>An API is a way for one application to talk to another.</mark> It is a <b>communication bridge</b> that lets one program ask another program for data or work.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Food delivery app talks to the API, the API talks to the restaurant system, which talks to the restaurant database; the food app never touches the database directly">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="50" width="140" height="90" rx="14"/>
+        <rect class="box f-yellow" x="200" y="50" width="140" height="90" rx="14"/>
+        <rect class="box f-orange" x="380" y="50" width="140" height="90" rx="14"/>
+        <rect class="box f-grey" x="560" y="50" width="140" height="90" rx="14"/>
+        <path class="ln" d="M164 95 L 193 95" marker-end="url(#ah)"/>
+        <path class="ln" d="M344 95 L 373 95" marker-end="url(#ah)"/>
+        <path class="ln" d="M524 95 L 553 95" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M90 146 C 90 205, 630 205, 630 146"/>
+      </g>
+      <text class="th" x="90" y="102" text-anchor="middle">Food app</text>
+      <text class="th" x="270" y="102" text-anchor="middle">API</text>
+      <text class="t" x="450" y="90" text-anchor="middle">Restaurant</text>
+      <text class="t" x="450" y="112" text-anchor="middle">system</text>
+      <text class="th" x="630" y="102" text-anchor="middle">Database</text>
+      <text class="ts" x="270" y="34" text-anchor="middle">fixed rules</text>
+      <text class="tr" x="360" y="228" text-anchor="middle">✗ never touches the database directly</text>
+    </svg></div>
+    <figcaption>The food app asks the API; the API talks to the restaurant’s system and brings the answer back.</figcaption>
+  </figure>
+  <p>Because the rules are fixed, the two programs don’t need to know anything about each other’s insides. Your program can be in Python and the other in Java; they only need to <b>follow the API rules</b>. Most APIs today work <b>over the internet</b>; these are called <b>web APIs</b>.</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="why-apis">
+  <h2>Why we need APIs</h2>
+  <p>Modern applications depend on many other systems. An online shop doesn’t build its own payment, delivery and email systems. It <b>uses</b> existing ones through their APIs.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="An e-commerce app connects to a payment API, a shipping API and an email API, each of which fronts its own system">
+      <g class="rough">
+        <rect class="box f-blue" x="250" y="15" width="220" height="55" rx="14"/>
+        <rect class="box f-yellow" x="30" y="125" width="180" height="50" rx="12"/>
+        <rect class="box f-yellow" x="270" y="125" width="180" height="50" rx="12"/>
+        <rect class="box f-yellow" x="510" y="125" width="180" height="50" rx="12"/>
+        <rect class="box f-green" x="30" y="230" width="180" height="50" rx="12"/>
+        <rect class="box f-green" x="270" y="230" width="180" height="50" rx="12"/>
+        <rect class="box f-green" x="510" y="230" width="180" height="50" rx="12"/>
+        <path class="ln" d="M330 74 L 130 118" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 74 L 360 118" marker-end="url(#ah)"/>
+        <path class="ln" d="M390 74 L 590 118" marker-end="url(#ah)"/>
+        <path class="lb" d="M120 179 L 120 223" marker-end="url(#ahb)"/>
+        <path class="lb" d="M360 179 L 360 223" marker-end="url(#ahb)"/>
+        <path class="lb" d="M600 179 L 600 223" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="360" y="51" text-anchor="middle">E-commerce app</text>
+      <text class="t" x="120" y="156" text-anchor="middle">Payment API</text>
+      <text class="t" x="360" y="156" text-anchor="middle">Shipping API</text>
+      <text class="t" x="600" y="156" text-anchor="middle">Email API</text>
+      <text class="t" x="120" y="261" text-anchor="middle">Payment system</text>
+      <text class="t" x="360" y="261" text-anchor="middle">Delivery system</text>
+      <text class="t" x="600" y="261" text-anchor="middle">Email system</text>
+    </svg></div>
+    <figcaption>The shop doesn’t build everything itself; it talks to other systems through their APIs.</figcaption>
+  </figure>
+  <p><b>Example:</b> a customer clicks <b>Pay Now</b>. The website doesn’t process the card itself. It asks a payment service through an API and gets the result back.</p>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>No rebuilding</h4><p>We reuse what already exists.</p></div>
+    <div class="card t1 tilt-b"><h4>Systems stay private</h4><p>Others can use only what the API allows.</p></div>
+    <div class="card t5 tilt-a"><h4>Any language</h4><p>Programs in different languages can work together.</p></div>
+  </div>
+  <h3>APIs you already use</h3>
+  <div class="tbl"><table>
+    <tr><th>Where you see it</th><th>What the app asks</th><th>What the API gives</th></tr>
+    <tr><td>Weather app</td><td>“Today’s weather for Bhubaneswar?”</td><td>Temperature, humidity, chance of rain</td></tr>
+    <tr><td>Food delivery app</td><td>“Distance from the restaurant to the customer?”</td><td>Distance and travel time</td></tr>
+    <tr><td>Online shop</td><td>“Charge Rs. 55,000 to this card”</td><td>“Payment successful” or “Payment failed”</td></tr>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="waiter">
+  <h2>The API is the waiter</h2>
+  <div class="story"><b class="lbl">At the restaurant</b>You sit at a table and read the menu. You don’t walk into the kitchen. You tell the <b>waiter</b> what you want; the waiter takes the order to the kitchen and brings the food back. <mark>The API is the waiter: the only way in, and the only way back out.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 235" role="img" aria-label="Customer gives an order (request) to the waiter, who takes it to the kitchen; the kitchen's food (response) comes back through the waiter to the customer">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="60" width="170" height="100" rx="14"/>
+        <rect class="box f-yellow" x="275" y="60" width="170" height="100" rx="14"/>
+        <rect class="box f-orange" x="530" y="60" width="170" height="100" rx="14"/>
+        <path class="lr" d="M194 90 L 268 90" marker-end="url(#ahr)"/>
+        <path class="lr" d="M449 90 L 523 90" marker-end="url(#ahr)"/>
+        <path class="lb" d="M268 130 L 194 130" marker-end="url(#ahb)"/>
+        <path class="lb" d="M523 130 L 449 130" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="105" y="108" text-anchor="middle">Customer</text>
+      <text class="ts" x="105" y="134" text-anchor="middle">your app (client)</text>
+      <text class="th" x="360" y="108" text-anchor="middle">Waiter</text>
+      <text class="ts" x="360" y="134" text-anchor="middle">the API</text>
+      <text class="th" x="615" y="108" text-anchor="middle">Kitchen</text>
+      <text class="ts" x="615" y="134" text-anchor="middle">server + database</text>
+      <text class="tr" x="231" y="46" text-anchor="middle">order</text>
+      <text class="tr" x="486" y="46" text-anchor="middle">order</text>
+      <text class="tb" x="231" y="190" text-anchor="middle">food</text>
+      <text class="tb" x="486" y="190" text-anchor="middle">food</text>
+      <text class="ts" x="360" y="222" text-anchor="middle">the menu = what you are allowed to ask</text>
+    </svg></div>
+    <figcaption>Order = request, food = response. Keep this picture: HTTP, endpoints, JSON and status codes all build on it.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Restaurant world</th><th>API world</th></tr>
+    <tr><td>Customer</td><td>Your application (the client)</td></tr>
+    <tr><td>Menu</td><td>The list of things the API allows you to ask</td></tr>
+    <tr><td>Waiter</td><td>The API</td></tr>
+    <tr><td>Kitchen</td><td>Server and database</td></tr>
+    <tr><td>Food order</td><td>API request</td></tr>
+    <tr><td>Prepared food</td><td>API response</td></tr>
+  </table></div>
+  <h3>Request and response</h3>
+  <p>When an application asks an API for something, that is an <b>API request</b>. It says <b>what</b> you want to do, <b>which</b> data you want, and any <b>extra information</b> needed. After processing, the API sends something back: the <b>API response</b>.</p>
+  <div class="sticky tip"><strong>The base of everything</strong> One request always gets one response.</div>
+  <h3>Small example: a student application</h3>
+  <p>A frontend wants the details of <b>student 101</b>:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Frontend sends a request</b>“Give me the student with ID 101.”</div></li>
+    <li><span class="dot">2</span><div><b>Student API receives it</b></div></li>
+    <li><span class="dot">3</span><div><b>API asks the database</b>for student 101.</div></li>
+    <li><span class="dot">4</span><div><b>Database answers</b>with the data, back to the API.</div></li>
+    <li><span class="dot">5</span><div><b>API sends the response</b>back to the frontend.</div></li>
+  </ol>
+  <div class="flow"><span>Application sends request</span><span class="hl">API processes it</span><span class="ok">API sends response</span></div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="client-server">
+  <h2>Client and server</h2>
+  <p>“Our program” and “the other program” have proper names: <b>client</b> and <b>server</b>.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Client: the one who asks</h4><p>The program that <b>sends the request</b>: a web browser asking for a page, a mobile app asking for the weather, your Python program asking for data. <b>Client is a role, not a device.</b> Whoever asks is the client.</p></div>
+    <div class="card t3 tilt-b"><h4>Server: the one who answers</h4><p>The program that <b>receives the request and sends the response</b>. It keeps the data (or knows where it is), runs all the time waiting for requests, and serves <b>many clients</b> at once. A server never starts the conversation.</p></div>
+  </div>
+  <h3>The rules of the conversation</h3>
+  <p>Client and server are usually on <b>different computers</b>, sometimes in different countries, connected through the internet.</p>
+  <ul>
+    <li>the <b>client always starts</b> by sending a request,</li>
+    <li>the <b>server replies</b> with a response,</li>
+    <li>one request gets one response.</li>
+  </ul>
+  <h3>Where the API fits</h3>
+  <p>The client doesn’t know <b>how</b> the server stores its data, and doesn’t need to. The API decides <b>what</b> requests the client may send, <b>in what format</b> the request must be written, and <b>in what format</b> the response comes back. In the restaurant, the menu and the waiter together are the API. The same API can serve a website, a mobile app and a Python program alike.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Request flow in five steps: client sends request, API checks it, server reads the database, API packs the response, client uses the data">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="40" width="150" height="130" rx="14"/>
+        <rect class="box f-yellow" x="285" y="40" width="150" height="130" rx="14"/>
+        <rect class="box f-orange" x="550" y="40" width="150" height="130" rx="14"/>
+        <path class="lr" d="M174 82 L 278 82" marker-end="url(#ahr)"/>
+        <path class="lr" d="M439 82 L 543 82" marker-end="url(#ahr)"/>
+        <path class="lb" d="M543 130 L 439 130" marker-end="url(#ahb)"/>
+        <path class="lb" d="M278 130 L 174 130" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="95" y="76" text-anchor="middle">Client</text>
+      <text class="ts" x="95" y="112" text-anchor="middle">1 · sends request</text>
+      <text class="ts" x="95" y="138" text-anchor="middle">5 · uses the data</text>
+      <text class="th" x="360" y="76" text-anchor="middle">API</text>
+      <text class="ts" x="360" y="112" text-anchor="middle">2 · checks request</text>
+      <text class="ts" x="360" y="138" text-anchor="middle">4 · packs response</text>
+      <text class="th" x="625" y="76" text-anchor="middle">Server</text>
+      <text class="ts" x="625" y="112" text-anchor="middle">3 · reads the</text>
+      <text class="ts" x="625" y="132" text-anchor="middle">database</text>
+      <text class="ts" x="226" y="70" text-anchor="middle">request</text>
+      <text class="ts" x="491" y="70" text-anchor="middle">valid request</text>
+      <text class="ts" x="491" y="152" text-anchor="middle">result</text>
+      <text class="ts" x="226" y="152" text-anchor="middle">response</text>
+    </svg></div>
+    <figcaption>Client → API → Server → API → Client: five steps for every call.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Good to know: one program can be both</strong> A food app’s own server is a <b>server</b> for your phone, but becomes a <b>client</b> when it asks a payment service to charge your card. The role depends on who asks and who answers at that moment.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="http">
+  <h2>HTTP: the shared language</h2>
+  <p>Client and server need an <b>agreed format</b>: where a message starts, what is being asked, where the data is. An agreed set of communication rules is a <b>protocol</b>. Web APIs use <b>HTTP</b>, the <b>H</b>yper<b>T</b>ext <b>T</b>ransfer <b>P</b>rotocol.</p>
+  <ul>
+    <li>Every API call is <mark>one HTTP request and one HTTP response</mark>.</li>
+    <li>Your browser uses HTTP every time you open a website.</li>
+    <li><b>HTTPS</b> is the secure version: the <b>S</b> means messages are <b>encrypted</b>, so nobody in between can read them.</li>
+  </ul>
+  <div class="sticky tip"><strong>Our practice API</strong> All examples use <b>JSONPlaceholder</b> (<code>jsonplaceholder.typicode.com</code>), a free fake-data API with posts, to-dos and users. No sign-up needed, and nothing you send is really saved, so experiment freely.</div>
+  <h3>URL and endpoint</h3>
+  <p>To send a request, the client must know <b>where</b> to send it. That address is the <b>URL</b>:</p>
+  <div class="anatomy"><span class="a1">https://</span><span class="a2">jsonplaceholder.typicode.com</span><span class="a3">/posts</span><span class="a4">?userId=1</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Protocol</b>: how to talk</p></div>
+    <div><span class="sw a2"></span><p><b>Domain</b>: which server</p></div>
+    <div><span class="sw a3"></span><p><b>Path</b>: which resource on that server</p></div>
+    <div><span class="sw a4"></span><p><b>Query string</b>: extra filter, after the <code>?</code></p></div>
+  </div>
+  <p>An <b>endpoint</b> is one specific address of an API that does one specific job, like one item on the menu:</p>
+  <div class="tbl"><table>
+    <tr><th>Request</th><th>What you get</th></tr>
+    <tr><td><code>GET /posts</code></td><td>all posts</td></tr>
+    <tr><td><code>GET /posts/1</code></td><td>post number 1</td></tr>
+    <tr><td><code>POST /posts</code></td><td>creates a new post</td></tr>
+  </table></div>
+  <h3>HTTP methods</h3>
+  <p>A client may want to read, add, change or delete data. The <b>method</b> tells the server which: <i>“What do I want to do?”</i></p>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>Purpose</th><th>Example request</th><th>Meaning</th></tr>
+    <tr><td><b>GET</b></td><td><b>Read</b> data</td><td><code>GET /products</code></td><td>“Give me the products.”</td></tr>
+    <tr><td><b>POST</b></td><td><b>Create</b> new data</td><td><code>POST /users</code> + body</td><td>“Create a new user with this information.”</td></tr>
+    <tr><td><b>PUT</b></td><td><b>Replace</b> an existing resource fully</td><td><code>PUT /users/101</code> + body</td><td>“Replace user 101 with this information.”</td></tr>
+    <tr><td><b>PATCH</b></td><td>Change <b>part</b> of existing data</td><td><code>PATCH /users/101</code> + body</td><td>“Change only these fields of user 101.”</td></tr>
+    <tr><td><b>DELETE</b></td><td><b>Remove</b> data</td><td><code>DELETE /users/101</code></td><td>“Delete user 101.”</td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">POST /users: the body carries the new user</span><pre><code class="language-json">{
+  "name": "Rahul",
+  "email": "rahul@example.com"
+}</code></pre></div>
+  <p>This note focuses on the two most used methods, <b>GET</b> and <b>POST</b>. The next notes in the module build the others in FastAPI.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="message-anatomy">
+  <h2>Inside a request and a response</h2>
+  <p>An HTTP message has <b>three parts</b>, and requests and responses share the same shape:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="Side by side: a request with request line, headers and body; a response with status line, headers and body">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="45" width="330" height="58" rx="10"/>
+        <rect class="box f-yellow" x="20" y="113" width="330" height="85" rx="10"/>
+        <rect class="box f-green" x="20" y="208" width="330" height="95" rx="10"/>
+        <rect class="box f-blue" x="370" y="45" width="330" height="58" rx="10"/>
+        <rect class="box f-yellow" x="370" y="113" width="330" height="85" rx="10"/>
+        <rect class="box f-green" x="370" y="208" width="330" height="95" rx="10"/>
+      </g>
+      <text class="tr" x="185" y="32" text-anchor="middle">Request (client sends)</text>
+      <text class="tb" x="535" y="32" text-anchor="middle">Response (server sends)</text>
+      <text class="ts" x="34" y="64">1 · request line</text>
+      <text class="tm" x="34" y="89">POST /posts HTTP/1.1</text>
+      <text class="ts" x="34" y="132">2 · headers</text>
+      <text class="tm" x="34" y="157">Host: jsonplaceholder.typicode.com</text>
+      <text class="tm" x="34" y="181">Content-Type: application/json</text>
+      <text class="ts" x="34" y="227">3 · body (optional)</text>
+      <text class="tm" x="34" y="253">{ "title": "Hello",</text>
+      <text class="tm" x="34" y="277">  "userId": 1 }</text>
+      <text class="ts" x="384" y="64">1 · status line</text>
+      <text class="tm" x="384" y="89">HTTP/1.1 201 Created</text>
+      <text class="ts" x="384" y="132">2 · headers</text>
+      <text class="tm" x="384" y="157">Content-Type: application/json</text>
+      <text class="tm" x="384" y="181">Content-Length: 65</text>
+      <text class="ts" x="384" y="227">3 · body</text>
+      <text class="tm" x="384" y="253">{ "id": 101, "title": "Hello",</text>
+      <text class="tm" x="384" y="277">  "userId": 1 }</text>
+    </svg></div>
+    <figcaption>Same three layers both ways: first line, headers (information <i>about</i> the message), body (the data itself).</figcaption>
+  </figure>
+  <h3>The request</h3>
+  <div class="codebox"><span class="cap">a real request, as plain text</span><pre><code class="language-plaintext">POST /posts HTTP/1.1                   ← 1. request line
+Host: jsonplaceholder.typicode.com     ← 2. headers
+Content-Type: application/json
+
+{ "title": "Hello", "userId": 1 }      ← 3. body</code></pre></div>
+  <ul>
+    <li><b>Request line</b> → the method and the path: what you want to do, and where (<code>POST</code>, <code>/posts</code>).</li>
+    <li><b>Headers</b> → extra information <b>about</b> the request, as <code>Name: value</code> lines.</li>
+    <li><b>Body</b> → the data you send. Optional: a <b>GET</b> usually has none, a <b>POST</b> usually has one.</li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th>Common request header</th><th>What it tells the server</th></tr>
+    <tr><td><code>Content-Type</code></td><td>The format of the data you send, such as <code>application/json</code></td></tr>
+    <tr><td><code>Accept</code></td><td>The format you want back</td></tr>
+    <tr><td><code>Authorization</code></td><td>Who is asking (a key or a token)</td></tr>
+    <tr><td><code>User-Agent</code></td><td>Which program is sending the request</td></tr>
+  </table></div>
+  <h3>The response</h3>
+  <div class="codebox"><span class="cap">the server’s answer</span><pre><code class="language-plaintext">HTTP/1.1 201 Created                   ← 1. status line
+Content-Type: application/json         ← 2. headers
+Content-Length: 65
+
+{ "id": 101, "title": "Hello", "userId": 1 }   ← 3. body</code></pre></div>
+  <ul>
+    <li><b>Status line</b> → did it work? (<code>201 Created</code>)</li>
+    <li><b>Response headers</b> → information about the response, such as its format and size.</li>
+    <li><b>Response body</b> → the actual data you asked for.</li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th></th><th>Request (client sends)</th><th>Response (server sends)</th></tr>
+    <tr><td><b>First line</b></td><td>Method + path (<code>GET /posts</code>)</td><td>Status code (<code>200 OK</code>)</td></tr>
+    <tr><td><b>Headers</b></td><td>About the request</td><td>About the response</td></tr>
+    <tr><td><b>Body</b></td><td>Data you send (optional)</td><td>Data you get back</td></tr>
+  </table></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="get-post">
+  <h2>GET and POST</h2>
+  <p>A simple way to remember: <mark><b>GET = take</b> data, <b>POST = give</b> data.</mark></p>
+  <h3>GET: read or fetch</h3>
+  <p>GET <b>reads</b> data and does <b>not change</b> anything on the server. <code>GET /posts/1</code> means “Please show me post number 1.” When you type an address in the browser and press Enter, the browser sends a GET.</p>
+  <h3>Query parameters</h3>
+  <p>To get only some of the data, add <b>query parameters</b> after a <code>?</code>. Each is a <code>key=value</code> pair; several pairs are joined with <code>&amp;</code>.</p>
+  <div class="anatomy"><span class="a6">https://jsonplaceholder.typicode.com/posts</span><span class="a1">?</span><span class="a2">userId=1</span><span class="a3">&amp;</span><span class="a4">id=3</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>?</code> starts the query parameters</p></div>
+    <div><span class="sw a2"></span><p><code>userId=1</code>: key <code>userId</code>, value <code>1</code></p></div>
+    <div><span class="sw a3"></span><p><code>&amp;</code> separates two parameters</p></div>
+    <div><span class="sw a4"></span><p><code>id=3</code>: a second key and value</p></div>
+  </div>
+  <p>This reads: “Give me posts where <code>userId</code> is 1 <b>and</b> <code>id</code> is 3.”</p>
+  <h3>POST: send new data</h3>
+  <p>POST <b>sends new data</b> to the server, usually to create something or submit a form: sign up, log in, add a comment, place an order. <code>POST /posts</code> means “Please add this new post.” The data goes in the <b>request body</b>, not in the URL:</p>
+  <div class="codebox"><span class="cap">POST request with a JSON body</span><pre><code class="language-plaintext">POST /posts HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Hello",
+  "body": "My first post",
+  "userId": 1
+}</code></pre></div>
+  <p>The <code>Content-Type</code> header tells the server the body is JSON. A successful POST usually gets <b>201 Created</b>.</p>
+  <div class="sticky warn"><strong>Why POST uses a body</strong> URLs are <b>visible</b>, have <b>length limits</b>, and are saved in browser history and server logs. Passwords and large data must <b>never</b> go in a URL. (The body is hidden from the address bar, but it is only protected from eavesdroppers when you use <b>HTTPS</b>.)</div>
+  <h3>GET vs POST</h3>
+  <div class="tbl"><table>
+    <tr><th></th><th>GET</th><th>POST</th></tr>
+    <tr><td><b>Purpose</b></td><td>Fetch data</td><td>Send or create data</td></tr>
+    <tr><td><b>Where data goes</b></td><td>In the URL (query parameters)</td><td>In the request body</td></tr>
+    <tr><td><b>Changes data on the server?</b></td><td>No</td><td>Yes, usually</td></tr>
+    <tr><td><b>Visible in the URL?</b></td><td>Yes</td><td>No</td></tr>
+    <tr><td><b>Good for</b></td><td>Searching, reading, listing</td><td>Login, sign-up, forms, new records</td></tr>
+    <tr><td><b>Usual success code</b></td><td>200 OK</td><td>201 Created or 200 OK</td></tr>
+  </table></div>
+  <h3>Basic request examples</h3>
+  <pre><code class="language-plaintext"># 1. Get all posts
+GET https://jsonplaceholder.typicode.com/posts
+
+# 2. Get one post
+GET https://jsonplaceholder.typicode.com/posts/1
+
+# 3. Get the posts of one user (query parameter)
+GET https://jsonplaceholder.typicode.com/posts?userId=1
+
+# 4. Create a new post (data in the body)
+POST https://jsonplaceholder.typicode.com/posts
+     body: { "title": "Hello", "body": "My first post", "userId": 1 }</code></pre>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="making-requests">
+  <h2>Making API requests</h2>
+  <h3>With a browser (GET only)</h3>
+  <p>Your browser is already an HTTP client. Open this address in a new tab:</p>
+  <pre><code class="language-plaintext">https://jsonplaceholder.typicode.com/posts/1</code></pre>
+  <p>The browser sends a GET and shows the JSON response:</p>
+  <pre class="out"><code>{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\n..."
+}</code></pre>
+  <p>Try a query parameter too: <code>https://jsonplaceholder.typicode.com/posts?userId=1</code>. A browser is great for quick GETs, but it can’t easily send POST data and can’t <b>use</b> the answer inside a program. For that, use Python.</p>
+  <h3>With Python: the requests library</h3>
+  <p>Python acts as the <b>client</b> using the <code>requests</code> library. Install it once (inside your virtual environment), then import it:</p>
+  <pre><code class="language-bash">pip install requests</code></pre>
+  <div class="flow"><span>Python program</span><span class="op">request →</span><span class="hl">API</span><span>Server</span><span class="op">← response</span><span>Python program</span></div>
+  <h3>Sending a GET</h3>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+
+print(response.status_code)   # 200
+print(response.text)          # the content as text</code></pre>
+  <p><code>requests.get(url)</code> sends the request and returns a <b>response object</b>, kept here in <code>response</code>.</p>
+  <h3>Passing query parameters</h3>
+  <p>Instead of writing <code>?userId=1</code> by hand, pass a <b>dictionary</b> as <code>params</code>:</p>
+  <pre><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+params = {"userId": 1}
+
+response = requests.get(url, params=params)
+
+print(response.url)</code></pre>
+  <pre class="out"><code>https://jsonplaceholder.typicode.com/posts?userId=1</code></pre>
+  <p>requests builds the query string for you and safely encodes special characters. More parameters work the same way: <code>params={"userId": 1, "id": 3}</code> becomes <code>?userId=1&amp;id=3</code>.</p>
+  <h3>Sending a POST</h3>
+  <pre><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+
+new_post = {
+    "title": "Learning APIs",
+    "body": "APIs are useful.",
+    "userId": 1
+}
+
+response = requests.post(url, json=new_post)
+
+print(response.status_code)   # 201 means created
+print(response.json())</code></pre>
+  <pre class="out"><code>201
+{'title': 'Learning APIs', 'body': 'APIs are useful.', 'userId': 1, 'id': 101}</code></pre>
+  <p>JSONPlaceholder pretends to save the post and returns it with a new <code>id</code>.</p>
+  <h3>Two ways to send body data</h3>
+  <div class="tbl"><table>
+    <tr><th>Option</th><th>How to write it</th><th>What it sends</th><th>When to use</th></tr>
+    <tr><td><code>json=</code></td><td><code>requests.post(url, json=data)</code></td><td>JSON; also sets <code>Content-Type: application/json</code></td><td>Most modern APIs</td></tr>
+    <tr><td><code>data=</code></td><td><code>requests.post(url, data=data)</code></td><td>Form-style data</td><td>Web forms and older APIs</td></tr>
+  </table></div>
+  <p>For the APIs in this course, use <code>json=</code>. You can also send <b>headers</b>:</p>
+  <pre><code class="language-python">headers = {"Authorization": "Bearer abc123"}
+
+response = requests.get(url, headers=headers)</code></pre>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="responses">
+  <h2>Working with responses</h2>
+  <p>The response object holds everything that came back: the <b>status</b> (did it work?), the <b>data</b>, the <b>headers</b>, and <b>error information</b> if something went wrong.</p>
+  <h3>1. Check the status</h3>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/posts")
+
+print(response.status_code)
+
+if response.status_code == 200:
+    print("Request successful")
+else:
+    print("Something went wrong")</code></pre>
+  <pre class="out"><code>200
+Request successful</code></pre>
+  <p><code>200</code> means success. The first digit of a status code tells you the group; the full table is in the errors section below.</p>
+  <h3>2. Read the content as text</h3>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+print(response.text)</code></pre>
+  <pre class="out"><code>{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+}</code></pre>
+  <p>It looks like JSON, but to Python it is just one long <b>string</b>.</p>
+  <h3>3. Convert it into Python objects</h3>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+data = response.json()
+print(data["id"])</code></pre>
+  <pre class="out"><code>1</code></pre>
+  <div class="flow"><span class="op">JSON text</span><span class="hl">response.json()</span><span class="ok">Python dict / list</span></div>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>response.text</code></th><th><code>response.json()</code></th></tr>
+    <tr><td><b>Returns</b></td><td>A string</td><td>A dictionary or list</td></tr>
+    <tr><td><b>Can you write <code>data["id"]</code>?</b></td><td>No</td><td>Yes</td></tr>
+    <tr><td><b>Best for</b></td><td>Seeing the raw content</td><td>Using the data in your program</td></tr>
+  </table></div>
+  <h3>4. Access individual values</h3>
+  <p>If the API returns <code>{ "id": 101, "name": "Rahul", "course": "Python" }</code>, then after <code>data = response.json()</code>:</p>
+  <pre><code class="language-python">print(data["name"])     # Rahul
+print(data["course"])   # Python</code></pre>
+  <h3>5. When the API returns a list</h3>
+  <p>Many records come back as a Python <b>list of dictionaries</b>. Loop through it:</p>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/users")
+data = response.json()
+
+for user in data:
+    print(user["name"])</code></pre>
+  <pre class="out"><code>Leanne Graham
+Ervin Howell
+Clementine Bauch
+Patricia Lebsack
+Chelsey Dietrich
+Mrs. Dennis Schulist
+Kurtis Weissnat
+Nicholas Runolfsdottir V
+Glenna Reichert
+Clementina DuBuque</code></pre>
+  <h3>6. Read response headers</h3>
+  <pre><code class="language-python">print(response.headers["Content-Type"])       # one header
+print(response.headers.get("Content-Type"))   # same, but returns None if missing</code></pre>
+  <pre class="out"><code>application/json; charset=utf-8
+application/json; charset=utf-8</code></pre>
+  <p>The server says the body is JSON. Remember: <b>headers = information about the response</b>, <b>body = the actual data</b>.</p>
+  <h3>7. Use the data in your app</h3>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/todos/1")
+data = response.json()
+
+print("Task     :", data["title"])
+print("Finished :", data["completed"])</code></pre>
+  <pre class="out"><code>Task     : delectus aut autem
+Finished : False</code></pre>
+  <p>JSON’s <code>false</code> became Python’s <code>False</code>.</p>
+  <h3>8. A complete example</h3>
+  <pre><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts/1"
+response = requests.get(url)
+
+# 1. Check status
+print("Status:", response.status_code)
+
+# 2. Check a response header
+print("Content type:", response.headers.get("Content-Type"))
+
+# 3. Convert JSON to a Python object
+data = response.json()
+
+# 4. Use the returned data
+print("Post ID:", data["id"])
+print("Title  :", data["title"])</code></pre>
+  <pre class="out"><code>Status: 200
+Content type: application/json; charset=utf-8
+Post ID: 1
+Title  : sunt aut facere repellat provident occaecati excepturi optio reprehenderit</code></pre>
+  <h3>9. A first look at error checking</h3>
+  <p>Never assume a request succeeds. Check first:</p>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+
+if response.status_code == 200:
+    data = response.json()
+    print("Title:", data["title"])
+else:
+    print("Request failed")</code></pre>
+  <p>A shorter way is <code>raise_for_status()</code>, which raises an <b>exception</b> if the status is an error such as 404 or 500 (used properly in the error sections):</p>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+response.raise_for_status()
+data = response.json()</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Code</th><th>Purpose</th></tr>
+    <tr><td><code>response.status_code</code></td><td>Check what happened</td></tr>
+    <tr><td><code>response.text</code></td><td>Read the response as text</td></tr>
+    <tr><td><code>response.headers</code></td><td>Read information about the response</td></tr>
+    <tr><td><code>response.json()</code></td><td>Convert JSON into Python data</td></tr>
+    <tr><td><code>data["name"]</code></td><td>Use the data in your application</td></tr>
+  </table></div>
+  <div class="flow"><span>Send request</span><span>Receive response</span><span class="hl">Check status</span><span>Read data</span><span class="op">.json()</span><span class="ok">Use the data</span></div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="json">
+  <h2>Working with JSON</h2>
+  <p>Ask an API for a student and it may answer:</p>
+  <pre><code class="language-json">{
+  "id": 101,
+  "name": "Rahul",
+  "course": "Python"
+}</code></pre>
+  <p>This is <b>JSON</b>, <b>J</b>ava<b>S</b>cript <b>O</b>bject <b>N</b>otation. It began in the JavaScript world, but today almost every language reads it: Python, JavaScript, Java, C#, Go, PHP. It is <b>easy for people to read</b> and <b>easy for programs to process</b>. <mark>If you can read JSON, you can read almost any API answer.</mark></p>
+  <div class="flow"><span>Python app</span><span class="hl">⇄ JSON ⇄</span><span>JavaScript app</span></div>
+  <h3>Objects: key-value pairs</h3>
+  <p>A JSON <b>object</b> uses curly braces <code>{ }</code> and stores <b>key-value pairs</b>. The key says what the value means. Keys are always in <b>double quotes</b>.</p>
+  <pre><code class="language-json">{
+  "name": "Rahul",
+  "age": 22,
+  "isStudent": true
+}</code></pre>
+  <div class="tbl"><table>
+    <tr><th>JSON type</th><th>Example</th><th>Becomes in Python</th></tr>
+    <tr><td>String</td><td><code>"Rahul"</code></td><td><code>str</code></td></tr>
+    <tr><td>Number</td><td><code>22</code> or <code>3.5</code></td><td><code>int</code> or <code>float</code></td></tr>
+    <tr><td>Boolean</td><td><code>true</code> / <code>false</code></td><td><code>True</code> / <code>False</code></td></tr>
+    <tr><td>Object</td><td><code>{ "a": 1 }</code></td><td><code>dict</code></td></tr>
+    <tr><td>Array</td><td><code>[1, 2, 3]</code></td><td><code>list</code></td></tr>
+    <tr><td>null</td><td><code>null</code></td><td><code>None</code></td></tr>
+  </table></div>
+  <h3>Arrays: lists of values</h3>
+  <p>A JSON <b>array</b> is a list of values in square brackets, like a Python list: <code>["Python", "JavaScript", "Java"]</code>. APIs often send many records as an <b>array of objects</b>:</p>
+  <pre><code class="language-json">[
+  { "id": 1, "name": "Rahul" },
+  { "id": 2, "name": "Priya" },
+  { "id": 3, "name": "Amit" }
+]</code></pre>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Object <code>{ }</code></h4><p>Holds key-value pairs. One thing with properties. Becomes a Python <b>dict</b>.</p></div>
+    <div class="card t2 tilt-b"><h4>Array <code>[ ]</code></h4><p>Holds a list of values. A collection of things. Becomes a Python <b>list</b>.</p></div>
+  </div>
+  <h3>Parsing and accessing</h3>
+  <p><b>Parsing</b> means turning JSON text into Python data. You already know the tool, <code>response.json()</code>:</p>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/users/1")
+data = response.json()          # JSON object → dict
+
+print(data["name"])             # Leanne Graham
+print(data["username"])         # Bret</code></pre>
+  <p>A parsed array is a list, so use an <b>index</b> (starting at 0) or a <b>loop</b>:</p>
+  <pre><code class="language-python">users = requests.get("https://jsonplaceholder.typicode.com/users").json()   # JSON array → list
+
+print(users[0]["name"])     # first user
+
+for user in users:
+    print(user["name"])     # every user</code></pre>
+  <h3>Nested JSON</h3>
+  <p>Real APIs put objects <b>inside</b> other objects. Here <code>address</code> is an object inside the student:</p>
+  <pre><code class="language-json">{
+  "id": 101,
+  "name": "Rahul",
+  "address": {
+    "city": "Bhubaneswar",
+    "state": "Odisha"
+  }
+}</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 245" role="img" aria-label="Nested boxes: the data dictionary contains name and an address dictionary, which contains city and state; reading data, then address, then city gives Bhubaneswar">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="430" height="200" rx="14"/>
+        <rect class="box f-green" x="40" y="100" width="390" height="100" rx="12"/>
+        <path class="lr" d="M590 72 L 590 94" marker-end="url(#ahr)"/>
+        <path class="lr" d="M590 124 L 590 146" marker-end="url(#ahr)"/>
+        <path class="lr" d="M590 176 L 590 198" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="36" y="44">data (dict)</text>
+      <text class="tm" x="40" y="76">"id": 101,  "name": "Rahul"</text>
+      <text class="ts" x="56" y="124">data["address"] (dict)</text>
+      <text class="tm" x="56" y="154">"city": "Bhubaneswar",</text>
+      <text class="tm" x="56" y="180">"state": "Odisha"</text>
+      <text class="tm" x="590" y="62" text-anchor="middle">data</text>
+      <text class="tm" x="590" y="114" text-anchor="middle">["address"]</text>
+      <text class="tm" x="590" y="166" text-anchor="middle">["city"]</text>
+      <text class="th" x="590" y="232" text-anchor="middle">Bhubaneswar</text>
+    </svg></div>
+    <figcaption>Open the boxes one level at a time: each <code>[...]</code> steps one level deeper.</figcaption>
+  </figure>
+  <pre><code class="language-python">print(data["name"])                # Rahul
+print(data["address"]["city"])     # Bhubaneswar</code></pre>
+  <p><code>data["address"]</code> gives the inner dictionary <code>{"city": ..., "state": ...}</code>; then <code>["city"]</code> picks the city from it.</p>
+  <div class="two">
+    <div>
+      <div class="codebox"><span class="cap">more levels</span><pre><code class="language-json">{
+  "id": 101,
+  "profile": {
+    "course": {
+      "name": "Python",
+      "duration": 6
+    }
+  }
+}</code></pre></div>
+      <pre><code class="language-python">print(data["profile"]["course"]["name"])   # Python
+# data -&gt; ["profile"] -&gt; ["course"] -&gt; ["name"]</code></pre>
+    </div>
+    <div>
+      <div class="codebox"><span class="cap">an array inside an object</span><pre><code class="language-json">{
+  "name": "Rahul",
+  "skills": ["Python", "Docker", "Linux"]
+}</code></pre></div>
+      <pre><code class="language-python">print(data["skills"])      # ['Python', 'Docker', 'Linux']
+print(data["skills"][0])   # Python</code></pre>
+    </div>
+  </div>
+  <div class="codebox"><span class="cap">object → array → object (very common)</span><pre><code class="language-json">{
+  "course": "Python",
+  "students": [
+    { "id": 1, "name": "Rahul" },
+    { "id": 2, "name": "Priya" }
+  ]
+}</code></pre></div>
+  <pre><code class="language-python">print(data["students"][0]["name"])   # Rahul
+print(data["students"][1]["name"])   # Priya</code></pre>
+  <div class="sticky tip"><strong>How to read nested data</strong> At each level ask: is this a <code>{ }</code> (use a <b>key</b>) or a <code>[ ]</code> (use an <b>index</b> or a <b>loop</b>)? Follow the brackets and you will always find the value.</div>
+  <h3>A complete practical example</h3>
+  <p>JSONPlaceholder’s <code>/users</code> returns a list of users, each with a nested <code>address</code>:</p>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/users")
+users = response.json()
+
+for user in users[:2]:                  # first two users
+    print("Name:", user["name"])
+    print("City:", user["address"]["city"])</code></pre>
+  <pre class="out"><code>Name: Leanne Graham
+City: Gwenborough
+Name: Ervin Howell
+City: Wisokyburgh</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Task</th><th>Code</th></tr>
+    <tr><td>Parse JSON</td><td><code>data = response.json()</code></td></tr>
+    <tr><td>Access a value</td><td><code>data["name"]</code></td></tr>
+    <tr><td>Access nested data</td><td><code>data["address"]["city"]</code></td></tr>
+    <tr><td>Access an item in an array</td><td><code>data["students"][0]</code></td></tr>
+    <tr><td>Value in an object in an array</td><td><code>data["students"][0]["name"]</code></td></tr>
+  </table></div>
+  <div class="flow"><span>API sends JSON</span><span class="hl">Python parses it</span><span>dicts &amp; lists</span><span class="ok">pick the values you need</span></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="status-codes">
+  <h2>When things go wrong: detecting errors</h2>
+  <p>So far we saw the <b>happy path</b>. In real life the server may be down, the URL may be wrong, the internet may drop, or the API may send unexpected data.</p>
+  <div class="story"><b class="lbl">Ordering by phone</b>When you call the kirana shop, sometimes nobody picks up, sometimes the line is busy forever, sometimes they say “that item isn’t available”. You don’t freeze; you have a plan for each. <mark>Golden rule: never assume an API request will succeed. Check the response and handle problems properly.</mark></div>
+  <div class="tbl"><table>
+    <tr><th>Problem</th><th>Example</th><th>Python exception (in <code>requests.exceptions</code>)</th></tr>
+    <tr><td>Server says “error”</td><td>404 Not Found, 500 Server Error</td><td><code>HTTPError</code> (from <code>raise_for_status()</code>)</td></tr>
+    <tr><td>Cannot reach the server</td><td>No internet, wrong host name</td><td><code>ConnectionError</code></td></tr>
+    <tr><td>Server is too slow</td><td>No reply for many seconds</td><td><code>Timeout</code></td></tr>
+    <tr><td>Reply is not valid JSON</td><td>Server sends plain text or HTML</td><td><code>JSONDecodeError</code></td></tr>
+  </table></div>
+  <p>You write them in full, e.g. <code>requests.exceptions.Timeout</code>.</p>
+  <h3>HTTP status codes</h3>
+  <p>Status codes are grouped by their <b>first digit</b>:</p>
+  <div class="notes"><div class="note"><b>2xx</b>Success</div><div class="note"><b>3xx</b>Redirect</div><div class="note"><b>4xx</b>Your request’s fault</div><div class="note"><b>5xx</b>Server’s fault</div></div>
+  <div class="tbl"><table>
+    <tr><th>Range</th><th>Meaning</th><th>Examples</th></tr>
+    <tr><td><b>2xx</b></td><td>Success</td><td>200 OK, 201 Created</td></tr>
+    <tr><td><b>3xx</b></td><td>Redirection: the resource is somewhere else (requests follows these for you)</td><td>301 Moved Permanently</td></tr>
+    <tr><td><b>4xx</b></td><td>Client error: the request has a problem</td><td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found</td></tr>
+    <tr><td><b>5xx</b></td><td>Server error: the server has a problem</td><td>500 Internal Server Error</td></tr>
+  </table></div>
+  <h3>Checking by hand</h3>
+  <p>Don’t call <code>response.json()</code> straight away. Check first:</p>
+  <pre><code class="language-python">import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+
+if response.status_code == 200:
+    print("Success")
+    print(response.json())
+elif response.status_code == 404:
+    print("Resource not found")
+else:
+    print("Something went wrong")</code></pre>
+  <h3>The better way: raise_for_status()</h3>
+  <p>Let requests do the checking. <code>raise_for_status()</code> raises an <code>HTTPError</code> for <b>any</b> 4xx or 5xx status and does nothing for success:</p>
+  <pre><code class="language-python">response = requests.get("https://jsonplaceholder.typicode.com/posts/99999")
+
+response.raise_for_status()   # raises HTTPError for 404
+
+data = response.json()        # never reached</code></pre>
+  <pre class="out"><code>requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://jsonplaceholder.typicode.com/posts/99999</code></pre>
+  <p>You catch that exception with Python’s <code>try</code> and <code>except</code>, which is the next section.</p>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="handling-errors">
+  <h2>Handling API errors with exceptions</h2>
+  <h3>Connection errors</h3>
+  <p>Sometimes your computer can’t reach the server at all: no internet, server unreachable, wrong host name, network trouble. requests raises a <b>ConnectionError</b>:</p>
+  <pre><code class="language-python">import requests
+
+try:
+    response = requests.get("https://this-site-does-not-exist-123.com")
+    response.raise_for_status()
+    print(response.json())
+
+except requests.exceptions.ConnectionError:
+    print("Could not connect to the server.")</code></pre>
+  <pre class="out"><code>Could not connect to the server.</code></pre>
+  <p>A clear message instead of a crash with a confusing traceback.</p>
+  <h3>Timeouts</h3>
+  <p>Sometimes the server is reachable but too slow. Without a limit, your program may wait <b>forever</b>. Set a <code>timeout</code> in seconds:</p>
+  <pre><code class="language-python">import requests
+
+try:
+    response = requests.get("https://jsonplaceholder.typicode.com/posts", timeout=5)
+    response.raise_for_status()
+    print(response.json())
+
+except requests.exceptions.Timeout:
+    print("The server took too long to respond.")</code></pre>
+  <div class="sticky warn"><strong>Always set a timeout</strong> By default, requests sets <b>no</b> timeout, so a stuck server can hang your program indefinitely.</div>
+  <h3>Invalid JSON</h3>
+  <p>You expect <code>{ "name": "Rahul" }</code> but the server sends plain text or an HTML page. Then <code>response.json()</code> fails:</p>
+  <pre><code class="language-python">import requests
+
+try:
+    response = requests.get("https://example.com")     # sends an HTML page, not JSON
+    response.raise_for_status()
+    data = response.json()
+    print(data)
+
+except requests.exceptions.JSONDecodeError:
+    print("The server returned invalid JSON.")</code></pre>
+  <pre class="out"><code>The server returned invalid JSON.</code></pre>
+  <p>(<code>requests.exceptions.JSONDecodeError</code> exists in requests 2.27 and newer.)</p>
+  <h3>Several things can go wrong: one try, many excepts</h3>
+  <pre><code class="language-python">import requests
+
+try:
+    response = requests.get("https://jsonplaceholder.typicode.com/posts/1", timeout=5)
+    response.raise_for_status()
+    data = response.json()
+    print(data["title"])
+
+except requests.exceptions.Timeout:
+    print("Request timed out.")
+
+except requests.exceptions.ConnectionError:
+    print("Could not connect to the server.")
+
+except requests.exceptions.HTTPError:
+    print("The API returned an HTTP error.")
+
+except requests.exceptions.JSONDecodeError:
+    print("The server returned invalid JSON.")</code></pre>
+  <div class="sticky info l"><strong>Why Timeout comes first</strong> A timeout while <i>connecting</i> (<code>ConnectTimeout</code>) counts as both a <code>Timeout</code> and a <code>ConnectionError</code>. Python uses the first matching <code>except</code>, so listing <code>Timeout</code> first gives the right message.</div>
+  <h3>A simple catch-all</h3>
+  <p><code>RequestException</code> is the parent of all the requests errors above, so one block catches them all:</p>
+  <pre><code class="language-python">try:
+    response = requests.get("https://jsonplaceholder.typicode.com/posts/1", timeout=5)
+    response.raise_for_status()
+    data = response.json()
+    print("Data received successfully.")
+
+except requests.exceptions.RequestException as error:
+    print("API request failed:", error)</code></pre>
+  <p>Later, switch to specific exceptions when you want a different message for each problem.</p>
+  <h3>Meaningful messages</h3>
+  <p>Don’t show raw technical errors to users. Translate them:</p>
+  <div class="tbl"><table>
+    <tr><th>Not helpful</th><th>Helpful</th></tr>
+    <tr><td><code>ConnectionError</code></td><td>Could not connect to the server. Please check your internet connection and try again.</td></tr>
+    <tr><td><code>404</code></td><td>The requested student could not be found.</td></tr>
+    <tr><td><code>Timeout</code></td><td>The server is taking too long. Please try again.</td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">different errors, different messages (student app)</span><pre><code class="language-python">import requests
+
+try:
+    response = requests.get("https://api.example.com/students/101", timeout=5)
+    response.raise_for_status()
+    data = response.json()
+    print("Student:", data["name"])
+
+except requests.exceptions.Timeout:
+    print("The server took too long to respond.")
+
+except requests.exceptions.ConnectionError:
+    print("Unable to connect to the server.")
+
+except requests.exceptions.HTTPError as error:
+    if error.response.status_code == 404:
+        print("Student not found.")
+    else:
+        print("The server returned an error.")
+
+except requests.exceptions.JSONDecodeError:
+    print("The server returned unexpected data.")</code></pre></div>
+  <p>(<code>api.example.com</code> is an imaginary API, used only to show the pattern.)</p>
+  <h3>Real-world example: a weather app</h3>
+  <div class="tbl"><table>
+    <tr><th>Situation</th><th>What happens</th><th>What the app shows</th></tr>
+    <tr><td>Everything works</td><td>200 OK with JSON</td><td>Bhubaneswar, 31°C, Sunny</td></tr>
+    <tr><td>Server can’t be reached</td><td><code>ConnectionError</code></td><td>Unable to connect to the weather service. Please try again later.</td></tr>
+    <tr><td>Request takes too long</td><td><code>Timeout</code></td><td>The weather service is taking too long. Please try again.</td></tr>
+    <tr><td>City does not exist</td><td>404 Not Found</td><td>City not found. Please check the city name.</td></tr>
+  </table></div>
+  <h3>A pattern to reuse</h3>
+  <div class="codebox"><span class="cap">safe API call template</span><pre><code class="language-python">import requests
+
+try:
+    # 1. Send the request, with a timeout
+    response = requests.get("https://jsonplaceholder.typicode.com/posts/1", timeout=5)
+
+    # 2. Check the HTTP status
+    response.raise_for_status()
+
+    # 3. Parse the JSON
+    data = response.json()
+
+    # 4. Use the data
+    print("Success:", data["title"])
+
+except requests.exceptions.Timeout:
+    print("Request timed out.")
+
+except requests.exceptions.ConnectionError:
+    print("Could not connect to the server.")
+
+except requests.exceptions.HTTPError:
+    print("API returned an error.")
+
+except requests.exceptions.JSONDecodeError:
+    print("Invalid JSON received.")</code></pre></div>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Send the request</b></div></li>
+    <li><span class="dot">2</span><div><b>Set a timeout</b><span class="tag">→ never wait forever</span></div></li>
+    <li><span class="dot">3</span><div><b>Check the HTTP status</b><code>raise_for_status()</code></div></li>
+    <li><span class="dot">4</span><div><b>Parse the JSON</b><code>response.json()</code></div></li>
+    <li><span class="dot">5</span><div><b>Use the data</b></div></li>
+    <li><span class="dot">6</span><div><b>Handle errors</b>when something goes wrong, with a clear message.</div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer systems (CRMs, ticketing tools, internal APIs) are slow, flaky and badly documented far more often than JSONPlaceholder. Timeouts, status checks and clear error messages are what keep your integration from silently hanging at 2 a.m.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>API</dt><dd>Application Programming Interface: a fixed set of rules that lets one program ask another program for data or work.</dd></div>
+    <div><dt>Web API</dt><dd>An API that is used over the internet, usually through HTTP.</dd></div>
+    <div><dt>Client</dt><dd>The program that starts the conversation by sending a request, such as a browser, a mobile app or a Python script. It is a role, not a device.</dd></div>
+    <div><dt>Server</dt><dd>The program that waits for requests, does the work and sends back a response, often to many clients at once.</dd></div>
+    <div><dt>HTTP / HTTPS</dt><dd>HyperText Transfer Protocol, the rules web clients and servers use to exchange requests and responses; HTTPS is the encrypted version.</dd></div>
+    <div><dt>Endpoint</dt><dd>One specific API address (method + path, like <code>GET /posts/1</code>) that does one specific job.</dd></div>
+    <div><dt>HTTP method</dt><dd>The verb in a request that says what to do: GET reads, POST creates, PUT replaces, PATCH partly updates, DELETE removes.</dd></div>
+    <div><dt>Headers</dt><dd><code>Name: value</code> lines that carry information about a request or response, such as <code>Content-Type</code> or <code>Authorization</code>.</dd></div>
+    <div><dt>Request body</dt><dd>The data a client sends with a request, typically JSON in a POST; GET requests usually have none.</dd></div>
+    <div><dt>Query parameters</dt><dd><code>key=value</code> pairs added to a URL after <code>?</code> and joined with <code>&amp;</code>, used to filter or shape a GET request.</dd></div>
+    <div><dt>Status code</dt><dd>A three-digit number in the response that says how it went: 2xx success, 3xx redirect, 4xx client error, 5xx server error.</dd></div>
+    <div><dt>JSON</dt><dd>JavaScript Object Notation, a text format of objects (key-value pairs) and arrays that almost every language can read; Python turns it into dicts and lists.</dd></div>
+    <div><dt>Parsing</dt><dd>Turning JSON text into Python objects, done with <code>response.json()</code>.</dd></div>
+    <div><dt>raise_for_status()</dt><dd>A requests method that raises <code>HTTPError</code> if the response status is 4xx or 5xx.</dd></div>
+    <div><dt>Timeout</dt><dd>The maximum number of seconds to wait for a server; requests sets none by default, so you should always pass one.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>In the restaurant analogy, what plays the role of the API?</p>
+      <ol><li>The customer</li><li>The waiter</li><li>The kitchen</li><li>The food</li></ol>
+      <p class="why">The waiter carries your order (request) to the kitchen (server) and brings the food (response) back. You never enter the kitchen.</p></div>
+    <div class="q" data-answer="4"><p>A food app’s backend asks a payment service to charge a card. In that moment, the backend is…</p>
+      <ol><li>Only a server</li><li>Neither a client nor a server</li><li>The database</li><li>A client</li></ol>
+      <p class="why">Client is a role: whoever sends the request. The same program is a server for your phone and a client for the payment service.</p></div>
+    <div class="q" data-answer="1"><p>Which method should you use to create a new record and send its data in the body?</p>
+      <ol><li>POST</li><li>GET</li><li>DELETE</li><li>PATCH</li></ol>
+      <p class="why">POST sends new data in the request body to create something. GET only reads.</p></div>
+    <div class="q" data-answer="3"><p>In <code>/posts?userId=1&amp;id=3</code>, what does <code>&amp;</code> do?</p>
+      <ol><li>Starts the query string</li><li>Marks the end of the path</li><li>Separates two query parameters</li><li>Means “or”</li></ol>
+      <p class="why"><code>?</code> starts the query string and <code>&amp;</code> joins one <code>key=value</code> pair to the next.</p></div>
+    <div class="q" data-answer="2"><p>What is the difference between <code>response.text</code> and <code>response.json()</code>?</p>
+      <ol><li>They are identical</li><li><code>.text</code> is a string; <code>.json()</code> parses it into a dict or list</li><li><code>.json()</code> returns the headers</li><li><code>.text</code> only works for POST</li></ol>
+      <p class="why">Only the parsed result lets you write <code>data["id"]</code>; the text is just one long string.</p></div>
+    <div class="q" data-answer="3"><p>Given <code>{"students": [{"name": "Rahul"}, {"name": "Priya"}]}</code>, how do you get <code>"Priya"</code>?</p>
+      <ol><li><code>data["students"]["Priya"]</code></li><li><code>data["name"][1]</code></li><li><code>data["students"][1]["name"]</code></li><li><code>data[1]["students"]</code></li></ol>
+      <p class="why">Key into the object (<code>"students"</code>), index into the array (<code>[1]</code>), then key into that object (<code>"name"</code>).</p></div>
+    <div class="q" data-answer="4"><p>A request returns <code>503</code>. What kind of problem is it?</p>
+      <ol><li>Success</li><li>Redirect</li><li>Something wrong with your request</li><li>Something wrong on the server</li></ol>
+      <p class="why">5xx codes are server errors; 4xx codes mean the request itself had a problem.</p></div>
+    <div class="q" data-answer="1"><p>Why should you always pass <code>timeout=</code> to <code>requests.get()</code>?</p>
+      <ol><li>Without it, requests may wait forever for a slow server</li><li>It makes the server respond faster</li><li>It is required or the call fails</li><li>It retries automatically</li></ol>
+      <p class="why">requests has no default timeout. A timeout makes it give up and raise <code>Timeout</code> so your program can recover.</p></div>
+    <div class="q" data-answer="2"><p>What does <code>response.raise_for_status()</code> do on a <code>200 OK</code> response?</p>
+      <ol><li>Raises HTTPError</li><li>Nothing; the program continues</li><li>Returns the JSON</li><li>Retries the request</li></ol>
+      <p class="why">It only raises for 4xx and 5xx status codes. On success it quietly does nothing.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">An <b>API</b> is the waiter between a <b>client</b> and a <b>server</b>: the client sends an <b>HTTP request</b> (GET to take, POST to give), the server answers with a <b>status code</b> and a <b>JSON</b> body, and your Python code uses <b>requests</b> to send it, <b>.json()</b> to read it, and <b>timeouts and exceptions</b> to survive when it fails.</p>
+  <p>Next up: <b>FastAPI Fundamentals</b>, where you switch sides and build your own API server in Python.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

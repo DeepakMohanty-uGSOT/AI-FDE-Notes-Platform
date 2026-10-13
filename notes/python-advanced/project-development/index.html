@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Project Development · Python Advanced &amp; FastAPI | AIFDE Notes</title>
+<meta name="description" content="Turn a single Python script into a real project: folder structure, virtual environments, pip and requirements.txt, version constraints, environment variables, .env files, configuration and type hints.">
+<meta name="keywords" content="project structure, virtual environment, venv, pip, requirements.txt, environment variables, .env, type hints">
+<meta name="date" content="2026-09-23">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-advanced/project-development">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Python Project Development</h1>
+  <p class="byline">Go from one Python file to a tidy, shareable project: its own environment, a recorded list of packages, secrets kept out of the code, and type hints that say what each function expects.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>From a script to a project</h2>
+  <div class="story"><b class="lbl">Home kitchen vs restaurant kitchen</b>Making Maggi for yourself needs one pan and no planning. A restaurant kitchen is different: separate stations, a written list of ingredients with exact brands, the safe locked away, and labels on every container so a new cook knows what is inside. <mark>A real Python project is the restaurant kitchen: organised, repeatable, and safe for other people to work in.</mark></div>
+  <p>A script that solves one small problem can live in a single file. A real application quickly needs more:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>An organised layout</h4><p>Code, tests, docs and settings each have a clear home.</p></div>
+    <div class="card t2 tilt-b"><h4>Isolated dependencies</h4><p>Packages for this project don’t clash with other projects on the same machine.</p></div>
+    <div class="card t3 tilt-a"><h4>Secrets out of the code</h4><p>API keys and passwords come from the environment, not from the source file.</p></div>
+    <div class="card t5 tilt-b"><h4>Type information</h4><p>Other developers (and your editor) can see what a function expects and returns.</p></div>
+  </div>
+  <p>This note follows that order. Each idea comes with what it is, why it exists, and an example.</p>
+  <div class="flow"><span>Project structure</span><span>Virtual environment</span><span>pip</span><span class="op">requirements.txt</span><span>Env variables &amp; .env</span><span>Configuration</span><span class="ok">Type hints</span></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="structure">
+  <h2>Project structure</h2>
+  <p><b>Project structure</b> is the overall organisation of an application: not just its source code, but also its tests, its list of dependencies and its documentation. In Python Fundamentals you used a <b>package</b> to organise the code itself. Project structure is the layer above that: it organises <mark>everything the project needs as a whole</mark>.</p>
+  <h3>A basic layout</h3>
+  <div class="codebox"><span class="cap">project folder</span><pre><code class="language-plaintext">project/
+├── app/                 → application code (a package)
+│   ├── __init__.py
+│   └── main.py
+├── tests/               → test code
+├── requirements.txt     → project dependencies
+├── README.md            → project documentation
+└── .gitignore           → files Git should ignore</code></pre></div>
+  <p>All of the application’s own code sits inside the <code>app</code> package. Tests, <code>requirements.txt</code>, <code>.gitignore</code> and <code>README.md</code> sit beside it at the top level, because they <b>support</b> the project without being part of its logic.</p>
+  <h3>Application code vs supporting files</h3>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Application code</h4><p>The <code>app/</code> folder: what the program actually does.</p></div>
+    <div class="card t6 tilt-b"><h4>Supporting files</h4><p>Tests, dependency list, docs and Git settings: what helps you build, run and share it.</p></div>
+  </div>
+  <p>This split makes it easy to see <b>what the application does and which files support it</b>.</p>
+  <div class="sticky info l"><strong>What is .gitignore?</strong> A plain text file that tells Git which files or folders <b>should not be tracked or uploaded</b>, such as virtual environments, <code>.env</code> files, cache files (<code>__pycache__/</code>) and generated files.</div>
+  <h3>Structure grows with the project</h3>
+  <div class="flow"><span>Small script</span><span>Multiple modules</span><span>Packages</span><span>Application structure</span><span class="ok">Production project</span></div>
+  <p>You don’t need a complex structure on day one. <b>Start simple and organise the project as it grows.</b></p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="global-problem">
+  <h2>The problem with installing packages globally</h2>
+  <p>Different projects may need <b>different versions of the same package</b>:</p>
+  <div class="two">
+    <div class="flow v"><span>Project A</span><span class="op">requests==2.28</span></div>
+    <div class="flow v"><span>Project B</span><span class="op">requests==2.32</span></div>
+  </div>
+  <p>If both projects use the same global Python, only <b>one</b> version can be installed at a time. Installing the version one project needs can <mark>break the other project</mark>. Global installation also makes it hard to:</p>
+  <ul>
+    <li>reproduce the same environment on another machine, and</li>
+    <li>keep development and production environments consistent.</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="Left: Project A and Project B both point to one global Python that can hold only one version of requests. Right: each project points to its own environment, Env A with requests 2.28 and Env B with requests 2.32">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="50" width="120" height="50" rx="12"/>
+        <rect class="box f-blue" x="200" y="50" width="120" height="50" rx="12"/>
+        <rect class="box f-orange" x="50" y="175" width="260" height="95" rx="14"/>
+        <path class="ln" d="M100 104 L 150 168" marker-end="url(#ah)"/>
+        <path class="ln" d="M260 104 L 210 168" marker-end="url(#ah)"/>
+        <path class="ln dash" d="M360 20 L 360 280"/>
+        <rect class="box f-blue" x="400" y="50" width="120" height="50" rx="12"/>
+        <rect class="box f-blue" x="560" y="50" width="120" height="50" rx="12"/>
+        <rect class="box f-green" x="400" y="175" width="120" height="95" rx="14"/>
+        <rect class="box f-green" x="560" y="175" width="120" height="95" rx="14"/>
+        <path class="lb" d="M460 104 L 460 168" marker-end="url(#ahb)"/>
+        <path class="lb" d="M620 104 L 620 168" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tr" x="180" y="32" text-anchor="middle">one global Python</text>
+      <text class="tb" x="540" y="32" text-anchor="middle">one venv per project</text>
+      <text class="t" x="100" y="81" text-anchor="middle">Project A</text>
+      <text class="t" x="260" y="81" text-anchor="middle">Project B</text>
+      <text class="th" x="180" y="208" text-anchor="middle">Global Python</text>
+      <text class="tm" x="180" y="234" text-anchor="middle">requests 2.28 or 2.32?</text>
+      <text class="ts" x="180" y="256" text-anchor="middle">one of them breaks</text>
+      <text class="t" x="460" y="81" text-anchor="middle">Project A</text>
+      <text class="t" x="620" y="81" text-anchor="middle">Project B</text>
+      <text class="th" x="460" y="210" text-anchor="middle">Env A</text>
+      <text class="tm" x="460" y="236" text-anchor="middle">requests</text>
+      <text class="tm" x="460" y="256" text-anchor="middle">2.28</text>
+      <text class="th" x="620" y="210" text-anchor="middle">Env B</text>
+      <text class="tm" x="620" y="236" text-anchor="middle">requests</text>
+      <text class="tm" x="620" y="256" text-anchor="middle">2.32</text>
+    </svg></div>
+    <figcaption>The fix: give each project its own <b>isolated environment</b>, so versions never collide.</figcaption>
+  </figure>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="venv">
+  <h2>Virtual environments</h2>
+  <div class="story"><b class="lbl">Separate tiffin boxes</b>If the whole family packs lunch into one big box, the dal leaks into the rice. Give each person their own tiffin and nothing mixes. <mark>A virtual environment is a separate tiffin box of packages for each project.</mark></div>
+  <p>A <b>virtual environment</b> is an isolated Python environment created for one specific project. It keeps that project’s installed packages separate from the <b>system Python</b> and from every other project.</p>
+  <h3>Creating one with venv</h3>
+  <p><code>venv</code> is Python’s <b>built-in module</b> for this, so there is nothing extra to install. <code>.venv</code> is the most common folder name (<code>venv</code> is also common; any name works).</p>
+  <pre><code class="language-bash">python -m venv .venv</code></pre>
+  <p>This creates a <code>.venv</code> folder holding the project’s own Python and its own place for packages. It simply sits beside your code as another folder:</p>
+  <pre><code class="language-plaintext">project/
+├── .venv/               → the isolated Python environment
+├── app/
+│   ├── __init__.py
+│   └── main.py
+├── tests/
+├── requirements.txt
+├── README.md
+└── .gitignore</code></pre>
+  <h3>Activating and deactivating</h3>
+  <p>Creating the environment is not enough. You also <b>activate</b> it, which tells this terminal to use that environment’s Python and packages instead of the system ones, for the rest of the terminal session.</p>
+  <div class="tbl"><table>
+    <tr><th>Operating system</th><th>Activate</th></tr>
+    <tr><td>Windows</td><td><code>.venv\Scripts\activate</code></td></tr>
+    <tr><td>Linux / macOS</td><td><code>source .venv/bin/activate</code></td></tr>
+    <tr><td>Any (to leave)</td><td><code>deactivate</code></td></tr>
+  </table></div>
+  <p>After activating, the prompt usually shows the environment name in front, like <code>(.venv)</code>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Before activation the terminal's python points to the system Python; after activation it points to the Python inside the .venv folder">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="80" width="185" height="80" rx="14"/>
+        <rect class="box f-blue" x="430" y="20" width="270" height="80" rx="14"/>
+        <rect class="box f-green" x="430" y="140" width="270" height="80" rx="14"/>
+        <path class="ln dash" d="M210 106 L 423 62" marker-end="url(#ah)"/>
+        <path class="lb" d="M210 136 L 423 178" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="112" y="116" text-anchor="middle">Terminal</text>
+      <text class="tm" x="112" y="142" text-anchor="middle">python app.py</text>
+      <text class="t" x="565" y="52" text-anchor="middle">System Python</text>
+      <text class="tm" x="565" y="78" text-anchor="middle">C:\Python312\python.exe</text>
+      <text class="t" x="565" y="172" text-anchor="middle">.venv Python + packages</text>
+      <text class="tm" x="565" y="198" text-anchor="middle">.venv\Scripts\python.exe</text>
+      <text class="ts" x="318" y="58" text-anchor="middle">before activate</text>
+      <text class="tb" x="318" y="200" text-anchor="middle">after activate</text>
+    </svg></div>
+    <figcaption>Activation only changes <b>which</b> Python (and which packages) the word <code>python</code> refers to in this terminal.</figcaption>
+  </figure>
+  <h3>Checking which Python is active</h3>
+  <pre><code class="language-bash">python --version
+where python       # Windows
+which python       # Linux/macOS</code></pre>
+  <p><code>where</code> / <code>which</code> prints the path of the Python being used. After activation, that path should point <b>inside the <code>.venv</code> folder</b>, not to the system installation.</p>
+  <pre class="out"><code>C:\projects\project\.venv\Scripts\python.exe
+C:\Python312\python.exe</code></pre>
+  <p>(On Windows, <code>where</code> lists every match; the first line is the one that runs.)</p>
+  <h3>Why .venv is not committed to Git</h3>
+  <ul>
+    <li>It can be <b>recreated</b> from <code>requirements.txt</code> at any time.</li>
+    <li>It makes the repository <b>unnecessarily large</b>.</li>
+    <li>It contains files specific to <b>your</b> operating system and machine.</li>
+  </ul>
+  <div class="codebox"><span class="cap">.gitignore</span><pre><code class="language-plaintext">.venv/</code></pre></div>
+  <p>This line tells Git to ignore the entire <code>.venv</code> folder.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="pip">
+  <h2>pip: installing external packages</h2>
+  <p><b>pip</b> is Python’s <b>package installer</b>. It installs third-party packages (libraries written by other developers, such as <code>requests</code> or <code>pandas</code>) that your project needs. With a virtual environment active, pip installs into that environment only.</p>
+  <div class="tbl"><table>
+    <tr><th>Task</th><th>Command</th></tr>
+    <tr><td>Install a package</td><td><code>pip install requests</code></td></tr>
+    <tr><td>Install a specific version</td><td><code>pip install requests==2.32.0</code></td></tr>
+    <tr><td>Upgrade a package</td><td><code>pip install --upgrade requests</code></td></tr>
+    <tr><td>Uninstall a package</td><td><code>pip uninstall requests</code></td></tr>
+    <tr><td>List installed packages</td><td><code>pip list</code></td></tr>
+    <tr><td>Show package details</td><td><code>pip show requests</code></td></tr>
+  </table></div>
+  <p>Once installed, a package is imported exactly like a built-in module, with the same import styles you learned in Python Fundamentals:</p>
+  <pre><code class="language-python">import requests</code></pre>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="requirements">
+  <h2>requirements.txt: recording dependencies</h2>
+  <p><code>requirements.txt</code> is a text file listing the <b>packages a project needs and their versions</b>, one per line:</p>
+  <div class="codebox"><span class="cap">requirements.txt</span><pre><code class="language-plaintext">pandas==2.2.2
+numpy==1.26.4</code></pre></div>
+  <h3>Generating and installing</h3>
+  <p>After installing what you need inside the virtual environment, generate the file automatically:</p>
+  <pre><code class="language-bash">pip freeze &gt; requirements.txt</code></pre>
+  <p><code>pip freeze</code> lists every installed package with its exact version (including the helper packages they pulled in), and <code>&gt;</code> saves that output into the file. Later, on another machine or in a fresh environment:</p>
+  <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
+  <p><code>-r</code> tells pip to <b>read the package list from</b> the file.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 215" role="img" aria-label="Your virtual environment is frozen into requirements.txt, which a new environment installs from, giving the same versions">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="70" width="190" height="100" rx="14"/>
+        <rect class="box f-yellow" x="265" y="70" width="190" height="100" rx="14"/>
+        <rect class="box f-green" x="510" y="70" width="190" height="100" rx="14"/>
+        <path class="lr" d="M214 120 L 258 120" marker-end="url(#ahr)"/>
+        <path class="lb" d="M459 120 L 503 120" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="237" y="52" text-anchor="middle">pip freeze &gt;</text>
+      <text class="tm" x="482" y="52" text-anchor="middle">pip install -r</text>
+      <text class="th" x="115" y="116" text-anchor="middle">Your venv</text>
+      <text class="ts" x="115" y="142" text-anchor="middle">pandas, numpy…</text>
+      <text class="tm" x="360" y="114" text-anchor="middle">requirements.txt</text>
+      <text class="ts" x="360" y="142" text-anchor="middle">pinned list</text>
+      <text class="th" x="605" y="116" text-anchor="middle">New venv</text>
+      <text class="ts" x="605" y="142" text-anchor="middle">same versions</text>
+      <text class="ts" x="115" y="196" text-anchor="middle">developer’s laptop</text>
+      <text class="ts" x="605" y="196" text-anchor="middle">teammate / server</text>
+    </svg></div>
+    <figcaption>The file travels with the code; the environment is rebuilt from it wherever it is needed.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Developer</b>installs packages in the venv and runs <code>pip freeze &gt; requirements.txt</code>.</div></li>
+    <li><span class="dot">2</span><div><b>requirements.txt</b>is committed to Git with the code.</div></li>
+    <li><span class="dot">3</span><div><b>New environment</b>a teammate or a server creates a fresh venv.</div></li>
+    <li><span class="dot">4</span><div><b>pip install -r requirements.txt</b>installs everything on the list.</div></li>
+    <li><span class="dot">5</span><div><b>Same dependencies</b>everyone runs the same package versions. <span class="tag">→ reproducible</span></div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> “It works on my laptop but not on the customer’s server” is very often a version mismatch. A pinned <code>requirements.txt</code> is the first thing to check, and the first thing to ship.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="versions">
+  <h2>Version constraints</h2>
+  <p><code>requirements.txt</code> doesn’t have to pin one exact version. It can also allow a <b>range</b> using a version constraint:</p>
+  <div class="tbl"><table>
+    <tr><th>Constraint</th><th>Meaning</th></tr>
+    <tr><td><code>requests==2.32.0</code></td><td>Exactly this version</td></tr>
+    <tr><td><code>requests&gt;=2.30.0</code></td><td>This version or newer</td></tr>
+    <tr><td><code>requests&lt;=2.32.0</code></td><td>This version or older</td></tr>
+    <tr><td><code>requests&gt;=2.30,&lt;3.0</code></td><td>Any version in this range</td></tr>
+  </table></div>
+  <p>Constraints exist so that <mark>an unrelated upgrade can’t silently break your project</mark>.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Exact pin <code>==</code></h4><p>Most stable and predictable: the same version every time. But someone must edit the file to get a newer version.</p></div>
+    <div class="card t3 tilt-b"><h4>Range <code>&gt;=</code>, <code>&lt;=</code>, both</h4><p>Picks up minor updates automatically, at some risk that an update changes behaviour unexpectedly.</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="env-vars">
+  <h2>Environment variables</h2>
+  <p>Applications need values such as API keys, passwords, database URLs and port numbers. Writing them straight into the code is unsafe:</p>
+  <pre><code class="language-python">API_KEY = "my-secret-key"   # anyone who can read the code can see this</code></pre>
+  <div class="story"><b class="lbl">The bank locker</b>You don’t write your locker PIN on the cheque book you hand to everyone. You keep it separately and bring it only when needed. <mark>An environment variable keeps a value outside the source code and hands it to the program only when it runs.</mark></div>
+  <h3>Setting one in the terminal</h3>
+  <div class="tbl"><table>
+    <tr><th>Shell</th><th>Command</th></tr>
+    <tr><td>Windows Command Prompt</td><td><code>set API_KEY=abc123</code></td></tr>
+    <tr><td>Windows PowerShell</td><td><code>$env:API_KEY="abc123"</code></td></tr>
+    <tr><td>Linux / macOS</td><td><code>export API_KEY=abc123</code></td></tr>
+  </table></div>
+  <p>A variable set like this lives only in <b>that terminal session</b>. Close the terminal and you must set it again.</p>
+  <h3>Reading it in Python</h3>
+  <div class="codebox"><span class="cap">app.py</span><pre><code class="language-python">import os
+
+api_key = os.getenv("API_KEY")
+print(api_key)</code></pre></div>
+  <p>Run it in the <b>same</b> terminal where you set the variable:</p>
+  <pre><code class="language-bash">python app.py</code></pre>
+  <pre class="out"><code>abc123</code></pre>
+  <p><code>os.getenv("API_KEY")</code> looks for a variable named <code>API_KEY</code> and returns its value, or <code>None</code> if it isn’t set. You can give a default that is used when it is missing:</p>
+  <pre><code class="language-python">port = os.getenv("PORT", "8000")</code></pre>
+  <p>Secrets stay out of the code, and development and production can use <b>different values without changing the code</b>.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="dotenv">
+  <h2>.env files for local configuration</h2>
+  <p>Setting variables by hand in every new terminal gets tiring. A <b>.env file</b> keeps your local environment variables in one place, in the project’s root folder:</p>
+  <div class="codebox"><span class="cap">.env</span><pre><code class="language-bash">API_KEY=abc123
+DATABASE_URL=postgresql://localhost/mydb
+DEBUG=True</code></pre></div>
+  <h3>Loading it with python-dotenv</h3>
+  <p>Python does <b>not</b> read <code>.env</code> files by itself. The <code>python-dotenv</code> package loads them into the environment:</p>
+  <pre><code class="language-bash">pip install python-dotenv</code></pre>
+  <div class="codebox"><span class="cap">app.py</span><pre><code class="language-python">from dotenv import load_dotenv
+import os
+
+load_dotenv()                     # copy values from .env into the environment
+
+api_key = os.getenv("API_KEY")    # read them exactly as before
+print(api_key)</code></pre></div>
+  <pre class="out"><code>abc123</code></pre>
+  <p><code>load_dotenv()</code> loads the values; <code>os.getenv()</code> reads them, just like in the previous section. The only difference is <b>where the values come from</b>.</p>
+  <div class="sticky warn"><strong>Everything is a string</strong> Environment variable values are always read as strings. <code>os.getenv("DEBUG")</code> returns the string <code>"True"</code>, not the boolean <code>True</code>. Convert it yourself, e.g. <code>debug = os.getenv("DEBUG") == "True"</code>.</div>
+  <h3>.env and Git</h3>
+  <p>A <code>.env</code> file may hold secrets, so it must <b>not</b> be committed:</p>
+  <div class="codebox"><span class="cap">.gitignore</span><pre><code class="language-plaintext">.venv/
+.env</code></pre></div>
+  <div class="sticky info l"><strong>Important</strong> <code>.env</code> is a convenience for <b>local development</b>, not a secure secret manager. Production applications should use the deployment platform’s <b>secret-management system</b>.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="config">
+  <h2>Project configuration</h2>
+  <p><b>Configuration</b> means values that control how an application behaves without changing its main logic, such as <code>DEBUG</code>, <code>PORT</code>, <code>DATABASE_URL</code> and <code>LOG_LEVEL</code>.</p>
+  <p>Instead of calling <code>os.getenv()</code> all over the project, <mark>keep configuration in one place</mark>, such as a configuration module:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Environment variables and the .env file both feed one configuration module, config.py, which the application reads">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="30" width="200" height="60" rx="12"/>
+        <rect class="box f-grey" x="20" y="130" width="200" height="60" rx="12"/>
+        <rect class="box f-yellow" x="290" y="70" width="160" height="80" rx="14"/>
+        <rect class="box f-blue" x="520" y="70" width="180" height="80" rx="14"/>
+        <path class="ln" d="M224 62 L 283 98" marker-end="url(#ah)"/>
+        <path class="ln" d="M224 158 L 283 124" marker-end="url(#ah)"/>
+        <path class="lr" d="M454 110 L 513 110" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="120" y="66" text-anchor="middle">Environment vars</text>
+      <text class="tm" x="120" y="165" text-anchor="middle">.env file</text>
+      <text class="th" x="370" y="108" text-anchor="middle">config.py</text>
+      <text class="ts" x="370" y="132" text-anchor="middle">one place</text>
+      <text class="th" x="610" y="108" text-anchor="middle">Application</text>
+      <text class="ts" x="610" y="132" text-anchor="middle">imports settings</text>
+    </svg></div>
+    <figcaption>Every part of the app reads settings from one module, so there is one place to look and change.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">app/config.py (a simple example)</span><pre><code class="language-python">import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+PORT = int(os.getenv("PORT", "8000"))
+DATABASE_URL = os.getenv("DATABASE_URL")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")</code></pre></div>
+  <p>Elsewhere you just write <code>from app.config import DEBUG</code>. The same setting can have different values in different environments:</p>
+  <div class="two">
+    <div class="flow"><span>Development</span><span class="op">DEBUG=True</span></div>
+    <div class="flow"><span>Production</span><span class="op">DEBUG=False</span></div>
+  </div>
+  <p>So the <b>same application code</b> runs in every environment without edits.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Every customer has a different database URL, API keys and log level. Keeping all of that in environment variables read by one config module means you deploy the same code everywhere and only change the settings.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="type-hints">
+  <h2>Type hints</h2>
+  <p>Without type information, it isn’t clear what a function expects:</p>
+  <pre><code class="language-python">def calculate(a, b):
+    ...</code></pre>
+  <p>Are <code>a</code> and <code>b</code> numbers, strings, something else? <b>Type hints</b> are optional annotations that describe the expected types of variables, parameters and return values. <mark>They make code easier to understand and help editors and type checkers catch mistakes.</mark></p>
+  <h3>On variables</h3>
+  <pre><code class="language-python">name: str = "Deepak"
+age: int = 20
+price: float = 99.5
+is_active: bool = True</code></pre>
+  <h3>On functions</h3>
+  <div class="anatomy"><span class="a1">def calculate(</span><span class="a2">a: int</span><span class="a1">, </span><span class="a2">b: int</span><span class="a1">)</span><span class="a3"> -&gt; int</span><span class="a1">:</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p><code>a: int</code>, <code>b: int</code> → each parameter is expected to be an integer</p></div>
+    <div><span class="sw a3"></span><p><code>-&gt; int</code> → the function is expected to return an integer</p></div>
+  </div>
+  <pre><code class="language-python">def calculate(a: int, b: int) -&gt; int:
+    return a + b</code></pre>
+  <h3>Type hints are not enforced</h3>
+  <pre><code class="language-python">age: int = "twenty"   # still runs!</code></pre>
+  <div class="sticky warn"><strong>Python won’t stop you</strong> Python does <b>not</b> check type hints at runtime. They act as documentation and as input for editors and type-checking tools (like mypy), which warn you <b>before</b> you run the code.</div>
+  <h3>Hints for collections</h3>
+  <p>You can describe both the collection and what it contains:</p>
+  <div class="tbl"><table>
+    <tr><th>Collection</th><th>Example</th><th>Meaning</th></tr>
+    <tr><td>List</td><td><code>names: list[str] = ["Rahul", "Amit", "Priya"]</code></td><td>a list of strings</td></tr>
+    <tr><td>Dictionary</td><td><code>marks: dict[str, int] = {"Python": 90, "SQL": 85}</code></td><td>string keys, integer values</td></tr>
+    <tr><td>Tuple</td><td><code>coordinates: tuple[int, int] = (10, 20)</code></td><td>exactly two integers</td></tr>
+    <tr><td>Set</td><td><code>unique_ids: set[int] = {1, 2, 3}</code></td><td>a set of integers</td></tr>
+  </table></div>
+  <pre><code class="language-python">def calculate_total(numbers: list[int]) -&gt; int:
+    return sum(numbers)</code></pre>
+  <p><code>numbers: list[int]</code> means the function expects a <b>list of integers</b>; <code>-&gt; int</code> means it returns an <b>integer</b>.</p>
+  <div class="sticky info l"><strong>Version note</strong> Writing <code>list[str]</code> and <code>dict[str, int]</code> with the built-in names works from Python 3.9. Older code uses <code>List</code> and <code>Dict</code> from the <code>typing</code> module.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="optional-union">
+  <h2>Optional, Union and Any</h2>
+  <p>Sometimes a value can have <b>more than one possible type</b>. A username may be <code>None</code> before it is provided and a string after.</p>
+  <h3>Optional: a type or None</h3>
+  <pre><code class="language-python">username: str | None = None          # modern syntax (Python 3.10+)
+
+from typing import Optional
+username: Optional[str] = None       # older syntax, same meaning</code></pre>
+  <p>Both mean <b><code>str</code> or <code>None</code></b>. The <code>|</code> reads as “or”.</p>
+  <h3>Union: one of several types</h3>
+  <pre><code class="language-python">user_id: int | str                   # modern syntax
+
+from typing import Union
+user_id: Union[int, str]             # older syntax</code></pre>
+  <pre><code class="language-python">def get_user(id: int | str) -&gt; str:
+    return str(id)</code></pre>
+  <p><code>id</code> may be an <code>int</code> or a <code>str</code>; the function returns a <code>str</code>.</p>
+  <h3>Any: the type is unknown</h3>
+  <pre><code class="language-python">from typing import Any
+
+value: Any = 10</code></pre>
+  <p><code>Any</code> tells type checkers to <b>allow any type</b>. It is useful for dynamic data whose type you don’t know in advance.</p>
+  <div class="sticky warn l"><strong>Don’t overuse Any</strong> Every <code>Any</code> switches type checking off for that value, so real mistakes slip through unnoticed.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="aliases">
+  <h2>Type aliases</h2>
+  <p>Complex hints get hard to read, especially when repeated:</p>
+  <pre><code class="language-python">users: dict[str, list[int]]   # string keys, lists of integers as values</code></pre>
+  <p>A <b>type alias</b> gives that type a meaningful name:</p>
+  <pre><code class="language-python">UserScores = dict[str, list[int]]
+
+scores: UserScores</code></pre>
+  <p>Modern Python (3.12+) also has a dedicated <code>type</code> statement for aliases:</p>
+  <pre><code class="language-python">type UserScores = dict[str, list[int]]</code></pre>
+  <p>Both create a name that stands for the same type, so you write <code>UserScores</code> instead of <code>dict[str, list[int]]</code> everywhere.</p>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="mistakes">
+  <h2>Common project-level mistakes</h2>
+  <div class="tbl"><table>
+    <tr><th style="width:22%">Area</th><th>Common mistakes</th></tr>
+    <tr><td><b>Structure</b></td><td>One huge <code>main.py</code>; poor file organisation; mixing unrelated code</td></tr>
+    <tr><td><b>Imports</b></td><td>Unnecessary wildcard imports (<code>from x import *</code>); confusing import paths; circular imports</td></tr>
+    <tr><td><b>Dependencies</b></td><td>Installing packages globally; not fixing versions; no <code>requirements.txt</code></td></tr>
+    <tr><td><b>Environment</b></td><td>Committing <code>.env</code> or <code>.venv</code>; hard-coding API keys</td></tr>
+    <tr><td><b>Type hints</b></td><td>Using <code>Any</code> everywhere; incorrect annotations; assuming hints are enforced at runtime</td></tr>
+  </table></div>
+  <p>This note is the bridge from writing Python syntax to building an actual project: from a single script, to modules and packages, to an <b>isolated, configured application with clear, typed code</b>.</p>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Project structure</dt><dd>The overall organisation of an application’s files: application code, tests, dependency list, documentation and configuration.</dd></div>
+    <div><dt>.gitignore</dt><dd>A text file listing files and folders Git should not track, such as <code>.venv/</code>, <code>.env</code> and cache files.</dd></div>
+    <div><dt>Virtual environment</dt><dd>An isolated Python environment for one project, keeping its installed packages separate from the system Python and other projects.</dd></div>
+    <div><dt>venv</dt><dd>Python’s built-in module for creating virtual environments, used as <code>python -m venv .venv</code>.</dd></div>
+    <div><dt>pip</dt><dd>Python’s package installer, used to install, upgrade, list and remove third-party packages.</dd></div>
+    <div><dt>requirements.txt</dt><dd>A text file listing a project’s packages and versions, created with <code>pip freeze &gt; requirements.txt</code> and installed with <code>pip install -r requirements.txt</code>.</dd></div>
+    <div><dt>Version constraint</dt><dd>A rule such as <code>==</code>, <code>&gt;=</code> or <code>&lt;=</code> in a requirement that limits which package versions may be installed.</dd></div>
+    <div><dt>Environment variable</dt><dd>A named value supplied by the operating environment rather than the source code, read in Python with <code>os.getenv()</code>.</dd></div>
+    <div><dt>.env file</dt><dd>A local file of <code>KEY=value</code> lines that <code>python-dotenv</code> loads into the environment; it must not be committed to Git.</dd></div>
+    <div><dt>Configuration</dt><dd>Values that change how an application behaves (debug mode, port, database URL) without changing its logic, ideally kept in one module.</dd></div>
+    <div><dt>Type hint</dt><dd>An optional annotation describing the expected type of a variable, parameter or return value; Python does not enforce it at runtime.</dd></div>
+    <div><dt>Optional / Union</dt><dd>Hints for values that may have more than one type: <code>str | None</code> (Optional) or <code>int | str</code> (Union).</dd></div>
+    <div><dt>Any</dt><dd>A special type from <code>typing</code> that tells type checkers to accept any type for a value.</dd></div>
+    <div><dt>Type alias</dt><dd>A name given to a complex type, such as <code>UserScores = dict[str, list[int]]</code>, to make hints easier to read.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Project A needs <code>requests==2.28</code> and Project B needs <code>requests==2.32</code> on the same laptop. What is the cleanest fix?</p>
+      <ol><li>Install both versions globally</li><li>Always use the newest version</li><li>Give each project its own virtual environment</li><li>Copy the requests source code into each project</li></ol>
+      <p class="why">A virtual environment per project keeps each project’s packages isolated, so different versions never conflict.</p></div>
+    <div class="q" data-answer="1"><p>Why should <code>.venv/</code> be listed in <code>.gitignore</code>?</p>
+      <ol><li>It can be recreated from requirements.txt and is large and machine-specific</li><li>Git cannot store Python files</li><li>It contains your passwords</li><li>Activating it fails if Git tracks it</li></ol>
+      <p class="why">The environment is rebuilt with <code>pip install -r requirements.txt</code>; committing it only adds size and OS-specific files.</p></div>
+    <div class="q" data-answer="4"><p>A teammate cloned your project. Which command installs exactly the packages you used?</p>
+      <ol><li><code>pip freeze &gt; requirements.txt</code></li><li><code>pip list</code></li><li><code>python -m venv requirements.txt</code></li><li><code>pip install -r requirements.txt</code></li></ol>
+      <p class="why"><code>-r</code> reads the package list from the file. <code>pip freeze &gt;</code> is what <b>creates</b> the file.</p></div>
+    <div class="q" data-answer="2"><p>What does the constraint <code>requests&gt;=2.30,&lt;3.0</code> allow?</p>
+      <ol><li>Only version 2.30</li><li>Any version from 2.30 up to, but not including, 3.0</li><li>Any version below 2.30</li><li>Version 3.0 and above</li></ol>
+      <p class="why">The two conditions combine: at least 2.30 and less than 3.0.</p></div>
+    <div class="q" data-answer="3"><p>Your <code>.env</code> has <code>DEBUG=False</code>. What does <code>bool(os.getenv("DEBUG"))</code> give?</p>
+      <ol><li><code>False</code>, because the value is False</li><li><code>None</code></li><li><code>True</code>, because <code>"False"</code> is a non-empty string</li><li>An error</li></ol>
+      <p class="why">Environment values are always strings. Any non-empty string is truthy, so compare the text instead, e.g. <code>== "True"</code>.</p></div>
+    <div class="q" data-answer="2"><p>What happens when you run <code>age: int = "twenty"</code>?</p>
+      <ol><li>Python raises a TypeError</li><li>It runs; Python does not enforce type hints at runtime</li><li>Python converts "twenty" to 20</li><li>The line is ignored</li></ol>
+      <p class="why">Hints are documentation for people and tools. Only a type checker or editor would flag this.</p></div>
+    <div class="q" data-answer="4"><p>Which hint means “a string, or nothing yet”?</p>
+      <ol><li><code>str &amp; None</code></li><li><code>list[str]</code></li><li><code>Any</code></li><li><code>str | None</code></li></ol>
+      <p class="why"><code>str | None</code> (or <code>Optional[str]</code>) means the value may be a string or <code>None</code>.</p></div>
+    <div class="q" data-answer="1"><p>Why keep settings in one <code>config.py</code> module instead of calling <code>os.getenv()</code> everywhere?</p>
+      <ol><li>There is one place to see and change every setting</li><li>os.getenv() only works inside config.py</li><li>It makes the code run faster</li><li>It encrypts the secrets</li></ol>
+      <p class="why">Central configuration is easier to understand and maintain; it does not secure or speed anything up on its own.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A real Python project has a <b>clear structure</b>, its own <b>virtual environment</b>, a pinned <b>requirements.txt</b>, secrets and settings in <b>environment variables</b> gathered in one <b>config</b> module, and <b>type hints</b> that tell everyone what each function expects.</p>
+  <p>Next up: <b>API Basics</b>, where your Python program starts asking other programs on the internet for data.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

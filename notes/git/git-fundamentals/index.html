@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Git Fundamentals · Git &amp; GitHub | AIFDE Notes</title>
+<meta name="description" content="Why Git, its alternatives, and every everyday Git command: init, status, add, commit, log, diff, clone, remote, pull, push, branch, checkout, merge, rebase, squash, cherry-pick, stash, reset, revert, clean, tag, blame, reflog, prune and help.">
+<meta name="keywords" content="git commands, staging and commits, commit messages, branches, merge vs rebase, git stash, reset vs revert, remotes, tags">
+<meta name="date" content="2026-10-12">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="git/git-fundamentals">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Git Fundamentals</h1>
+  <p class="byline">Learn the everyday Git commands: start a repository, save snapshots, read history, work with branches and remotes, park unfinished work, and undo mistakes safely.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why-git">
+  <h2>Why Git, and what else is out there</h2>
+  <p>Git does everything you expect from a version control system, and does it fast. It gives teams a solid way to <b>manage source code together</b>, <b>track every change</b> and <b>coordinate work across people and locations</b>, with excellent <b>branching, merging and history</b> tools. <mark>That combination is why Git became the default choice for almost every software team.</mark></p>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Distributed</h4><p>Every clone has the full history: work offline, and every laptop is a backup.</p></div>
+    <div class="card t1 tilt-b"><h4>Cheap branches</h4><p>Creating and switching branches takes a moment, so you use them for every feature.</p></div>
+    <div class="card t5 tilt-a"><h4>Everywhere</h4><p>GitHub, GitLab, Bitbucket, CI tools and editors all speak Git.</p></div>
+  </div>
+  <h3>Alternatives to Git</h3>
+  <div class="tbl"><table>
+    <tr><th>Tool</th><th>Type</th><th>Known for</th></tr>
+    <tr><td><b>Mercurial</b></td><td>Distributed, free, open source</td><td>Similar to Git in many ways; simple and fast, liked by people who want a lightweight tool.</td></tr>
+    <tr><td><b>Subversion (SVN)</b></td><td>Centralised</td><td>Reliable and simple; still common in large organisations.</td></tr>
+    <tr><td><b>CVS</b> (Concurrent Versions System)</td><td>Centralised, older</td><td>Simple and easy to use, but lacks advanced features found in Git and Mercurial. Still used by a few teams.</td></tr>
+  </table></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="map">
+  <h2>The map: where each command acts</h2>
+  <div class="story"><b class="lbl">Packing a parcel at the post office</b>You gather things on your table (working directory), put the ones you want into the box (staging area), seal and label the box (commit) and keep a receipt in your drawer (local repository). Only when you hand it over the counter (push) does it reach the other city (remote). <mark>Nearly every Git command moves changes between these four places.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Four boxes: working directory, staging area, local repository, remote. git add, git commit and git push move right. git fetch brings remote commits into the local repository. git checkout or git restore brings files from the local repository back into the working directory">
+      <g class="rough">
+        <rect class="box f-yellow" x="10" y="90" width="140" height="84" rx="14"/>
+        <rect class="box f-orange" x="195" y="90" width="140" height="84" rx="14"/>
+        <rect class="box f-green" x="380" y="90" width="140" height="84" rx="14"/>
+        <rect class="box f-blue" x="565" y="90" width="145" height="84" rx="14"/>
+        <path class="lr" d="M154 132 L 189 132" marker-end="url(#ahr)"/>
+        <path class="lr" d="M339 132 L 374 132" marker-end="url(#ahr)"/>
+        <path class="lr" d="M524 132 L 559 132" marker-end="url(#ahr)"/>
+        <path class="lb" d="M637 178 C 637 215, 485 215, 485 182" marker-end="url(#ahb)"/>
+        <path class="lb" d="M420 178 C 420 235, 80 235, 80 182" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="80" y="128" text-anchor="middle">Working</text>
+      <text class="ts" x="80" y="154" text-anchor="middle">files you edit</text>
+      <text class="th" x="265" y="128" text-anchor="middle">Staging</text>
+      <text class="ts" x="265" y="154" text-anchor="middle">the index</text>
+      <text class="th" x="450" y="128" text-anchor="middle">Local</text>
+      <text class="ts" x="450" y="154" text-anchor="middle">the .git folder</text>
+      <text class="th" x="637" y="128" text-anchor="middle">Remote</text>
+      <text class="ts" x="637" y="154" text-anchor="middle">e.g. GitHub</text>
+      <text class="tm" x="172" y="76" text-anchor="middle">add</text>
+      <text class="tm" x="357" y="76" text-anchor="middle">commit</text>
+      <text class="tm" x="542" y="76" text-anchor="middle">push</text>
+      <text class="tm" x="561" y="236" text-anchor="middle">fetch</text>
+      <text class="tm" x="250" y="258" text-anchor="middle">checkout / restore</text>
+      <text class="tr" x="360" y="34" text-anchor="middle">pull = fetch + merge</text>
+    </svg></div>
+    <figcaption>Changes travel right with <code>add → commit → push</code>, and come back with <code>fetch</code>/<code>pull</code> and <code>checkout</code>.</figcaption>
+  </figure>
+  <p>This note covers these commands, grouped by job:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Start &amp; save</h4><p><code>init</code> · <code>status</code> · <code>add</code> · <code>commit</code></p></div>
+    <div class="card t8 tilt-b"><h4>Look at history</h4><p><code>log</code> · <code>diff</code> · <code>blame</code> · <code>reflog</code></p></div>
+    <div class="card t2 tilt-a"><h4>Share</h4><p><code>clone</code> · <code>remote</code> · <code>pull</code> · <code>push</code></p></div>
+    <div class="card t5 tilt-b"><h4>Branch &amp; combine</h4><p><code>branch</code> · <code>checkout</code> · <code>merge</code> · <code>rebase</code> · squash · <code>cherry-pick</code></p></div>
+    <div class="card t3 tilt-a"><h4>Park &amp; undo</h4><p><code>stash</code> · <code>reset</code> · <code>revert</code> · <code>clean</code></p></div>
+    <div class="card t6 tilt-b"><h4>Mark &amp; tidy</h4><p><code>tag</code> · <code>prune</code> · <code>help</code></p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="init-status">
+  <h2><code>git init</code> and <code>git status</code></h2>
+  <h3><code>git init</code> · start a repository</h3>
+  <p><code>git init</code> turns an existing folder into a Git repository. It creates a hidden sub-folder called <code>.git</code> that holds everything Git needs: the history, branches and settings. Open a terminal in the project’s <b>root folder</b> and run:</p>
+  <div class="cmd"><p class="what">Try it</p>
+  <pre><code class="language-bash">mkdir git_practice &amp;&amp; cd git_practice
+git init</code></pre></div>
+  <pre class="out"><code>Initialized empty Git repository in /path/to/git_practice/.git/</code></pre>
+  <p>Run any Git command in a folder that is <b>not</b> a repository and you get this error:</p>
+  <pre class="out"><code>$ git status
+fatal: not a git repository (or any of the parent directories): .git</code></pre>
+  <div class="sticky warn l"><strong>Don’t delete <code>.git</code></strong> That folder <i>is</i> the repository. Delete it and your files stay, but the whole history is gone.</div>
+
+  <h3><code>git status</code> · what is going on?</h3>
+  <p><code>git status</code> shows which files are <b>modified</b>, which are <b>staged</b> for the next commit, and which are <b>untracked</b> (new files Git is not watching yet). <mark>Run it before and after every step; it is the command you will type most.</mark></p>
+  <p>A brand-new repository with three new files:</p>
+  <pre class="out"><code>On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        dropdown&amp;navbar.zip
+        dropdown.html
+        navbar.html
+
+nothing added to commit but untracked files present (use "git add" to track)</code></pre>
+  <p>A repository with nothing new to save:</p>
+  <pre class="out"><code>On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="add-commit">
+  <h2><code>git add</code> and <code>git commit</code></h2>
+  <h3><code>git add</code> · choose what goes in</h3>
+  <p><code>git add</code> starts tracking a new file, or <b>stages</b> changes so they are included in the next commit. Staging lets you <b>choose</b> which changes go into a commit and which stay out for now.</p>
+  <div class="codebox"><span class="cap">staging</span><pre><code class="language-bash">git add .                          # stage all changes and new files in this folder
+git add newFile.js                 # stage a single file
+git add newFile1.js newFile2.js    # stage several files</code></pre></div>
+
+  <h3><code>git commit</code> · save a snapshot</h3>
+  <p>A <b>commit</b> is a snapshot of the project at one point in time. Each commit gets a unique ID (a <b>hash</b> such as <code>3f9a1c2</code>) and a message describing what changed. <code>git commit</code> saves everything that is <b>staged</b> as a new commit.</p>
+  <div class="codebox"><span class="cap">syntax and example</span><pre><code class="language-bash">git commit -m "message that describes the change"
+git commit -m "initial commit"</code></pre></div>
+  <div class="flow"><span>edit files</span><span class="op">git add</span><span class="hl">staged</span><span class="op">git commit</span><span class="ok">snapshot saved</span></div>
+
+  <h3>Commit message convention</h3>
+  <p>Good messages keep the history clean and readable. A widely used convention (<b>Conventional Commits</b>) has three parts:</p>
+  <div class="anatomy"><span class="a1">feat</span><span class="a2">: </span><span class="a3">Add user login functionality</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Type</b>: the category of change, e.g. <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code>, <code>chore</code>.</p></div>
+    <div><span class="sw a2"></span><p>A colon and a space separate the type from the subject.</p></div>
+    <div><span class="sw a3"></span><p><b>Subject</b>: one short, imperative, present-tense sentence (“Add”, not “Added”), with no full stop at the end.</p></div>
+  </div>
+  <p>An optional <b>body</b> can follow after a blank line, explaining the context and reasoning, wrapped at about 72 characters per line.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:16%">Type</th><th style="width:30%">Use it for</th><th>Example</th></tr>
+    <tr><td><code>feat</code></td><td>A new feature</td><td><code>feat: Add user login functionality</code></td></tr>
+    <tr><td><code>fix</code></td><td>A bug fix</td><td><code>fix: Fix issue in the login page</code></td></tr>
+    <tr><td><code>docs</code></td><td>Documentation only</td><td><code>docs: Update swagger README with installation instructions</code></td></tr>
+    <tr><td><code>style</code></td><td>Formatting, no logic change</td><td><code>style: Format code according to project style guide</code></td></tr>
+    <tr><td><code>refactor</code></td><td>Restructuring code without changing behaviour</td><td><code>refactor: Refactor database connection URL</code></td></tr>
+    <tr><td><code>test</code></td><td>Adding or changing tests</td><td><code>test: Add unit test for user login logic</code></td></tr>
+    <tr><td><code>chore</code></td><td>Routine tasks and maintenance</td><td><code>chore: Update dependencies</code></td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Capital or lowercase?</strong> Teams differ on whether the subject starts with a capital letter. Pick whatever your project already uses and stay consistent.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="log-diff">
+  <h2>Reading history: <code>git log</code> and <code>git diff</code></h2>
+  <p>Each commit stores a pointer to the commit before it (its <b>parent</b>), so the history is a chain. A <b>branch</b> such as <code>main</code> is just a label on the newest commit, and <b>HEAD</b> marks where you are now.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Four commits in a row, each pointing back to its parent. The branch label main points at the newest commit, and HEAD points at main">
+      <g class="rough">
+        <circle class="box f-blue" cx="90" cy="130" r="36"/>
+        <circle class="box f-blue" cx="260" cy="130" r="36"/>
+        <circle class="box f-blue" cx="430" cy="130" r="36"/>
+        <circle class="box f-green" cx="600" cy="130" r="36"/>
+        <path class="ln" d="M220 130 L 132 130" marker-end="url(#ah)"/>
+        <path class="ln" d="M390 130 L 302 130" marker-end="url(#ah)"/>
+        <path class="ln" d="M560 130 L 472 130" marker-end="url(#ah)"/>
+        <rect class="box f-yellow" x="560" y="22" width="80" height="38" rx="10"/>
+        <rect class="box f-pink" x="400" y="22" width="80" height="38" rx="10"/>
+        <path class="lr" d="M600 64 L 600 88" marker-end="url(#ahr)"/>
+        <path class="lr" d="M484 41 L 552 41" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="90" y="135" text-anchor="middle">a1f3</text>
+      <text class="tm" x="260" y="135" text-anchor="middle">b7c2</text>
+      <text class="tm" x="430" y="135" text-anchor="middle">c9d0</text>
+      <text class="tm" x="600" y="135" text-anchor="middle">d4e8</text>
+      <text class="tm" x="600" y="46" text-anchor="middle">main</text>
+      <text class="tm" x="440" y="46" text-anchor="middle">HEAD</text>
+      <text class="ts" x="90" y="194" text-anchor="middle">initial commit</text>
+      <text class="ts" x="260" y="194" text-anchor="middle">feat: add login</text>
+      <text class="ts" x="430" y="194" text-anchor="middle">fix: login typo</text>
+      <text class="ts" x="600" y="194" text-anchor="middle">docs: README</text>
+      <text class="tr" x="90" y="230" text-anchor="middle">oldest</text>
+      <text class="tr" x="600" y="230" text-anchor="middle">newest</text>
+    </svg></div>
+    <figcaption>History is a chain of snapshots. Arrows point to the parent; <code>main</code> marks the tip and HEAD marks where you are.</figcaption>
+  </figure>
+  <h3><code>git log</code> · the commit history</h3>
+  <p>Shows past commits with their hashes, authors, dates and messages, newest first.</p>
+  <div class="codebox"><span class="cap">common log commands</span><pre><code class="language-bash">git log                         # full history
+git log --oneline               # compact: one line per commit
+git show &lt;commit_hash&gt;          # details and changes of a single commit
+git log -p                      # history with the changes (patch) of each commit
+git log -n 5                    # only the last 5 commits
+git log &lt;branch_name&gt;           # commits on a specific branch
+git log --author="Asha"         # commits by one author</code></pre></div>
+  <pre class="out"><code>$ git log --oneline
+d4e8a10 (HEAD -&gt; main) docs: README
+c9d07b2 fix: login typo
+b7c2e45 feat: add login
+a1f3c99 initial commit</code></pre>
+  <div class="sticky tip l"><strong>Leaving the log</strong> A long log opens in a pager. Use the arrow keys to scroll and press <kbd>q</kbd> to quit.</div>
+  <h3><code>git diff</code> · what exactly changed?</h3>
+  <p>Compares two versions and shows the lines added (<code>+</code>) and removed (<code>-</code>).</p>
+  <div class="codebox"><span class="cap">common diff commands</span><pre><code class="language-bash">git diff                        # working directory vs staging area (unstaged changes)
+git diff --staged               # staged changes vs the last commit
+git diff &lt;commit1&gt; &lt;commit2&gt;    # compare two commits
+git diff &lt;branch_name&gt;          # your working files vs another branch
+git diff &lt;file_name&gt;            # changes in one file only
+git diff --stat                 # summary: which files changed, how many lines</code></pre></div>
+  <pre class="out"><code>$ git diff
+diff --git a/index.html b/index.html
+@@ -1,3 +1,3 @@
+ &lt;h1&gt;Shop&lt;/h1&gt;
+-&lt;p&gt;Welcom&lt;/p&gt;
++&lt;p&gt;Welcome&lt;/p&gt;</code></pre>
+  <div class="sticky warn"><strong>“git diff shows nothing!”</strong> Plain <code>git diff</code> only shows changes you have <b>not staged yet</b>. After <code>git add</code>, use <code>git diff --staged</code>.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="remotes">
+  <h2>Working with remotes: clone, remote, pull, push</h2>
+  <h3><code>git clone</code> · copy a repository to your machine</h3>
+  <p>Downloads a remote repository: all the files, the full commit history and the branches. It also sets up a remote called <code>origin</code> pointing back to where you cloned from.</p>
+  <pre><code class="language-bash">git clone https://github.com/username/repo-name.git
+# creates a folder "repo-name" with the project's files and history</code></pre>
+  <p>To get the URL on GitHub, open the repository and click the green <b>Code</b> button; the link is shown there.</p>
+
+  <h3><code>git remote</code> · manage connections</h3>
+  <p>A repository can talk to several remotes. <code>git remote</code> lists and manages them.</p>
+  <div class="codebox"><span class="cap">remote commands</span><pre><code class="language-bash">git remote                               # list remotes
+git remote -v                            # list remotes with their URLs
+git remote add &lt;name&gt; &lt;url&gt;              # add a remote, e.g. git remote add origin &lt;url&gt;
+git remote remove &lt;name&gt;                 # remove a remote
+git remote rename &lt;old_name&gt; &lt;new_name&gt;  # rename a remote
+git remote show &lt;name&gt;                   # details about one remote</code></pre></div>
+
+  <h3><code>git pull</code> · get others’ work</h3>
+  <p><code>git pull</code> = <b>two steps</b> in one:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b><code>git fetch</code></b>Downloads new commits from the remote (usually <code>origin</code>) into your local repository, without touching your current branch.</div></li>
+    <li><span class="dot">2</span><div><b><code>git merge</code></b>Merges those fetched commits into your current branch.</div></li>
+  </ol>
+  <pre><code class="language-bash">git pull                          # fetch + merge from the branch your branch tracks
+git pull origin feature-branch    # fetch + merge a specific remote branch</code></pre>
+
+  <h3><code>git push</code> · send your commits</h3>
+  <p>Uploads your local commits to the remote so others can see them.</p>
+  <pre><code class="language-bash">git push -u origin main    # first push: also set origin/main as upstream
+git push                   # later pushes from the same branch</code></pre>
+  <div class="flow"><span class="op">git pull</span><span>work</span><span class="op">git add</span><span class="op">git commit</span><span class="op">git pull</span><span class="ok">git push</span></div>
+  <div class="sticky info l"><strong>Push rejected?</strong> If teammates pushed first, Git refuses your push (“updates were rejected”). <code>git pull</code> to combine their work with yours, then push again.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="branches">
+  <h2>Branches: <code>git branch</code> and <code>git checkout</code></h2>
+  <div class="story"><b class="lbl">A rough notebook</b>Before writing the final answer in your exam copy, you try it in a rough notebook. If it works, you copy it in; if not, you tear out the page. <mark>A branch is a rough notebook for your code: work in isolation, then merge or throw it away.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="main has commits C1, C2, C3. A feature branch starts at C2 and has commits F1 and F2. Each branch label points to its newest commit">
+      <g class="rough">
+        <path class="ln" d="M110 90 L 230 90"/>
+        <path class="ln" d="M290 90 L 410 90"/>
+        <path class="lr" d="M280 112 L 380 178"/>
+        <path class="lr" d="M440 200 L 540 200"/>
+        <circle class="box f-blue" cx="80" cy="90" r="30"/>
+        <circle class="box f-blue" cx="260" cy="90" r="30"/>
+        <circle class="box f-blue" cx="440" cy="90" r="30"/>
+        <circle class="box f-purple" cx="410" cy="200" r="30"/>
+        <circle class="box f-purple" cx="570" cy="200" r="30"/>
+        <rect class="box f-yellow" x="500" y="70" width="80" height="38" rx="10"/>
+        <rect class="box f-yellow" x="620" y="182" width="90" height="38" rx="10"/>
+        <path class="ln" d="M496 89 L 476 89" marker-end="url(#ah)"/>
+        <path class="ln" d="M616 200 L 606 200" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="80" y="99" text-anchor="middle">C1</text>
+      <text class="th" x="260" y="99" text-anchor="middle">C2</text>
+      <text class="th" x="440" y="99" text-anchor="middle">C3</text>
+      <text class="th" x="410" y="209" text-anchor="middle">F1</text>
+      <text class="th" x="570" y="209" text-anchor="middle">F2</text>
+      <text class="tm" x="540" y="94" text-anchor="middle">main</text>
+      <text class="tm" x="665" y="205" text-anchor="middle">feature</text>
+      <text class="ts" x="260" y="44" text-anchor="middle">branch created here</text>
+      <text class="ts" x="490" y="250" text-anchor="middle">feature/login work, isolated from main</text>
+    </svg></div>
+    <figcaption>A branch is a separate line of commits. <code>main</code> keeps moving while you work on <code>feature</code>.</figcaption>
+  </figure>
+  <h3><code>git branch</code> · list, create, rename, delete</h3>
+  <div class="codebox"><span class="cap">branch commands</span><pre><code class="language-bash">git branch                          # list local branches (* marks the current one)
+git branch -r                       # list remote-tracking branches
+git branch -a                       # list all branches, local and remote
+git branch &lt;new_branch_name&gt;        # create a branch, e.g. git branch feature/new-feature
+git branch -m new-name              # rename the current branch
+git branch -d &lt;branch_name&gt;         # delete a branch (only if it is already merged)
+git branch -D &lt;branch_name&gt;         # force-delete, even if not merged</code></pre></div>
+  <h3><code>git checkout</code> · switch, restore, time-travel</h3>
+  <p><code>git checkout</code> is a multi-purpose command:</p>
+  <div class="codebox"><span class="cap">checkout uses</span><pre><code class="language-bash">git checkout &lt;branch_name&gt;            # switch to a branch
+git checkout -b &lt;new_branch&gt;          # create a branch and switch to it
+git checkout -- &lt;file&gt;                # discard uncommitted edits to a file
+git checkout &lt;commit_hash&gt; -- &lt;file&gt;  # restore a file from an old commit
+git checkout &lt;commit_hash&gt;            # view an old commit (detached HEAD)
+git checkout --orphan &lt;new_branch&gt;    # new branch with no history</code></pre></div>
+  <pre><code class="language-bash">git checkout -b feature/new-feature   # everyday shortcut</code></pre>
+  <div class="sticky info"><strong>Newer, clearer commands</strong> Since Git 2.23, <code>git switch &lt;branch&gt;</code> (and <code>git switch -c &lt;new&gt;</code>) switches branches, and <code>git restore &lt;file&gt;</code> discards changes to a file. They split <code>checkout</code>’s two jobs; both styles work.</div>
+  <div class="sticky warn l"><strong>Detached HEAD</strong> After <code>git checkout &lt;commit_hash&gt;</code> you are not on any branch. Look around freely, but commits made here are easy to lose. To keep work, create a branch first: <code>git switch -c rescue</code>.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="combine">
+  <h2>Combining work: merge, rebase, squash, cherry-pick</h2>
+  <h3><code>git merge</code></h3>
+  <p>Integrates the changes from one branch into another, typically a finished feature branch back into <code>main</code>. Switch to the branch that should <b>receive</b> the changes, then merge:</p>
+  <pre><code class="language-bash">git checkout main
+git merge feature</code></pre>
+  <h3><code>git rebase</code></h3>
+  <p>Also integrates changes, but by <b>replaying your branch’s commits on top of</b> another branch. The result is a <mark>clean, straight-line history</mark> with no merge commit.</p>
+  <div class="codebox"><span class="cap">rebase feature onto the latest main</span><pre><code class="language-bash"># 1. update main
+git checkout main
+git pull origin main
+
+# 2. switch to the feature branch
+git checkout feature
+
+# 3. replay feature's commits on top of main
+git rebase main</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 400" role="img" aria-label="Top: git merge. main C1 C2 C3 and feature F1 F2 from C2 are joined by a new merge commit M. Bottom: git rebase. F1 and F2 are replayed after C3 as new commits F1 prime and F2 prime in one straight line">
+      <g class="rough">
+        <path class="ln" d="M86 90 L 144 90"/><path class="ln" d="M196 90 L 254 90"/><path class="ln" d="M306 90 L 444 90"/>
+        <path class="lr" d="M188 110 L 256 150"/><path class="lr" d="M306 170 L 364 170"/><path class="lr" d="M410 152 L 452 108"/>
+        <circle class="box f-blue" cx="60" cy="90" r="26"/>
+        <circle class="box f-blue" cx="170" cy="90" r="26"/>
+        <circle class="box f-blue" cx="280" cy="90" r="26"/>
+        <circle class="box f-purple" cx="280" cy="170" r="26"/>
+        <circle class="box f-purple" cx="390" cy="170" r="26"/>
+        <circle class="box f-green" cx="470" cy="90" r="26"/>
+        <path class="ln dash" d="M10 215 L 710 215"/>
+        <path class="ln" d="M86 310 L 144 310"/><path class="ln" d="M196 310 L 254 310"/>
+        <path class="lr" d="M306 310 L 364 310"/><path class="lr" d="M416 310 L 474 310"/>
+        <circle class="box f-blue" cx="60" cy="310" r="26"/>
+        <circle class="box f-blue" cx="170" cy="310" r="26"/>
+        <circle class="box f-blue" cx="280" cy="310" r="26"/>
+        <circle class="box f-purple" cx="390" cy="310" r="26"/>
+        <circle class="box f-purple" cx="500" cy="310" r="26"/>
+      </g>
+      <text class="tr" x="20" y="36">git merge</text>
+      <text class="t" x="60" y="96" text-anchor="middle">C1</text>
+      <text class="t" x="170" y="96" text-anchor="middle">C2</text>
+      <text class="t" x="280" y="96" text-anchor="middle">C3</text>
+      <text class="t" x="280" y="176" text-anchor="middle">F1</text>
+      <text class="t" x="390" y="176" text-anchor="middle">F2</text>
+      <text class="th" x="470" y="99" text-anchor="middle">M</text>
+      <text class="ts" x="520" y="86">merge commit with</text>
+      <text class="ts" x="520" y="106">two parents</text>
+      <text class="tr" x="20" y="256">git rebase</text>
+      <text class="t" x="60" y="316" text-anchor="middle">C1</text>
+      <text class="t" x="170" y="316" text-anchor="middle">C2</text>
+      <text class="t" x="280" y="316" text-anchor="middle">C3</text>
+      <text class="t" x="390" y="316" text-anchor="middle">F1′</text>
+      <text class="t" x="500" y="316" text-anchor="middle">F2′</text>
+      <text class="ts" x="550" y="306">F1, F2 replayed as</text>
+      <text class="ts" x="550" y="326">new commits</text>
+      <text class="ts" x="280" y="370" text-anchor="middle">one straight line, no merge commit</text>
+    </svg></div>
+    <figcaption>Same end result in the files; different shape of history.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>git merge</code></th><th><code>git rebase</code></th></tr>
+    <tr><td>History shape</td><td>Keeps both lines, adds a merge commit</td><td>One straight line</td></tr>
+    <tr><td>Existing commits</td><td>Unchanged</td><td>Rewritten with new hashes</td></tr>
+    <tr><td>Safe on shared branches?</td><td>Yes</td><td>Only on branches nobody else uses</td></tr>
+  </table></div>
+  <div class="sticky warn"><strong>Golden rule of rebase</strong> Never rebase commits you have already pushed to a branch others are working on. Rebase rewrites them, and your teammates’ copies will no longer match.</div>
+
+  <h3>Squash</h3>
+  <p>“Squash” is not a separate command; it is a <b>technique</b> for combining several commits into one meaningful commit, for a tidier history. One way:</p>
+  <pre><code class="language-bash">git checkout main
+git merge --squash &lt;branch_name&gt;   # stage all the branch's changes as one set
+git commit -m "feat: Add checkout page"</code></pre>
+  <div class="flow"><span class="op">wip</span><span class="op">fix typo</span><span class="op">really fix</span><span class="ok">feat: Add checkout page</span></div>
+  <p>You can also squash commits on your own branch with interactive rebase, <code>git rebase -i HEAD~3</code>, and GitHub offers a “Squash and merge” button on pull requests.</p>
+
+  <h3><code>git cherry-pick</code></h3>
+  <p>Copies <b>one specific commit</b> from another branch and applies it to your current branch, without merging the whole branch. Handy for taking just one bug fix.</p>
+  <pre><code class="language-bash">git checkout main
+git cherry-pick &lt;commit_hash&gt;</code></pre>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="stash">
+  <h2><code>git stash</code> · park unfinished work</h2>
+  <div class="story"><b class="lbl">The cloak room</b>You can’t take your bag into the exam hall, so you leave it at the cloak room and collect it after. <mark><code>git stash</code> is a cloak room for half-done changes: it clears your working directory now and gives them back later.</mark></div>
+  <p>Use it when you must switch branches or pull, but your current changes are not ready to commit.</p>
+  <div class="codebox"><span class="cap">stash commands</span><pre><code class="language-bash">git stash                      # save uncommitted changes and clean the working directory
+git stash list                 # list all stashes: stash@{0} is the newest
+git stash apply                # re-apply the newest stash (it stays in the list)
+git stash apply stash@{1}      # re-apply a specific stash
+git stash pop                  # re-apply the newest stash AND remove it from the list
+git stash drop stash@{0}       # delete a specific stash</code></pre></div>
+  <div class="flow"><span>half-done work</span><span class="op">git stash</span><span class="hl">switch, fix, commit</span><span class="op">git stash pop</span><span class="ok">work is back</span></div>
+  <div class="sticky tip l"><strong>New files are skipped</strong> By default <code>git stash</code> only saves changes to tracked files. Add <code>-u</code> (<code>git stash -u</code>) to include untracked files too.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="undo">
+  <h2>Undoing things: reset, revert, clean</h2>
+  <h3><code>git reset</code> · move the branch back</h3>
+  <p><code>git reset</code> moves the current branch pointer to another commit. Its three modes decide what happens to the changes in between:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Commits C1, C2, C3. The main label moves back from C3 to C2 with git reset HEAD~1. What happens to C3's changes depends on soft, mixed or hard">
+      <g class="rough">
+        <path class="ln" d="M146 140 L 274 140"/>
+        <path class="ln dash" d="M326 140 L 454 140"/>
+        <circle class="box f-blue" cx="120" cy="140" r="26"/>
+        <circle class="box f-blue" cx="300" cy="140" r="26"/>
+        <circle class="box f-grey dash" cx="480" cy="140" r="26"/>
+        <rect class="box f-yellow" x="260" y="56" width="80" height="36" rx="10"/>
+        <rect class="box f-none dash" x="440" y="56" width="80" height="36" rx="10"/>
+        <path class="ln" d="M300 96 L 300 108" marker-end="url(#ah)"/>
+        <path class="lr" d="M436 74 L 348 74" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="120" y="149" text-anchor="middle">C1</text>
+      <text class="th" x="300" y="149" text-anchor="middle">C2</text>
+      <text class="th" x="480" y="149" text-anchor="middle">C3</text>
+      <text class="tm" x="300" y="79" text-anchor="middle">main</text>
+      <text class="tm" x="480" y="79" text-anchor="middle">main</text>
+      <text class="tm" x="392" y="40" text-anchor="middle">git reset HEAD~1</text>
+      <text class="ts" x="480" y="192" text-anchor="middle">C3 leaves the branch</text>
+      <text class="ts" x="620" y="136" text-anchor="middle">its changes go to:</text>
+      <text class="ts" x="620" y="156" text-anchor="middle">see the table below</text>
+    </svg></div>
+    <figcaption>Reset moves the branch label back. The mode decides whether the undone changes stay staged, stay in your files, or are thrown away.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Mode</th><th>Branch pointer</th><th>Staging area</th><th>Working directory</th></tr>
+    <tr><td><code>--soft</code></td><td>moved</td><td>✅ changes kept, <b>staged</b></td><td>✅ kept</td></tr>
+    <tr><td><code>--mixed</code> (default)</td><td>moved</td><td>❌ unstaged</td><td>✅ changes kept as unstaged edits</td></tr>
+    <tr><td><code>--hard</code></td><td>moved</td><td>❌ discarded</td><td>❌ <b>discarded</b></td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">common uses</span><pre><code class="language-bash">git reset --soft HEAD^           # undo the last commit, keep its changes staged
+git reset                        # unstage everything (mixed reset to HEAD)
+git reset --soft &lt;commit_hash&gt;   # move the branch back, keep all changes staged
+git reset --mixed &lt;commit_hash&gt;  # move back, keep changes as unstaged edits
+git reset --hard &lt;commit_hash&gt;   # move back and DISCARD all changes after it</code></pre></div>
+  <p><code>HEAD^</code> and <code>HEAD~1</code> both mean “the commit before HEAD”; <code>HEAD~3</code> means three commits back.</p>
+  <div class="sticky warn l"><strong><code>--hard</code> deletes work</strong> Uncommitted changes wiped by <code>git reset --hard</code> cannot be recovered. Run <code>git status</code> and <code>git stash</code> first if unsure.</div>
+
+  <h3><code>git revert</code> · undo with a new commit</h3>
+  <p>Creates a <b>new commit</b> that applies the opposite of an earlier commit. <mark>The history is not rewritten, so it is the safe way to undo something already pushed.</mark></p>
+  <pre><code class="language-bash">git revert &lt;commit_hash&gt;             # undo one commit
+git revert &lt;start&gt;..&lt;end&gt;            # undo a range (start NOT included)</code></pre>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>git reset</code></th><th><code>git revert</code></th></tr>
+    <tr><td>How it undoes</td><td>Moves the branch back; later commits leave the branch</td><td>Adds a new “opposite” commit</td></tr>
+    <tr><td>Rewrites history?</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Use on pushed commits?</td><td>Avoid</td><td>Yes, this is the right tool</td></tr>
+  </table></div>
+
+  <h3><code>git clean</code> · delete untracked files</h3>
+  <p>Removes files Git is not tracking (never added) from the working directory. Ignored files (listed in <code>.gitignore</code>) are left alone unless you add <code>-x</code>.</p>
+  <pre><code class="language-bash">git clean -n     # dry run: show what WOULD be removed
+git clean -f     # remove untracked files
+git clean -fd    # remove untracked files and directories</code></pre>
+  <div class="sticky tip"><strong>Always dry-run first</strong> <code>git clean</code> deletes files that were never committed, so Git cannot bring them back. Check with <code>-n</code> before <code>-f</code>.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="tags">
+  <h2><code>git tag</code> · mark releases</h2>
+  <p>A <b>tag</b> is a fixed label on a specific commit, used to mark important points such as releases (<code>v1.0</code>) or milestones. Unlike a branch, a tag never moves.</p>
+  <div class="codebox"><span class="cap">tag commands</span><pre><code class="language-bash">git tag v1.0                          # lightweight tag (no -a, -s or -m): just a name
+git tag -a v1.0 -m "First release"    # annotated tag: stores author, date and a message
+git tag                               # list tags
+git tag -d v1.0                       # delete a local tag
+git push origin v1.0                  # tags need an explicit push</code></pre></div>
+  <div class="two">
+    <div class="card t7 tilt-a"><h4>Lightweight tag</h4><p>Only a name pointing at a commit. Good for private, temporary markers.</p></div>
+    <div class="card t2 tilt-b"><h4>Annotated tag</h4><p>A full object with tagger, date and message. Use these for releases.</p></div>
+  </div>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> Tag every build you deploy to a customer (<code>v1.4.2-acme</code>). When they report a bug in “the version from last month”, <code>git checkout v1.4.2-acme</code> gives you exactly that code to reproduce it.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="investigate">
+  <h2>Investigate and tidy: blame, reflog, prune, help</h2>
+  <h3><code>git blame</code> · who changed this line?</h3>
+  <p>Annotates each line of a file with the commit that last changed it and the author of that commit. Useful to find who to ask about a piece of code.</p>
+  <pre><code class="language-bash">git blame &lt;file&gt;</code></pre>
+  <pre class="out"><code>b7c2e45 (Asha  2026-10-02 11:04:12 +0530 1) &lt;h1&gt;Shop&lt;/h1&gt;
+c9d07b2 (Rahul 2026-10-05 16:40:51 +0530 2) &lt;p&gt;Welcome&lt;/p&gt;</code></pre>
+  <h3><code>git reflog</code> · Git’s safety net</h3>
+  <p>The <b>reference log</b> records every time HEAD or a branch moved: commits, checkouts, resets, rebases. <mark>If you “lost” a commit after a bad reset, the reflog still knows its hash.</mark></p>
+  <div class="codebox"><span class="cap">reflog</span><pre><code class="language-bash">git reflog                       # where HEAD has been (same as: git reflog HEAD)
+git reflog show &lt;branch_name&gt;    # movements of one branch
+git reset --hard HEAD@{2}        # e.g. go back to where HEAD was two moves ago</code></pre></div>
+  <pre class="out"><code>d4e8a10 HEAD@{0}: reset: moving to HEAD~1
+e51b7f3 HEAD@{1}: commit: feat: Add search
+d4e8a10 HEAD@{2}: commit: docs: README</code></pre>
+  <div class="sticky info"><strong>Reflog is local</strong> It lives only in your clone and old entries expire (by default after about 90 days), so it is a rescue tool, not a backup.</div>
+  <h3><code>git prune</code> · remove unreachable objects</h3>
+  <p>Deletes objects (commits, trees, blobs) from Git’s database that no branch, tag or reflog entry can reach any more. It is normally run for you by <code>git gc</code>, so you rarely need it directly.</p>
+  <pre><code class="language-bash">git prune</code></pre>
+  <h3><code>git help</code> · built-in documentation</h3>
+  <pre><code class="language-bash">git help &lt;command&gt;    # full manual page, e.g. git help commit
+git help -a           # list all available Git commands</code></pre>
+</section>
+
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Working directory</dt><dd>The project files on your disk that you edit; changes here are not saved in Git until staged and committed.</dd></div>
+    <div><dt>Untracked file</dt><dd>A file in the working directory that Git has never been told to track with <code>git add</code>.</dd></div>
+    <div><dt>Hash</dt><dd>The unique ID Git gives every commit, a long hexadecimal string usually shortened to its first 7 characters.</dd></div>
+    <div><dt>HEAD</dt><dd>Git’s pointer to where you are now, normally the current branch and through it that branch’s newest commit.</dd></div>
+    <div><dt>Detached HEAD</dt><dd>The state after checking out a commit directly instead of a branch; new commits made here are easy to lose.</dd></div>
+    <div><dt>origin</dt><dd>The default name Git gives the remote repository you cloned from.</dd></div>
+    <div><dt>git fetch</dt><dd>Downloads new commits from a remote into your local repository without changing your current branch.</dd></div>
+    <div><dt>git pull</dt><dd>A fetch followed by a merge: brings remote commits into your current branch.</dd></div>
+    <div><dt>Merge commit</dt><dd>A commit with two parents that joins two lines of history, created by <code>git merge</code>.</dd></div>
+    <div><dt>Rebase</dt><dd>Replaying a branch’s commits on top of another branch to produce a straight-line history; it rewrites those commits.</dd></div>
+    <div><dt>Squash</dt><dd>Combining several commits into one, e.g. with <code>git merge --squash</code> or interactive rebase.</dd></div>
+    <div><dt>Cherry-pick</dt><dd>Applying one specific commit from another branch onto the current branch.</dd></div>
+    <div><dt>Stash</dt><dd>A temporary shelf for uncommitted changes, so you can switch tasks with a clean working directory.</dd></div>
+    <div><dt>Revert</dt><dd>Undoing a commit by adding a new commit with the opposite changes, without rewriting history.</dd></div>
+    <div><dt>Reflog</dt><dd>A local log of every move of HEAD and branches, used to recover commits lost by resets or rebases.</dd></div>
+  </dl>
+</section>
+
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>You edited <code>app.py</code> and ran <code>git add app.py</code>. Which command shows the change you just staged?</p>
+      <ol><li><code>git diff</code></li><li><code>git diff --staged</code></li><li><code>git log</code></li><li><code>git status -v --all</code></li></ol>
+      <p class="why">Plain <code>git diff</code> shows only unstaged changes. Staged changes are compared to the last commit with <code>--staged</code>.</p></div>
+    <div class="q" data-answer="4"><p>What does <code>git pull</code> do?</p>
+      <ol><li>Uploads your commits</li><li>Only downloads commits, never changes your branch</li><li>Creates a copy of a remote repository</li><li>Fetches remote commits and merges them into your current branch</li></ol>
+      <p class="why">Pull = fetch + merge. Fetch alone downloads without touching your branch; clone makes a new copy; push uploads.</p></div>
+    <div class="q" data-answer="1"><p>A bad commit is already pushed to <code>main</code>, which the whole team uses. What is the safe way to undo it?</p>
+      <ol><li><code>git revert &lt;hash&gt;</code></li><li><code>git reset --hard &lt;hash&gt;</code> then push</li><li><code>git clean -f</code></li><li><code>git rebase main</code></li></ol>
+      <p class="why">Revert adds a new opposite commit and leaves history intact. Resetting a shared branch rewrites history everyone already has.</p></div>
+    <div class="q" data-answer="3"><p>After <code>git reset --soft HEAD^</code>, where are the changes from the undone commit?</p>
+      <ol><li>Deleted</li><li>In the working directory, unstaged</li><li>Still staged, ready to commit again</li><li>In the stash</li></ol>
+      <p class="why"><code>--soft</code> only moves the branch pointer, so the changes stay staged. <code>--mixed</code> would unstage them and <code>--hard</code> would discard them.</p></div>
+    <div class="q" data-answer="2"><p>Your feature work is half done and you must quickly fix a bug on <code>main</code>. What do you run first?</p>
+      <ol><li><code>git reset --hard</code></li><li><code>git stash</code></li><li><code>git clean -fd</code></li><li><code>git tag wip</code></li></ol>
+      <p class="why">Stash shelves the unfinished changes and cleans the working directory; <code>git stash pop</code> brings them back later. The other options would destroy or ignore the work.</p></div>
+    <div class="q" data-answer="3"><p>How is <code>git rebase main</code> (run on <code>feature</code>) different from <code>git merge feature</code> (run on <code>main</code>)?</p>
+      <ol><li>Rebase deletes the feature commits</li><li>Merge rewrites existing commits</li><li>Rebase replays feature’s commits on top of main for a straight history</li><li>There is no difference</li></ol>
+      <p class="why">Rebase creates new copies of the feature commits after main’s tip. Merge keeps commits unchanged and adds a merge commit.</p></div>
+    <div class="q" data-answer="4"><p>You want just one bug-fix commit from <code>release</code> on your branch, not the whole branch. Which command?</p>
+      <ol><li><code>git merge release</code></li><li><code>git rebase release</code></li><li><code>git pull release</code></li><li><code>git cherry-pick &lt;hash&gt;</code></li></ol>
+      <p class="why">Cherry-pick applies a single chosen commit. The others bring in every commit from the branch.</p></div>
+    <div class="q" data-answer="1"><p>Which commit message follows the convention best?</p>
+      <ol><li><code>fix: Prevent crash when cart is empty</code></li><li><code>fixed stuff</code></li><li><code>Fix: prevented the crash.</code></li><li><code>update</code></li></ol>
+      <p class="why">It has a type, a colon and space, and a short imperative subject with no full stop. The others are vague or use past tense and a full stop.</p></div>
+    <div class="q" data-answer="2"><p>After a <code>git reset --hard</code> you realise you needed the commit you threw away. Where can you find its hash?</p>
+      <ol><li><code>git log</code> on main</li><li><code>git reflog</code></li><li><code>git stash list</code></li><li>It is gone forever</li></ol>
+      <p class="why">The reset moved main, so <code>git log</code> no longer shows the commit, but the reflog recorded where HEAD was before the reset.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">You <b>add</b> and <b>commit</b> to save snapshots, read them with <b>log</b> and <b>diff</b>, share them with <b>pull</b> and <b>push</b>, isolate work on <b>branches</b> and combine it with <b>merge</b> or <b>rebase</b>, and undo safely with <b>stash</b>, <b>reset</b>, <b>revert</b> and the <b>reflog</b> as your safety net.</p>
+  <p>Next up: this module wraps here. Continue with the Web &amp; HTML module, starting with HTML Syntax and Structure, and put your first web page under Git from day one.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

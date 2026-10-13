@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Essential Text Filters · Linux | AIFDE Notes</title>
+<meta name="description" content="Count, sort, de-duplicate, slice and transform text with wc, sort, uniq, cut and tr, with sample input files and the exact output of every command.">
+<meta name="keywords" content="wc, sort, uniq, cut, tr, text filters, characters vs bytes">
+<meta name="date" content="2026-09-07">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/text-filters">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Essential Text Filters</h1>
+  <p class="byline">Count, sort, de-duplicate, slice and transform text with five tiny tools: <code>wc</code>, <code>sort</code>, <code>uniq</code>, <code>cut</code> and <code>tr</code>.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why text filters matter</h2>
+  <p><b>The rule of Linux: almost everything is text.</b> The settings that run the system are text files. The diaries the system keeps (<b>logs</b>) are text. Even the answers you get after typing a command are just text.</p>
+  <p><b>The problem: information overload.</b> Those files grow huge. Finding one error in tens of thousands of lines by reading is simply not possible.</p>
+  <p><b>The solution: text filters</b>, small programs that act like smart reading assistants. They take a big chunk of text, process it (search, sort, chop it up) according to your instructions, and hand back only the pieces you care about.</p>
+  <div class="story"><b class="lbl">The water filter</b>Tap water goes in, the filter cleans it, clean water comes out. The filter doesn’t make water; it only changes what passes through. <mark>A text filter takes text in, processes it, and prints the result. It never creates text of its own.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Text goes in, a filter such as sort, uniq, cut, tr or wc processes it, processed text comes out on the screen">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="60" width="180" height="90" rx="12"/>
+        <path class="box f-yellow" d="M270 50 L 450 50 L 410 160 L 310 160 Z"/>
+        <rect class="box f-green" x="520" y="70" width="180" height="70" rx="12"/>
+        <path class="ln" d="M205 105 L 285 105" marker-end="url(#ah)"/>
+        <path class="lr" d="M435 105 L 512 105" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="110" y="100" text-anchor="middle">text in</text>
+      <text class="ts" x="110" y="128" text-anchor="middle">file or another command</text>
+      <text class="th" x="360" y="96" text-anchor="middle">filter</text>
+      <text class="tm" x="360" y="126" text-anchor="middle">wc sort uniq</text>
+      <text class="tm" x="360" y="148" text-anchor="middle">cut tr</text>
+      <text class="th" x="610" y="112" text-anchor="middle">result</text>
+      <text class="ts" x="360" y="186" text-anchor="middle">the original file is never changed</text>
+    </svg></div>
+    <figcaption>Every filter in this note has the same shape: input → process → output.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1. Takes text</h4><p>From a file, or from another command through a pipe <code>|</code>.</p></div>
+    <div class="card t7 tilt-b"><h4>2. Processes it</h4><p>Counts, sorts, removes duplicates, cuts out parts, or swaps characters.</p></div>
+    <div class="card t2 tilt-a"><h4>3. Shows the result</h4><p>Prints to the screen. Your original file stays untouched.</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="wc">
+  <h2><code>wc</code> · measure your text</h2>
+  <p><code>wc</code> stands for <b>word count</b>, but that name is modest. Think of it as a quick <b>measuring tape</b> for text: it counts <b>lines</b>, <b>words</b>, <b>characters</b> and <b>bytes</b>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">wc filename</code></pre></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">file1.txt</span><pre><code class="language-plaintext">Linux is powerful
+Linux is secure
+Linux is fast</code></pre></div>
+    <div><pre><code class="language-bash">wc file1.txt</code></pre>
+    <pre class="out"><code> 3  9 48 file1.txt</code></pre></div>
+  </div>
+  <div class="anatomy"><span class="a1">3</span> <span class="a2">9</span> <span class="a3">48</span> <span class="a4">file1.txt</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>lines</p></div>
+    <div><span class="sw a2"></span><p>words</p></div>
+    <div><span class="sw a3"></span><p>bytes (17 + 15 + 13 visible characters, plus one invisible newline at the end of each line)</p></div>
+    <div><span class="sw a4"></span><p>file name</p></div>
+  </div>
+  <div class="sticky info l"><strong>The invisible newline</strong> Every time you press <kbd>Enter</kbd>, the file stores a hidden <b>newline</b> character (<code>\n</code>). It counts as one character and one byte. That is why byte counts are a little bigger than the letters you can see.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="wc-options">
+  <h2>Counting one thing at a time</h2>
+  <p>Options make <code>wc</code> print just one number:</p>
+  <div class="tbl"><table>
+    <tr><th>Option</th><th>Counts</th><th>Sample file</th><th>Command</th><th>Output</th></tr>
+    <tr><td><code>-l</code></td><td><b>lines</b> (how many times Enter was pressed)</td><td><code>todo.txt</code>: Buy milk / Clean room / Call Mom</td><td><code>wc -l todo.txt</code></td><td><code>3 todo.txt</code></td></tr>
+    <tr><td><code>-w</code></td><td><b>words</b> (groups of characters separated by spaces)</td><td><code>note.txt</code>: Linux is very cool</td><td><code>wc -w note.txt</code></td><td><code>4 note.txt</code></td></tr>
+    <tr><td><code>-m</code></td><td><b>characters</b> (letters, digits, spaces, punctuation, newlines)</td><td><code>hi.txt</code>: Hello World!</td><td><code>wc -m hi.txt</code></td><td><code>13 hi.txt</code></td></tr>
+    <tr><td><code>-c</code></td><td><b>bytes</b> (how much space the text takes)</td><td><code>data.txt</code>: Hello world</td><td><code>wc -c data.txt</code></td><td><code>12 data.txt</code></td></tr>
+  </table></div>
+  <p><code>Hello World!</code> has 12 visible characters (H-e-l-l-o, a space, W-o-r-l-d, !). <code>wc -m</code> says 13 because the newline at the end of the line counts too. Likewise <code>Hello world</code> is 11 letters and a space… 11 visible characters + newline = 12 bytes.</p>
+  <h3>Characters vs bytes</h3>
+  <p>They are not always a 1-to-1 match. <mark>One character on screen can need several bytes of storage.</mark></p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Normal English text</h4><p>A, b, 7, !, space: <b>1 character = 1 byte</b>, so <code>-m</code> and <code>-c</code> agree.</p></div>
+    <div class="card t4 tilt-b"><h4>Special text</h4><p>Accented letters, Hindi script, symbols and emojis (😀) take <b>2 to 4 bytes</b> each in UTF-8, so <code>-c</code> is bigger than <code>-m</code>.</p></div>
+  </div>
+  <pre><code class="language-bash">echo "😀" | wc -m     # 2  (the emoji + newline)
+echo "😀" | wc -c     # 5  (4 bytes for the emoji + 1 for newline)</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="wc-more">
+  <h2><code>wc</code> with several files and with pipes</h2>
+  <h3>Several files at once</h3>
+  <p>Like putting items on a weighing scale one by one and reading the <b>total</b> at the end:</p>
+  <pre><code class="language-bash">wc file1.txt file2.txt</code></pre>
+  <pre class="out"><code>  10   50  300 file1.txt
+  20   70  500 file2.txt
+  30  120  800 total</code></pre>
+  <p>Each file gets its own row (lines, words, bytes), and the last row, <b>total</b>, adds them up.</p>
+
+  <h3>With a pipe <code>|</code></h3>
+  <p>The pipe acts like a tunnel that sends one command’s output straight into <code>wc</code> to be counted:</p>
+  <div class="flow"><span class="op">command</span><span class="op">|</span><span class="op">wc</span><span class="ok">result</span></div>
+  <div class="cmd"><p class="what">How many items are in this folder?</p>
+  <pre><code class="language-bash">ls | wc -l</code></pre></div>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b><code>ls</code></b>lists your files, one per line when sent into a pipe.</div></li>
+    <li><span class="dot">2</span><div><b><code>|</code></b>sends that list to the counter instead of the screen.</div></li>
+    <li><span class="dot">3</span><div><b><code>wc -l</code></b>counts the lines, and each line is one file.</div></li>
+  </ol>
+  <div class="two">
+    <div class="codebox"><span class="cap">file.txt</span><pre><code class="language-plaintext">Linux is powerful
+Linux is secure</code></pre></div>
+    <div><pre><code class="language-bash">cat file.txt | wc -w</code></pre>
+    <pre class="out"><code>6</code></pre></div>
+  </div>
+  <p><code>cat</code> reads the text, <code>|</code> sends it through the tunnel, and <code>wc -w</code> counts every word. When <code>wc</code> reads from a pipe, it prints no file name.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="sort">
+  <h2><code>sort</code> · put lines in order</h2>
+  <p>Data usually arrives in a messy, first-come-first-served order: names, prices, log events, user IDs. <code>sort</code> is the <b>“Sort A to Z” button</b> for your command line.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">sort filename</code></pre></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">names.txt</span><pre><code class="language-plaintext">Zebra
+Apple
+Monkey
+Banana</code></pre></div>
+    <div><pre><code class="language-bash">sort names.txt</code></pre>
+    <pre class="out"><code>Apple
+Banana
+Monkey
+Zebra</code></pre></div>
+  </div>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Human readability</h4><p>Finding “Banana” in an alphabetical list is much easier than in a random one.</p></div>
+    <div class="card t5 tilt-b"><h4>Other tools need it</h4><p>Many Linux tools, like <code>uniq</code> below, only work properly on sorted data.</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="sort-options">
+  <h2>Numbers, reverse and unique: <code>-n</code>, <code>-r</code>, <code>-u</code></h2>
+  <h3>Numeric sort <code>-n</code></h3>
+  <p>Plain <code>sort</code> compares text character by character, so it thinks <b>10</b> comes before <b>2</b> (because “1” comes before “2”). <code>-n</code> tells it to compare whole numbers by value.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Plain sort orders 10, 2, 50, 1 as 1, 10, 2, 50 by first character; sort -n orders them by value as 1, 2, 10, 50">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="40" width="130" height="160" rx="12"/>
+        <rect class="box f-orange" x="290" y="40" width="130" height="160" rx="12"/>
+        <rect class="box f-green" x="570" y="40" width="130" height="160" rx="12"/>
+        <path class="lr" d="M155 90 L 284 90" marker-end="url(#ahr)"/>
+        <path class="lb" d="M155 150 C 300 215, 450 215, 564 150" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="85" y="28" text-anchor="middle">numbers.txt</text>
+      <text class="tm" x="85" y="80" text-anchor="middle">10</text>
+      <text class="tm" x="85" y="112" text-anchor="middle">2</text>
+      <text class="tm" x="85" y="144" text-anchor="middle">50</text>
+      <text class="tm" x="85" y="176" text-anchor="middle">1</text>
+      <text class="tr" x="220" y="76" text-anchor="middle">sort</text>
+      <text class="tm" x="355" y="80" text-anchor="middle">1</text>
+      <text class="tm" x="355" y="112" text-anchor="middle">10</text>
+      <text class="tm" x="355" y="144" text-anchor="middle">2</text>
+      <text class="tm" x="355" y="176" text-anchor="middle">50</text>
+      <text class="ts" x="355" y="28" text-anchor="middle">by first character ✗</text>
+      <text class="tb" x="470" y="186" text-anchor="middle">sort -n</text>
+      <text class="tm" x="635" y="80" text-anchor="middle">1</text>
+      <text class="tm" x="635" y="112" text-anchor="middle">2</text>
+      <text class="tm" x="635" y="144" text-anchor="middle">10</text>
+      <text class="tm" x="635" y="176" text-anchor="middle">50</text>
+      <text class="ts" x="635" y="28" text-anchor="middle">by value ✓</text>
+    </svg></div>
+    <figcaption>Always add <code>-n</code> when sorting numbers.</figcaption>
+  </figure>
+  <pre><code class="language-bash">sort numbers.txt       # 1 10 2 50  (text order)
+sort -n numbers.txt    # 1 2 10 50  (numeric order)</code></pre>
+
+  <h3>Reverse sort <code>-r</code></h3>
+  <p>Flips the order: Z to A, or 10 to 1.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">Apple
+Banana
+Cherry</code></pre></div>
+    <div><pre><code class="language-bash">sort -r fruits.txt</code></pre>
+    <pre class="out"><code>Cherry
+Banana
+Apple</code></pre></div>
+  </div>
+
+  <h3>Combine them: <code>-nr</code></h3>
+  <p>Options can be joined. Largest number first, e.g. prices from most to least expensive:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">points.txt</span><pre><code class="language-plaintext">10
+50
+25</code></pre></div>
+    <div><pre><code class="language-bash">sort -nr points.txt</code></pre>
+    <pre class="out"><code>50
+25
+10</code></pre></div>
+  </div>
+
+  <h3>Sort and remove duplicates: <code>-u</code></h3>
+  <p>If a line appears three times, <code>-u</code> (<b>unique</b>) keeps it once. The fastest way to get a clean list.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">members.txt</span><pre><code class="language-plaintext">Alice
+Bob
+Alice
+Charlie
+Bob</code></pre></div>
+    <div><pre><code class="language-bash">sort -u members.txt</code></pre>
+    <pre class="out"><code>Alice
+Bob
+Charlie</code></pre></div>
+  </div>
+  <p>Useful for email lists and usernames, and combined with <code>wc</code> it counts <b>unique</b> people:</p>
+  <pre><code class="language-bash">sort -u members.txt | wc -l</code></pre>
+  <pre class="out"><code>3</code></pre>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="uniq">
+  <h2><code>uniq</code> · remove repeated lines</h2>
+  <p><code>uniq</code> is a <b>duplicate remover</b>, with one important rule: <mark><code>uniq</code> only removes duplicates that are consecutive, right next to each other.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="uniq on apple apple banana apple gives apple banana apple, missing the separated apple. sort first gives apple apple apple banana, then uniq gives apple banana">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="40" width="140" height="150" rx="12"/>
+        <rect class="box f-orange" x="250" y="10" width="160" height="100" rx="12"/>
+        <rect class="box f-blue" x="250" y="130" width="160" height="104" rx="12"/>
+        <rect class="box f-green" x="540" y="140" width="160" height="80" rx="12"/>
+        <path class="lr" d="M165 80 L 244 60" marker-end="url(#ahr)"/>
+        <path class="lb" d="M165 150 L 244 175" marker-end="url(#ahb)"/>
+        <path class="lb" d="M415 180 L 534 180" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="90" y="30" text-anchor="middle">list.txt</text>
+      <text class="tm" x="90" y="76" text-anchor="middle">apple</text>
+      <text class="tm" x="90" y="104" text-anchor="middle">apple</text>
+      <text class="tm" x="90" y="132" text-anchor="middle">banana</text>
+      <text class="tm" x="90" y="160" text-anchor="middle">apple</text>
+      <text class="tr" x="200" y="56" text-anchor="middle">uniq</text>
+      <text class="tm" x="330" y="40" text-anchor="middle">apple</text>
+      <text class="tm" x="330" y="64" text-anchor="middle">banana</text>
+      <text class="tm" x="330" y="88" text-anchor="middle">apple</text>
+      <text class="tr" x="490" y="64">✗ apple still twice</text>
+      <text class="tb" x="200" y="200" text-anchor="middle">sort</text>
+      <text class="tm" x="330" y="156" text-anchor="middle">apple</text>
+      <text class="tm" x="330" y="178" text-anchor="middle">apple</text>
+      <text class="tm" x="330" y="200" text-anchor="middle">apple</text>
+      <text class="tm" x="330" y="222" text-anchor="middle">banana</text>
+      <text class="tb" x="475" y="168" text-anchor="middle">uniq</text>
+      <text class="tm" x="620" y="174" text-anchor="middle">apple</text>
+      <text class="tm" x="620" y="200" text-anchor="middle">banana</text>
+    </svg></div>
+    <figcaption>Sort first so identical lines sit together; then <code>uniq</code> can collapse them.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">list.txt</span><pre><code class="language-plaintext">apple
+apple
+banana
+apple</code></pre></div>
+  <div class="two">
+    <div><pre><code class="language-bash">uniq list.txt</code></pre>
+    <pre class="out"><code>apple
+banana
+apple</code></pre></div>
+    <div><pre><code class="language-bash">sort list.txt | uniq</code></pre>
+    <pre class="out"><code>apple
+banana</code></pre></div>
+  </div>
+  <p>Alone, <code>uniq</code> merged the first two apples (they were touching) but missed the third. That is why you almost always write <code>sort file | uniq</code>.</p>
+
+  <h3>Count duplicates with <code>-c</code></h3>
+  <p><code>-c</code> puts a counter in front of each line showing how many copies were found:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">apple
+apple
+banana
+banana</code></pre></div>
+    <div><pre><code class="language-bash">uniq -c fruits.txt</code></pre>
+    <pre class="out"><code>      2 apple
+      2 banana</code></pre></div>
+  </div>
+  <div class="sticky warn"><strong>Messy file? Sort first.</strong> <code>uniq -c</code> on unsorted data gives several small counts for the same word. Use <code>sort file | uniq -c</code>.</div>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> “Which IPs hit the API most?” <code>cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head</code> gives a ranked top 10 in one line. You’ll use this sort → uniq -c → sort -nr pattern constantly when reading customer logs.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="cut">
+  <h2><code>cut</code> · extract part of every line</h2>
+  <p><code>cut</code> <b>extracts specific parts of text</b>. Instead of showing whole lines, it cuts out only the portion you need, from <b>every</b> line.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cut [option] filename     # option says which part to keep
+cut -c 3 file.txt         # -c = character position: the 3rd character of each line</code></pre></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">file.txt</span><pre><code class="language-plaintext">Apple
+Banana
+Cherry</code></pre></div>
+    <div><pre><code class="language-bash">cut -c 3 file.txt</code></pre>
+    <pre class="out"><code>p
+n
+e</code></pre></div>
+  </div>
+  <p>Apple → 3rd character <b>p</b>; Banana → <b>n</b>; Cherry → <b>e</b>.</p>
+
+  <h3>Counting positions</h3>
+  <p>Positions start at <b>1</b>, not 0. Here is how <code>cut -c</code> sees the line <code>HELLOWORLD</code>:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="HELLOWORLD with positions 1 to 10. Characters 5 to 9 are highlighted, giving OWORL">
+      <g class="rough">
+        <rect class="box f-card" x="110" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-card" x="160" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-card" x="210" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-card" x="260" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-green" x="310" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-green" x="360" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-green" x="410" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-green" x="460" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-green" x="510" y="60" width="50" height="56" rx="6"/>
+        <rect class="box f-card" x="560" y="60" width="50" height="56" rx="6"/>
+        <path class="lb" d="M312 134 L 558 134"/>
+      </g>
+      <text class="ts" x="135" y="48" text-anchor="middle">1</text><text class="ts" x="185" y="48" text-anchor="middle">2</text><text class="ts" x="235" y="48" text-anchor="middle">3</text><text class="ts" x="285" y="48" text-anchor="middle">4</text><text class="ts" x="335" y="48" text-anchor="middle">5</text><text class="ts" x="385" y="48" text-anchor="middle">6</text><text class="ts" x="435" y="48" text-anchor="middle">7</text><text class="ts" x="485" y="48" text-anchor="middle">8</text><text class="ts" x="535" y="48" text-anchor="middle">9</text><text class="ts" x="585" y="48" text-anchor="middle">10</text>
+      <text class="th" x="135" y="98" text-anchor="middle">H</text><text class="th" x="185" y="98" text-anchor="middle">E</text><text class="th" x="235" y="98" text-anchor="middle">L</text><text class="th" x="285" y="98" text-anchor="middle">L</text><text class="th" x="335" y="98" text-anchor="middle">O</text><text class="th" x="385" y="98" text-anchor="middle">W</text><text class="th" x="435" y="98" text-anchor="middle">O</text><text class="th" x="485" y="98" text-anchor="middle">R</text><text class="th" x="535" y="98" text-anchor="middle">L</text><text class="th" x="585" y="98" text-anchor="middle">D</text>
+      <text class="tm" x="40" y="22">position</text>
+      <text class="tb" x="435" y="162" text-anchor="middle">cut -c 5-9  →  OWORL</text>
+    </svg></div>
+    <figcaption>Count from 1. A range <code>5-9</code> includes both ends.</figcaption>
+  </figure>
+
+  <h3>Single position, range, and open ranges</h3>
+  <div class="codebox"><span class="cap">emp.txt</span><pre><code class="language-plaintext">HELLOWORLD
+LINUXSYSTEM
+PROGRAMMING</code></pre></div>
+  <div class="two">
+    <div><pre><code class="language-bash">cut -c 9 emp.txt       # the 9th character</code></pre>
+    <pre class="out"><code>L
+T
+I</code></pre></div>
+    <div><pre><code class="language-bash">cut -c 5-9 emp.txt     # characters 5 to 9</code></pre>
+    <pre class="out"><code>OWORL
+XSYST
+RAMMI</code></pre></div>
+  </div>
+  <p>The 9th characters: HELLOWOR<b>L</b>D → L, LINUXSYS<b>T</b>EM → T, PROGRAMM<b>I</b>NG → I.</p>
+  <div class="tbl"><table>
+    <tr><th>Form</th><th>Meaning</th><th>On <code>HELLOWORLD</code></th><th>Output</th></tr>
+    <tr><td><code>cut -c 3</code></td><td>one position</td><td><code>cut -c 3 text.txt</code></td><td><code>L</code></td></tr>
+    <tr><td><code>cut -c 5-9</code></td><td>from 5 to 9</td><td><code>cut -c 5-9 text.txt</code></td><td><code>OWORL</code></td></tr>
+    <tr><td><code>cut -c 5-</code></td><td>from 5 to the end of the line</td><td><code>cut -c 5- text.txt</code></td><td><code>OWORLD</code></td></tr>
+    <tr><td><code>cut -c -3</code></td><td>from the start up to 3</td><td><code>cut -c -3 text.txt</code></td><td><code>HEL</code></td></tr>
+    <tr><td><code>cut -c 3-5,7-10</code></td><td>several ranges, joined</td><td><code>cut -c 3-5,7-10 text.txt</code></td><td><code>LLOORLD</code></td></tr>
+  </table></div>
+  <p>The last one: characters 3–5 are <b>LLO</b>, characters 7–10 are <b>ORLD</b>, and both are printed together: LLO + ORLD = <b>LLOORLD</b>.</p>
+  <div class="sticky tip"><strong>Columns, not just characters</strong> For data with separators (CSV, <code>/etc/passwd</code>), use <code>-d</code> for the delimiter and <code>-f</code> for the field number: <code>cut -d ',' -f 2 users.csv</code> prints the 2nd comma-separated column; <code>cut -d ':' -f 1 /etc/passwd</code> lists every username.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="tr">
+  <h2><code>tr</code> · translate characters</h2>
+  <p><code>tr</code> stands for <b>translate</b>. It reads text, <b>changes characters</b>, and prints the result. It does <b>not</b> change the original file.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Replace</h4><p>Every <code>a</code> becomes <code>4</code>.</p></div>
+    <div class="card t5 tilt-b"><h4>Convert</h4><p>lowercase → UPPERCASE.</p></div>
+    <div class="card t3 tilt-a"><h4>Delete <code>-d</code></h4><p>Remove symbols or digits.</p></div>
+    <div class="card t8 tilt-b"><h4>Squeeze <code>-s</code></h4><p>“helloooooo” → “hello”.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">tr [options] SET1 SET2    # characters in SET1 are replaced by the matching characters in SET2</code></pre></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 200" role="img" aria-label="tr eo EO maps e to E and o to O position by position, turning hello into hEllO">
+      <g class="rough">
+        <rect class="box f-blue" x="60" y="20" width="70" height="50" rx="10"/>
+        <rect class="box f-blue" x="150" y="20" width="70" height="50" rx="10"/>
+        <rect class="box f-green" x="60" y="130" width="70" height="50" rx="10"/>
+        <rect class="box f-green" x="150" y="130" width="70" height="50" rx="10"/>
+        <path class="lr" d="M95 74 L 95 124" marker-end="url(#ahr)"/>
+        <path class="lr" d="M185 74 L 185 124" marker-end="url(#ahr)"/>
+        <path class="ln" d="M290 100 L 340 100" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="95" y="54" text-anchor="middle">e</text>
+      <text class="th" x="185" y="54" text-anchor="middle">o</text>
+      <text class="th" x="95" y="164" text-anchor="middle">E</text>
+      <text class="th" x="185" y="164" text-anchor="middle">O</text>
+      <text class="ts" x="10" y="50">SET1</text>
+      <text class="ts" x="10" y="160">SET2</text>
+      <text class="tm" x="415" y="80" text-anchor="middle">hello</text>
+      <text class="th" x="415" y="128" text-anchor="middle">hEllO</text>
+    </svg></div>
+    <figcaption>1st of SET1 → 1st of SET2, 2nd → 2nd, and so on.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Job</th><th>Command</th><th>Output</th></tr>
+    <tr><td>Replace one character (a → o)</td><td><code>echo "apple" | tr 'a' 'o'</code></td><td><code>opple</code></td></tr>
+    <tr><td>Replace h → H</td><td><code>echo "hello" | tr 'h' 'H'</code></td><td><code>Hello</code></td></tr>
+    <tr><td>Replace several (e→E, o→O)</td><td><code>echo "hello" | tr 'eo' 'EO'</code></td><td><code>hEllO</code></td></tr>
+    <tr><td>Lowercase → uppercase</td><td><code>echo "linux" | tr 'a-z' 'A-Z'</code></td><td><code>LINUX</code></td></tr>
+    <tr><td>Uppercase → lowercase</td><td><code>echo "LINUX" | tr 'A-Z' 'a-z'</code></td><td><code>linux</code></td></tr>
+    <tr><td>Delete digits</td><td><code>echo "hello123" | tr -d '0-9'</code></td><td><code>hello</code></td></tr>
+    <tr><td>Delete spaces</td><td><code>echo "hello world" | tr -d ' '</code></td><td><code>helloworld</code></td></tr>
+    <tr><td>Squeeze repeats</td><td><code>echo "hellooooo" | tr -s 'o'</code></td><td><code>hello</code></td></tr>
+  </table></div>
+  <p><code>echo "apple"</code> prints the word, the pipe hands it to <code>tr 'a' 'o'</code>, and every <b>a</b> becomes <b>o</b>: apple → opple. Ranges like <code>a-z</code> mean “all 26 lowercase letters”, so <code>tr 'a-z' 'A-Z'</code> is a Caps Lock converter. Lowercasing is handy for standardising data so “Apple” and “apple” are treated the same.</p>
+  <div class="sticky warn l"><strong>tr takes no file name</strong> Unlike the other filters, <code>tr</code> only reads its input stream. Feed it with a pipe (<code>cat names.txt | tr 'a-z' 'A-Z'</code>) or with input redirection (<code>tr 'a-z' 'A-Z' &lt; names.txt</code>). <code>tr 'a-z' 'A-Z' names.txt</code> is an error.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="recap">
+  <h2>The five filters at a glance</h2>
+  <div class="tbl"><table>
+    <tr><th>Filter</th><th>Job</th><th>Key options</th></tr>
+    <tr><td><code>wc</code></td><td>measure text</td><td><code>-l</code> lines, <code>-w</code> words, <code>-m</code> characters, <code>-c</code> bytes</td></tr>
+    <tr><td><code>sort</code></td><td>order lines</td><td><code>-n</code> numeric, <code>-r</code> reverse, <code>-u</code> unique</td></tr>
+    <tr><td><code>uniq</code></td><td>collapse adjacent duplicates</td><td><code>-c</code> count (sort first!)</td></tr>
+    <tr><td><code>cut</code></td><td>keep part of each line</td><td><code>-c</code> positions, <code>-d</code> + <code>-f</code> fields</td></tr>
+    <tr><td><code>tr</code></td><td>change characters</td><td><code>-d</code> delete, <code>-s</code> squeeze</td></tr>
+  </table></div>
+  <p>Each one is small, but chained with <code>|</code> they become powerful:</p>
+  <pre><code class="language-bash">cat words.txt | tr 'A-Z' 'a-z' | sort | uniq -c | sort -nr | head -n 5   # top 5 words, case-insensitive</code></pre>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Text filter</dt><dd>A small program that takes text as input, processes it, and prints the result without changing the original source.</dd></div>
+    <div><dt>wc</dt><dd>Word count: prints the number of lines, words and bytes in text; -l, -w, -m and -c select lines, words, characters or bytes.</dd></div>
+    <div><dt>Newline</dt><dd>The invisible character (\n) stored each time a line ends. It counts as one character and one byte in wc.</dd></div>
+    <div><dt>Characters vs bytes</dt><dd>A character is one visible symbol; a byte is a unit of storage. English letters use 1 byte, but emojis and many scripts use 2 to 4 bytes per character.</dd></div>
+    <div><dt>sort</dt><dd>Prints lines in order: alphabetical by default, numeric with -n, reversed with -r, and de-duplicated with -u.</dd></div>
+    <div><dt>uniq</dt><dd>Collapses consecutive identical lines into one; -c shows how many copies there were. Usually used after sort.</dd></div>
+    <div><dt>cut</dt><dd>Extracts part of every line: by character position with -c, or by field with -d (delimiter) and -f (field number).</dd></div>
+    <div><dt>tr</dt><dd>Translate: replaces characters in SET1 with those in SET2, deletes with -d, or squeezes repeats with -s. Reads only from its input stream.</dd></div>
+    <div><dt>Pipe (|)</dt><dd>Sends the output of one command directly into the input of the next, so filters can be chained.</dd></div>
+  </dl>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Which command tells you how many lines are in <code>app.log</code>?</p>
+      <ol><li><code>wc -w app.log</code></li><li><code>wc -l app.log</code></li><li><code>wc -c app.log</code></li><li><code>sort -l app.log</code></li></ol>
+      <p class="why"><code>-l</code> counts lines; <code>-w</code> counts words; <code>-c</code> counts bytes.</p></div>
+    <div class="q" data-answer="4"><p>A file holds 10, 2, 50, 1 (one per line). What does plain <code>sort</code> print?</p>
+      <ol><li>1 2 10 50</li><li>50 10 2 1</li><li>10 2 50 1</li><li>1 10 2 50</li></ol>
+      <p class="why">Without <code>-n</code>, sort compares text character by character, so “10” comes before “2”.</p></div>
+    <div class="q" data-answer="1"><p>Why do we usually write <code>sort file | uniq</code> instead of just <code>uniq file</code>?</p>
+      <ol><li>uniq only removes duplicates that are next to each other</li><li>uniq can’t read files</li><li>sort makes uniq faster but isn’t needed</li><li>uniq deletes the file otherwise</li></ol>
+      <p class="why">uniq compares each line with the one before it. Sorting brings identical lines together.</p></div>
+    <div class="q" data-answer="3"><p>What does <code>cut -c 2-4</code> print for the line <code>LINUX</code>?</p>
+      <ol><li><code>LIN</code></li><li><code>NUX</code></li><li><code>INU</code></li><li><code>IN</code></li></ol>
+      <p class="why">Positions start at 1: L1 I2 N3 U4 X5. Characters 2 to 4 are I, N, U.</p></div>
+    <div class="q" data-answer="2"><p>What is the output of <code>echo "banana" | tr 'a' 'o'</code>?</p>
+      <ol><li><code>bonana</code></li><li><code>bonono</code></li><li><code>banana</code></li><li><code>bnn</code></li></ol>
+      <p class="why">tr replaces every matching character, not just the first.</p></div>
+    <div class="q" data-answer="4"><p><code>wc -m</code> and <code>wc -c</code> give different numbers for a file. What is the most likely reason?</p>
+      <ol><li>The file is corrupted</li><li>The file has blank lines</li><li>wc counts spaces only in -m</li><li>The file contains characters that take more than one byte, like emojis</li></ol>
+      <p class="why">-m counts characters and -c counts bytes. They match only when every character is 1 byte.</p></div>
+    <div class="q" data-answer="1"><p>Which shows the highest score first from a file of numbers?</p>
+      <ol><li><code>sort -nr scores.txt</code></li><li><code>sort -r scores.txt</code></li><li><code>sort -u scores.txt</code></li><li><code>uniq -c scores.txt</code></li></ol>
+      <p class="why">-n compares by value and -r reverses, so the biggest comes first. -r alone would compare as text.</p></div>
+    <div class="q" data-answer="3"><p>Which command removes all digits from text?</p>
+      <ol><li><code>tr -s '0-9'</code></li><li><code>cut -c 0-9</code></li><li><code>tr -d '0-9'</code></li><li><code>sort -u</code></li></ol>
+      <p class="why"><code>tr -d</code> deletes every character in the set; <code>-s</code> only squeezes repeats.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Text filters take text in and print a processed version: <b>wc</b> measures it, <b>sort</b> orders it, <b>uniq</b> removes adjacent repeats, <b>cut</b> keeps just the part you need, and <b>tr</b> swaps or deletes characters.</p>
+  <p>Next up: Pipes &amp; Redirection, where you learn exactly how <code>|</code>, <code>&gt;</code>, <code>&gt;&gt;</code> and <code>2&gt;</code> connect these filters into pipelines and save their results to files.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pydantic: Validating Data · Python Advanced &amp; FastAPI | AIFDE Notes</title>
+<meta name="description" content="Check data before your program uses it with Pydantic v2: BaseModel, field types, required and optional fields, EmailStr, Field() rules, strict mode, field and model validators, computed fields, nested models and model_dump().">
+<meta name="keywords" content="Pydantic, BaseModel, ValidationError, Field(), field_validator, model_validator, computed_field, model_dump">
+<meta name="date" content="2026-10-06">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-advanced/pydantic">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Pydantic: Validating Data</h1>
+  <p class="byline">Describe your data once as a class, and let Pydantic check every piece of data at the door, so the rest of your code can trust it.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="problem">
+  <h2>The problem: Python does not check data types</h2>
+  <div class="story"><b class="lbl">The TTE on the train</b>On an Indian train, the ticket checker (TTE) checks every passenger once, at the start. After that, nobody in the coach asks you for your ticket again. Without a TTE, every passenger would have to check every other passenger, all the time. <mark>Pydantic is the TTE for your data: it checks once, at the entrance, and everything after that can trust it.</mark></div>
+  <p>Through this note we build one running example: a shipment-booking system for a logistics company called <b>SwiftCargo</b>.</p>
+  <div class="flow"><span>The problem</span><span>Models</span><span>Field types</span><span>Required / optional</span><span>EmailStr, AnyUrl</span><span>Field() rules</span><span>Validators</span><span>Computed &amp; nested</span><span class="ok">Export</span></div>
+  <p>Python lets a variable hold any type of value and never stops you from mixing types. That is fine for small scripts, but it causes real trouble once other people start calling your functions. Here is a function SwiftCargo might use to register a shipment:</p>
+  <pre><code class="language-python">def register_shipment(sender_name, packages_count):
+    print(f"{sender_name} is shipping {packages_count} package(s)")
+
+register_shipment("Rohan Mehta", "three")</code></pre>
+  <pre class="out"><code>Rohan Mehta is shipping three package(s)</code></pre>
+  <p>Python runs this without complaint, even though <code>"three"</code> is text, not a number. If a later part of the program does maths with <code>packages_count</code> (say, adding up packages across many shipments), it crashes there, and it is hard to trace the problem back to here.</p>
+
+  <h3>Type hints don't fix it</h3>
+  <pre><code class="language-python">def register_shipment(sender_name: str, packages_count: int):
+    print(f"{sender_name} is shipping {packages_count} package(s)")
+
+register_shipment("Rohan Mehta", "three")</code></pre>
+  <pre class="out"><code>Rohan Mehta is shipping three package(s)</code></pre>
+  <p>Same result. Type hints in plain Python are <b>notes for humans and code editors</b>. Python ignores them while running the code.</p>
+
+  <h3>Manual checks work, but don't scale</h3>
+  <pre><code class="language-python">def register_shipment(sender_name, packages_count):
+    if not isinstance(sender_name, str) or not isinstance(packages_count, int):
+        raise TypeError("Invalid data type")
+    print(f"{sender_name} is shipping {packages_count} package(s)")
+
+register_shipment("Rohan Mehta", "three")</code></pre>
+  <pre class="out"><code>TypeError: Invalid data type</code></pre>
+  <p>This works, but every function that uses shipment data would need the same checks copied in, which makes the code messy and easy to break. And there is a second problem: <code>packages_count</code> could be <code>-5</code>. It is an <code>int</code>, but it makes no real-world sense.</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Type checking</h4><p>Is it the <b>right kind</b> of value? <code>"three"</code> is not an int.</p></div>
+    <div class="card t4 tilt-b"><h4>Value validation</h4><p>Does the value <b>make sense</b>? <code>-5</code> is an int, but not a valid package count.</p></div>
+  </div>
+  <p>These are two separate problems, and <mark>Pydantic takes both off your hands</mark>.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what">
+  <h2>What Pydantic actually does</h2>
+  <p>Pydantic lets you <b>describe your data once, as a class</b>, and then automatically checks any data you give it against that description. If the data is wrong, it stops immediately with a clear error instead of letting bad data slip through silently.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Raw data arrives at a guard (the Pydantic model). Good data passes through to your code as a safe object; bad data is stopped with a ValidationError.">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="40" width="170" height="74" rx="12"/>
+        <rect class="box f-yellow" x="20" y="150" width="170" height="74" rx="12"/>
+        <rect class="box f-purple" x="262" y="24" width="196" height="216" rx="18"/>
+        <rect class="box f-green" x="530" y="40" width="170" height="74" rx="12"/>
+        <rect class="box f-orange" x="530" y="150" width="170" height="74" rx="12"/>
+        <path class="ln" d="M194 78 L 256 98" marker-end="url(#ah)"/>
+        <path class="ln" d="M194 186 L 256 166" marker-end="url(#ah)"/>
+        <path class="lb" d="M462 98 L 524 78" marker-end="url(#ahb)"/>
+        <path class="lr" d="M462 166 L 524 186" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="105" y="66" text-anchor="middle">raw data</text>
+      <text class="tm" x="105" y="94" text-anchor="middle">count = 3</text>
+      <text class="ts" x="105" y="176" text-anchor="middle">raw data</text>
+      <text class="tm" x="105" y="204" text-anchor="middle">count = "three"</text>
+      <text class="th" x="360" y="70" text-anchor="middle">The guard</text>
+      <text class="ts" x="360" y="96" text-anchor="middle">your BaseModel class</text>
+      <text class="t" x="360" y="140" text-anchor="middle">right type?</text>
+      <text class="t" x="360" y="168" text-anchor="middle">sensible value?</text>
+      <text class="t" x="360" y="196" text-anchor="middle">nothing missing?</text>
+      <text class="t" x="615" y="74" text-anchor="middle">Your code</text>
+      <text class="ts" x="615" y="98" text-anchor="middle">gets a safe object</text>
+      <text class="t" x="615" y="184" text-anchor="middle">ValidationError</text>
+      <text class="ts" x="615" y="208" text-anchor="middle">stopped at the door</text>
+    </svg></div>
+    <figcaption>A Pydantic model stands at the door: data is checked once, on the way in.</figcaption>
+  </figure>
+  <p>Using Pydantic always follows the same three steps:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Describe</b>Write your data as a class, called a <b>model</b>.</div></li>
+    <li><span class="dot">2</span><div><b>Feed</b>Pass real data into that class. <mark>This is where the checking happens.</mark></div></li>
+    <li><span class="dot">3</span><div><b>Use</b>Pass the checked, safe object anywhere in your code. <span class="tag">→ no more checks needed</span></div></li>
+  </ol>
+  <h3>Installing Pydantic</h3>
+  <pre><code class="language-bash">pip install pydantic                # first install
+pip install --upgrade pydantic      # if you already have an old version</code></pre>
+  <div class="sticky info"><strong>Always use version 2.</strong> Pydantic has two major versions. Version 2 is much faster (its core is written in Rust) and its method names differ from v1 (<code>model_dump()</code> instead of <code>dict()</code>, <code>field_validator</code> instead of <code>validator</code>). Every example here is Pydantic v2. Check yours with <code>python -c "import pydantic; print(pydantic.VERSION)"</code>.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="first-model">
+  <h2>Building your first model</h2>
+  <p>A Pydantic model is a normal Python class that inherits from <code>BaseModel</code>. Each field is a name with a type hint:</p>
+  <pre><code class="language-python">from pydantic import BaseModel
+
+class ShipmentBooking(BaseModel):
+    sender_name: str
+    packages_count: int</code></pre>
+  <p>That is the whole description: a booking must have a <code>sender_name</code> (text) and a <code>packages_count</code> (a whole number).</p>
+  <h3>Create an object from real data</h3>
+  <pre><code class="language-python">data = {"sender_name": "Rohan Mehta", "packages_count": 3}
+shipment1 = ShipmentBooking(**data)     # ** unpacks the dict into keyword arguments
+print(shipment1)</code></pre>
+  <pre class="out"><code>sender_name='Rohan Mehta' packages_count=3</code></pre>
+  <p>Now send bad data:</p>
+  <pre><code class="language-python">bad_data = {"sender_name": "Rohan Mehta", "packages_count": "three"}
+shipment2 = ShipmentBooking(**bad_data)</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+packages_count
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='three', input_type=str]</code></pre>
+  <p>We wrote no checking code. Pydantic did it automatically, just from the type in the class.</p>
+  <div class="sticky tip l"><strong>Reading a ValidationError</strong> Line 1 says how many errors and which model. Then, for each error: the <b>field name</b>, a plain-English <b>message</b>, and in brackets the error <b>type</b> and the bad <b>input</b>. Real output also ends with a link to the Pydantic docs for that error type; we leave it out in these notes.</div>
+  <h3>Use the checked object</h3>
+  <pre><code class="language-python">def register_shipment(shipment: ShipmentBooking):
+    print(f"Registered: {shipment.sender_name}, {shipment.packages_count} package(s)")
+
+register_shipment(shipment1)</code></pre>
+  <pre class="out"><code>Registered: Rohan Mehta, 3 package(s)</code></pre>
+  <p><code>register_shipment()</code> checks nothing itself. It trusts <code>shipment</code> because Pydantic already validated it. An <code>update_shipment()</code> function could accept the same <code>ShipmentBooking</code> type, again with no repeated checking code.</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="field-types">
+  <h2>Field types: numbers, flags, lists and dictionaries</h2>
+  <p>A model can mix any Python types, such as <code>str</code>, <code>int</code>, <code>float</code> and <code>bool</code>. Pydantic checks each field against its own type.</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    sender_name: str
+    packages_count: int
+    package_weight_kg: float
+    is_fragile: bool
+
+data = {
+    "sender_name": "Rohan Mehta",
+    "packages_count": 3,
+    "package_weight_kg": 12.5,
+    "is_fragile": True
+}
+shipment1 = ShipmentBooking(**data)
+print(shipment1)</code></pre>
+  <pre class="out"><code>sender_name='Rohan Mehta' packages_count=3 package_weight_kg=12.5 is_fragile=True</code></pre>
+
+  <h3>Lists and dictionaries: say what goes inside</h3>
+  <p>Sometimes a field holds several values, like a list of handling instructions or key-value details about the package. If you write plain <code>list</code> or <code>dict</code>, Pydantic only checks the <b>container</b>, not what is inside it:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    handling_notes: list      # only checks it's a list, not what's inside
+    package_meta: dict        # only checks it's a dict, not what's inside</code></pre>
+  <p>To check the items too, use <code>List</code> and <code>Dict</code> from the <code>typing</code> module and name the item types:</p>
+  <pre><code class="language-python">from typing import List, Dict
+from pydantic import BaseModel
+
+class ShipmentBooking(BaseModel):
+    sender_name: str
+    handling_notes: List[str]
+    package_meta: Dict[str, str]
+
+data = {
+    "sender_name": "Rohan Mehta",
+    "handling_notes": ["Keep upright", "Do not stack"],
+    "package_meta": {"customs_code": "CN2201", "insurance_number": "INS7788"}
+}
+shipment1 = ShipmentBooking(**data)
+print(shipment1)</code></pre>
+  <pre class="out"><code>sender_name='Rohan Mehta' handling_notes=['Keep upright', 'Do not stack'] package_meta={'customs_code': 'CN2201', 'insurance_number': 'INS7788'}</code></pre>
+  <p><code>List[str]</code> means “a list where <b>every</b> item must be text”. Put a number inside and Pydantic rejects it, pointing at the exact position:</p>
+  <pre class="out"><code>1 validation error for ShipmentBooking
+handling_notes.1
+  Input should be a valid string [type=string_type, input_value=5, input_type=int]</code></pre>
+  <p>Plain <code>list</code> would have let <code>["Keep upright", 5]</code> straight through.</p>
+  <div class="sticky info l"><strong>Shorter spelling</strong> On Python 3.9 and newer you can also write the built-in names directly: <code>list[str]</code> and <code>dict[str, str]</code>. They mean exactly the same as <code>List[str]</code> and <code>Dict[str, str]</code>.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="required-optional">
+  <h2>Required fields, optional fields and defaults</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Three kinds of field: required (no default, missing means error), optional (Optional type with default None, missing means None), default (a normal default value, missing means that value)">
+      <g class="rough">
+        <rect class="box f-orange" x="15" y="20" width="215" height="190" rx="16"/>
+        <rect class="box f-blue" x="252" y="20" width="215" height="190" rx="16"/>
+        <rect class="box f-green" x="489" y="20" width="215" height="190" rx="16"/>
+        <path class="ln dash" d="M35 140 L 210 140"/>
+        <path class="ln dash" d="M272 140 L 447 140"/>
+        <path class="ln dash" d="M509 140 L 684 140"/>
+      </g>
+      <text class="th" x="122" y="60" text-anchor="middle">Required</text>
+      <text class="th" x="359" y="60" text-anchor="middle">Optional</text>
+      <text class="th" x="596" y="60" text-anchor="middle">Default</text>
+      <text class="tm" x="122" y="100" text-anchor="middle">x: str</text>
+      <text class="tm" x="359" y="94" text-anchor="middle">x: Optional[str]</text>
+      <text class="tm" x="359" y="118" text-anchor="middle">= None</text>
+      <text class="tm" x="596" y="94" text-anchor="middle">x: bool</text>
+      <text class="tm" x="596" y="118" text-anchor="middle">= False</text>
+      <text class="ts" x="122" y="170" text-anchor="middle">left out?</text>
+      <text class="t" x="122" y="194" text-anchor="middle">ValidationError</text>
+      <text class="ts" x="359" y="170" text-anchor="middle">left out?</text>
+      <text class="t" x="359" y="194" text-anchor="middle">becomes None</text>
+      <text class="ts" x="596" y="170" text-anchor="middle">left out?</text>
+      <text class="t" x="596" y="194" text-anchor="middle">becomes False</text>
+    </svg></div>
+    <figcaption>What decides “required” is whether the field has a default, not the type.</figcaption>
+  </figure>
+  <h3>Every field is required by default</h3>
+  <p>Using the model from the previous section, leave out <code>handling_notes</code>:</p>
+  <pre><code class="language-python">data = {
+    "sender_name": "Rohan Mehta",
+    "package_meta": {"customs_code": "CN2201"}
+}
+shipment1 = ShipmentBooking(**data)</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+handling_notes
+  Field required [type=missing, input_value={'sender_name': 'Rohan Me...ustoms_code': 'CN2201'}}, input_type=dict]</code></pre>
+  <p>This guarantees that <b>required information is always provided</b> before the object exists.</p>
+  <h3>Making a field optional</h3>
+  <p>Use <code>Optional</code> from <code>typing</code> <b>and</b> give the field a default of <code>None</code>:</p>
+  <pre><code class="language-python">from typing import List, Dict, Optional
+
+class ShipmentBooking(BaseModel):
+    sender_name: str
+    handling_notes: Optional[List[str]] = None
+    package_meta: Dict[str, str]
+
+data = {"sender_name": "Rohan Mehta", "package_meta": {"customs_code": "CN2201"}}
+shipment1 = ShipmentBooking(**data)
+print(shipment1.handling_notes)</code></pre>
+  <pre class="out"><code>None</code></pre>
+  <div class="sticky warn"><strong><code>Optional[...]</code> alone is not enough.</strong> <code>Optional[List[str]]</code> only means “a list of strings <i>or</i> None”. Without <code>= None</code>, the field is still <b>required</b> (you would have to pass <code>None</code> explicitly). The default is what makes it optional. <code>List[str] | None = None</code> is the newer spelling of the same thing.</div>
+  <h3>A normal default value</h3>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    sender_name: str
+    is_fragile: bool = False
+
+shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
+print(shipment1.is_fragile)</code></pre>
+  <pre class="out"><code>False</code></pre>
+  <p><code>is_fragile</code> was not provided, so Pydantic used the default <code>False</code>.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="ready-made">
+  <h2>Ready-made validators: <code>EmailStr</code> and <code>AnyUrl</code></h2>
+  <p>Some formats show up so often that Pydantic ships special types for them, so you never write that checking logic (or a regular expression) yourself.</p>
+  <h3>Email addresses with <code>EmailStr</code></h3>
+  <div class="sticky warn l"><strong>One extra install</strong> <code>EmailStr</code> uses a separate package, <code>email-validator</code>. Install it with <code>pip install "pydantic[email]"</code>, or the import fails with an <code>ImportError</code> asking you to install it.</div>
+  <pre><code class="language-python">from pydantic import BaseModel, EmailStr
+
+class ShipmentBooking(BaseModel):
+    sender_name: str
+    sender_email: EmailStr
+
+shipment1 = ShipmentBooking(sender_name="Rohan Mehta", sender_email="rohan@cargolink.com")
+print(shipment1)</code></pre>
+  <pre class="out"><code>sender_name='Rohan Mehta' sender_email='rohan@cargolink.com'</code></pre>
+  <pre><code class="language-python">shipment2 = ShipmentBooking(sender_name="Rohan Mehta", sender_email="rohan-cargolink.com")</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+sender_email
+  value is not a valid email address: An email address must have an @-sign. [type=value_error, input_value='rohan-cargolink.com', input_type=str]</code></pre>
+  <h3>Web addresses with <code>AnyUrl</code></h3>
+  <pre><code class="language-python">from pydantic import BaseModel, AnyUrl
+
+class ShipmentBooking(BaseModel):
+    courier_partner_url: AnyUrl
+
+shipment1 = ShipmentBooking(courier_partner_url="https://cargolink.com/swift-express")
+print(shipment1)</code></pre>
+  <pre class="out"><code>courier_partner_url=AnyUrl('https://cargolink.com/swift-express')</code></pre>
+  <p>The value is now a URL object, not a plain string (older 2.x releases print it as <code>Url('…')</code>). A string without a scheme is rejected:</p>
+  <pre><code class="language-python">shipment2 = ShipmentBooking(courier_partner_url="cargolink.com")</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+courier_partner_url
+  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='cargolink.com', input_type=str]</code></pre>
+  <div class="sticky tip"><strong>Need only web links?</strong> <code>AnyUrl</code> accepts any scheme (<code>ftp://</code>, <code>postgres://</code>…). Pydantic also has <code>HttpUrl</code>, which accepts only <code>http</code> and <code>https</code>.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="field-rules">
+  <h2>Your own rules with <code>Field()</code></h2>
+  <p><code>EmailStr</code> and <code>AnyUrl</code> cover common formats, but your business has its own rules, such as “a package weight must be greater than 0”. For these, Pydantic gives you the <code>Field()</code> function.</p>
+  <pre><code class="language-python">from pydantic import BaseModel, Field
+
+class ShipmentBooking(BaseModel):
+    package_weight_kg: float = Field(gt=0)      # gt = greater than
+
+ShipmentBooking(package_weight_kg=5.5)          # valid
+shipment1 = ShipmentBooking(package_weight_kg=-4.5)</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+package_weight_kg
+  Input should be greater than 0 [type=greater_than, input_value=-4.5, input_type=float]</code></pre>
+  <h3>The four comparison constraints</h3>
+  <div class="tbl"><table>
+    <tr><th>Constraint</th><th>Meaning</th><th>Example</th><th>Same as</th></tr>
+    <tr><td><code>gt</code></td><td>greater than</td><td><code>Field(gt=0)</code></td><td><code>value &gt; 0</code></td></tr>
+    <tr><td><code>ge</code></td><td>greater than or equal to</td><td><code>Field(ge=0)</code></td><td><code>value &gt;= 0</code></td></tr>
+    <tr><td><code>lt</code></td><td>less than</td><td><code>Field(lt=100)</code></td><td><code>value &lt; 100</code></td></tr>
+    <tr><td><code>le</code></td><td>less than or equal to</td><td><code>Field(le=5)</code></td><td><code>value &lt;= 5</code></td></tr>
+  </table></div>
+  <h3>Combining constraints into a range</h3>
+  <p>A delivery priority level must be between 1 and 5:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    delivery_priority_level: int = Field(gt=0, le=5)   # value &gt; 0 AND value &lt;= 5
+
+shipment1 = ShipmentBooking(delivery_priority_level=6)</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+delivery_priority_level
+  Input should be less than or equal to 5 [type=less_than_equal, input_value=6, input_type=int]</code></pre>
+  <h3><code>Field()</code> with text and lists</h3>
+  <pre><code class="language-python">from typing import List, Optional
+
+class ShipmentBooking(BaseModel):
+    sender_name: str = Field(max_length=50)
+    handling_notes: Optional[List[str]] = Field(default=None, max_length=5)</code></pre>
+  <ul>
+    <li><code>max_length=50</code> on a string: at most 50 characters.</li>
+    <li><code>max_length=5</code> on a list: at most 5 items.</li>
+    <li><code>default=None</code>: <code>Field()</code> can carry the default and the rules <b>together</b>.</li>
+  </ul>
+  <p>(There is also <code>min_length</code> for the other end.) Break both rules at once and Pydantic reports <b>every</b> problem, not just the first:</p>
+  <pre class="out"><code>2 validation errors for ShipmentBooking
+sender_name
+  String should have at most 50 characters [type=string_too_long, ...]
+handling_notes
+  List should have at most 5 items after validation, not 6 [type=too_long, ...]</code></pre>
+
+  <h3>Adding notes to a field (metadata)</h3>
+  <p><code>Field()</code> can also attach a <b>title</b>, <b>description</b> and <b>examples</b>. These do <b>not</b> validate anything; they document the field, which matters most in APIs where they show up in the generated docs. The modern style puts <code>Field()</code> inside <code>Annotated</code>:</p>
+  <pre><code class="language-python">from typing import Annotated
+from pydantic import BaseModel, Field
+
+class ShipmentBooking(BaseModel):
+    sender_name: Annotated[
+        str,
+        Field(
+            max_length=50,                                   # validation
+            title="Sender Name",                             # documentation only
+            description="Full name of the person sending the package",
+            examples=["Rohan Mehta", "Ananya Iyer"]
+        )
+    ]</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When you wrap a customer’s system in an API, <code>description</code> and <code>examples</code> are what their developers read in <code>/docs</code>. A one-line description on each field saves you a dozen “what does this field mean?” emails.</div>
+
+  <h3>When Pydantic auto-converts data (and how to stop it)</h3>
+  <p>If Pydantic can safely turn a value into the expected type, it does. This is called <b>type coercion</b>:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    package_weight_kg: float = Field(gt=0)
+
+shipment1 = ShipmentBooking(package_weight_kg="25.5")
+print(shipment1.package_weight_kg, type(shipment1.package_weight_kg))</code></pre>
+  <pre class="out"><code>25.5 &lt;class 'float'&gt;</code></pre>
+  <p>The string <code>"25.5"</code> became the float <code>25.5</code>. (This is why <code>"3"</code> is accepted for an <code>int</code> field, while <code>"three"</code> is not.) To accept <b>only</b> a real number, add <code>strict=True</code>:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    package_weight_kg: Annotated[float, Field(gt=0, strict=True)]
+
+shipment1 = ShipmentBooking(package_weight_kg="25.5")</code></pre>
+  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+package_weight_kg
+  Input should be a valid number [type=float_type, input_value='25.5', input_type=str]</code></pre>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="field-validators">
+  <h2>Field validators: your own custom rule</h2>
+  <p><code>Field()</code> handles built-in limits. For a <b>business rule</b>, such as “only emails from registered partner companies”, write a <code>@field_validator</code>:</p>
+  <pre><code class="language-python">from pydantic import BaseModel, EmailStr, field_validator
+
+class ShipmentBooking(BaseModel):
+    sender_email: EmailStr
+
+    @field_validator("sender_email")
+    @classmethod
+    def check_partner_domain(cls, value):
+        allowed_domains = ["swiftpartners.com", "cargolink.com"]
+        domain = value.split("@")[-1]
+        if domain not in allowed_domains:
+            raise ValueError("email must belong to a registered partner domain")
+        return value</code></pre>
+  <div class="grid">
+    <div class="card t5 tilt-a"><h4>Names its field</h4><p><code>@field_validator("sender_email")</code>, with <code>@classmethod</code> right below it.</p></div>
+    <div class="card t2 tilt-b"><h4>Returns if valid</h4><p>Receives the value and <b>returns</b> it (the returned value is what gets stored).</p></div>
+    <div class="card t3 tilt-a"><h4>Raises if invalid</h4><p><code>raise ValueError("…")</code>. Pydantic turns it into a ValidationError.</p></div>
+  </div>
+  <pre><code class="language-python">print(ShipmentBooking(sender_email="rohan@cargolink.com"))
+shipment2 = ShipmentBooking(sender_email="rohan@gmail.com")</code></pre>
+  <pre class="out"><code>sender_email='rohan@cargolink.com'
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+sender_email
+  Value error, email must belong to a registered partner domain [type=value_error, input_value='rohan@gmail.com', input_type=str]</code></pre>
+  <h3>A field validator can also change the value</h3>
+  <p>Because the returned value is what gets stored, a validator can <b>transform</b> data, for example store every sender name in uppercase:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    sender_name: str
+
+    @field_validator("sender_name")
+    @classmethod
+    def to_uppercase(cls, value):
+        return value.upper()
+
+shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
+print(shipment1.sender_name)</code></pre>
+  <pre class="out"><code>ROHAN MEHTA</code></pre>
+
+  <h3>Before or after: when does the validator run?</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="The validation pipeline: raw input, then before-validators, then type conversion and Field rules, then after-validators, then the model validator on the whole object, giving a valid object. Any failure gives a ValidationError.">
+      <g class="rough">
+        <rect class="box f-yellow" x="15" y="30" width="150" height="84" rx="14"/>
+        <rect class="box f-blue" x="195" y="30" width="150" height="84" rx="14"/>
+        <rect class="box f-purple" x="375" y="30" width="150" height="84" rx="14"/>
+        <rect class="box f-blue" x="555" y="30" width="150" height="84" rx="14"/>
+        <rect class="box f-teal" x="555" y="190" width="150" height="84" rx="14"/>
+        <rect class="box f-green" x="305" y="190" width="200" height="84" rx="14"/>
+        <rect class="box f-orange" x="15" y="190" width="220" height="84" rx="14"/>
+        <path class="ln" d="M168 72 L 190 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M348 72 L 370 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M528 72 L 550 72" marker-end="url(#ah)"/>
+        <path class="ln" d="M630 118 L 630 184" marker-end="url(#ah)"/>
+        <path class="lb" d="M550 232 L 510 232" marker-end="url(#ahb)"/>
+        <path class="lr dash" d="M450 120 C 420 160, 300 150, 200 184" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="90" y="66" text-anchor="middle">Raw input</text>
+      <text class="ts" x="90" y="92" text-anchor="middle">e.g. "3"</text>
+      <text class="tm" x="270" y="66" text-anchor="middle">mode="before"</text>
+      <text class="ts" x="270" y="92" text-anchor="middle">sees raw value</text>
+      <text class="t" x="450" y="66" text-anchor="middle">Type + Field()</text>
+      <text class="ts" x="450" y="92" text-anchor="middle">"3" becomes 3</text>
+      <text class="tm" x="630" y="66" text-anchor="middle">mode="after"</text>
+      <text class="ts" x="630" y="92" text-anchor="middle">sees typed value</text>
+      <text class="tm" x="630" y="226" text-anchor="middle">model_validator</text>
+      <text class="ts" x="630" y="252" text-anchor="middle">whole object</text>
+      <text class="t" x="405" y="226" text-anchor="middle">Valid object</text>
+      <text class="ts" x="405" y="252" text-anchor="middle">ready to use</text>
+      <text class="t" x="125" y="226" text-anchor="middle">ValidationError</text>
+      <text class="ts" x="125" y="252" text-anchor="middle">if any step fails</text>
+      <text class="tr" x="300" y="150" text-anchor="middle">any failure</text>
+    </svg></div>
+    <figcaption>Validators plug into fixed points of the pipeline. <code>after</code> (the default) sees the converted value.</figcaption>
+  </figure>
+  <ul>
+    <li><code>mode="before"</code> runs <b>before</b> type conversion and receives the <b>original value</b>, exactly as sent.</li>
+    <li><code>mode="after"</code> runs <b>after</b> conversion and receives the <b>typed value</b>. This is the default.</li>
+  </ul>
+  <p>Watch what happens with a before-validator when the client sends <code>"3"</code> as text:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    delivery_priority_level: int
+
+    @field_validator("delivery_priority_level", mode="before")
+    @classmethod
+    def check_range(cls, value):
+        if 0 &lt; value &lt; 6:
+            return value
+        raise ValueError("must be between 1 and 5")
+
+shipment1 = ShipmentBooking(delivery_priority_level="3")</code></pre>
+  <pre class="out"><code>Traceback (most recent call last):
+  ...
+  File "main.py", line 7, in check_range
+    if 0 &lt; value &lt; 6:
+TypeError: '&lt;' not supported between instances of 'int' and 'str'</code></pre>
+  <p>The validator received the <b>string</b> <code>"3"</code>, and Python cannot compare a number with a string. Notice that this is a raw <code>TypeError</code> that crashes the program, <b>not</b> a neat ValidationError: <mark>Pydantic only converts <code>ValueError</code> (and <code>AssertionError</code>) raised in a validator into a ValidationError.</mark> Switch to <code>mode="after"</code> and it works:</p>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    delivery_priority_level: int
+
+    @field_validator("delivery_priority_level", mode="after")
+    @classmethod
+    def check_range(cls, value):
+        if 0 &lt; value &lt; 6:
+            return value
+        raise ValueError("must be between 1 and 5")
+
+shipment1 = ShipmentBooking(delivery_priority_level="3")
+print(shipment1.delivery_priority_level)</code></pre>
+  <pre class="out"><code>3</code></pre>
+  <p>Pydantic first converted <code>"3"</code> into <code>3</code>, then the validator checked it.</p>
+  <div class="sticky tip l"><strong>When is <code>before</code> useful?</strong> For cleaning raw input before the type check, e.g. stripping spaces or turning <code>"1,200"</code> into <code>"1200"</code>. Just remember the value can be of any type at that point.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="model-validators">
+  <h2>Model validators: checking two fields together</h2>
+  <p>A field validator only ever sees <b>one</b> field. Some rules need more. SwiftCargo requires an insurance number for any package worth more than ₹50,000. That depends on <code>package_value</code> <b>and</b> <code>package_meta</code> together, so we need a <b>model validator</b>:</p>
+  <pre><code class="language-python">from typing import Dict
+from pydantic import BaseModel, model_validator
+
+class ShipmentBooking(BaseModel):
+    package_value: float
+    package_meta: Dict[str, str]
+
+    @model_validator(mode="after")
+    def check_insurance(self):
+        if self.package_value &gt; 50000 and "insurance_number" not in self.package_meta:
+            raise ValueError("packages over 50,000 must include an insurance_number")
+        return self</code></pre>
+  <p>A model validator does not name a field. In <code>after</code> mode it runs once all fields are validated and receives the <b>whole object</b> as <code>self</code>, so you read fields with dot notation (<code>self.package_value</code>). It must <b>return</b> the object.</p>
+  <pre><code class="language-python">shipment1 = ShipmentBooking(package_value=30000, package_meta={"customs_code": "CN2201"})
+print(shipment1)
+
+shipment2 = ShipmentBooking(package_value=75000, package_meta={"customs_code": "CN2201"})</code></pre>
+  <pre class="out"><code>package_value=30000.0 package_meta={'customs_code': 'CN2201'}
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
+  Value error, packages over 50,000 must include an insurance_number [type=value_error, input_value={'package_value': 75000, ...ustoms_code': 'CN2201'}}, input_type=dict]</code></pre>
+  <p>Note that <code>30000</code> was stored as <code>30000.0</code> (coerced to <code>float</code>), and that the error has no field name above it, because it belongs to the whole model.</p>
+  <div class="sticky warn"><strong>Version note</strong> Older tutorials write an after-mode model validator as a <code>@classmethod</code> taking <code>(cls, model)</code>. Since Pydantic 2.12 that style is <b>deprecated</b> and prints a warning; use an ordinary method with <code>self</code>, as above.</div>
+  <div class="flow"><span class="hl">one field on its own</span><span class="op">field_validator</span></div>
+  <div class="flow"><span class="hl">two or more fields together</span><span class="op">model_validator</span></div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="computed">
+  <h2>Computed fields: values Pydantic calculates for you</h2>
+  <p>A computed field never comes from the user. Pydantic works it out from the other fields. A delivery vehicle’s fuel efficiency is a good example: nobody types it in, it is calculated from distance travelled and fuel used.</p>
+  <pre><code class="language-python">from pydantic import BaseModel, computed_field
+
+class DeliveryTrip(BaseModel):
+    distance_km: float
+    fuel_used_liters: float
+
+    @computed_field
+    @property
+    def fuel_efficiency(self) -&gt; float:
+        return round(self.distance_km / self.fuel_used_liters, 2)
+
+trip1 = DeliveryTrip(distance_km=180, fuel_used_liters=15)
+print(trip1.fuel_efficiency)
+print(trip1.model_dump())</code></pre>
+  <pre class="out"><code>12.0
+{'distance_km': 180.0, 'fuel_used_liters': 15.0, 'fuel_efficiency': 12.0}</code></pre>
+  <ul>
+    <li>Two decorators, in this order: <code>@computed_field</code> on top, <code>@property</code> right below.</li>
+    <li><code>-&gt; float</code> tells Pydantic the type of the result.</li>
+    <li>The <b>method name is the field name</b>: you read it as <code>trip1.fuel_efficiency</code>, with no brackets.</li>
+    <li>Unlike a plain <code>@property</code>, a computed field is <b>included when you export</b> the model with <code>model_dump()</code>, as the output shows.</li>
+  </ul>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="nested">
+  <h2>Nested models: grouping related fields</h2>
+  <p>Some fields are really a small group of fields. A delivery address is a city, a state and a pin code, not one long string. Build a separate model for it and use that model as a field type. This is a <b>nested model</b>.</p>
+  <pre><code class="language-python">from pydantic import BaseModel
+
+class ShipmentAddress(BaseModel):
+    city: str
+    state: str
+    pincode: str
+
+class ShipmentBooking(BaseModel):
+    sender_name: str
+    delivery_address: ShipmentAddress
+
+address1 = ShipmentAddress(city="Gurugram", state="Haryana", pincode="122001")
+shipment1 = ShipmentBooking(sender_name="Rohan Mehta", delivery_address=address1)
+print(shipment1)
+print(shipment1.delivery_address.city)
+print(shipment1.delivery_address.pincode)</code></pre>
+  <pre class="out"><code>sender_name='Rohan Mehta' delivery_address=ShipmentAddress(city='Gurugram', state='Haryana', pincode='122001')
+Gurugram
+122001</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="A ShipmentBooking box containing sender_name and a nested ShipmentAddress box with city, state and pincode. You reach inner fields with chained dots.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="420" height="210" rx="18"/>
+        <rect class="box f-card" x="40" y="66" width="380" height="40" rx="10"/>
+        <rect class="box f-green" x="40" y="120" width="380" height="94" rx="14"/>
+        <path class="lr" d="M424 170 C 480 170, 500 150, 540 140" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="230" y="52" text-anchor="middle">ShipmentBooking</text>
+      <text class="tm" x="60" y="92">sender_name: str</text>
+      <text class="t" x="60" y="146">delivery_address: ShipmentAddress</text>
+      <text class="tm" x="70" y="176">city</text>
+      <text class="tm" x="190" y="176">state</text>
+      <text class="tm" x="310" y="176">pincode</text>
+      <text class="ts" x="60" y="202">checked by its own model first</text>
+      <text class="tr" x="560" y="110">chained dots</text>
+      <text class="tm" x="548" y="146">shipment1</text>
+      <text class="tm" x="548" y="168">.delivery_address</text>
+      <text class="tm" x="548" y="190">.city</text>
+    </svg></div>
+    <figcaption>A model inside a model: the inner one is validated by its own rules.</figcaption>
+  </figure>
+  <p>You can also pass the address as a plain dictionary; Pydantic builds the <code>ShipmentAddress</code> for you and validates it. If <code>pincode</code> is missing, the error path shows exactly where: <code>delivery_address.pincode  Field required</code>.</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Better organised</h4><p>Related fields stay grouped instead of scattered.</p></div>
+    <div class="card t2 tilt-b"><h4>Reusable</h4><p>The same <code>ShipmentAddress</code> can sit inside a <code>Customer</code> or <code>Employee</code> model.</p></div>
+    <div class="card t5 tilt-b"><h4>Easier to read</h4><p>Anyone reading <code>ShipmentBooking</code> sees the address is its own structured thing.</p></div>
+    <div class="card t8 tilt-a"><h4>Validated automatically</h4><p>If <code>delivery_address</code> exists, every field inside it already passed its checks.</p></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="export">
+  <h2>Turning a model into a dictionary or JSON</h2>
+  <p>A validated object often has to go somewhere else: an API response, a log file, a database. Every model has two built-in export methods. Using <code>shipment1</code> from the nested example:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">to a Python dict</span><pre><code class="language-python">shipment_dict = shipment1.model_dump()
+print(shipment_dict)
+print(type(shipment_dict))</code></pre></div>
+    <div class="codebox"><span class="cap">to a JSON string</span><pre><code class="language-python">shipment_json = shipment1.model_dump_json()
+print(shipment_json)</code></pre></div>
+  </div>
+  <pre class="out"><code>{'sender_name': 'Rohan Mehta', 'delivery_address': {'city': 'Gurugram', 'state': 'Haryana', 'pincode': '122001'}}
+&lt;class 'dict'&gt;
+{"sender_name":"Rohan Mehta","delivery_address":{"city":"Gurugram","state":"Haryana","pincode":"122001"}}</code></pre>
+  <p>Note the difference: the dict uses Python’s single quotes; the JSON string uses double quotes and no spaces, ready to send over the network.</p>
+  <h3>Choosing exactly what gets exported</h3>
+  <div class="tbl"><table>
+    <tr><th>Call</th><th>Result</th></tr>
+    <tr><td><code>model_dump(include={"sender_name"})</code></td><td><code>{'sender_name': 'Rohan Mehta'}</code></td></tr>
+    <tr><td><code>model_dump(exclude={"sender_name"})</code></td><td><code>{'delivery_address': {'city': 'Gurugram', 'state': 'Haryana', 'pincode': '122001'}}</code></td></tr>
+    <tr><td><code>model_dump(exclude={"delivery_address": {"state"}})</code></td><td><code>{'sender_name': 'Rohan Mehta', 'delivery_address': {'city': 'Gurugram', 'pincode': '122001'}}</code></td></tr>
+  </table></div>
+  <p><code>include</code> keeps only the fields you name, <code>exclude</code> keeps everything except them, and a nested dict lets you exclude a field <b>inside</b> a nested model.</p>
+  <h3><code>exclude_unset</code>: leave out what was never given</h3>
+  <pre><code class="language-python">class ShipmentBooking(BaseModel):
+    sender_name: str
+    is_fragile: bool = False
+
+shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
+print(shipment1.model_dump(exclude_unset=True))</code></pre>
+  <pre class="out"><code>{'sender_name': 'Rohan Mehta'}</code></pre>
+  <p><code>is_fragile</code> was never passed in, so it is left out, even though the object still holds <code>is_fragile = False</code>. This is exactly what a PATCH-style update needs: “only the fields the client actually sent”.</p>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> Before writing customer data into logs, use <code>exclude</code> to drop sensitive fields (phone numbers, insurance numbers, tokens). One line keeps personal data out of places it should never be.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="mistakes">
+  <h2>Common mistakes to avoid</h2>
+  <div class="tbl"><table>
+    <tr><th style="width:42%">Mistake</th><th>Why it’s a problem</th></tr>
+    <tr><td>Plain <code>list</code> / <code>dict</code> instead of <code>List[str]</code> / <code>Dict[str, str]</code></td><td>Pydantic checks only the container, not what is inside.</td></tr>
+    <tr><td><code>Optional[...]</code> without a default</td><td>The field is still required. <code>= None</code> is what makes it optional.</td></tr>
+    <tr><td>Trusting type hints on normal functions</td><td>Only fields inside a <code>BaseModel</code> are actually checked.</td></tr>
+    <tr><td>Forgetting <code>return value</code> in a field validator</td><td>The function returns <code>None</code>, so the field silently becomes <code>None</code>.</td></tr>
+    <tr><td>Raising <code>TypeError</code> (or letting one happen) in a validator</td><td>Only <code>ValueError</code> / <code>AssertionError</code> become a ValidationError; anything else crashes the program.</td></tr>
+    <tr><td>Using a field validator to compare two fields</td><td>A field validator sees one field. Use <code>model_validator</code>.</td></tr>
+    <tr><td>Assuming Pydantic never converts data</td><td><code>"25.5"</code> becomes <code>25.5</code>. Use <code>strict=True</code> when the exact type matters.</td></tr>
+    <tr><td>Reading a computed field by a different name, or with <code>()</code></td><td>The method name <b>is</b> the field name, and it is a property: <code>trip.fuel_efficiency</code>.</td></tr>
+    <tr><td>Using <code>EmailStr</code> without <code>email-validator</code></td><td>Import fails. Install <code>pydantic[email]</code>.</td></tr>
+  </table></div>
+  <div class="sticky info"><strong>About <code>@classmethod</code></strong> Write <code>@classmethod</code> under <code>@field_validator</code> as the docs do. Pydantic quietly applies it for you if you forget, but the first parameter must still be <code>cls</code> (the class), not <code>self</code>, because no object exists yet while fields are being validated.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="practice">
+  <h2>Practice tasks and mini project</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Basic model</b>Build a <code>CustomerOrder</code> model with <code>customer_name: str</code>, <code>items_count: int</code> and <code>order_total: float</code>. Send <code>items_count</code> as text and read the error.</div></li>
+    <li><span class="dot">2</span><div><b>Optional fields</b>Add <code>gift_message: Optional[str] = None</code> and <code>product_tags: List[str]</code>. Leave <code>gift_message</code> out and check it comes through as <code>None</code>.</div></li>
+    <li><span class="dot">3</span><div><b>Built-in checks and Field() rules</b>Add <code>customer_email: EmailStr</code> and change <code>order_total</code> to <code>Field(gt=0)</code>. Test a bad email and a negative total.</div></li>
+    <li><span class="dot">4</span><div><b>Field validator</b>Turn <code>customer_name</code> into title case (<code>"rohan mehta"</code> → <code>"Rohan Mehta"</code>). <span class="tag">→ str.title()</span></div></li>
+    <li><span class="dot">5</span><div><b>Model validator</b>Add <code>is_gift: bool</code> and <code>gift_message: Optional[str] = None</code>. Fail if <code>is_gift</code> is True but <code>gift_message</code> is empty.</div></li>
+  </ol>
+  <h3>Mini project: the complete SwiftCargo booking model</h3>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>ShipmentAddress</h4><p><code>city</code>, <code>state</code>, <code>pincode</code></p></div>
+    <div class="card t7 tilt-b"><h4>ShipmentBooking</h4><p>Everything below, with <code>delivery_address: ShipmentAddress</code> nested inside.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Field / rule</th><th>Requirement</th><th>Tool</th></tr>
+    <tr><td><code>sender_name</code></td><td>required, max 50 characters, stored in uppercase</td><td><code>Field(max_length=50)</code> + field validator</td></tr>
+    <tr><td><code>sender_email</code></td><td>real email, only <code>swiftpartners.com</code> or <code>cargolink.com</code></td><td><code>EmailStr</code> + field validator</td></tr>
+    <tr><td><code>package_weight_kg</code></td><td>greater than 0</td><td><code>Field(gt=0)</code></td></tr>
+    <tr><td><code>package_value</code></td><td>greater than 0</td><td><code>Field(gt=0)</code></td></tr>
+    <tr><td><code>shipping_cost</code></td><td>needed for the computed field</td><td><code>float</code></td></tr>
+    <tr><td><code>is_fragile</code></td><td>defaults to False</td><td><code>= False</code></td></tr>
+    <tr><td><code>handling_notes</code></td><td>optional, at most 5 items</td><td><code>Field(default=None, max_length=5)</code></td></tr>
+    <tr><td><code>package_meta</code></td><td>text keys and text values</td><td><code>Dict[str, str]</code></td></tr>
+    <tr><td><code>delivery_address</code></td><td>a nested address</td><td><code>ShipmentAddress</code></td></tr>
+    <tr><td>insurance rule</td><td>value over 50,000 needs <code>"insurance_number"</code> in <code>package_meta</code></td><td><code>model_validator</code></td></tr>
+    <tr><td><code>cost_per_kg</code></td><td><code>shipping_cost / package_weight_kg</code></td><td><code>computed_field</code></td></tr>
+  </table></div>
+  <p><b>Then:</b> (1) create one valid booking and print it; (2) create at least three invalid bookings, one per rule, and check each fails clearly; (3) export a valid booking with <code>model_dump_json()</code>, and again with <code>model_dump()</code> hiding <code>package_meta</code>.</p>
+  <details class="qa"><summary>Show one possible solution</summary>
+  <pre><code class="language-python">from typing import Annotated, Dict, List, Optional
+from pydantic import BaseModel, EmailStr, Field, computed_field, field_validator, model_validator
+
+class ShipmentAddress(BaseModel):
+    city: str
+    state: str
+    pincode: str
+
+class ShipmentBooking(BaseModel):
+    sender_name: Annotated[str, Field(max_length=50)]
+    sender_email: EmailStr
+    package_weight_kg: float = Field(gt=0)
+    package_value: float = Field(gt=0)
+    shipping_cost: float = Field(ge=0)
+    is_fragile: bool = False
+    handling_notes: Optional[List[str]] = Field(default=None, max_length=5)
+    package_meta: Dict[str, str]
+    delivery_address: ShipmentAddress
+
+    @field_validator("sender_name")
+    @classmethod
+    def to_uppercase(cls, value):
+        return value.upper()
+
+    @field_validator("sender_email")
+    @classmethod
+    def check_partner_domain(cls, value):
+        if value.split("@")[-1] not in ["swiftpartners.com", "cargolink.com"]:
+            raise ValueError("email must belong to a registered partner domain")
+        return value
+
+    @model_validator(mode="after")
+    def check_insurance(self):
+        if self.package_value &gt; 50000 and "insurance_number" not in self.package_meta:
+            raise ValueError("packages over 50,000 must include an insurance_number")
+        return self
+
+    @computed_field
+    @property
+    def cost_per_kg(self) -&gt; float:
+        return round(self.shipping_cost / self.package_weight_kg, 2)</code></pre>
+  </details>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Pydantic</dt><dd>A Python library that checks data against a class-based description and raises a clear error when the data is wrong.</dd></div>
+    <div><dt>Model (BaseModel)</dt><dd>A class that inherits from Pydantic’s <code>BaseModel</code>; its type-hinted attributes are the fields that every input is validated against.</dd></div>
+    <div><dt>ValidationError</dt><dd>The exception Pydantic raises when input does not fit a model; it lists every failing field, a message and the error type.</dd></div>
+    <div><dt>Required field</dt><dd>A model field with no default value; leaving it out raises a “Field required” error.</dd></div>
+    <div><dt>Optional field</dt><dd>A field typed as <code>Optional[X]</code> (or <code>X | None</code>) <b>and</b> given a default such as <code>= None</code>, so it may be left out.</dd></div>
+    <div><dt>Field()</dt><dd>A Pydantic function that adds constraints (<code>gt</code>, <code>le</code>, <code>max_length</code>, <code>strict</code>), a default, or documentation metadata to a field.</dd></div>
+    <div><dt>Type coercion</dt><dd>Pydantic automatically converting a value to the declared type when it safely can, such as the string <code>"25.5"</code> to the float 25.5; <code>strict=True</code> turns it off.</dd></div>
+    <div><dt>field_validator</dt><dd>A decorator for a custom rule on one field; the method returns the (possibly changed) value or raises <code>ValueError</code>.</dd></div>
+    <div><dt>model_validator</dt><dd>A decorator for a rule that looks at several fields together; in <code>after</code> mode it receives the whole validated object.</dd></div>
+    <div><dt>computed_field</dt><dd>A property whose value Pydantic calculates from other fields and includes when the model is exported.</dd></div>
+    <div><dt>Nested model</dt><dd>A Pydantic model used as the type of a field in another model, so a group of related fields is validated as one structured unit.</dd></div>
+    <div><dt>model_dump() / model_dump_json()</dt><dd>Methods that export a model as a Python dictionary or a JSON string, with options like <code>include</code>, <code>exclude</code> and <code>exclude_unset</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>A plain function has <code>packages_count: int</code> in its signature. You call it with <code>"three"</code>. What happens?</p>
+      <ol><li>Python raises a TypeError</li><li>Python converts it to 3</li><li>It runs normally; the hint is ignored</li><li>Python raises a ValidationError</li></ol>
+      <p class="why">Type hints on ordinary functions are notes for humans and editors. Python does not enforce them at run time.</p></div>
+    <div class="q" data-answer="2"><p>Which field is <b>optional</b> (can be left out)?</p>
+      <ol><li><code>notes: Optional[str]</code></li><li><code>notes: Optional[str] = None</code></li><li><code>notes: str</code></li><li><code>notes: List[str]</code></li></ol>
+      <p class="why">A field is optional only when it has a default. <code>Optional[str]</code> without <code>= None</code> is still required.</p></div>
+    <div class="q" data-answer="4"><p>A field is declared <code>package_weight_kg: float = Field(gt=0)</code>. Which input passes?</p>
+      <ol><li><code>0</code></li><li><code>-4.5</code></li><li><code>"heavy"</code></li><li><code>"25.5"</code></li></ol>
+      <p class="why">Without <code>strict=True</code>, <code>"25.5"</code> is coerced to 25.5, which is greater than 0. Zero fails <code>gt=0</code>.</p></div>
+    <div class="q" data-answer="1"><p>The rule is “if <code>is_gift</code> is True, <code>gift_message</code> must not be empty”. What should you use?</p>
+      <ol><li><code>model_validator</code></li><li><code>field_validator("gift_message")</code></li><li><code>Field(min_length=1)</code></li><li><code>computed_field</code></li></ol>
+      <p class="why">The rule involves two fields at once, and only a model validator sees the whole object.</p></div>
+    <div class="q" data-answer="3"><p>A <code>mode="before"</code> field validator on an <code>int</code> field receives <code>"3"</code> from the client. What type is <code>value</code> inside the validator?</p>
+      <ol><li><code>int</code></li><li><code>float</code></li><li><code>str</code></li><li>It depends on the default</li></ol>
+      <p class="why">Before-validators run ahead of type conversion, so they see the raw input exactly as sent.</p></div>
+    <div class="q" data-answer="2"><p>You forget to write <code>return value</code> at the end of a field validator. What is stored in the field?</p>
+      <ol><li>The original value</li><li><code>None</code></li><li>An empty string</li><li>Pydantic raises an error</li></ol>
+      <p class="why">The validator’s return value is what gets stored. A function without <code>return</code> returns <code>None</code>.</p></div>
+    <div class="q" data-answer="4"><p>A model has <code>is_fragile: bool = False</code>. You create it without <code>is_fragile</code> and call <code>model_dump(exclude_unset=True)</code>. Is <code>is_fragile</code> in the result?</p>
+      <ol><li>Yes, as False</li><li>Yes, as None</li><li>Only if it’s a computed field</li><li>No, because it was never set</li></ol>
+      <p class="why"><code>exclude_unset</code> drops fields that only have their default value because nobody passed them.</p></div>
+    <div class="q" data-answer="1"><p>Which list field rejects <code>["Keep upright", 5]</code>?</p>
+      <ol><li><code>List[str]</code></li><li><code>list</code></li><li><code>Optional[list] = None</code></li><li><code>dict</code></li></ol>
+      <p class="why"><code>List[str]</code> checks every item. Plain <code>list</code> checks only that the container is a list.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Describe your data once with <b>BaseModel</b>, tighten it with <b>Field()</b> rules, add business logic with <b>field_validator</b> (one field) and <b>model_validator</b> (several fields), derive values with <b>computed_field</b>, group data with <b>nested models</b>, and export with <b>model_dump()</b>, so bad data is stopped <b>at the door</b> and everything after it can trust what it receives.</p>
+  <p>Next up: Path Operations &amp; HTTP Methods, where FastAPI uses exactly these ideas to read, add, change and delete data through an API.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

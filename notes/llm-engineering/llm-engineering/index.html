@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LLM Engineering · LLM Engineering | AIFDE Notes</title>
+<meta name="description" content="How large language models work from an engineer's point of view: tokens, context windows, embeddings, Transformers and attention, inference and sampling, cost and latency, strengths and limits, and choosing open or proprietary models.">
+<meta name="keywords" content="tokens, context window, embeddings, transformer, attention, temperature, inference cost, open vs proprietary models">
+<meta name="date" content="2026-10-06">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="llm-engineering/llm-engineering">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>LLM Engineering</h1>
+  <p class="byline">Understand what really happens between “you send a prompt” and “text comes back”, so you can build LLM features that are accurate, fast and affordable.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what-is-llm">
+  <h2>What is an LLM?</h2>
+  <div class="story"><b class="lbl">The very well-read assistant</b>Imagine an assistant who has read millions of books, articles and code files. You say: <i>“Write an email to my manager asking for leave tomorrow.”</i> A second later it replies: <i>“Dear Sir, I would like to request leave tomorrow due to…”</i> <mark>That assistant is a Large Language Model.</mark></div>
+  <p>A <b>Large Language Model (LLM)</b> is an AI model trained on a huge amount of text so that it can <b>understand and generate human language</b>. You give it text, called a <b>prompt</b>, and it gives text back, called a <b>response</b> or <b>completion</b>.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Large</h4><p>Trained on a <b>very large</b> amount of text: books, articles, web pages, documents, code and conversations.</p></div>
+    <div class="card t2 tilt-b"><h4>Language</h4><p>Works with <b>human language</b> (English, Hindi, Kannada…) and with <b>programming languages</b> such as Python, JavaScript, Java and C++.</p></div>
+    <div class="card t5 tilt-a"><h4>Model</h4><p>A system that <b>learns patterns from data</b>, instead of following rules a programmer wrote.</p></div>
+  </div>
+  <p>Put together: <mark>an LLM is a large AI model trained on huge amounts of text to learn the patterns of language and generate useful text.</mark></p>
+  <div class="flow"><span>prompt</span><span class="hl">LLM</span><span class="ok">response (completion)</span></div>
+  <p>Well-known LLM families include <b>GPT</b> (OpenAI), <b>Claude</b> (Anthropic), <b>Gemini</b> (Google) and <b>Llama</b> (Meta).</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why-llms">
+  <h2>Why do we need LLMs?</h2>
+  <p>Traditional software needs very <b>specific instructions</b>. Here is a support bot built with plain rules:</p>
+  <div class="codebox"><span class="cap">rule_bot.py</span><pre><code class="language-python">message = input("How can we help? ")
+
+if "refund" in message:
+    print("Refund request")
+elif "late" in message or "delay" in message:
+    print("Delivery issue")
+else:
+    print("Unknown request")</code></pre></div>
+  <p>This breaks very quickly:</p>
+  <div class="grid two">
+    <div class="card t3 tilt-a"><h4>Same meaning, different words</h4><p>“money back” means refund, but the rule only looks for the word <code>refund</code>.</p></div>
+    <div class="card t4 tilt-b"><h4>Typos and slang</h4><p>“refnd plz” or “paisa wapas” are not matched.</p></div>
+    <div class="card t1 tilt-b"><h4>Other languages</h4><p>You would need a separate set of rules for every language.</p></div>
+    <div class="card t6 tilt-a"><h4>Endless rules</h4><p>Every new phrasing needs another <code>elif</code>. The code never ends.</p></div>
+  </div>
+  <p>Rules work for exact, structured data. Human language is not exact. <mark>LLMs understand meaning and intent, not just keywords, and one model can handle many tasks without new rules for each one.</mark></p>
+
+  <h3>Traditional software vs traditional ML vs LLMs</h3>
+  <div class="tbl"><table>
+    <tr><th>Approach</th><th>Who writes the logic?</th><th>How many tasks?</th><th>How you change behaviour</th></tr>
+    <tr><td><b>Traditional software</b></td><td>The programmer writes every rule; the computer follows them</td><td>Whatever you coded</td><td>Edit the code. Output is exact and predictable.</td></tr>
+    <tr><td><b>Traditional ML</b></td><td>The model learns the rule from labelled examples (e.g. 10,000 emails marked spam / not spam)</td><td>Usually one</td><td>Collect new data and retrain</td></tr>
+    <tr><td><b>LLM</b></td><td>The model already learned language in general from huge amounts of text</td><td>Many</td><td>Describe the task in plain English in the prompt</td></tr>
+  </table></div>
+  <div class="sticky info"><strong>Key idea</strong> With an LLM, the “program” is often just a well-written instruction. Change the instruction and the behaviour changes, with no new training.</div>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> Customers often arrive with a pile of brittle keyword rules (an <code>if/elif</code> ticket router, regex email parsers). Replacing them with one well-tested LLM classification prompt is one of the most common and fastest FDE wins.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="journey">
+  <h2>The journey of a prompt</h2>
+  <p>When you send a prompt to an LLM, the text goes through a fixed series of steps. Each step gets its own section below; here is the whole journey once.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Six steps: tokenizer, token IDs, embeddings, transformer, probabilities, pick a token, and a loop back to repeat">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="200" height="72" rx="14"/>
+        <rect class="box f-blue" x="260" y="30" width="200" height="72" rx="14"/>
+        <rect class="box f-teal" x="500" y="30" width="200" height="72" rx="14"/>
+        <rect class="box f-purple" x="500" y="164" width="200" height="72" rx="14"/>
+        <rect class="box f-yellow" x="260" y="164" width="200" height="72" rx="14"/>
+        <rect class="box f-green" x="20" y="164" width="200" height="72" rx="14"/>
+        <path class="ln" d="M224 66 L 254 66" marker-end="url(#ah)"/>
+        <path class="ln" d="M464 66 L 494 66" marker-end="url(#ah)"/>
+        <path class="ln" d="M600 106 L 600 158" marker-end="url(#ah)"/>
+        <path class="ln" d="M496 200 L 466 200" marker-end="url(#ah)"/>
+        <path class="ln" d="M256 200 L 226 200" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M120 160 L 120 108" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="120" y="66" text-anchor="middle">Tokenizer</text>
+      <text class="ts" x="120" y="90" text-anchor="middle">text → tokens</text>
+      <text class="th" x="360" y="66" text-anchor="middle">Token IDs</text>
+      <text class="ts" x="360" y="90" text-anchor="middle">tokens → numbers</text>
+      <text class="th" x="600" y="66" text-anchor="middle">Embeddings</text>
+      <text class="ts" x="600" y="90" text-anchor="middle">numbers → meaning</text>
+      <text class="th" x="600" y="200" text-anchor="middle">Transformer</text>
+      <text class="ts" x="600" y="224" text-anchor="middle">tokens share context</text>
+      <text class="th" x="360" y="200" text-anchor="middle">Probabilities</text>
+      <text class="ts" x="360" y="224" text-anchor="middle">a score for every token</text>
+      <text class="th" x="120" y="200" text-anchor="middle">Pick a token</text>
+      <text class="ts" x="120" y="224" text-anchor="middle">add it to the text</text>
+      <text class="tr" x="134" y="140">repeat</text>
+    </svg></div>
+    <figcaption>Text in, one token out, then the whole loop runs again for the next token.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Tokenizer</b>The text is broken into small pieces called <b>tokens</b>. <span class="tag">→ Tokens</span></div></li>
+    <li><span class="dot">2</span><div><b>Token IDs</b>Each token becomes a number, because models only work with numbers.</div></li>
+    <li><span class="dot">3</span><div><b>Embeddings</b>Each number becomes a list of values that represents its meaning. <span class="tag">→ Embeddings</span></div></li>
+    <li><span class="dot">4</span><div><b>Transformer layers</b>The tokens “look at” each other to understand the context. <span class="tag">→ Transformers</span></div></li>
+    <li><span class="dot">5</span><div><b>Probabilities</b>The model gives a score to every possible next token.</div></li>
+    <li><span class="dot">6</span><div><b>Pick one token</b>One token is chosen, added to the text, and the process repeats. <span class="tag">→ Inference</span></div></li>
+  </ol>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="training-inference">
+  <h2>Training vs inference, and how text is generated</h2>
+  <div class="story"><b class="lbl">Studying vs the exam</b>A student spends years studying, then sits in the exam hall and writes answers. Nothing new is learned in the exam hall. <mark>Training is the studying; inference is writing the exam.</mark></div>
+  <p>An LLM has two completely different phases in its life:</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Training (learning)</h4><p>The model reads massive amounts of text and practises one task again and again: <b>predict the next token</b>. Every time it is wrong, its internal numbers, called <b>weights</b> or <b>parameters</b>, are nudged slightly. After billions of these corrections the weights hold the patterns of language, facts and reasoning.</p></div>
+    <div class="card t2 tilt-b"><h4>Inference (using)</h4><p>The trained model is simply <b>used</b>: you send a prompt and it generates a response. The weights <b>do not change</b>. The model does not learn from your conversation.</p></div>
+  </div>
+  <p>Training usually happens in stages:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Pre-training</b>Learn language from huge amounts of text. The result can continue text, but is not yet a good assistant.</div></li>
+    <li><span class="dot">2</span><div><b>Instruction tuning</b>Train on examples of instructions with good answers, so it learns to <i>follow instructions</i>.</div></li>
+    <li><span class="dot">3</span><div><b>Alignment</b>Feedback from humans (and from AI) teaches it to be more helpful, honest and safe.</div></li>
+  </ol>
+  <div class="sticky info l"><strong>Key idea</strong> As LLM engineers we almost always work with <b>inference</b>. Training a large model from scratch costs millions of dollars and is done by a handful of companies.</div>
+
+  <h3>One token at a time</h3>
+  <p>An LLM does not write a whole answer at once. At each step it looks at all the text so far, calculates the probability of every possible next token, picks one, <b>adds it to the input</b>, and repeats. This loop is called <mark>autoregressive generation</mark>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Three steps: The capital of France is predicts Paris; with Paris appended it predicts a full stop; then it predicts end and stops">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="20" width="360" height="50" rx="12"/>
+        <rect class="box f-green" x="450" y="20" width="140" height="50" rx="12"/>
+        <rect class="box f-card" x="20" y="95" width="360" height="50" rx="12"/>
+        <rect class="box f-green" x="450" y="95" width="140" height="50" rx="12"/>
+        <rect class="box f-card" x="20" y="170" width="360" height="50" rx="12"/>
+        <rect class="box f-orange" x="450" y="170" width="140" height="50" rx="12"/>
+        <path class="ln" d="M386 45 L 444 45" marker-end="url(#ah)"/>
+        <path class="ln" d="M386 120 L 444 120" marker-end="url(#ah)"/>
+        <path class="ln" d="M386 195 L 444 195" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M500 74 C 480 90, 410 80, 370 92" marker-end="url(#ahr)"/>
+        <path class="lr dash" d="M500 149 C 480 165, 410 155, 370 167" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="200" y="50" text-anchor="middle">The capital of France is</text>
+      <text class="tm" x="200" y="125" text-anchor="middle">The capital of France is Paris</text>
+      <text class="tm" x="200" y="200" text-anchor="middle">The capital of France is Paris.</text>
+      <text class="tm" x="520" y="50" text-anchor="middle">" Paris"</text>
+      <text class="tm" x="520" y="125" text-anchor="middle">"."</text>
+      <text class="tm" x="520" y="200" text-anchor="middle">&lt;end&gt;</text>
+      <text class="ts" x="610" y="50">step 1</text>
+      <text class="ts" x="610" y="125">step 2</text>
+      <text class="ts" x="610" y="200">stop</text>
+      <text class="tr" x="600" y="92">append</text>
+    </svg></div>
+    <figcaption>Each predicted token is glued onto the input before the next prediction.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Why this one fact matters</strong> A 500-token answer means the model ran its prediction <b>500 times</b>. That explains why longer answers take longer and cost more, and why a model can “talk itself” into a wrong answer one token at a time.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="tokens">
+  <h2>Tokens: how text becomes numbers</h2>
+  <div class="story"><b class="lbl">Cutting vegetables</b>You can’t cook a whole pumpkin in one go, and you don’t dice it into individual fibres either. You cut it into sensible pieces. <mark>Tokens are the “sensible pieces” an LLM cuts text into.</mark></div>
+  <p>Computers cannot do maths on letters; a model only understands numbers. So the text must become a sequence of numbers first. The question is <i>how to cut the text into pieces</i> before numbering them.</p>
+  <div class="tbl"><table>
+    <tr><th>Cut into…</th><th>Vocabulary size</th><th>Problem</th></tr>
+    <tr><td><b>Characters</b></td><td>Tiny (letters, digits, symbols)</td><td>Sequences become very long, and single letters carry little meaning</td></tr>
+    <tr><td><b>Whole words</b></td><td>Enormous</td><td>Cannot handle new words, names, typos or other languages it has never seen</td></tr>
+    <tr><td><b>Tokens</b> (middle path)</td><td>Fixed, typically tens of thousands to a few hundred thousand</td><td>Balanced: common words stay whole, rare words split into known pieces, so any text can be written</td></tr>
+  </table></div>
+  <p>A <b>token</b> is a small chunk of text the model treats as one unit: a whole word, part of a word, a single character, a word with its leading space, or a punctuation mark.</p>
+  <pre class="out"><code>"Hello"        -&gt; 1 token
+" learning"    -&gt; 1 token   (the space is part of the token)
+"Tokenization" -&gt; 2 tokens  ("Token" + "ization")
+"!"            -&gt; 1 token</code></pre>
+  <div class="notes"><div class="note"><b>≈ 4</b>characters per token (English)</div><div class="note"><b>≈ 0.75</b>words per token</div><div class="note"><b>100</b>tokens ≈ 75 words</div></div>
+
+  <h3>Tokenization</h3>
+  <p><b>Tokenization</b> converts text into tokens and then into <b>token IDs</b>. It is done by a separate program, the <b>tokenizer</b>, which ships with every model.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="The text Tokenization is fun! is split into five tokens, Token, ization, space is, space fun, and exclamation mark, and each token becomes a number">
+      <g class="rough">
+        <rect class="box f-card" x="150" y="20" width="342" height="44" rx="12"/>
+        <path class="ln" d="M321 68 L 321 96" marker-end="url(#ah)"/>
+        <rect class="box f-blue" x="150" y="100" width="70" height="40" rx="8"/>
+        <rect class="box f-green" x="230" y="100" width="86" height="40" rx="8"/>
+        <rect class="box f-yellow" x="326" y="100" width="50" height="40" rx="8"/>
+        <rect class="box f-pink" x="386" y="100" width="60" height="40" rx="8"/>
+        <rect class="box f-purple" x="456" y="100" width="36" height="40" rx="8"/>
+        <path class="ln" d="M185 144 L 185 172" marker-end="url(#ah)"/>
+        <path class="ln" d="M273 144 L 273 172" marker-end="url(#ah)"/>
+        <path class="ln" d="M351 144 L 351 172" marker-end="url(#ah)"/>
+        <path class="ln" d="M416 144 L 416 172" marker-end="url(#ah)"/>
+        <path class="ln" d="M474 144 L 474 172" marker-end="url(#ah)"/>
+        <rect class="box f-grey" x="150" y="176" width="70" height="40" rx="8"/>
+        <rect class="box f-grey" x="230" y="176" width="86" height="40" rx="8"/>
+        <rect class="box f-grey" x="326" y="176" width="50" height="40" rx="8"/>
+        <rect class="box f-grey" x="386" y="176" width="60" height="40" rx="8"/>
+        <rect class="box f-grey" x="456" y="176" width="36" height="40" rx="8"/>
+      </g>
+      <text class="t" x="20" y="47">text</text>
+      <text class="t" x="20" y="125">tokens</text>
+      <text class="t" x="20" y="201">token IDs</text>
+      <text class="tm" x="321" y="47" text-anchor="middle">Tokenization is fun!</text>
+      <text class="tm" x="185" y="125" text-anchor="middle">Token</text>
+      <text class="tm" x="273" y="125" text-anchor="middle">ization</text>
+      <text class="tm" x="351" y="125" text-anchor="middle">·is</text>
+      <text class="tm" x="416" y="125" text-anchor="middle">·fun</text>
+      <text class="tm" x="474" y="125" text-anchor="middle">!</text>
+      <text class="tm" x="185" y="201" text-anchor="middle">4421</text>
+      <text class="tm" x="273" y="201" text-anchor="middle">2860</text>
+      <text class="tm" x="351" y="201" text-anchor="middle">382</text>
+      <text class="tm" x="416" y="201" text-anchor="middle">2827</text>
+      <text class="tm" x="474" y="201" text-anchor="middle">0</text>
+      <text class="ts" x="512" y="125">5 tokens (· = space)</text>
+      <text class="ts" x="512" y="201">what the model sees</text>
+    </svg></div>
+    <figcaption>Text → tokens → IDs. The split and the ID numbers here are illustrative; each tokenizer has its own.</figcaption>
+  </figure>
+  <p>How does the tokenizer decide where to cut? Most modern tokenizers use <b>Byte Pair Encoding (BPE)</b>: start with single characters (or bytes) and keep merging the pairs that appear together most often in a huge amount of text, until the vocabulary reaches its target size.</p>
+  <ul>
+    <li><b>Common words</b> usually become one token.</li>
+    <li><b>Rare words, names and typos</b> split into several smaller tokens.</li>
+    <li>A <b>space is usually attached to the start</b> of the next word (<code>" learning"</code>, not <code>"learning "</code>).</li>
+    <li><b>Different model families use different tokenizers</b>, so the same text can have different token counts.</li>
+  </ul>
+
+  <h3>Seeing tokens with a tokenizer tool</h3>
+  <p>OpenAI offers a free online <b>Tokenizer</b> page where you type any text and see exactly how it is split (each coloured block is one token). Results from the GPT-4o tokenizer show the patterns clearly:</p>
+  <div class="tbl"><table>
+    <tr><th>Example</th><th>What you see</th><th>Lesson</th></tr>
+    <tr><td>A normal sentence (37 characters)</td><td>9 tokens; “LLM” splits into <code>" L"</code> + <code>"LM"</code> while <code>" learning"</code> stays whole</td><td>≈ 4 characters per token, as the rule of thumb says</td></tr>
+    <tr><td>Common vs rare words</td><td><code>" unbelievably"</code> = 1 token; <i>Supercalifragilisticexpialidocious</i> = 10 tokens</td><td>Rare words are expensive</td></tr>
+    <tr><td>The same sentence in three languages</td><td>8 tokens in English, 13 in Hindi, 18 in Kannada</td><td>Tokenizers are trained mostly on English, so other languages cost more tokens</td></tr>
+    <tr><td>Code, numbers and dates</td><td><code>123456789</code> → <code>123</code> <code>456</code> <code>789</code></td><td>Long numbers are chunked (up to 3 digits each), one reason LLMs slip on arithmetic</td></tr>
+    <tr><td>Capitals and spaces</td><td><code>apple</code>, <code>Apple</code> and <code>APPLE</code> are different tokens; an extra space can be its own token</td><td>The model sees tokens, not “words”</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Indian customers often serve users in Hindi, Tamil or Kannada. The same message can cost <b>2× or more</b> the tokens of English, which changes both the bill and how much fits in the context window. Measure token counts on <i>real</i> customer text before you quote a cost.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="token-cost">
+  <h2>Input tokens, output tokens, cost and limits</h2>
+  <p>Every request involves two kinds of tokens:</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Input tokens (prompt tokens)</h4><p>Everything you send: instructions, the user’s question, conversation history, documents.</p></div>
+    <div class="card t2 tilt-b"><h4>Output tokens (completion tokens)</h4><p>Everything the model generates in its response.</p></div>
+  </div>
+  <p>Providers <b>charge per token</b>, usually quoted per 1 million tokens. Input and output are priced separately, and <mark>output tokens typically cost several times more than input tokens</mark>, because each one needs its own prediction.</p>
+  <h3>Worked example: a support assistant</h3>
+  <p>10,000 requests a day, each about 1,200 input tokens and 300 output tokens. Example prices (not real prices; always check the provider’s pricing page, since prices change often): input $2.50 and output $10.00 per 1,000,000 tokens.</p>
+  <pre class="out"><code>Input cost per request  = 1,200 / 1,000,000 x $2.50  = $0.0030
+Output cost per request =   300 / 1,000,000 x $10.00 = $0.0030
+Total per request       = $0.0060
+
+Per day   = $0.0060 x 10,000 requests = $60
+Per month = $60 x 30 days             = $1,800</code></pre>
+  <div class="sticky warn l"><strong>Notice</strong> Output was only 20% of the tokens but 50% of the cost. Asking for shorter answers is often the cheapest optimisation you can make.</div>
+
+  <h3>Token limits</h3>
+  <div class="tbl"><table>
+    <tr><th>Limit</th><th>What it caps</th></tr>
+    <tr><td><b>Context window</b></td><td>Total tokens (input + output) the model can handle in one request (next section)</td></tr>
+    <tr><td><b>Max output tokens</b></td><td>The longest single response. You can set your own lower limit in the request to control cost and length</td></tr>
+    <tr><td><b>Rate limits</b></td><td>How many tokens or requests your account may use per minute or per day</td></tr>
+  </table></div>
+  <p>When a response is cut off by the output limit, the API tells you why: OpenAI’s API returns <code>finish_reason = "length"</code> and Anthropic’s returns <code>stop_reason = "max_tokens"</code>. <b>That answer is incomplete</b>, so your code should check for it.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> A classic production bug: a JSON answer silently truncated by the output limit, then a parser crash downstream. Always log the stop reason and the token usage of every call; it is the first thing you will look at when a customer says “the bot is broken”.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="context-window">
+  <h2>Context windows</h2>
+  <div class="story"><b class="lbl">The study desk</b>You can only work with the papers that fit on your desk right now. Anything in the cupboard doesn’t count until you put it on the desk. <mark>The context window is the model’s desk: everything it needs must fit on it at the same time.</mark></div>
+  <p>Something surprising: <b>an LLM has no memory between requests</b>. Each request is processed completely fresh. So how do chat apps remember the conversation? <b>The app re-sends the whole conversation with every new message.</b> The model only knows what is inside the current request, its <b>context</b>. If information is not in the context, the model cannot use it.</p>
+  <p>The <b>context window</b> is the maximum number of tokens a model can process in one request. All of these share it:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="A long bar labelled context window, split into system instructions, history, documents, the question, and space for the answer. Input plus output must fit">
+      <g class="rough">
+        <rect class="box f-none" x="20" y="44" width="680" height="80" rx="14"/>
+        <rect class="box f-purple" x="28" y="52" width="112" height="64" rx="10"/>
+        <rect class="box f-blue" x="146" y="52" width="180" height="64" rx="10"/>
+        <rect class="box f-yellow" x="332" y="52" width="160" height="64" rx="10"/>
+        <rect class="box f-pink" x="498" y="52" width="80" height="64" rx="10"/>
+        <rect class="box f-green dash" x="584" y="52" width="108" height="64" rx="10"/>
+        <path class="ln" d="M28 140 L 578 140"/>
+        <path class="lb" d="M584 140 L 692 140"/>
+      </g>
+      <text class="th" x="20" y="32">Context window</text>
+      <text class="t" x="84" y="89" text-anchor="middle">system</text>
+      <text class="t" x="236" y="89" text-anchor="middle">history</text>
+      <text class="t" x="412" y="89" text-anchor="middle">documents</text>
+      <text class="ts" x="538" y="89" text-anchor="middle">question</text>
+      <text class="t" x="638" y="89" text-anchor="middle">answer</text>
+      <text class="ts" x="303" y="162" text-anchor="middle">input tokens</text>
+      <text class="tb" x="638" y="166" text-anchor="middle">output</text>
+      <text class="tr" x="360" y="198" text-anchor="middle">input + output ≤ context window</text>
+    </svg></div>
+    <figcaption>The answer is written onto the same desk as everything you sent.</figcaption>
+  </figure>
+  <ul>
+    <li><b>System instructions</b>: how the assistant should behave (“You are a polite support agent…”).</li>
+    <li><b>Conversation history</b>: the earlier messages.</li>
+    <li><b>Documents or data</b>: files, search results, product details you add.</li>
+    <li><b>The current question</b>: the user’s latest message.</li>
+    <li><b>The answer</b>: the generated tokens take space in the <i>same</i> window.</li>
+  </ul>
+  <p>Window sizes vary a lot: from a few thousand tokens in older models to hundreds of thousands, and over a million in some modern ones. Always check the model’s documentation.</p>
+
+  <h3>Input and output share the window</h3>
+  <pre class="out"><code>Context window = 8,000 tokens
+
+Case 1: input = 1,500  -&gt;  room for output = 8,000 - 1,500 = 6,500 tokens
+Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
+        if the answer needs 1,000 tokens, it is cut off after 400</code></pre>
+
+  <h3>Why not just stuff everything in?</h3>
+  <div class="grid two">
+    <div class="card t4 tilt-a"><h4>Hard limit</h4><p>Anything beyond the window cannot be sent; the request fails.</p></div>
+    <div class="card t3 tilt-b"><h4>Cost</h4><p>Every context token is an input token you pay for, on <b>every</b> request.</p></div>
+    <div class="card t1 tilt-b"><h4>Speed</h4><p>All input must be processed before the first word of the answer, so long prompts mean a longer wait.</p></div>
+    <div class="card t5 tilt-a"><h4>Quality</h4><p>Models often pay less attention to information buried in the middle of a very long context: the <b>“lost in the middle”</b> problem.</p></div>
+  </div>
+  <div class="sticky info"><strong>Key idea</strong> A good LLM engineer sends the model the <b>right</b> information, not <b>all</b> the information.</div>
+
+  <h3>How conversations consume context</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Bars growing with each turn: turn 1 is 350 tokens, turn 2 is 900, turn 3 is 1,700, because each turn re-sends everything before it">
+      <g class="rough">
+        <rect class="box f-purple" x="110" y="30" width="40" height="36" rx="6"/>
+        <rect class="box f-blue" x="150" y="30" width="67" height="36" rx="6"/>
+        <rect class="box f-purple" x="110" y="85" width="40" height="36" rx="6"/>
+        <rect class="box f-blue" x="150" y="85" width="235" height="36" rx="6"/>
+        <rect class="box f-purple" x="110" y="140" width="40" height="36" rx="6"/>
+        <rect class="box f-blue" x="150" y="140" width="480" height="36" rx="6"/>
+      </g>
+      <text class="t" x="20" y="54">Turn 1</text>
+      <text class="t" x="20" y="109">Turn 2</text>
+      <text class="t" x="20" y="164">Turn 3</text>
+      <text class="tm" x="228" y="53">350</text>
+      <text class="tm" x="396" y="108">900</text>
+      <text class="tm" x="640" y="163">1,700</text>
+      <text class="ts" x="130" y="22" text-anchor="middle">system</text>
+      <text class="ts" x="420" y="22">tokens sent per turn</text>
+    </svg></div>
+    <figcaption>Every turn = all previous turns + the new message, so long chats get slower and pricier.</figcaption>
+  </figure>
+
+  <h3>Managing long contexts</h3>
+  <div class="tbl"><table>
+    <tr><th>Strategy</th><th>How it works</th><th>Trade-off</th></tr>
+    <tr><td><b>Sliding window</b></td><td>Keep only the last few messages, drop the oldest</td><td>Simple, but early details are forgotten</td></tr>
+    <tr><td><b>Summarization</b></td><td>Replace old messages with a short LLM-written summary</td><td>Important facts survive in fewer tokens</td></tr>
+    <tr><td><b>Retrieval (RAG)</b></td><td>Store documents outside the model; send only the pieces relevant to this question</td><td>Needs embeddings and a search step (see Embeddings below)</td></tr>
+    <tr><td><b>Trim and clean</b></td><td>Remove repeated text, formatting and fields the model doesn’t need</td><td>Cheap and almost always worth doing</td></tr>
+    <tr><td><b>Bigger window</b></td><td>Switch to a model with a larger context window</td><td>Costs more per request</td></tr>
+    <tr><td><b>Limit the output</b></td><td>Set a sensible maximum response length</td><td>Guarantees the answer always has room</td></tr>
+  </table></div>
+
+  <h3>Context window vs model memory</h3>
+  <p>Beginners often mix up what the model <i>knows</i> with what it <i>remembers</i>. There are three different kinds of “memory”:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Weights (knowledge)</h4><p>What the model learned in training. Fixed after training; does not change when you chat.</p></div>
+    <div class="card t2 tilt-b"><h4>Context window (working memory)</h4><p>What is on the desk for <b>this</b> request only. Gone when the request ends.</p></div>
+    <div class="card t3 tilt-a"><h4>External memory (app storage)</h4><p>A database or file your <b>app</b> keeps, and puts back into the context when needed.</p></div>
+  </div>
+  <p>When a chat app “remembers” your name next week, the model has not learned anything. <mark>The app saved your name and placed it back into the context window; the weights never changed.</mark></p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="embeddings">
+  <h2>Embeddings: numbers that carry meaning</h2>
+  <div class="story"><b class="lbl">Roll numbers vs a map</b>Roll number 12 and roll number 13 sit next to each other on the register, but the two students may have nothing in common. A map is different: two cities with close latitude and longitude really are close. <mark>A token ID is a name tag. An embedding is a description.</mark></div>
+  <p>The tokenizer gives each token an ID, like <code>9247</code> for “cat”. But IDs are only labels: the IDs of “cat” and “car” can be neighbours while the words have nothing in common. The model needs numbers that describe <b>meaning</b>, so that “cat” and “dog” get similar numbers and “car” gets very different ones.</p>
+  <p>An <b>embedding</b> is a list of numbers (a <b>vector</b>) that represents the meaning of a token, like coordinates on a map of meaning:</p>
+  <pre class="out"><code>"cat"  -&gt; [0.82, 0.10, 0.75, 0.05, ...]
+"dog"  -&gt; [0.79, 0.14, 0.71, 0.08, ...]
+"car"  -&gt; [0.05, 0.91, 0.12, 0.88, ...]</code></pre>
+  <p>Nobody chooses these numbers by hand, and no single number has a name like “animal-ness”. The model learns them during training.</p>
+
+  <h3>Converting tokens into vectors</h3>
+  <p>The conversion is just a <b>lookup</b>. The model has a big table with one row per token in its vocabulary; the token ID says which row to pick.</p>
+  <div class="flow"><span class="op">"cat"</span><span class="op">token ID 9247</span><span>row 9247 of the table</span><span class="ok">[0.82, 0.10, 0.75, …]</span></div>
+  <p>The rows start as random values and are adjusted during training so that tokens used in similar ways end up with similar rows. <b>The embedding table is part of the model’s weights.</b></p>
+
+  <h3>Meaning as a map</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="A 2D map of meaning: animals cat, dog, lion cluster together, fruits apple, mango, banana cluster together, vehicles car, bus, truck cluster together far away">
+      <g class="rough">
+        <path class="ln" d="M40 270 L 690 270" marker-end="url(#ah)"/>
+        <path class="ln" d="M40 270 L 40 20" marker-end="url(#ah)"/>
+        <ellipse class="box f-green" cx="170" cy="90" rx="115" ry="50"/>
+        <ellipse class="box f-yellow" cx="210" cy="215" rx="125" ry="40"/>
+        <ellipse class="box f-blue" cx="560" cy="120" rx="115" ry="60"/>
+        <path class="lr dash" d="M200 85 L 520 120"/>
+      </g>
+      <text class="t" x="100" y="78">cat</text>
+      <text class="t" x="160" y="104">dog</text>
+      <text class="t" x="210" y="74">lion</text>
+      <text class="t" x="110" y="222">apple</text>
+      <text class="t" x="180" y="206">mango</text>
+      <text class="t" x="254" y="228">banana</text>
+      <text class="t" x="500" y="104">car</text>
+      <text class="t" x="560" y="146">bus</text>
+      <text class="t" x="600" y="104">truck</text>
+      <text class="tb" x="170" y="26" text-anchor="middle">animals</text>
+      <text class="tb" x="410" y="226">fruits</text>
+      <text class="tb" x="560" y="50" text-anchor="middle">vehicles</text>
+      <text class="tr" x="360" y="80" text-anchor="middle">far apart</text>
+    </svg></div>
+    <figcaption>Similar meanings land close together. Real embeddings have hundreds or thousands of directions, not two.</figcaption>
+  </figure>
+  <ul>
+    <li>Animals sit together, fruits sit together, vehicles sit together.</li>
+    <li>The <b>distance</b> between two points tells how related the meanings are.</li>
+    <li><b>Directions</b> can carry meaning too. A famous (rough) example from early embedding research: <i>king − man + woman ≈ queen</i>.</li>
+  </ul>
+
+  <h3>Embedding dimensions</h3>
+  <p>The <b>dimension</b> is how many numbers are in the vector. Toy examples use 2 to 4; real models use hundreds or thousands.</p>
+  <div class="tbl"><table>
+    <tr><th>Model (example)</th><th>Used for</th><th>Dimensions</th></tr>
+    <tr><td>all-MiniLM-L6-v2</td><td>small open model for search</td><td>384</td></tr>
+    <tr><td>BERT base</td><td>understanding text</td><td>768</td></tr>
+    <tr><td>OpenAI text-embedding-3-small</td><td>search, RAG (API)</td><td>1,536</td></tr>
+    <tr><td>OpenAI text-embedding-3-large</td><td>search, RAG (API)</td><td>3,072</td></tr>
+    <tr><td>Llama 3 8B (inside the LLM)</td><td>the LLM’s own token vectors</td><td>4,096</td></tr>
+  </table></div>
+  <p>These are examples; always check the model’s documentation. More dimensions give more room to describe meaning (often better quality) but cost more memory, slower search and higher cost.</p>
+  <div class="sticky warn l"><strong>Same model, both sides</strong> Documents and questions must be embedded with the <b>same</b> embedding model. Vectors from two different models cannot be compared.</div>
+
+  <h3>Semantic similarity</h3>
+  <p>Because meanings are now numbers, we can measure how close two meanings are. The most common method is <b>cosine similarity</b>: it looks at the <b>angle</b> between two vectors. A small angle (a value near 1) means similar meaning.</p>
+  <pre class="out"><code>Toy 2-number vectors:
+cat = (0.90, 0.25)   dog = (0.85, 0.42)   car = (0.08, 0.97)
+
+cat &lt;-&gt; dog  =  0.98   (very similar)
+cat &lt;-&gt; car  =  0.35   (far apart)
+dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
+  <p><b>Semantic</b> means “about meaning”, so semantic similarity is similarity in meaning, not spelling. “refund” and “money back” share no letters, but their embeddings are close.</p>
+
+  <h3>Where embeddings are used</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Semantic search</h4><p>Find documents by meaning, not only exact words.</p></div>
+    <div class="card t2 tilt-b"><h4>RAG</h4><p>Find the best pieces of your documents and paste them into the context window.</p></div>
+    <div class="card t3 tilt-a"><h4>Recommendations</h4><p>“People who liked this also liked…” = find the nearest vectors.</p></div>
+    <div class="card t4 tilt-b"><h4>Clustering</h4><p>Group thousands of support tickets by topic.</p></div>
+    <div class="card t5 tilt-a"><h4>Duplicate detection</h4><p>Find questions that mean the same thing.</p></div>
+    <div class="card t8 tilt-b"><h4>Cross-language search</h4><p>A Hindi question can match an English document, if the embedding model knows both languages.</p></div>
+  </div>
+  <div class="sticky info"><strong>Two places you’ll meet embeddings</strong> (1) <b>Inside every LLM</b>, as the first step after tokenizing. (2) In <b>separate embedding models</b> built only to create vectors for search. Both turn text into vectors of meaning.</div>
+  <p>One problem remains: inside the LLM, a token like “bank” gets the <b>same</b> vector in every sentence. The Transformer fixes this using the words around it. First, a little history.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="neural-networks">
+  <h2>Before Transformers: ANNs and RNNs</h2>
+  <h3>What is an ANN?</h3>
+  <p>An <b>Artificial Neural Network (ANN)</b> is a computer system that <b>learns from examples</b> instead of following rules written by a programmer. Show it many students and who passed or failed, and later it can guess whether a new student will pass.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="A neuron: hours studied with weight 0.8 and attendance with weight 0.2 feed a sum plus bias, then an activation function, then a pass or fail output">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="40" width="150" height="50" rx="12"/>
+        <rect class="box f-blue" x="20" y="150" width="150" height="50" rx="12"/>
+        <path class="lr" d="M174 65 C 240 70, 270 95, 304 112" marker-end="url(#ahr)"/>
+        <path class="lb" d="M174 175 C 240 170, 270 145, 304 130" marker-end="url(#ahb)"/>
+        <circle class="box f-yellow" cx="360" cy="120" r="52"/>
+        <path class="ln" d="M416 120 L 446 120" marker-end="url(#ah)"/>
+        <rect class="box f-purple" x="450" y="92" width="125" height="56" rx="12"/>
+        <path class="ln" d="M579 120 L 601 120" marker-end="url(#ah)"/>
+        <rect class="box f-green" x="605" y="92" width="105" height="56" rx="12"/>
+      </g>
+      <text class="t" x="95" y="70" text-anchor="middle">hours studied</text>
+      <text class="t" x="95" y="180" text-anchor="middle">attendance</text>
+      <text class="tr" x="230" y="52" text-anchor="middle">w = 0.8</text>
+      <text class="tb" x="230" y="200" text-anchor="middle">w = 0.2</text>
+      <text class="t" x="360" y="117" text-anchor="middle">Σ inputs×w</text>
+      <text class="ts" x="360" y="138" text-anchor="middle">+ bias</text>
+      <text class="t" x="512" y="125" text-anchor="middle">activation</text>
+      <text class="t" x="657" y="125" text-anchor="middle">Pass/Fail</text>
+      <text class="ts" x="360" y="200" text-anchor="middle">e.g. 0.92</text>
+      <text class="ts" x="512" y="170" text-anchor="middle">strong enough?</text>
+    </svg></div>
+    <figcaption>One neuron: weigh the inputs, add a bias, pass the number through a gate.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Inputs</b>The data given to the network: hours studied, attendance, previous marks.</div></li>
+    <li><span class="dot">2</span><div><b>Weights</b>How strongly each input affects the decision. If hours studied matter a lot and attendance less, give them 0.8 and 0.2.</div></li>
+    <li><span class="dot">3</span><div><b>Bias</b>An extra value added to the weighted sum (<i>weighted inputs + bias</i>) that helps the neuron shift its decision.</div></li>
+    <li><span class="dot">4</span><div><b>Activation function</b>Turns the number (say 0.92) into a decision, like a gate asking “is this strong enough to say Pass?”. It is also what lets networks learn complex, non-linear patterns.</div></li>
+    <li><span class="dot">5</span><div><b>Output</b>The final result: Pass / Fail.</div></li>
+  </ol>
+
+  <h3>Watching an ANN learn: TensorFlow Playground</h3>
+  <p><b>playground.tensorflow.org</b> is a free site where you can watch a small network learn in real time. Before training (epoch 0) the weights are random, so it knows nothing:</p>
+  <div class="tbl"><table>
+    <tr><th>On screen</th><th>What it is</th><th>Simple meaning</th></tr>
+    <tr><td>Dataset “two groups”</td><td>Blue and orange dots</td><td>Blue = students who <b>pass</b>, orange = students who <b>fail</b></td></tr>
+    <tr><td>Inputs X₁, X₂</td><td>Two input features</td><td>X₁ = hours studied, X₂ = hours slept</td></tr>
+    <tr><td>Hidden layer, 3 neurons</td><td>Middle layer</td><td>Three small “thinkers” that each look for a pattern</td></tr>
+    <tr><td>Output square</td><td>Background colour</td><td>The network’s <b>guess</b></td></tr>
+    <tr><td>Test loss = 0.715</td><td>Error measure</td><td>The <b>mistake score</b>; high = many mistakes</td></tr>
+    <tr><td>Play button</td><td>Start training</td><td>Starts the learning</td></tr>
+    <tr><td>Epoch = 0</td><td>Training rounds</td><td>Rounds of practice done so far: none</td></tr>
+  </table></div>
+  <p>Press <b>Play</b>: the network looks at the examples again and again (each full round is an <b>epoch</b>), adjusts its weights a little after each round, and the test loss falls from 0.715 towards 0.000. It can now tell a pass student from a fail student.</p>
+
+  <h3>Where ANNs fall short</h3>
+  <div class="grid two">
+    <div class="card t4 tilt-a"><h4>No memory</h4><p>Each input is looked at once and forgotten. In “I grew up in France, so I speak fluent ___”, it has no sense that “France” came earlier, so it can’t connect it to “French”.</p></div>
+    <div class="card t3 tilt-b"><h4>No sense of order</h4><p>Inputs are a bag of numbers. “The dog bit the man” and “The man bit the dog” use the same words with opposite meanings, and a plain ANN can’t tell them apart.</p></div>
+  </div>
+
+  <h3>RNN: an ANN with memory</h3>
+  <p>A <b>Recurrent Neural Network (RNN)</b> is built for data that comes in order: sentences, speech, stock prices. It reads one item at a time, updates a small memory called the <b>hidden state</b>, and passes it to the next step.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="An RNN reading The cat sat down one word at a time, passing a memory box from step to step">
+      <g class="rough">
+        <rect class="box f-purple" x="30" y="40" width="130" height="60" rx="12"/>
+        <rect class="box f-purple" x="205" y="40" width="130" height="60" rx="12"/>
+        <rect class="box f-purple" x="380" y="40" width="130" height="60" rx="12"/>
+        <rect class="box f-purple" x="555" y="40" width="130" height="60" rx="12"/>
+        <path class="lr" d="M164 70 L 199 70" marker-end="url(#ahr)"/>
+        <path class="lr" d="M339 70 L 374 70" marker-end="url(#ahr)"/>
+        <path class="lr" d="M514 70 L 549 70" marker-end="url(#ahr)"/>
+        <path class="ln" d="M95 150 L 95 106" marker-end="url(#ah)"/>
+        <path class="ln" d="M270 150 L 270 106" marker-end="url(#ah)"/>
+        <path class="ln" d="M445 150 L 445 106" marker-end="url(#ah)"/>
+        <path class="ln" d="M620 150 L 620 106" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="95" y="76" text-anchor="middle">memory h1</text>
+      <text class="t" x="270" y="76" text-anchor="middle">memory h2</text>
+      <text class="t" x="445" y="76" text-anchor="middle">memory h3</text>
+      <text class="t" x="620" y="76" text-anchor="middle">memory h4</text>
+      <text class="tm" x="95" y="172" text-anchor="middle">"The"</text>
+      <text class="tm" x="270" y="172" text-anchor="middle">"cat"</text>
+      <text class="tm" x="445" y="172" text-anchor="middle">"sat"</text>
+      <text class="tm" x="620" y="172" text-anchor="middle">"down"</text>
+      <text class="ts" x="360" y="208" text-anchor="middle">one word at a time; each step must wait for the previous one</text>
+    </svg></div>
+    <figcaption>At step 4 the RNN knows the earlier words only through one small, constantly rewritten memory.</figcaption>
+  </figure>
+  <p>An RNN fixed the memory problem but created new ones:</p>
+  <ul>
+    <li><b>Too slow</b>: each step waits for the one before, so it can’t use the full parallel power of GPUs, and training on huge text takes very long.</li>
+    <li><b>It forgets</b>: the whole memory is one small box rewritten at every step. By the 500th word, the first word is almost gone.</li>
+    <li><b>Far-apart words are hard to connect</b>: the first and last words of a long sentence are many steps apart.</li>
+  </ul>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="transformers">
+  <h2>Transformers and attention</h2>
+  <p>In 2017, researchers at Google published <b>“Attention Is All You Need”</b> and introduced the <b>Transformer</b>. The big idea: <mark>don’t read word by word; look at all the words at once, and let every word directly look at every other word.</mark></p>
+  <div class="tbl"><table>
+    <tr><th></th><th>ANN</th><th>RNN</th><th>Transformer</th></tr>
+    <tr><td><b>How it reads</b></td><td>one input at a time, no order</td><td>one word at a time, in order</td><td>all words at once</td></tr>
+    <tr><td><b>Memory</b></td><td>none</td><td>small and fades</td><td>looks at every word directly</td></tr>
+    <tr><td><b>Speed on long text</b></td><td>fast, but no context</td><td>slow</td><td>fast (runs in parallel)</td></tr>
+    <tr><td><b>Used for</b></td><td>simple predictions</td><td>older speech and translation systems</td><td>all modern LLMs</td></tr>
+  </table></div>
+
+  <h3>The Transformer as a tower</h3>
+  <p>Don’t worry about the maths. Think of a tower of identical floors, called <b>blocks</b> or <b>layers</b>. Text goes in at the bottom, every floor improves the understanding, and the prediction comes out at the top.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 400" role="img" aria-label="A tower from bottom to top: text, tokenizer and IDs, embeddings plus position, block 1, block 2, more blocks repeated N times, output scores, and the next token on top">
+      <g class="rough">
+        <rect class="box f-green" x="210" y="10" width="300" height="40" rx="10"/>
+        <rect class="box f-yellow" x="210" y="64" width="300" height="40" rx="10"/>
+        <rect class="box f-purple dash" x="210" y="118" width="300" height="40" rx="10"/>
+        <rect class="box f-purple" x="210" y="172" width="300" height="40" rx="10"/>
+        <rect class="box f-purple" x="210" y="226" width="300" height="40" rx="10"/>
+        <rect class="box f-teal" x="210" y="280" width="300" height="40" rx="10"/>
+        <rect class="box f-blue" x="210" y="334" width="300" height="40" rx="10"/>
+        <path class="ln" d="M360 332 L 360 324" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 278 L 360 270" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 224 L 360 216" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 170 L 360 162" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 116 L 360 108" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 62 L 360 54" marker-end="url(#ah)"/>
+        <path class="lr" d="M196 120 L 186 120 L 186 264 L 196 264"/>
+      </g>
+      <text class="t" x="360" y="36" text-anchor="middle">next token: " on"</text>
+      <text class="t" x="360" y="90" text-anchor="middle">output scores (probabilities)</text>
+      <text class="t" x="360" y="144" text-anchor="middle">… more blocks …</text>
+      <text class="t" x="360" y="198" text-anchor="middle">Block 2</text>
+      <text class="t" x="360" y="252" text-anchor="middle">Block 1</text>
+      <text class="t" x="360" y="306" text-anchor="middle">embeddings + position</text>
+      <text class="t" x="360" y="360" text-anchor="middle">"The cat sat" → token IDs</text>
+      <text class="tr" x="176" y="188" text-anchor="end">× N blocks</text>
+      <text class="ts" x="526" y="190">each block =</text>
+      <text class="ts" x="526" y="210">self-attention</text>
+      <text class="ts" x="526" y="230">+ feed-forward</text>
+      <text class="ts" x="526" y="304">vectors of meaning</text>
+      <text class="ts" x="526" y="324">+ where each token sits</text>
+    </svg></div>
+    <figcaption>More blocks and longer vectors = a bigger model: more capable, but more expensive to run.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Tokenizer and token IDs</b>Text becomes numbers.</div></li>
+    <li><span class="dot">2</span><div><b>Embeddings + position</b>Numbers become vectors of meaning, plus information about where each token sits. Because a Transformer reads all words together, without position it could not tell “dog bit man” from “man bit dog”.</div></li>
+    <li><span class="dot">3</span><div><b>Transformer block × N</b>Each block has <b>self-attention</b> (tokens share information with each other) and a <b>feed-forward</b> step (each token is processed further on its own). The block repeats many times.</div></li>
+    <li><span class="dot">4</span><div><b>Output scores</b>A score for every token in the vocabulary, which becomes the next-token probabilities.</div></li>
+  </ol>
+  <p>Follow the three tokens of “The cat sat”: they become 3 IDs, then 3 embedding vectors (+ position). Block 1 outputs 3 vectors with a little more context, block 2 more, … block N outputs 3 vectors rich with context. Every block takes in and gives out vectors of the <b>same size</b>. After the last block, the vector of the <b>last token</b> (“sat”) is used to score the next token, here <code>" on"</code>.</p>
+
+  <h3>Attention, conceptually</h3>
+  <p>Read: <i>“The animal didn’t cross the street because it was too tired.”</i> What does “it” mean? You know at once: the animal. A model must work this out too. <mark>Attention lets a token look at the other tokens and decide how much each one matters for understanding it.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="The word it in the sentence sends a thick arrow to animal at 62 percent, smaller arrows to street at 12 percent and tired at 15 percent">
+      <g class="rough">
+        <rect class="box f-purple" x="56" y="183" width="60" height="26" rx="6"/>
+        <rect class="box f-yellow" x="420" y="183" width="30" height="26" rx="6"/>
+        <path class="lr" d="M430 180 C 380 50, 140 50, 90 178" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M432 180 C 410 132, 340 132, 316 180" marker-end="url(#ah)"/>
+        <path class="lb dash" d="M440 180 C 465 122, 540 122, 560 180" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="20" y="201">The</text>
+      <text class="t" x="60" y="201">animal</text>
+      <text class="t" x="125" y="201">didn’t</text>
+      <text class="t" x="190" y="201">cross</text>
+      <text class="t" x="247" y="201">the</text>
+      <text class="t" x="287" y="201">street</text>
+      <text class="t" x="352" y="201">because</text>
+      <text class="t" x="426" y="201">it</text>
+      <text class="t" x="457" y="201">was</text>
+      <text class="t" x="497" y="201">too</text>
+      <text class="t" x="537" y="201">tired.</text>
+      <text class="tr" x="262" y="62" text-anchor="middle">62%</text>
+      <text class="t" x="372" y="116" text-anchor="middle">12%</text>
+      <text class="tb" x="500" y="122" text-anchor="middle">15%</text>
+      <text class="ts" x="620" y="150">“it” asks:</text>
+      <text class="ts" x="620" y="168">who am I?</text>
+      <text class="ts" x="360" y="232" text-anchor="middle">percentages are made up to explain the idea; real ones are learned</text>
+    </svg></div>
+    <figcaption>“it” pays most attention to “animal”, so its vector picks up the animal’s meaning.</figcaption>
+  </figure>
+  <p>Think of a <b>library</b>:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Query</h4><p>Your question: <i>“what am I looking for?”</i></p></div>
+    <div class="card t2 tilt-b"><h4>Key</h4><p>The title on each book: <i>“what do I contain?”</i></p></div>
+    <div class="card t3 tilt-a"><h4>Value</h4><p>The content inside the book: <i>“the information I can give.”</i></p></div>
+  </div>
+  <p>The better a book’s key matches your query, the more you read from its value. Every token asks a query, and every token offers a key and a value.</p>
+
+  <h3>Self-attention</h3>
+  <p><b>Self-attention</b> is attention where tokens look at the other tokens in the <b>same</b> text (and at themselves), all at the same time, in three steps:</p>
+  <div class="flow"><span class="hl">Score</span><span>how related is each pair?</span><span class="hl">Softmax</span><span>turn scores into % (each row sums to 100%)</span><span class="hl">Mix</span><span>blend in information using those %</span></div>
+  <p>A Transformer runs this many times in parallel. Each copy is a <b>head</b>, and each head can notice something different: grammar, who did what, nearby words. Their results are combined; this is <b>multi-head attention</b>.</p>
+
+  <h3>How tokens change after attention</h3>
+  <div class="grid two">
+    <div class="card t8 tilt-a"><h4>“I sat on the river <u>bank</u>.”</h4><p>Before attention: the generic “bank” vector. After: pulled towards <b>water, shore, river</b>.</p></div>
+    <div class="card t7 tilt-b"><h4>“I deposited cash at the <u>bank</u>.”</h4><p>Before attention: the <b>same</b> generic vector. After: pulled towards <b>money, account, branch</b>.</p></div>
+  </div>
+  <div class="sticky info"><strong>Key idea</strong> The embedding gives the <b>dictionary meaning</b>; attention adds the <b>meaning in this sentence</b>. Early blocks tend to pick up simple things (grammar, nearby words); later blocks tend to pick up deeper things (meaning, intent).</div>
+
+  <h3>Encoder and decoder</h3>
+  <div class="tbl"><table>
+    <tr><th>Part</th><th>What it does</th><th>Good for / examples</th></tr>
+    <tr><td><b>Encoder</b></td><td>Reads the whole text and builds a deep understanding. Each word can look both left and right.</td><td>Search embeddings, classification (BERT-style models)</td></tr>
+    <tr><td><b>Decoder</b></td><td>Writes text one token at a time. Each token can only look at tokens before it; a <b>mask</b> hides the future, like covering the answer sheet with your hand.</td><td>Chat LLMs: GPT-style models, Llama, Mistral, Qwen</td></tr>
+    <tr><td><b>Encoder + decoder</b></td><td>The encoder understands the input; the decoder writes the output.</td><td>Translation: T5, the original 2017 Transformer</td></tr>
+  </table></div>
+  <p>Why must the decoder hide future tokens? Because during generation the future tokens <b>don’t exist yet</b>, so training must match that. When people say “LLM” today, they usually mean a <b>decoder-only Transformer</b>.</p>
+
+  <h3>Why Transformers power LLMs</h3>
+  <ul>
+    <li><b>Fast training</b>: all tokens are processed in parallel across many GPUs.</li>
+    <li><b>Context understanding</b>: any token can connect directly to any other, however far apart.</li>
+    <li><b>They scale</b>: more data, parameters and compute usually give a better model.</li>
+    <li><b>One design, many jobs</b>: text, code, images and audio.</li>
+    <li><b>The foundation</b>: GPT, Llama, Gemini, Claude and almost all other LLMs are built on the Transformer or close variants.</li>
+  </ul>
+  <div class="flow"><span>tokens</span><span>embeddings</span><span class="hl">Transformer blocks (attention)</span><span>next-token scores</span><span class="ok">one token chosen</span><span class="op">repeat</span></div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="inference">
+  <h2>Inference: from prompt to answer</h2>
+  <p><b>Inference</b> means using the trained model to produce an output for a new input. The weights are fixed; nothing is learned. Every time you press Enter in a chat app, you run inference, and <mark>inference is where an LLM engineer balances quality, speed and cost.</mark></p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Build the prompt</b>Your app combines system instructions + chat history + the new question.</div></li>
+    <li><span class="dot">2</span><div><b>Send an API request</b>Together with settings such as maximum output length and temperature.</div></li>
+    <li><span class="dot">3</span><div><b>Run the model</b>The server tokenizes the prompt and runs the model on GPUs.</div></li>
+    <li><span class="dot">4</span><div><b>Generate</b>The model produces tokens one by one.</div></li>
+    <li><span class="dot">5</span><div><b>Return</b>The text comes back as the response (completion), with token usage and a stop reason.</div></li>
+  </ol>
+  <div class="codebox"><span class="cap">one inference call with the OpenAI Python SDK</span><pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()   # reads the OPENAI_API_KEY environment variable
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",          # example name: model line-ups change often
+    messages=[
+        {"role": "system", "content": "You are a polite support agent. Answer in 2 sentences."},
+        {"role": "user", "content": "Where is my order #1234?"},
+    ],
+    max_tokens=300,               # cap the output length (and cost)
+    temperature=0.3,              # low randomness for support answers
+)
+
+print(response.choices[0].message.content)   # the answer text
+print(response.choices[0].finish_reason)     # "stop" = finished, "length" = cut off
+print(response.usage.prompt_tokens, response.usage.completion_tokens)</code></pre></div>
+  <p>Other providers use the same idea with slightly different shapes (for example, Anthropic’s Messages API takes the system prompt as a separate <code>system</code> parameter and requires <code>max_tokens</code>). Check each SDK’s docs.</p>
+
+  <h3>Two phases: prefill and decode</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Timeline: a large prefill block that reads the whole prompt in parallel, then the first token appears, then many small decode steps, one token at a time">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="50" width="260" height="60" rx="12"/>
+        <path class="lr dash" d="M290 40 L 290 122"/>
+        <rect class="box f-green" x="304" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="342" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="380" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="418" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="456" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="494" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="532" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="570" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="608" y="62" width="30" height="36" rx="6"/>
+        <rect class="box f-green" x="646" y="62" width="30" height="36" rx="6"/>
+      </g>
+      <text class="th" x="150" y="82" text-anchor="middle">Prefill</text>
+      <text class="ts" x="150" y="102" text-anchor="middle">whole prompt, in parallel</text>
+      <text class="th" x="490" y="40" text-anchor="middle">Decode</text>
+      <text class="ts" x="490" y="125" text-anchor="middle">one token at a time</text>
+      <text class="tr" x="290" y="150" text-anchor="middle">first token (TTFT)</text>
+    </svg></div>
+    <figcaption>Left to right is time. A long prompt stretches the blue block; a long answer adds green steps.</figcaption>
+  </figure>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Phase 1 · Prefill (prompt processing)</h4><p>All prompt tokens are processed together, in parallel. GPUs are very good at this. A longer prompt still means a longer wait before the first word.</p></div>
+    <div class="card t2 tilt-b"><h4>Phase 2 · Decode (generation)</h4><p>The answer is produced one token at a time, each needing a full pass through the model.</p></div>
+  </div>
+
+  <h3>Next-token prediction</h3>
+  <p>At each step the model produces a probability for <b>every</b> token in its vocabulary:</p>
+  <pre class="out"><code>Prompt: "The weather today is"
+  sunny     42%
+  cloudy    24%
+  hot       14%
+  rainy     10%
+  cold       6%
+  banana     4%
+  ... thousands of other tokens with tiny chances</code></pre>
+  <div class="sticky info l"><strong>Key idea</strong> The model doesn’t “decide” one answer; it gives probabilities. A separate rule, called <b>decoding</b>, picks one token.</div>
+  <p>It then loops: predict → pick → append → repeat (<code>"The weather today is"</code> → <code>" sunny"</code> → <code>"."</code> → <code>&lt;end&gt;</code>). Generation stops when:</p>
+  <ul>
+    <li>the model produces a special <b>end token</b>;</li>
+    <li>it reaches the <b>maximum output tokens</b> you set (the answer is cut off);</li>
+    <li>it produces a <b>stop sequence</b> you defined, for example a line <code>END</code>.</li>
+  </ul>
+
+  <h3>Decoding rules</h3>
+  <div class="tbl"><table>
+    <tr><th>Rule</th><th>How it picks</th><th>Feel</th></tr>
+    <tr><td><b>Greedy</b></td><td>Always the most likely token</td><td>Safe and repeatable, can sound dull</td></tr>
+    <tr><td><b>Random sampling</b></td><td>Randomly, weighted by the probabilities</td><td>More natural, occasionally picks a silly token</td></tr>
+    <tr><td><b>Top-k</b></td><td>Keep only the k best tokens, then sample</td><td>Cuts off the long tail</td></tr>
+    <tr><td><b>Top-p</b> (nucleus)</td><td>Keep the smallest group whose chances add up to p (e.g. 70%), then sample</td><td>Adapts to how confident the model is</td></tr>
+  </table></div>
+  <p>With top-p = 0.70 above: sunny (42%) + cloudy (24%) = 66%, still under 70%, so add hot (14%) → 80%. The model samples only from <b>sunny, cloudy, hot</b>; “banana” can never be picked. Most APIs let you set temperature and top-p, and some also top-k. Usually change <b>one</b> of them, not all.</p>
+
+  <h3>Temperature</h3>
+  <p><b>Temperature</b> controls how random the choice is. Low: the model nearly always picks the top token. High: lower-chance tokens get picked more often.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Three bar charts of the same six words. At temperature 0.2 sunny is 94 percent and the rest almost zero; at 1.0 sunny is 42 percent; at 2.0 the bars are much flatter and sunny is 29 percent">
+      <g class="rough">
+        <path class="ln" d="M20 200 L 236 200"/>
+        <path class="ln" d="M260 200 L 476 200"/>
+        <path class="ln" d="M500 200 L 716 200"/>
+        <rect class="box f-purple" x="24" y="59" width="26" height="141"/>
+        <rect class="box f-blue" x="58" y="191" width="26" height="9"/>
+        <rect class="box f-blue" x="92" y="198" width="26" height="2"/>
+        <rect class="box f-purple" x="264" y="137" width="26" height="63"/>
+        <rect class="box f-blue" x="298" y="164" width="26" height="36"/>
+        <rect class="box f-blue" x="332" y="179" width="26" height="21"/>
+        <rect class="box f-blue" x="366" y="185" width="26" height="15"/>
+        <rect class="box f-blue" x="400" y="191" width="26" height="9"/>
+        <rect class="box f-pink" x="434" y="194" width="26" height="6"/>
+        <rect class="box f-purple" x="504" y="157" width="26" height="43"/>
+        <rect class="box f-blue" x="538" y="168" width="26" height="32"/>
+        <rect class="box f-blue" x="572" y="175" width="26" height="25"/>
+        <rect class="box f-blue" x="606" y="179" width="26" height="21"/>
+        <rect class="box f-blue" x="640" y="184" width="26" height="16"/>
+        <rect class="box f-pink" x="674" y="187" width="26" height="13"/>
+      </g>
+      <text class="tm" x="37" y="50" text-anchor="middle">94%</text>
+      <text class="tm" x="277" y="128" text-anchor="middle">42%</text>
+      <text class="tm" x="517" y="148" text-anchor="middle">29%</text>
+      <text class="th" x="128" y="30" text-anchor="middle">T = 0.2</text>
+      <text class="th" x="368" y="30" text-anchor="middle">T = 1.0</text>
+      <text class="th" x="608" y="30" text-anchor="middle">T = 2.0</text>
+      <text class="ts" x="128" y="222" text-anchor="middle">almost always “sunny”</text>
+      <text class="ts" x="368" y="222" text-anchor="middle">the model’s own odds</text>
+      <text class="ts" x="608" y="222" text-anchor="middle">flatter: more surprises</text>
+      <text class="ts" x="360" y="256" text-anchor="middle">bars, left to right: sunny, cloudy, hot, rainy, cold, banana (pink)</text>
+    </svg></div>
+    <figcaption>Same model scores; only the temperature changes how “peaky” the choice is.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Temperature</th><th>Use for</th></tr>
+    <tr><td><b>Low (0 to 0.3)</b></td><td>Facts, code, data extraction, classification</td></tr>
+    <tr><td><b>Medium (around 0.7)</b></td><td>Everyday chat, emails, summaries</td></tr>
+    <tr><td><b>High (1.0 or more)</b></td><td>Stories, brainstorming, many different ideas</td></tr>
+  </table></div>
+  <div class="sticky warn"><strong>Three warnings</strong> (1) Temperature 0 gives <i>almost</i> the same answer each time, but not always exactly the same on every provider. (2) A low temperature does <b>not</b> remove hallucinations. (3) The allowed range differs between providers, and some newer (especially reasoning) models don’t let you change it. Check the docs.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="latency-cost">
+  <h2>Latency, cost and streaming</h2>
+  <h3>Inference latency</h3>
+  <p><b>Latency</b> is how long the user waits. Two numbers matter:</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Time To First Token (TTFT)</h4><p>The wait before the first word appears. Depends on network time and prompt length (prefill).</p></div>
+    <div class="card t2 tilt-b"><h4>Tokens per second</h4><p>How fast the rest of the answer is produced. Depends on model size and hardware.</p></div>
+  </div>
+  <pre class="out"><code>Total time = TTFT + (output tokens / tokens per second)
+           = 0.5 s + (300 / 50) s
+           = 0.5 s + 6.0 s  =  6.5 s</code></pre>
+  <p>Ways to reduce latency:</p>
+  <ul>
+    <li>Send a shorter prompt and ask for a shorter answer (or set a lower maximum output).</li>
+    <li>Use a smaller, faster model for easy tasks.</li>
+    <li>Use <b>streaming</b> so the user sees words early.</li>
+    <li>Use the provider’s <b>prompt caching</b> (a repeated prompt prefix is reused), and choose a server region close to your users.</li>
+  </ul>
+
+  <h3>Inference cost</h3>
+  <p>From the token section: $0.0060 per request, $1,800 a month at 10,000 requests a day. When you run your own model, the cost is the GPUs instead.</p>
+  <div class="tbl"><table>
+    <tr><th>What drives the cost</th><th>Why</th></tr>
+    <tr><td><b>Model size</b></td><td>Bigger models cost more per token</td></tr>
+    <tr><td><b>Input tokens</b></td><td>Long prompts, chat history and documents are paid on <b>every</b> request</td></tr>
+    <tr><td><b>Output tokens</b></td><td>Usually several times pricier than input tokens</td></tr>
+    <tr><td><b>Number of requests</b></td><td>Cost grows with users</td></tr>
+    <tr><td><b>“Thinking” tokens</b></td><td>Reasoning models write extra hidden steps, usually billed as output tokens</td></tr>
+  </table></div>
+  <p>Ways to reduce cost: trim or summarise old chat history and remove unneeded text; cap the output length; use a small model for simple tasks and a big one only when needed; cache repeated prompt parts and use cheaper <b>batch</b> options for non-urgent jobs where offered.</p>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> Before a customer pilot, build a one-page cost sheet: requests/day × (input tokens × input price + output tokens × output price) × 30, using their real prompts. Then show the two or three levers (smaller model, shorter history, caching) and what each saves. It turns an “AI is expensive” worry into a decision.</div>
+
+  <h3>Streaming responses</h3>
+  <p>Without streaming, the user stares at a blank screen for the full 6.5 seconds. With <b>streaming</b>, the server sends each token as soon as it’s ready, like a person typing.</p>
+  <div class="codebox"><span class="cap">streaming with the OpenAI Python SDK</span><pre><code class="language-python">stream = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "Explain tokens in 3 lines."}],
+    stream=True,
+)
+for chunk in stream:
+    piece = chunk.choices[0].delta.content
+    if piece:
+        print(piece, end="", flush=True)   # show every small piece immediately</code></pre></div>
+  <div class="grid two">
+    <div class="card t2 tilt-a"><h4>Good</h4><p>Feels much faster, the user can start reading, and can stop early to save tokens.</p></div>
+    <div class="card t3 tilt-b"><h4>Careful</h4><p>You can’t check the full answer before showing it, and app code gets a bit more complex. A JSON answer isn’t valid until the last piece arrives.</p></div>
+  </div>
+  <div class="sticky info"><strong>Key idea</strong> Streaming does not make the total time shorter. It makes the <b>first words arrive sooner</b>.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="capabilities">
+  <h2>What LLMs are good at</h2>
+  <div class="story"><b class="lbl">The brilliant new intern</b>Fast, flexible, has read everything, never tired, and will occasionally state something wrong with total confidence. <mark>A good LLM engineer knows both sides of the intern.</mark></div>
+  <h3>Text generation</h3>
+  <pre><code class="language-plaintext">Prompt : Write a 2-line email asking my manager for leave tomorrow.
+Output : Dear Sir, I would like to request leave tomorrow due to a family
+         function. I will complete my pending work today.</code></pre>
+  <h3>Summarization</h3>
+  <pre><code class="language-plaintext">Prompt : Summarise this 20-page report in 5 bullet points.
+Output : 5 short bullet points with the key findings</code></pre>
+  <h3>Question answering</h3>
+  <p>From training knowledge, or, <b>much more reliably</b>, from a document you provide:</p>
+  <pre><code class="language-plaintext">Prompt : Using the policy below, how many days do I have to return an item?
+         Policy: Items can be returned within 7 days of delivery.
+Output : You have 7 days from the delivery date.</code></pre>
+  <h3>Classification</h3>
+  <p>This replaces the brittle refund/delivery rules from the start of this note with one instruction:</p>
+  <pre><code class="language-plaintext">Prompt : Classify the message as Refund, Delivery issue or Other.
+         Message: paisa wapas chahiye
+Output : Refund</code></pre>
+  <h3>Information extraction</h3>
+  <p>Pull structured data out of messy text. Ask for JSON, and check it with code.</p>
+  <pre><code class="language-plaintext">Text   : Rahul Sharma booked 2 tickets to Goa on 12 Nov and paid Rs 8,400.
+Output : {"name": "Rahul Sharma", "tickets": 2, "destination": "Goa",
+          "date": "12 Nov", "amount": 8400}</code></pre>
+  <h3>Code generation</h3>
+  <p>The model writes, explains and fixes code. Always run and test what it gives you.</p>
+  <div class="codebox"><span class="cap">Prompt: “Write a Python function that checks if a number is prime.”</span><pre><code class="language-python">def is_prime(n):
+    if n &lt; 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True</code></pre></div>
+  <h3>Reasoning</h3>
+  <pre><code class="language-plaintext">Prompt : A pen costs Rs 12. I buy 7 pens and pay with Rs 100.
+         How much change do I get? Think step by step.
+Output : 7 x 12 = 84.  100 - 84 = 16.  The change is Rs 16.</code></pre>
+  <p>Asking it to “think step by step” often helps. Some models are <b>reasoning models</b> that spend extra tokens “thinking” before answering: more time and money, better on hard problems. It is still pattern-based, not human thinking. <b>For exact maths, let the model use a calculator or write code.</b></p>
+  <h3>Multimodal capabilities</h3>
+  <p>A <b>multimodal</b> model accepts more than text, usually images and sometimes audio or video; output is often still text.</p>
+  <ul>
+    <li>Read a receipt, form, chart or handwriting from a photo.</li>
+    <li>Describe an image or answer questions about it.</li>
+    <li>Transcribe speech or answer questions about audio, with models that support it.</li>
+  </ul>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Most first enterprise use cases are some mix of <b>classify, extract, summarise</b> over the customer’s documents: invoices, tickets, KYC forms, call transcripts. Multimodal models now let you skip a separate OCR step for many scanned documents, but test accuracy on the customer’s worst scans first.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="limitations">
+  <h2>Limitations, hallucinations and evaluation</h2>
+  <h3>Hallucinations</h3>
+  <p>A <b>hallucination</b> is an answer that sounds confident and correct but is false or made up. It happens because the model predicts <i>likely-sounding</i> text; it doesn’t look facts up and doesn’t know when it is guessing. <mark>A fluent answer is not proof of a true answer.</mark></p>
+  <p>Common examples: fake facts and numbers, invented book or paper titles and web links, functions or settings that don’t exist, wrong quotes.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Ground it</b>Give the model the real source text (RAG) and tell it to answer only from that text.</div></li>
+    <li><span class="dot">2</span><div><b>Allow “I don’t know”</b>Say explicitly that not knowing is an acceptable answer.</div></li>
+    <li><span class="dot">3</span><div><b>Lower the temperature</b>For factual work. It helps, but does not remove the problem.</div></li>
+    <li><span class="dot">4</span><div><b>Verify</b>Check important facts, numbers and code. Ask for sources and check them.</div></li>
+  </ol>
+  <h3>Knowledge and context limitations</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Knowledge cutoff</h4><p>Knows nothing after its training data ends. Give it a search tool or paste newer facts into the context.</p></div>
+    <div class="card t2 tilt-b"><h4>No private data</h4><p>Hasn’t seen your company files, emails or database unless you provide them.</p></div>
+    <div class="card t3 tilt-a"><h4>Context window</h4><p>Very long documents may not fit, and details in the middle may get less attention.</p></div>
+    <div class="card t4 tilt-b"><h4>No memory between chats</h4><p>The app must send the history every time.</p></div>
+    <div class="card t5 tilt-a"><h4>Tokens, not letters</h4><p>Counting letters in a word or long arithmetic can go wrong.</p></div>
+    <div class="card t6 tilt-b"><h4>Sensitive to wording</h4><p>A small prompt change can change the answer, and answers may vary run to run.</p></div>
+  </div>
+  <h3>Why you must evaluate outputs</h3>
+  <p>The text is fluent, so a wrong answer is easy to believe, and answers change between runs. So we <b>test</b> the model rather than trust it.</p>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>How it works</th><th>Good for</th></tr>
+    <tr><td><b>Human review</b></td><td>People read and rate the answers</td><td>Quality, tone, tricky cases</td></tr>
+    <tr><td><b>Rule checks</b></td><td>Code compares with the expected answer, checks the JSON format, or runs unit tests on generated code</td><td>Classification, extraction, code</td></tr>
+    <tr><td><b>LLM as a judge</b></td><td>Another LLM scores the answer using a checklist (compare its scores with humans first)</td><td>Large volumes of answers</td></tr>
+    <tr><td><b>User feedback</b></td><td>Thumbs up/down in the live app</td><td>Monitoring after launch</td></tr>
+  </table></div>
+  <pre class="out"><code>Test set : 10 questions with known correct answers
+Result   : 8 correct, 2 wrong
+Score    : 8 / 10 = 80% accuracy
+   |
+Change the prompt or model  -&gt;  run the same 10 questions again</code></pre>
+  <div class="sticky info l"><strong>Key idea</strong> Trust, but verify. Build a small test set early, and re-run it every time you change the prompt or the model.</div>
+  <div class="tbl"><table>
+    <tr><th>LLMs are strong at</th><th>Be careful with</th></tr>
+    <tr><td>writing, summarising, translating</td><td>facts the model may not know (hallucination)</td></tr>
+    <tr><td>classifying and extracting from messy text</td><td>recent events (knowledge cutoff)</td></tr>
+    <tr><td>explaining and generating code</td><td>exact maths, counting and long calculations</td></tr>
+    <tr><td>working across many topics and languages</td><td>private data it has never seen</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Ask the customer for 30–50 real examples with the answers they consider correct <b>on day one</b>. That set becomes your acceptance test, your demo, and your proof when someone says “it got worse after the update”.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="open-vs-proprietary">
+  <h2>Open vs proprietary models</h2>
+  <p>Now the practical question: which model should we use, and how do we run it? There are two big families.</p>
+  <div class="grid two">
+    <div class="card t2 tilt-a"><h4>Open-weight models</h4><p>The company publishes the <b>weights</b>, so anyone can download them, run them on their own computer or server, and often change them. Examples: Llama, Mistral, Qwen, Gemma, DeepSeek, gpt-oss.</p><p><b>Like getting the finished cake:</b> cut it, decorate it, serve it your way, but you don’t always get the recipe (training data and code).</p></div>
+    <div class="card t1 tilt-b"><h4>Proprietary (closed) models</h4><p>Owned and run by a company. You use them through an API or app; the weights stay secret. Examples: GPT (OpenAI), Claude (Anthropic), Gemini (Google).</p><p><b>Like a restaurant:</b> you order, they cook. Great food without owning a kitchen, but you can’t see how it’s made. Often the strongest and easiest to start with; you pay per token.</p></div>
+  </div>
+  <div class="sticky warn l"><strong>Open-weight ≠ open-source</strong> You may get the weights without the training data or code. Every model also has a <b>licence</b>, and some limit commercial use. Always read it.</div>
+
+  <h3>API access vs self-hosting</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Left: your app sends requests over the internet to a provider who runs the model, paying per token. Right: inside your own network, your app calls your own GPUs running open weights at a fixed cost">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="62" width="120" height="60" rx="12"/>
+        <path class="lr" d="M154 92 L 204 92" marker-end="url(#ahr)"/>
+        <rect class="box f-purple" x="210" y="52" width="140" height="80" rx="14"/>
+        <rect class="box f-none dash" x="378" y="46" width="324" height="96" rx="16"/>
+        <rect class="box f-blue" x="395" y="64" width="110" height="60" rx="12"/>
+        <path class="lb" d="M509 94 L 559 94" marker-end="url(#ahb)"/>
+        <rect class="box f-green" x="565" y="58" width="125" height="72" rx="14"/>
+      </g>
+      <text class="th" x="190" y="30" text-anchor="middle">API access</text>
+      <text class="th" x="540" y="30" text-anchor="middle">Self-hosting</text>
+      <text class="t" x="90" y="97" text-anchor="middle">Your app</text>
+      <text class="t" x="280" y="88" text-anchor="middle">Provider</text>
+      <text class="ts" x="280" y="110" text-anchor="middle">runs the model</text>
+      <text class="t" x="450" y="99" text-anchor="middle">Your app</text>
+      <text class="t" x="627" y="90" text-anchor="middle">Your GPUs</text>
+      <text class="ts" x="627" y="112" text-anchor="middle">open weights</text>
+      <text class="ts" x="190" y="168" text-anchor="middle">data leaves your network</text>
+      <text class="ts" x="190" y="192" text-anchor="middle">pay per token · minutes to start</text>
+      <text class="ts" x="540" y="168" text-anchor="middle">data stays in your network</text>
+      <text class="ts" x="540" y="192" text-anchor="middle">fixed cost · you run everything</text>
+    </svg></div>
+    <figcaption>Middle path: cloud platforms and hosting companies also serve open models behind an API, so you get an easy API without running GPUs.</figcaption>
+  </figure>
+
+  <h3>Customization: start at the top</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Prompting</b>Clear instructions and a few examples. Cheapest and fastest. <span class="tag">→ next note</span></div></li>
+    <li><span class="dot">2</span><div><b>RAG</b>Give the model your own documents in the context.</div></li>
+    <li><span class="dot">3</span><div><b>Fine-tuning</b>Train the model a little more on your own examples to change its style, format or skill.</div></li>
+  </ol>
+  <ul>
+    <li><b>Open models</b>: full control. Efficient methods like <b>LoRA</b> train only a small add-on, so one GPU can be enough for a small model.</li>
+    <li><b>Proprietary models</b>: some providers offer fine-tuning for selected models; options are limited and the tuned model stays on their platform.</li>
+  </ul>
+
+  <h3>Infrastructure requirements</h3>
+  <p>An open model must run on GPUs, and the main limit is <b>GPU memory</b>. Rule of thumb for the weights:</p>
+  <pre class="out"><code>memory (GB)  ~  parameters (billions)  x  bytes per number
+16-bit = 2 bytes     8-bit = 1 byte     4-bit = 0.5 byte
+
+7B model,  16-bit  -&gt;  7 x 2   = 14 GB
+7B model,   4-bit  -&gt;  7 x 0.5 = 3.5 GB
+70B model, 16-bit  -&gt;  70 x 2  = 140 GB</code></pre>
+  <ul>
+    <li><b>Quantization</b> stores each number with fewer bits (e.g. 4-bit instead of 16-bit): much smaller model, small loss in quality.</li>
+    <li>Real needs are higher: the model also needs working memory (the <b>KV cache</b>) that grows with context length.</li>
+    <li>A small model (~7–8B) in 4-bit runs on a laptop or home GPU; <b>Ollama</b> and <b>llama.cpp</b> make this easy. For many users at once, servers use tools like <b>vLLM</b>.</li>
+    <li>Beyond GPUs you need storage, serving software, monitoring and a plan for scaling.</li>
+  </ul>
+
+  <h3>Cost: pay-per-use vs fixed</h3>
+  <p>An API is <b>pay-per-use</b>: no usage, no bill. Self-hosting is a <b>fixed cost</b>: the GPU server costs the same busy or idle. With the example numbers from earlier (not real prices):</p>
+  <pre class="out"><code>API per month       = requests/day x cost/request x 30
+                    = 10,000 x $0.006 x 30  =  $1,800
+Self-host (assumed) = $2,000 per month, fixed
+
+Break-even = 2,000 / (0.006 x 30)  =  about 11,100 requests per day</code></pre>
+  <p>Below break-even the API is cheaper; above it, self-hosting can win. But count the hidden costs: engineers’ time, monitoring, downtime, and the limit on how many requests one GPU server can handle.</p>
+
+  <h3>Privacy and data</h3>
+  <p>With an API, your prompts and documents go to the provider’s servers. Check:</p>
+  <ul>
+    <li>Does the provider store your data, and for how long?</li>
+    <li>Is it used to train their models? (Business API terms often say no, but read them.)</li>
+    <li>In which country is it processed?</li>
+    <li>Which rules apply? For example GDPR (Europe), the DPDP Act (India), HIPAA (US health data).</li>
+  </ul>
+  <p>Self-hosting keeps data inside your network, but you are responsible for securing it. A middle path is a <b>private deployment</b> of a model inside your own cloud account.</p>
+  <div class="sticky warn"><strong>Never</strong> paste passwords, secret keys or personal data into any AI tool you haven’t checked.</div>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="choosing">
+  <h2>Choosing a model for a use case</h2>
+  <div class="tbl"><table>
+    <tr><th></th><th>Proprietary API</th><th>Open-weight, self-hosted</th></tr>
+    <tr><td><b>Time to start</b></td><td>minutes</td><td>days to weeks</td></tr>
+    <tr><td><b>Top-end quality</b></td><td>usually the strongest</td><td>often a little behind the best, good enough for many tasks</td></tr>
+    <tr><td><b>Model changes</b></td><td>provider updates or retires versions; you must re-test</td><td>keep the exact version as long as you want</td></tr>
+    <tr><td><b>Customization</b></td><td>prompts, RAG, limited fine-tuning</td><td>anything, including your own fine-tuning</td></tr>
+    <tr><td><b>Limits and outages</b></td><td>the provider’s rate limits and downtime</td><td>limited by your own servers</td></tr>
+    <tr><td><b>Lock-in</b></td><td>higher: prompts are tuned to one provider</td><td>lower: you can move between models</td></tr>
+    <tr><td><b>Data location</b></td><td>the provider’s servers</td><td>your own network</td></tr>
+    <tr><td><b>Cost pattern</b></td><td>pay per use</td><td>fixed infrastructure cost</td></tr>
+  </table></div>
+  <p>Ask five questions: <b>How good</b> must the answers be? <b>How much</b> will it cost at our volume? <b>How sensitive</b> is the data? <b>How fast</b> must it respond? Does our team have the <b>skills</b> to run models?</p>
+  <div class="tbl"><table>
+    <tr><th>Use case</th><th>Good starting choice</th><th>Why</th></tr>
+    <tr><td>Prototype a new idea this week</td><td>proprietary API</td><td>fastest to start, nothing to set up</td></tr>
+    <tr><td>Support chatbot for a small startup</td><td>proprietary API (a smaller, cheaper model)</td><td>low volume, quality matters</td></tr>
+    <tr><td>Hospital summarising patient notes</td><td>self-hosted open model, or a private deployment</td><td>sensitive data must stay inside</td></tr>
+    <tr><td>Classify millions of reviews every day</td><td>small open model, fine-tuned, self-hosted</td><td>high volume, simple task, cost matters</td></tr>
+    <tr><td>Assistant that works offline on a laptop</td><td>small open model on the device</td><td>no internet needed</td></tr>
+    <tr><td>Hardest reasoning and coding work</td><td>the best proprietary models (also test the top open ones)</td><td>quality comes first</td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>Key idea</strong> Don’t pick a model from a leaderboard or from hype. Test two or three candidates on <b>your own test set</b>, compare quality, speed and cost, then decide. Models change fast, so re-check every few months.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Keep the model name in config, not hard-coded, and wrap provider calls behind one small function. When the customer’s security team says “no external APIs” or a model is retired, you swap one line and re-run your test set instead of rewriting the app.</div>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Large Language Model (LLM)</dt><dd>An AI model trained on huge amounts of text to learn language patterns, which takes a prompt and generates a text response.</dd></div>
+    <div><dt>Token</dt><dd>A small chunk of text (a word, part of a word, a character or punctuation) that a model treats as one unit; roughly 4 characters of English.</dd></div>
+    <div><dt>Tokenizer</dt><dd>The program that splits text into tokens and maps each token to a numeric ID; each model family has its own, often based on Byte Pair Encoding.</dd></div>
+    <div><dt>Context window</dt><dd>The maximum number of tokens, input plus output together, that a model can process in a single request.</dd></div>
+    <div><dt>Embedding</dt><dd>A vector of numbers representing the meaning of a token or text, so that similar meanings have nearby vectors.</dd></div>
+    <div><dt>Cosine similarity</dt><dd>A measure of how similar two vectors are, based on the angle between them; values near 1 mean very similar meaning.</dd></div>
+    <div><dt>Transformer</dt><dd>The neural-network design behind modern LLMs, introduced in 2017, which processes all tokens in parallel and relates them using attention.</dd></div>
+    <div><dt>Self-attention</dt><dd>The mechanism that lets each token weigh and blend in information from the other tokens in the same text, giving it context-specific meaning.</dd></div>
+    <div><dt>Inference</dt><dd>Using a trained model to generate output for new input; the weights stay fixed and nothing is learned.</dd></div>
+    <div><dt>Autoregressive generation</dt><dd>Producing text one token at a time, appending each chosen token to the input before predicting the next.</dd></div>
+    <div><dt>Temperature</dt><dd>A sampling setting that controls randomness: low values almost always pick the top token, high values give less likely tokens more chance.</dd></div>
+    <div><dt>Top-p (nucleus) sampling</dt><dd>Sampling only from the smallest set of tokens whose probabilities add up to p.</dd></div>
+    <div><dt>Hallucination</dt><dd>A fluent, confident model answer that is false or made up.</dd></div>
+    <div><dt>Time To First Token (TTFT)</dt><dd>The delay between sending a request and receiving the first token of the response.</dd></div>
+    <div><dt>Quantization</dt><dd>Storing model weights with fewer bits (for example 4-bit instead of 16-bit) to cut memory use, with a small loss in quality.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>A chat app “remembers” what you said three messages ago. How?</p>
+      <ol><li>The model updated its weights after each message</li><li>The model has a built-in memory per user</li><li>The app re-sends the earlier messages inside each new request</li><li>The tokenizer stores the conversation</li></ol>
+      <p class="why">LLMs are stateless between requests. The app puts the history back into the context window every time.</p></div>
+    <div class="q" data-answer="1"><p>Context window 8,000 tokens; your prompt is 7,600 tokens; the ideal answer needs 1,000 tokens. What happens?</p>
+      <ol><li>The answer is cut off after about 400 tokens</li><li>The model compresses the prompt automatically</li><li>The full answer is produced; only input counts</li><li>The model answers in 1,000 tokens and drops the system prompt</li></ol>
+      <p class="why">Input and output share the window: 8,000 − 7,600 = 400 tokens of room. The API will report a stop reason like “length”.</p></div>
+    <div class="q" data-answer="4"><p>10,000 requests a day, 1,200 input tokens at $2.50/M and 300 output tokens at $10/M. Roughly what is the monthly bill?</p>
+      <ol><li>$180</li><li>$600</li><li>$6,000</li><li>$1,800</li></ol>
+      <p class="why">$0.003 + $0.003 = $0.006 per request; × 10,000 = $60/day; × 30 = $1,800.</p></div>
+    <div class="q" data-answer="2"><p>Why does a token ID alone not tell the model what a word means?</p>
+      <ol><li>IDs are too large to store</li><li>An ID is just a label; nearby IDs need not have related meanings</li><li>IDs change every request</li><li>IDs only work for English</li></ol>
+      <p class="why">IDs are like roll numbers. Embeddings provide the meaning, placing similar words close together.</p></div>
+    <div class="q" data-answer="3"><p>What problem of RNNs did Transformers solve most directly?</p>
+      <ol><li>RNNs could not use numbers</li><li>RNNs had no activation functions</li><li>RNNs read one word at a time and forget far-away words</li><li>RNNs could not be trained at all</li></ol>
+      <p class="why">Transformers read all tokens at once (parallel, fast) and let every token attend directly to every other, however far apart.</p></div>
+    <div class="q" data-answer="1"><p>You are extracting invoice numbers into JSON. Which temperature fits best?</p>
+      <ol><li>0 to 0.3</li><li>About 0.7</li><li>1.0</li><li>2.0</li></ol>
+      <p class="why">Extraction and classification want consistent, predictable output, so use a low temperature.</p></div>
+    <div class="q" data-answer="2"><p>Streaming is switched on. What changes?</p>
+      <ol><li>The total generation time halves</li><li>The first words appear sooner; total time is about the same</li><li>Output tokens become free</li><li>The answer becomes more accurate</li></ol>
+      <p class="why">Streaming sends tokens as they’re produced. It improves perceived speed, not total time or quality.</p></div>
+    <div class="q" data-answer="4"><p>Which is the best first defence against hallucinated policy answers in a support bot?</p>
+      <ol><li>Set temperature to 0 and trust the result</li><li>Use a bigger model</li><li>Fine-tune on the internet</li><li>Put the actual policy text in the context and tell the model to answer only from it, or say “I don’t know”</li></ol>
+      <p class="why">Grounding the model in real source text (RAG) and allowing “I don’t know” is the main fix. Low temperature alone does not remove hallucinations.</p></div>
+    <div class="q" data-answer="3"><p>Roughly how much GPU memory do the weights of a 7B model need at 4-bit?</p>
+      <ol><li>0.7 GB</li><li>14 GB</li><li>3.5 GB</li><li>28 GB</li></ol>
+      <p class="why">7 billion × 0.5 bytes ≈ 3.5 GB, plus extra working memory (KV cache) in practice.</p></div>
+    <div class="q" data-answer="2"><p>A hospital wants to summarise patient notes, and data must not leave its network. What is a good starting choice?</p>
+      <ol><li>Any public chatbot website</li><li>A self-hosted open model, or a private deployment</li><li>The biggest proprietary API with default settings</li><li>A rule-based keyword system</li></ol>
+      <p class="why">Sensitive data that must stay inside points to self-hosting or a private deployment in the customer’s own cloud.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">An LLM turns text into <b>tokens</b>, tokens into <b>embeddings</b>, lets them share meaning through <b>attention</b>, and then predicts <b>one token at a time</b> inside a limited <b>context window</b>; as an engineer you control what goes into that window, how tokens are <b>sampled</b>, and the trade-off between <b>quality, speed and cost</b>.</p>
+  <p>Next up: <b>Prompt &amp; Context Engineering</b>, where you learn to write the instructions and assemble the context that make all of this work in practice.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linux Architecture · Linux | AIFDE Notes</title>
+<meta name="description" content="How Linux is built in layers: hardware, kernel, shell and user space. What the kernel does, why kernel space is protected, how system calls cross the wall, and what really happens when you type ls.">
+<meta name="keywords" content="kernel, shell, user space, kernel space, system calls, device drivers, hardware layer">
+<meta name="date" content="2026-09-08">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/linux-architecture">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Linux Architecture</h1>
+  <p class="byline">See the four layers inside every Linux machine, and follow a single command from your keyboard down to the disk and back.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why learn Linux architecture?</h2>
+  <p>Before the layers, understand the problem. A computer has a <b>CPU</b>, <b>memory (RAM)</b>, <b>storage</b>, <b>input devices</b> like a keyboard and mouse, and <b>network hardware</b>. These physical parts do the actual work. But users and applications <b>cannot control this hardware directly</b>.</p>
+  <div class="story"><b class="lbl">A railway station without a station master</b>Imagine every passenger at a busy station could switch the tracks and signals themselves. Two trains would be sent onto the same line, signals would flip back and forth, and there would be a crash within minutes. <mark>Linux puts a station master between the passengers and the tracks.</mark></div>
+  <p>If every program touched hardware on its own:</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Memory clashes</h4><p>Programs would overwrite each other’s memory.</p></div>
+    <div class="card t4 tilt-b"><h4>CPU fights</h4><p>Programs would compete for the CPU at the same moment.</p></div>
+    <div class="card t6 tilt-a"><h4>Broken devices, broken trust</h4><p>Devices would be used incorrectly, security would break down, data would be corrupted and the system would crash.</p></div>
+  </div>
+  <p>To prevent this chaos, Linux uses a structured design that safely connects:</p>
+  <div class="flow"><span>User</span><span class="hl">Software</span><span class="ok">Hardware</span></div>
+  <p>That organised design is called <mark>Linux architecture</mark>.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="layers">
+  <h2>The layers of Linux architecture</h2>
+  <p>Linux is designed in <b>layers</b>, like a building where each floor has its own job. Each layer talks only to the one directly below it.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="Four stacked layers. Top: user layer with applications. Then the shell. Then the kernel with drivers. Bottom: hardware such as CPU, RAM and disk. Arrows show requests going down and results coming up.">
+      <g class="rough">
+        <rect class="box f-pink" x="150" y="14" width="420" height="62" rx="14"/>
+        <rect class="box f-green" x="150" y="90" width="420" height="62" rx="14"/>
+        <rect class="box f-blue" x="150" y="166" width="420" height="62" rx="14"/>
+        <rect class="box f-grey" x="150" y="242" width="420" height="62" rx="14"/>
+        <path class="lr" d="M118 30 L 118 290" marker-end="url(#ahr)"/>
+        <path class="lb" d="M602 290 L 602 30" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="168" y="54">4 · User</text><text class="ts" x="552" y="52" text-anchor="end">browser, editor, scripts</text>
+      <text class="th" x="168" y="130">3 · Shell</text><text class="ts" x="552" y="128" text-anchor="end">interprets your commands</text>
+      <text class="th" x="168" y="206">2 · Kernel</text><text class="ts" x="552" y="204" text-anchor="end">control, uses drivers</text>
+      <text class="th" x="168" y="282">1 · Hardware</text><text class="ts" x="552" y="280" text-anchor="end">CPU, RAM, disk, network</text>
+      <text class="tr" x="106" y="165" text-anchor="end">requests</text>
+      <text class="tb" x="614" y="165">results</text>
+    </svg></div>
+    <figcaption>Requests travel down the stack; results travel back up.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th style="width:24%">Layer</th><th style="width:22%">Role</th><th>What it does</th></tr>
+    <tr><td><b>1 · Hardware</b></td><td>physical</td><td>The actual components: CPU, RAM, disks, devices.</td></tr>
+    <tr><td><b>2 · Kernel</b></td><td>translation and control</td><td>The software that talks to hardware. It uses <b>drivers</b> (small programs) to know how to speak to specific components such as a graphics card or a hard drive.</td></tr>
+    <tr><td><b>3 · Shell</b></td><td>user interface</td><td>The bridge between you and the kernel. When you type <code>ls</code>, the shell interprets it and gets the kernel to fetch file information.</td></tr>
+    <tr><td><b>4 · User</b></td><td>applications</td><td>The programs you actually use to get work done.</td></tr>
+  </table></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="hardware">
+  <h2>Layer 1 · The hardware layer</h2>
+  <p>Before any code can run, we need the physical machine. Think of it as the <b>engine room of a huge ship</b>: full of powerful machinery, but with no idea where the ship is going. It just waits for instructions.</p>
+  <h3>The key components</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>CPU · the brain</h4><p>The Central Processing Unit does all the calculations, millions of logical operations every second.</p></div>
+    <div class="card t7 tilt-b"><h4>RAM · short-term memory</h4><p>A super-fast workspace for the data in use <i>right now</i>. Switch off the power and everything in RAM vanishes.</p></div>
+    <div class="card t2 tilt-a"><h4>Storage (HDD/SSD) · long-term memory</h4><p>Where your files, photos and the operating system itself live while the computer is off.</p></div>
+    <div class="card t4 tilt-b"><h4>I/O devices · the senses</h4><p><b>Input</b> is how you talk to the computer (keyboard, mouse). <b>Output</b> is how it talks back (monitor, printer).</p></div>
+    <div class="card t5 tilt-a"><h4>Peripheral devices · extras</h4><p>Extra parts like a graphics card (<b>GPU</b>) for gaming and AI, or a network card (<b>NIC</b>) for the internet.</p></div>
+  </div>
+  <h3>The binary barrier and the language gap</h3>
+  <p>Hardware is <b>digital</b>. It doesn’t understand human language, icons or even text. Inside it are billions of tiny switches called <b>transistors</b>, wired into <b>logic gates</b>. To the hardware, a command is just a pattern of <b>high voltage (1)</b> and <b>low voltage (0)</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="A person says 'Print this document!' to a printer and nothing happens. The printer only understands a square wave of high and low voltage, read as 1 0 1 1 0 0 1 0.">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="40" width="230" height="60" rx="14"/>
+        <rect class="box f-grey" x="290" y="40" width="130" height="60" rx="14"/>
+        <path class="ln dash" d="M255 70 L 284 70" marker-end="url(#ah)"/>
+        <path class="lb" d="M460 150 L 460 90 L 490 90 L 490 150 L 520 150 L 520 90 L 550 90 L 550 90 L 580 90 L 580 150 L 610 150 L 610 150 L 640 150 L 640 90 L 670 90 L 670 150 L 700 150"/>
+      </g>
+      <text class="t" x="135" y="76" text-anchor="middle">“Print this document!”</text>
+      <text class="t" x="355" y="76" text-anchor="middle">printer</text>
+      <text class="tr" x="355" y="130" text-anchor="middle">nothing happens</text>
+      <text class="tm" x="475" y="80" text-anchor="middle">1</text><text class="tm" x="505" y="176" text-anchor="middle">0</text>
+      <text class="tm" x="535" y="80" text-anchor="middle">1</text><text class="tm" x="565" y="80" text-anchor="middle">1</text>
+      <text class="tm" x="595" y="176" text-anchor="middle">0</text><text class="tm" x="625" y="176" text-anchor="middle">0</text>
+      <text class="tm" x="655" y="80" text-anchor="middle">1</text><text class="tm" x="685" y="176" text-anchor="middle">0</text>
+      <text class="ts" x="580" y="40" text-anchor="middle">what hardware actually understands</text>
+      <text class="ts" x="580" y="200" text-anchor="middle">high voltage = 1 · low voltage = 0</text>
+    </svg></div>
+    <figcaption>Hardware is not “smart” on its own. It needs a manager to turn your intent into electrical instructions.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>It doesn’t speak English</b>Yell “Print this document!” at a printer and nothing happens.</div></li>
+    <li><span class="dot">2</span><div><b>It only speaks electricity</b>Electrical signals (on or off) and binary instructions (0s and 1s). That’s all.</div></li>
+  </ol>
+  <p>Because hardware is just metal and silicon speaking in electrical pulses, <mark>it needs a manager to give it precise instructions</mark>. That manager is the next layer.</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="kernel">
+  <h2>Layer 2 · The kernel layer</h2>
+  <p>If the hardware is the computer’s <b>body</b>, the kernel is its <b>manager</b>. It is the most powerful software on your machine, yet <b>you never actually see it</b>. It sits directly between the hardware and everything else, and <mark>it is the only part of Linux that talks to the hardware directly</mark>.</p>
+  <div class="story"><b class="lbl">The factory boss</b>A factory has 100 workers (apps) and only one set of tools (hardware). Without a boss, the workers would fight over the tools, break the machines and take each other’s materials. <mark>The kernel is that boss:</mark> everyone plays fair, stays safe and gets their work done without crashing the system.</div>
+  <h3>The kernel’s “Big 5” jobs</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · Process management</h4><p><b>The timekeeper.</b> Each CPU core runs one thing at a time, so the kernel acts like a teacher with a stopwatch, giving each program a tiny slice of time.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Memory management</h4><p><b>The space guard.</b> Each app gets its own <b>virtual address space</b>, so App A cannot see App B’s memory. Like a hotel room key: you only open your own room.</p></div>
+    <div class="card t3 tilt-a"><h4>3 · Device drivers</h4><p><b>The master translator.</b> Click “Print” and the app asks the kernel, which uses a <b>driver</b> (a translation book) to tell the printer exactly what to do.</p></div>
+    <div class="card t5 tilt-b"><h4>4 · File system management</h4><p><b>The librarian.</b> You save a photo by name; the kernel finds a free spot on disk, stores it, and remembers where it is.</p></div>
+    <div class="card t4 tilt-a"><h4>5 · System calls</h4><p><b>The permission slip.</b> Apps may not touch hardware. To use the camera, an app files a <b>system call</b>; the kernel checks it is allowed, then does the work.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Time slicing: one CPU core alternates between Music, Browser and Editor in 10 millisecond slices so they appear to run at the same time">
+      <g class="rough">
+        <rect class="box f-pink" x="120" y="60" width="90" height="56" rx="8"/>
+        <rect class="box f-blue" x="215" y="60" width="90" height="56" rx="8"/>
+        <rect class="box f-green" x="310" y="60" width="90" height="56" rx="8"/>
+        <rect class="box f-pink" x="405" y="60" width="90" height="56" rx="8"/>
+        <rect class="box f-blue" x="500" y="60" width="90" height="56" rx="8"/>
+        <rect class="box f-green" x="595" y="60" width="90" height="56" rx="8"/>
+        <path class="ln" d="M120 140 L 700 140" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="60" y="94" text-anchor="middle">CPU core</text>
+      <text class="t" x="165" y="94" text-anchor="middle">Music</text>
+      <text class="t" x="260" y="94" text-anchor="middle">Browser</text>
+      <text class="t" x="355" y="94" text-anchor="middle">Editor</text>
+      <text class="t" x="450" y="94" text-anchor="middle">Music</text>
+      <text class="t" x="545" y="94" text-anchor="middle">Browser</text>
+      <text class="t" x="640" y="94" text-anchor="middle">Editor</text>
+      <text class="ts" x="165" y="48" text-anchor="middle">~10 ms</text>
+      <text class="ts" x="260" y="48" text-anchor="middle">~10 ms</text>
+      <text class="ts" x="355" y="48" text-anchor="middle">~10 ms</text>
+      <text class="ts" x="400" y="166" text-anchor="middle">time</text>
+      <text class="tr" x="400" y="192" text-anchor="middle">switching so fast it looks simultaneous</text>
+    </svg></div>
+    <figcaption>Process management: the kernel’s scheduler hands out tiny time slices. Multi-core CPUs do this on every core at once.</figcaption>
+  </figure>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="kernel-space">
+  <h2>Layer 2.5 · Kernel space</h2>
+  <p>We know <i>what</i> the kernel does. Now, <i>where</i> does it live? Linux splits memory into two separate worlds: <b>user space</b>, where your apps live, and <b>kernel space</b>, where the boss lives.</p>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4>A restricted zone</h4><p>Kernel space is a private area of memory that is off-limits to everyone except the kernel, a high-security vault inside your computer.</p></div>
+    <div class="card t3 tilt-b"><h4>Privileged power</h4><p>Code here runs in the CPU’s <b>privileged mode</b>: “god mode”. It can touch hardware, control power and access any memory, with no restrictions.</p></div>
+  </div>
+  <h3>Why is this area protected?</h3>
+  <p>“Why can’t my apps live there too?” Because of three walls the kernel keeps standing:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Safety: stop the total crash</b>A tiny bug in a game running in kernel space could crash the <b>entire</b> computer. In user space, if the game crashes, only the game dies. <span class="tag">→ the rest of the system stays alive</span></div></li>
+    <li><span class="dot">2</span><div><b>Privacy: stop memory bullying</b>Without the wall, a sneaky app could reach into another app’s memory and steal your bank password from the browser. The kernel acts as a security guard for every app’s data.</div></li>
+    <li><span class="dot">3</span><div><b>Order: stop hardware chaos</b>If every app wrote to the disk at once, they would overwrite each other’s files. Only <b>one manager</b> touches the hardware, so access stays orderly.</div></li>
+  </ol>
+  <div class="story"><b class="lbl">The bank</b><b>User space</b> is the bank <b>lobby</b>: customers (apps) move around and fill in forms, but can’t touch the money. <b>Kernel space</b> is the <b>main vault</b>, where the money (hardware power) is kept behind thick, locked walls. <b>The kernel</b> is the <b>bank teller</b>, the only one with the vault key; you talk to them through the glass window. <mark>Keeping the vault separate from the lobby keeps the bank safe and organised.</mark></div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="shell">
+  <h2>Layer 3 · The shell</h2>
+  <p>We have the hardware and the kernel. But the kernel is like a genius scientist who speaks a language too complex for normal humans. You can’t just shout at it. You need a middleman: <mark>the shell</mark>.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>It’s an interface</h4><p>The shell is a <b>command interpreter</b>, a protective outer layer around the kernel (like the shell around a nut). It’s where human and machine finally meet.</p></div>
+    <div class="card t1 tilt-b"><h4>It’s just a program</h4><p>Chrome is a program for browsing; the shell (for example <b>Bash</b>) is a program for giving commands. It lives in user space like any other app.</p></div>
+  </div>
+  <h3>What the shell does every time you press Enter</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Read</b>It reads the words you typed, such as <code>ls</code> (list files) or <code>mkdir</code> (make a folder).</div></li>
+    <li><span class="dot">2</span><div><b>Interpret</b>It works out what they mean: is it a built-in command, or a program on disk such as <code>/usr/bin/ls</code>? What are the options and arguments?</div></li>
+    <li><span class="dot">3</span><div><b>Request</b>It asks the kernel, through <b>system calls</b>, to do the work, for example to start the <code>ls</code> program, which in turn asks the kernel to read the folder.</div></li>
+  </ol>
+  <h3>Why do we need a shell? Computers are literal</h3>
+  <p>They don’t understand <i>intent</i>, only exact requests. Take <code>pwd</code> (“print working directory”):</p>
+  <pre><code class="language-bash">pwd</code></pre>
+  <pre class="out"><code>/home/vishwa/projects</code></pre>
+  <div class="flow"><span class="op">you type pwd</span><span>shell asks the kernel: “which directory is this process in?”</span><span>kernel checks its records</span><span class="ok">path printed on screen</span></div>
+  <p>The kernel keeps track of each program’s <b>current working directory</b>. The shell asks for it and displays the answer as a text path.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="syscalls">
+  <h2>The bridge · system calls</h2>
+  <p>User space is a restricted playground; kernel space is a high-security vault. So how does a request cross the line? With a <b>system call</b>.</p>
+  <p>A <mark>system call (syscall)</mark> is the official request form an application fills in when it needs something only the kernel can do: read a file, open a network connection, start a program. It is the <b>only</b> doorway from the user world into the kernel world.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Left: user space lobby with an app. A wall in the middle with a window labelled system call. Right: kernel space vault holding hardware. The app's request passes through the window to the kernel, which accesses hardware and returns the result.">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="290" height="220" rx="16"/>
+        <rect class="box f-orange" x="410" y="20" width="290" height="220" rx="16"/>
+        <rect class="box f-card" x="60" y="100" width="150" height="56" rx="12"/>
+        <rect class="box f-blue" x="440" y="70" width="230" height="52" rx="12"/>
+        <rect class="box f-grey" x="440" y="160" width="230" height="52" rx="12"/>
+        <path class="ln" d="M360 20 L 360 100"/>
+        <path class="ln" d="M360 160 L 360 240"/>
+        <path class="lr" d="M215 108 L 434 102" marker-end="url(#ahr)"/>
+        <path class="lb" d="M440 116 C 400 150, 300 156, 218 146" marker-end="url(#ahb)"/>
+        <path class="ln" d="M555 124 L 555 154" marker-end="url(#ah)"/>
+      </g>
+      <text class="tr" x="165" y="50" text-anchor="middle">user space (lobby)</text>
+      <text class="tr" x="555" y="50" text-anchor="middle">kernel space (vault)</text>
+      <text class="t" x="135" y="134" text-anchor="middle">your app</text>
+      <text class="t" x="555" y="102" text-anchor="middle">kernel (teller)</text>
+      <text class="t" x="555" y="192" text-anchor="middle">hardware (money)</text>
+      <text class="ts" x="360" y="133" text-anchor="middle">syscall</text>
+      <text class="ts" x="165" y="200" text-anchor="middle">limited power</text>
+      <text class="ts" x="165" y="218" text-anchor="middle">can’t touch hardware</text>
+    </svg></div>
+    <figcaption>The app never walks into the vault. It hands a slip through the window and waits for the answer.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Bank</th><th>Computer</th></tr>
+    <tr><td>The lobby where you stand</td><td>User space, where the <b>app</b> runs</td></tr>
+    <tr><td>The withdrawal slip</td><td>The <b>system call</b></td></tr>
+    <tr><td>The vault with the money</td><td>Kernel space, where the <b>hardware</b> is controlled</td></tr>
+    <tr><td>The bank teller</td><td>The <b>kernel</b></td></tr>
+  </table></div>
+  <p><b>How it works:</b> you hand the slip to the teller; the teller checks your ID, goes into the vault and brings the money back. If apps could touch hardware directly they could erase the whole system, so the syscall forces them to stop at this security desk.</p>
+  <div class="sticky tip l"><strong>See it for yourself</strong> The tool <code>strace</code> lists every system call a program makes. Try <code>strace ls</code> later: you will see calls like <code>openat</code>, <code>getdents64</code> and <code>write</code> scroll past.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="user-space">
+  <h2>Layer 4 · User space</h2>
+  <p>User space is the computer’s <b>playground</b>, where every app you know lives. Typing in a terminal or watching videos in a browser, you are working in user space. It is a deliberately <b>restricted</b> part of memory: <mark>programs can do their own work, but they are forbidden from touching the hardware</mark>. They are like hotel guests: they can use the room, but they can’t rewire the electricity in the walls.</p>
+  <h3>What lives in user space?</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Terminal and shell</h4><p>Your tools for giving orders.</p></div>
+    <div class="card t2 tilt-b"><h4>Browsers</h4><p>Chrome, Firefox and friends.</p></div>
+    <div class="card t7 tilt-a"><h4>Text editors</h4><p>Where you write code or notes.</p></div>
+    <div class="card t5 tilt-b"><h4>Scripts</h4><p>Small programs you write to automate tasks.</p></div>
+  </div>
+  <h3>Why “restricted” is a superpower</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>One app crashes, the computer stays alive</b>Every app runs in its own private box. If the browser freezes and “pops”, it can’t break the kernel or other apps. Close it and carry on.</div></li>
+    <li><span class="dot">2</span><div><b>Your data stays safe</b>Apps don’t hold the keys to the hardware. A random game can’t just switch on your microphone or read your photos; it must ask the kernel, which checks the permissions you have set.</div></li>
+    <li><span class="dot">3</span><div><b>Everyone plays fair</b>No app has god mode, so none can grab all the memory. The kernel makes sure every app gets its fair share of CPU time.</div></li>
+  </ol>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="two-worlds">
+  <h2>The two worlds: kernel space vs user space</h2>
+  <p>Inside memory, Linux draws a thick line in the sand. The two sides follow very different rules.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:20%"></th><th style="width:40%">Kernel space · the private office</th><th style="width:40%">User space · the public lobby</th></tr>
+    <tr><td><b>What it is</b></td><td>The high-security inner circle where the core of the system lives.</td><td>Where you and your apps live: browser, terminal, music player.</td></tr>
+    <tr><td><b>Power</b></td><td><b>Full access.</b> The only place software can touch raw hardware.</td><td><b>Limited.</b> A safe zone; apps can’t touch hardware.</td></tr>
+    <tr><td><b>If something goes wrong</b></td><td>The <b>whole computer</b> can stop (a “kernel panic”).</td><td>Only that app crashes; the rest keeps running.</td></tr>
+    <tr><td><b>Who is allowed</b></td><td>Only the most trusted code: the kernel and its drivers.</td><td>Every ordinary program.</td></tr>
+  </table></div>
+  <h3>The big difference: asking for permission</h3>
+  <p><b>User space cannot talk to hardware directly.</b> To save a file from user space:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>You can’t grab the disk</b>No app may write to the hard drive itself.</div></li>
+    <li><span class="dot">2</span><div><b>Send a system call</b>A formal request note: “please write these bytes to this file”.</div></li>
+    <li><span class="dot">3</span><div><b>Hand it over the wall</b>The note goes to the kernel.</div></li>
+    <li><span class="dot">4</span><div><b>The kernel checks and acts</b>It checks you are allowed, then works with the hardware from kernel space on your behalf.</div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer’s app dies with <code>Permission denied</code> or <code>Too many open files</code>, that is the kernel refusing a system call. Knowing that every file, socket and GPU request goes through the kernel tells you where to look: permissions, limits (<code>ulimit</code>) and kernel logs (<code>dmesg</code>).</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="execution-flow">
+  <h2>Execution flow: what happens when you type <code>ls</code></h2>
+  <p>You type <code>ls</code> and press Enter. In a split second, the request makes a full round trip through every layer:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Round trip for ls: 1 you type ls in the terminal, 2 the shell starts the ls program, 3 the kernel checks permission and finds the folder, 4 the disk reads data, 5 kernel prepares it, 6 ls formats the names, 7 the terminal shows the result">
+      <g class="rough">
+        <rect class="box f-pink" x="30" y="20" width="200" height="54" rx="12"/>
+        <rect class="box f-green" x="30" y="90" width="200" height="54" rx="12"/>
+        <rect class="box f-blue" x="30" y="160" width="200" height="54" rx="12"/>
+        <rect class="box f-grey" x="260" y="232" width="200" height="54" rx="12"/>
+        <rect class="box f-blue" x="490" y="160" width="200" height="54" rx="12"/>
+        <rect class="box f-green" x="490" y="90" width="200" height="54" rx="12"/>
+        <rect class="box f-pink" x="490" y="20" width="200" height="54" rx="12"/>
+        <path class="lr" d="M130 76 L 130 86" marker-end="url(#ahr)"/>
+        <path class="lr" d="M130 146 L 130 156" marker-end="url(#ahr)"/>
+        <path class="lr" d="M130 216 C 130 250, 180 259, 254 259" marker-end="url(#ahr)"/>
+        <path class="lb" d="M466 259 C 540 259, 590 250, 590 220" marker-end="url(#ahb)"/>
+        <path class="lb" d="M590 158 L 590 148" marker-end="url(#ahb)"/>
+        <path class="lb" d="M590 88 L 590 78" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="130" y="52" text-anchor="middle">1 · you type ls</text>
+      <text class="t" x="130" y="122" text-anchor="middle">2 · shell starts ls</text>
+      <text class="t" x="130" y="192" text-anchor="middle">3 · kernel checks</text>
+      <text class="t" x="360" y="264" text-anchor="middle">4 · disk reads data</text>
+      <text class="t" x="590" y="192" text-anchor="middle">5 · kernel returns</text>
+      <text class="t" x="590" y="122" text-anchor="middle">6 · ls formats</text>
+      <text class="t" x="590" y="52" text-anchor="middle">7 · terminal shows</text>
+      <text class="tr" x="360" y="110" text-anchor="middle">down the stack</text>
+      <text class="tb" x="360" y="140" text-anchor="middle">and back up</text>
+    </svg></div>
+    <figcaption>Every command, however small, makes this journey: user space → kernel → hardware → kernel → user space.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>You (the user)</b>In user space, you type <code>ls</code> into the terminal. You have only given an order; nothing has touched the hardware yet.</div></li>
+    <li><span class="dot">2</span><div><b>The shell (the translator)</b>The terminal hands your text to the shell (e.g. Bash). It understands “the user wants to list files”, finds the program <code>ls</code>, and asks the kernel to start it (a system call).</div></li>
+    <li><span class="dot">3</span><div><b>The kernel (the boss)</b>The <code>ls</code> program asks the kernel, again by system call, for the folder’s contents. The kernel checks: “Is this user allowed to read this folder?” If yes, it looks up its file-system map to find where the folder lives on disk.</div></li>
+    <li><span class="dot">4</span><div><b>The hardware (the muscles)</b>Through the disk driver, the kernel signals the SSD/HDD. The disk reads the data, such as the names <code>photo.jpg</code> and <code>notes.txt</code>, and sends the raw data back.</div></li>
+    <li><span class="dot">5</span><div><b>Back to the kernel</b>The kernel turns the raw disk data into a clean list of file names and hands it back across the wall to <code>ls</code>.</div></li>
+    <li><span class="dot">6</span><div><b>Back in user space</b><code>ls</code> decides how to show the names: sorted alphabetically, and often coloured (folders in blue).</div></li>
+    <li><span class="dot">7</span><div><b>The result</b>The text is written to your terminal window (one last system call), and you see:</div></li>
+  </ol>
+  <pre><code class="language-bash">ls</code></pre>
+  <pre class="out"><code>my_code.py  notes.txt  photo.jpg</code></pre>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Linux architecture</dt><dd>The layered design (hardware, kernel, shell, user applications) that safely connects users and software to the hardware.</dd></div>
+    <div><dt>Hardware layer</dt><dd>The physical components (CPU, RAM, storage, I/O and peripheral devices) that do the actual work and only understand binary electrical signals.</dd></div>
+    <div><dt>CPU</dt><dd>The Central Processing Unit, the “brain” that performs calculations and runs program instructions.</dd></div>
+    <div><dt>RAM</dt><dd>Fast, temporary working memory for data in use right now; its contents vanish when the power is switched off.</dd></div>
+    <div><dt>Kernel</dt><dd>The core of Linux that manages processes, memory, devices and files, and is the only software that talks to hardware directly.</dd></div>
+    <div><dt>Device driver</dt><dd>A piece of kernel code that knows how to talk to one specific kind of hardware, such as a printer, disk or graphics card.</dd></div>
+    <div><dt>Virtual address space</dt><dd>The private view of memory the kernel gives each program, so one app cannot read or overwrite another app’s memory.</dd></div>
+    <div><dt>Kernel space</dt><dd>The protected region of memory and privileged CPU mode where the kernel runs with full access to the hardware.</dd></div>
+    <div><dt>User space</dt><dd>The restricted area where ordinary programs (shell, browser, editors, scripts) run without direct hardware access, so a crash stays contained.</dd></div>
+    <div><dt>System call (syscall)</dt><dd>The official request a program makes to the kernel to do privileged work such as reading a file or starting a program; the only way from user space into kernel space.</dd></div>
+    <div><dt>Shell</dt><dd>A command interpreter program (e.g. Bash) that reads what you type, works out what it means and asks the kernel to carry it out.</dd></div>
+    <div><dt>Time slicing</dt><dd>The kernel’s trick of switching a CPU core between programs every few milliseconds so they appear to run at the same time.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Why can’t applications control the hardware directly?</p>
+      <ol><li>Hardware is too slow for apps</li><li>Programs would clash over memory, CPU and devices, causing crashes and security holes</li><li>Apps are written in English</li><li>Only the shell is allowed to touch hardware</li></ol>
+      <p class="why">Direct access would let programs overwrite each other and corrupt data, so the kernel controls all hardware.</p></div>
+    <div class="q" data-answer="3"><p>Which layer uses drivers to talk to a graphics card?</p>
+      <ol><li>User layer</li><li>Shell layer</li><li>Kernel layer</li><li>Hardware layer</li></ol>
+      <p class="why">Drivers are part of the kernel; they translate generic requests into device-specific instructions.</p></div>
+    <div class="q" data-answer="1"><p>A browser tab has a bug and crashes. Why does the rest of the computer keep running?</p>
+      <ol><li>The browser runs in user space, isolated from the kernel and other apps</li><li>The shell restarts it instantly</li><li>The browser runs in kernel space</li><li>RAM is wiped every second</li></ol>
+      <p class="why">User-space programs live in their own protected boxes, so a crash stays contained.</p></div>
+    <div class="q" data-answer="4"><p>What is a system call?</p>
+      <ol><li>A phone call to tech support</li><li>A command typed only by the root user</li><li>A message from hardware to the user</li><li>A program’s formal request asking the kernel to do privileged work</li></ol>
+      <p class="why">Syscalls are the only doorway from user space into the kernel, like a withdrawal slip handed to a bank teller.</p></div>
+    <div class="q" data-answer="2"><p>Your laptop has one CPU core, yet music and a browser run “at the same time”. How?</p>
+      <ol><li>The music app runs on the GPU</li><li>The kernel switches between them in tiny time slices</li><li>The shell runs one of them</li><li>They share the same memory</li></ol>
+      <p class="why">Process management gives each program a few milliseconds in turn, fast enough to look simultaneous.</p></div>
+    <div class="q" data-answer="3"><p>In the bank analogy, who is the bank teller?</p>
+      <ol><li>The user</li><li>The shell</li><li>The kernel</li><li>The hard drive</li></ol>
+      <p class="why">Only the kernel holds the key to the vault (hardware) and acts on requests passed through the window.</p></div>
+    <div class="q" data-answer="1"><p>When you run <code>ls</code>, which part actually reads the folder data from the disk?</p>
+      <ol><li>The kernel, through the disk driver</li><li>The terminal window</li><li>The shell, by touching the SSD directly</li><li>The <code>ls</code> program, bypassing the kernel</li></ol>
+      <p class="why">User-space programs (shell, ls) only ask. The kernel checks permissions and drives the hardware.</p></div>
+    <div class="q" data-answer="4"><p>Which is TRUE about the shell?</p>
+      <ol><li>It is part of the kernel</li><li>It runs in kernel space</li><li>It is the hardware’s firmware</li><li>It is an ordinary user-space program that interprets your commands</li></ol>
+      <p class="why">The shell is just a program, like a browser, that turns your typed commands into requests to the kernel.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Linux is a stack of <b>hardware</b>, <b>kernel</b>, <b>shell</b> and <b>user space</b>: apps and the shell live in restricted user space and must hand <b>system calls</b> to the kernel, which alone controls the hardware in protected <b>kernel space</b>.</p>
+  <p>Next up: <b>Environment Setup</b>, where you get a real Linux system running on your own machine so you can try all of this.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HTML Lists &amp; Images · Web &amp; HTML | AIFDE Notes</title>
+<meta name="description" content="Ordered, unordered and description lists with their attributes and nesting; the img tag with src, alt, width, height, loading and title; and links with the anchor tag: href, link types, target, rel and download.">
+<meta name="keywords" content="ordered list, unordered list, description list, img tag, alt text, lazy loading, anchor tag, href and target">
+<meta name="date" content="2026-09-22">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="web/html-lists-images">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>HTML Lists &amp; Images</h1>
+  <p class="byline">Organise content into numbered, bulleted and dictionary-style lists, put pictures on the page the right way, and connect pages together with links.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="lists">
+  <h2>Why lists?</h2>
+  <div class="story"><b class="lbl">The kirana list</b>Before going to the kirana shop you jot down: milk, eggs, bread. A dhaba menu card lists pizza, burger, pasta. A recipe card says Step 1, Step 2, Step 3. <mark>HTML lists organise information on a page exactly like lists in real life.</mark></div>
+  <p>Lists make content easy to scan and neat to look at, and they give the page a clear structure that is also <b>accessible</b> (screen readers announce “list, 3 items”). HTML has three kinds:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Three list types side by side. Ordered list with numbered steps. Unordered list with bullets for milk, eggs and bread. Description list with terms HTML and CSS and their descriptions.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="44" width="200" height="190" rx="14"/>
+        <rect class="box f-green" x="260" y="44" width="200" height="190" rx="14"/>
+        <rect class="box f-yellow" x="500" y="44" width="200" height="190" rx="14"/>
+      </g>
+      <text class="th" x="120" y="32" text-anchor="middle">Ordered</text>
+      <text class="th" x="360" y="32" text-anchor="middle">Unordered</text>
+      <text class="th" x="600" y="32" text-anchor="middle">Description</text>
+      <text class="t" x="40" y="90">1. Wake up</text>
+      <text class="t" x="40" y="124">2. Make coffee</text>
+      <text class="t" x="40" y="158">3. Code</text>
+      <text class="t" x="280" y="90">● Milk</text>
+      <text class="t" x="280" y="124">● Eggs</text>
+      <text class="t" x="280" y="158">● Bread</text>
+      <text class="t" x="520" y="86" style="font-weight:700">HTML</text>
+      <text class="ts" x="540" y="108">structure of pages</text>
+      <text class="t" x="520" y="140" style="font-weight:700">CSS</text>
+      <text class="ts" x="540" y="162">style and design</text>
+      <text class="tm" x="120" y="214" text-anchor="middle">&lt;ol&gt; order matters</text>
+      <text class="tm" x="360" y="214" text-anchor="middle">&lt;ul&gt; any order</text>
+      <text class="tm" x="600" y="214" text-anchor="middle">&lt;dl&gt; term + meaning</text>
+    </svg></div>
+    <figcaption>Numbers when order matters, bullets when it doesn’t, terms and definitions for a glossary.</figcaption>
+  </figure>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="ordered">
+  <h2>Ordered lists <code>&lt;ol&gt;</code></h2>
+  <p>Use an ordered list when the <b>order of items matters</b>: the steps of a recipe, or a Top 5 ranking (1st, 2nd, 3rd place).</p>
+  <ul>
+    <li><code>&lt;ol&gt;</code> creates the ordered list.</li>
+    <li><code>&lt;li&gt;</code> (list item) wraps each item.</li>
+    <li>The browser <b>numbers the items for you</b>.</li>
+  </ul>
+  <div class="anatomy"><span class="a1">&lt;ol&gt;</span> <span class="a6">&lt;li&gt;</span><span class="a4">Wake up</span><span class="a6">&lt;/li&gt;</span> <span class="a6">&lt;li&gt;</span><span class="a4">Make coffee</span><span class="a6">&lt;/li&gt;</span> <span class="a5">&lt;/ol&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>List opens</b> · <code>&lt;ol&gt;</code></p></div>
+    <div><span class="sw a6"></span><p><b>Item tags</b> · one <code>&lt;li&gt;</code> pair per item</p></div>
+    <div><span class="sw a4"></span><p><b>Item content</b></p></div>
+    <div><span class="sw a5"></span><p><b>List closes</b> · <code>&lt;/ol&gt;</code></p></div>
+  </div>
+  <div class="codebox"><span class="cap">to-do list</span><pre><code class="language-html">&lt;p&gt;My To-Do List:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Wake up&lt;/li&gt;
+  &lt;li&gt;Make coffee&lt;/li&gt;
+  &lt;li&gt;Code&lt;/li&gt;
+&lt;/ol&gt;</code></pre></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 180" role="img" aria-label="Browser output: My To-Do List, then 1. Wake up, 2. Make coffee, 3. Code, indented">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="480" height="160" rx="14"/>
+      </g>
+      <text class="t" x="40" y="46">My To-Do List:</text>
+      <text class="t" x="70" y="86">1. Wake up</text>
+      <text class="t" x="70" y="116">2. Make coffee</text>
+      <text class="t" x="70" y="146">3. Code</text>
+      <text class="tr" x="260" y="116">numbers added for you</text>
+    </svg></div>
+    <figcaption>The browser adds the numbers and indents the list.</figcaption>
+  </figure>
+
+  <h3>Nested ordered lists</h3>
+  <p>A <b>nested</b> list is simply a list placed <b>inside an <code>&lt;li&gt;</code></b> of another list. Use it for sub-steps.</p>
+  <div class="codebox"><span class="cap">recipe with sub-steps</span><pre><code class="language-html">&lt;ol&gt;
+  &lt;li&gt;Gather your ingredients.&lt;/li&gt;
+  &lt;li&gt;
+    Mix the dry ingredients.
+    &lt;ol&gt;
+      &lt;li&gt;First, add the flour.&lt;/li&gt;
+      &lt;li&gt;Next, add the sugar.&lt;/li&gt;
+      &lt;li&gt;Finally, add the salt.&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Mix the wet ingredients.&lt;/li&gt;
+  &lt;li&gt;Combine all ingredients and bake.&lt;/li&gt;
+&lt;/ol&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Browser output: four main steps numbered 1 to 4; under step 2, three indented sub-steps numbered 1 to 3">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="240" rx="14"/>
+        <path class="lr" d="M86 96 L 80 96 L 80 174 L 86 174"/>
+      </g>
+      <text class="t" x="50" y="50">1. Gather your ingredients.</text>
+      <text class="t" x="50" y="82">2. Mix the dry ingredients.</text>
+      <text class="t" x="100" y="112">1. First, add the flour.</text>
+      <text class="t" x="100" y="140">2. Next, add the sugar.</text>
+      <text class="t" x="100" y="168">3. Finally, add the salt.</text>
+      <text class="t" x="50" y="200">3. Mix the wet ingredients.</text>
+      <text class="t" x="50" y="230">4. Combine all ingredients and bake.</text>
+      <text class="tr" x="400" y="146">inner &lt;ol&gt; counts from 1 again</text>
+    </svg></div>
+    <figcaption>The inner list is indented and keeps its own numbering.</figcaption>
+  </figure>
+  <div class="sticky warn l"><strong>Nest inside the <code>&lt;li&gt;</code></strong> The inner <code>&lt;ol&gt;</code> must sit <b>inside</b> an <code>&lt;li&gt;</code>, before its <code>&lt;/li&gt;</code>. Putting it directly between two <code>&lt;li&gt;</code> elements is invalid HTML.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="ol-attributes">
+  <h2>Attributes of <code>&lt;ol&gt;</code>: <code>type</code>, <code>start</code>, <code>reversed</code></h2>
+  <p>By default an ordered list <b>starts at 1</b> and <b>uses numbers</b>. Three attributes change that.</p>
+  <h3>1 · <code>type</code> changes the marker</h3>
+  <div class="tbl"><table>
+    <tr><th>Value</th><th>Marker</th><th>Counts like</th></tr>
+    <tr><td><code>type="1"</code> (default)</td><td>numbers</td><td>1, 2, 3…</td></tr>
+    <tr><td><code>type="A"</code></td><td>uppercase letters</td><td>A, B, C…</td></tr>
+    <tr><td><code>type="a"</code></td><td>lowercase letters</td><td>a, b, c…</td></tr>
+    <tr><td><code>type="I"</code></td><td>uppercase Roman numerals</td><td>I, II, III…</td></tr>
+    <tr><td><code>type="i"</code></td><td>lowercase Roman numerals</td><td>i, ii, iii…</td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">all five types</span><pre><code class="language-html">&lt;h2&gt;1. Default Numbers (1, 2, 3)&lt;/h2&gt;
+&lt;ol type="1"&gt;
+  &lt;li&gt;Apple&lt;/li&gt;
+  &lt;li&gt;Banana&lt;/li&gt;
+  &lt;li&gt;Mango&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;2. Uppercase Letters (A, B, C)&lt;/h2&gt;
+&lt;ol type="A"&gt; …same three items… &lt;/ol&gt;
+
+&lt;h2&gt;3. Lowercase Letters (a, b, c)&lt;/h2&gt;
+&lt;ol type="a"&gt; …same three items… &lt;/ol&gt;
+
+&lt;h2&gt;4. Uppercase Roman Numerals (I, II, III)&lt;/h2&gt;
+&lt;ol type="I"&gt; …same three items… &lt;/ol&gt;
+
+&lt;h2&gt;5. Lowercase Roman Numerals (i, ii, iii)&lt;/h2&gt;
+&lt;ol type="i"&gt; …same three items… &lt;/ol&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The same list Apple, Banana, Mango rendered with five type values: numbers, uppercase letters, lowercase letters, uppercase Roman numerals and lowercase Roman numerals">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="50" width="128" height="140" rx="12"/>
+        <rect class="box f-card" x="161" y="50" width="128" height="140" rx="12"/>
+        <rect class="box f-card" x="302" y="50" width="128" height="140" rx="12"/>
+        <rect class="box f-card" x="443" y="50" width="128" height="140" rx="12"/>
+        <rect class="box f-card" x="584" y="50" width="128" height="140" rx="12"/>
+      </g>
+      <text class="tm" x="84" y="36" text-anchor="middle">type="1"</text>
+      <text class="tm" x="225" y="36" text-anchor="middle">type="A"</text>
+      <text class="tm" x="366" y="36" text-anchor="middle">type="a"</text>
+      <text class="tm" x="507" y="36" text-anchor="middle">type="I"</text>
+      <text class="tm" x="648" y="36" text-anchor="middle">type="i"</text>
+      <text class="t" x="36" y="92">1. Apple</text><text class="t" x="36" y="124">2. Banana</text><text class="t" x="36" y="156">3. Mango</text>
+      <text class="t" x="177" y="92">A. Apple</text><text class="t" x="177" y="124">B. Banana</text><text class="t" x="177" y="156">C. Mango</text>
+      <text class="t" x="318" y="92">a. Apple</text><text class="t" x="318" y="124">b. Banana</text><text class="t" x="318" y="156">c. Mango</text>
+      <text class="t" x="459" y="92">I. Apple</text><text class="t" x="459" y="124">II. Banana</text><text class="t" x="459" y="156">III. Mango</text>
+      <text class="t" x="600" y="92">i. Apple</text><text class="t" x="600" y="124">ii. Banana</text><text class="t" x="600" y="156">iii. Mango</text>
+    </svg></div>
+    <figcaption>Same items, five kinds of markers.</figcaption>
+  </figure>
+
+  <h3>2 · <code>start</code> sets the first number</h3>
+  <p><code>start</code> must <b>always be a number</b>, even when the type is letters or Roman numerals.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">start at 5</span><pre><code class="language-html">&lt;ol start="5"&gt;
+  &lt;li&gt;Item Five&lt;/li&gt;
+  &lt;li&gt;Item Six&lt;/li&gt;
+  &lt;li&gt;Item Seven&lt;/li&gt;
+&lt;/ol&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">letters starting at C</span><pre><code class="language-html">&lt;ol type="A" start="3"&gt;
+  &lt;li&gt;Item C&lt;/li&gt;
+  &lt;li&gt;Item D&lt;/li&gt;
+  &lt;li&gt;Item E&lt;/li&gt;
+&lt;/ol&gt;</code></pre></div>
+  </div>
+  <p>To start a lettered list at “C”, write <code>start="3"</code>, because C is the 3rd letter.</p>
+
+  <h3>3 · <code>reversed</code> counts down</h3>
+  <p><code>reversed</code> is a <b>boolean attribute</b>: it needs no value. Just writing the word makes the list count <i>down</i>.</p>
+  <pre><code class="language-html">&lt;ol reversed&gt;
+  &lt;li&gt;Three&lt;/li&gt;
+  &lt;li&gt;Two&lt;/li&gt;
+  &lt;li&gt;One&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Three outputs. start equals 5 gives 5, 6, 7. type A start 3 gives C, D, E. reversed gives 3, 2, 1.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="54" width="200" height="130" rx="12"/>
+        <rect class="box f-green" x="260" y="54" width="200" height="130" rx="12"/>
+        <rect class="box f-orange" x="500" y="54" width="200" height="130" rx="12"/>
+      </g>
+      <text class="tm" x="120" y="38" text-anchor="middle">start="5"</text>
+      <text class="tm" x="360" y="38" text-anchor="middle">type="A" start="3"</text>
+      <text class="tm" x="600" y="38" text-anchor="middle">reversed</text>
+      <text class="t" x="44" y="94">5. Item Five</text><text class="t" x="44" y="126">6. Item Six</text><text class="t" x="44" y="158">7. Item Seven</text>
+      <text class="t" x="284" y="94">C. Item C</text><text class="t" x="284" y="126">D. Item D</text><text class="t" x="284" y="158">E. Item E</text>
+      <text class="t" x="524" y="94">3. Three</text><text class="t" x="524" y="126">2. Two</text><text class="t" x="524" y="158">1. One</text>
+    </svg></div>
+    <figcaption><code>start</code> picks the first count, <code>reversed</code> flips the direction.</figcaption>
+  </figure>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="unordered">
+  <h2>Unordered lists <code>&lt;ul&gt;</code></h2>
+  <p>Use an unordered list when the <b>order doesn’t matter</b>: a shopping list (buy apples, bananas or mangoes in any order) or a menu card.</p>
+  <ul>
+    <li><code>&lt;ul&gt;</code> creates the unordered list.</li>
+    <li><code>&lt;li&gt;</code> wraps each item, just like in <code>&lt;ol&gt;</code>.</li>
+    <li>The browser adds a <b>bullet (•)</b> before each item.</li>
+  </ul>
+  <div class="codebox"><span class="cap">shopping list</span><pre><code class="language-html">&lt;ul&gt;
+  &lt;li&gt;Milk&lt;/li&gt;
+  &lt;li&gt;Eggs&lt;/li&gt;
+  &lt;li&gt;Bread&lt;/li&gt;
+&lt;/ul&gt;</code></pre></div>
+
+  <h3>The <code>type</code> attribute: bullet style</h3>
+  <div class="codebox"><span class="cap">three bullet types</span><pre><code class="language-html">&lt;h2&gt;1. Disc (Default)&lt;/h2&gt;
+&lt;ul type="disc"&gt;
+  &lt;li&gt;Apples&lt;/li&gt;
+  &lt;li&gt;Bananas&lt;/li&gt;
+  &lt;li&gt;Mangoes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;2. Circle&lt;/h2&gt;
+&lt;ul type="circle"&gt; …same three items… &lt;/ul&gt;
+
+&lt;h2&gt;3. Square&lt;/h2&gt;
+&lt;ul type="square"&gt; …same three items… &lt;/ul&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Three outputs: type disc shows filled round bullets, type circle shows hollow circles, type square shows filled squares">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="54" width="200" height="130" rx="12"/>
+        <rect class="box f-card" x="260" y="54" width="200" height="130" rx="12"/>
+        <rect class="box f-card" x="500" y="54" width="200" height="130" rx="12"/>
+      </g>
+      <text class="tm" x="120" y="38" text-anchor="middle">type="disc"</text>
+      <text class="tm" x="360" y="38" text-anchor="middle">type="circle"</text>
+      <text class="tm" x="600" y="38" text-anchor="middle">type="square"</text>
+      <text class="t" x="50" y="94">● Apples</text><text class="t" x="50" y="126">● Bananas</text><text class="t" x="50" y="158">● Mangoes</text>
+      <text class="t" x="290" y="94">○ Apples</text><text class="t" x="290" y="126">○ Bananas</text><text class="t" x="290" y="158">○ Mangoes</text>
+      <text class="t" x="530" y="94">■ Apples</text><text class="t" x="530" y="126">■ Bananas</text><text class="t" x="530" y="158">■ Mangoes</text>
+    </svg></div>
+    <figcaption><code>disc</code> ● (default), <code>circle</code> ○, <code>square</code> ■.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Good to know</strong> The <code>type</code> attribute on <code>&lt;ul&gt;</code> is <b>obsolete in HTML5</b>. Browsers still honour it, but the modern way is the CSS property <code>list-style-type</code>, which you’ll meet in the CSS lessons. (On <code>&lt;ol&gt;</code>, <code>type</code> is still valid.)</div>
+
+  <h3>Nested unordered lists</h3>
+  <div class="two">
+    <div class="codebox"><span class="cap">categories with items</span><pre><code class="language-html">&lt;ul&gt;
+  &lt;li&gt;Fruits
+    &lt;ul&gt;
+      &lt;li&gt;Apples&lt;/li&gt;
+      &lt;li&gt;Bananas&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Vegetables
+    &lt;ul&gt;
+      &lt;li&gt;Carrot&lt;/li&gt;
+      &lt;li&gt;Spinach&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre></div>
+    <figure>
+      <div class="dia sm"><svg viewBox="0 0 520 230" role="img" aria-label="Browser output: Fruits with indented Apples and Bananas below it, then Vegetables with indented Carrot and Spinach. Top-level bullets are filled discs, inner bullets are hollow circles.">
+        <g class="rough">
+          <rect class="box f-card" x="20" y="10" width="480" height="210" rx="14"/>
+        </g>
+        <text class="t" x="44" y="50">● Fruits</text>
+        <text class="t" x="84" y="80">○ Apples</text>
+        <text class="t" x="84" y="108">○ Bananas</text>
+        <text class="t" x="44" y="142">● Vegetables</text>
+        <text class="t" x="84" y="172">○ Carrot</text>
+        <text class="t" x="84" y="200">○ Spinach</text>
+        <text class="tr" x="240" y="90">inner level gets ○</text>
+        <text class="ts" x="240" y="112">browsers switch bullets</text>
+        <text class="ts" x="240" y="132">automatically per level</text>
+      </svg></div>
+    </figure>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="description">
+  <h2>Description lists <code>&lt;dl&gt;</code></h2>
+  <div class="story"><b class="lbl">The menu card</b>On a restaurant menu, each dish name is followed by a line describing it: “Masala Dosa · crisp rice crêpe with spiced potato.” <mark>A description list pairs each term with its meaning or details, like a dictionary or glossary.</mark></div>
+  <div class="grid">
+    <div class="card t5 tilt-a"><h4><code>&lt;dl&gt;</code></h4><p>The <b>description list</b> container.</p></div>
+    <div class="card t1 tilt-b"><h4><code>&lt;dt&gt;</code></h4><p>The <b>term</b>: what you want to define.</p></div>
+    <div class="card t2 tilt-a"><h4><code>&lt;dd&gt;</code></h4><p>The <b>description</b>: its meaning or details.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">a mini glossary</span><pre><code class="language-html">&lt;dl&gt;
+  &lt;dt&gt;HTML&lt;/dt&gt;
+  &lt;dd&gt;It is used to create the structure of web pages.&lt;/dd&gt;
+
+  &lt;dt&gt;CSS&lt;/dt&gt;
+  &lt;dd&gt;It is used to style and design web pages.&lt;/dd&gt;
+
+  &lt;dt&gt;JavaScript&lt;/dt&gt;
+  &lt;dd&gt;It makes web pages interactive and dynamic.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Browser output: each term on its own line, with its description on the next line, indented">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="210" rx="14"/>
+      </g>
+      <text class="t" x="44" y="50">HTML</text>
+      <text class="t" x="94" y="78">It is used to create the structure of web pages.</text>
+      <text class="t" x="44" y="114">CSS</text>
+      <text class="t" x="94" y="142">It is used to style and design web pages.</text>
+      <text class="t" x="44" y="178">JavaScript</text>
+      <text class="t" x="94" y="206">It makes web pages interactive and dynamic.</text>
+      <text class="tr" x="600" y="50">&lt;dt&gt;</text>
+      <text class="tb" x="600" y="78">&lt;dd&gt;</text>
+    </svg></div>
+    <figcaption>Terms sit at the left edge; each description is indented beneath its term.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Spot it on this site</strong> The “Key terms” box at the end of every note is a <code>&lt;dl&gt;</code>: each word is a <code>&lt;dt&gt;</code> and each definition a <code>&lt;dd&gt;</code>.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="images">
+  <h2>Images with <code>&lt;img&gt;</code></h2>
+  <p>Images make a page attractive and help users understand content, just as pictures make a textbook easier to read. The <code>&lt;img&gt;</code> tag shows an actual picture (a photo, logo or icon) from your computer or the internet.</p>
+  <div class="two">
+    <div class="card t3 tilt-a"><h4>It is a void element</h4><p><code>&lt;img&gt;</code> has <b>no closing tag</b>. There is no <code>&lt;/img&gt;</code>.</p></div>
+    <div class="card t1 tilt-b"><h4>It needs attributes</h4><p>On its own, <code>&lt;img&gt;</code> does nothing. Attributes tell the browser which picture to show and how.</p></div>
+  </div>
+  <div class="anatomy"><span class="a1">&lt;img</span> <span class="a2">src</span>=<span class="a3">"images/cat.jpg"</span> <span class="a2">alt</span>=<span class="a3">"A cute cat"</span> <span class="a2">loading</span>=<span class="a3">"lazy"</span><span class="a1">&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>The tag</b> · opens and ends in one piece</p></div>
+    <div><span class="sw a2"></span><p><b>Attribute names</b> · src, alt, loading…</p></div>
+    <div><span class="sw a3"></span><p><b>Values</b> · where, what, when</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="src">
+  <h2><code>src</code>: the image’s address</h2>
+  <p><code>src</code> (source) tells the browser <b>where to find the image file</b>. Think of it as the picture’s home address: give the wrong address and the browser can’t find it. There are two kinds of path:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">local path · file in your project</span><pre><code class="language-html">&lt;img src="images/cat.jpg" alt="A cute cat"&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">online URL · file on the internet</span><pre><code class="language-html">&lt;img src="https://example.com/photos/cat.jpg" alt="A cute cat"&gt;</code></pre></div>
+  </div>
+  <p>With the local path, the browser looks inside the <code>images</code> folder (next to your HTML file) for a file called <code>cat.jpg</code>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="A project folder my-site contains index.html and an images folder holding cat.jpg. A local path points into that folder; an online URL points to a file on another server.">
+      <g class="rough">
+        <rect class="box f-yellow" x="24" y="28" width="110" height="34" rx="6"/>
+        <path class="ln" d="M52 64 L 52 126 M52 86 L 72 86 M52 126 L 72 126"/>
+        <path class="ln" d="M96 138 L 96 166 L 112 166"/>
+        <rect class="box f-blue" x="400" y="30" width="300" height="76" rx="12"/>
+        <rect class="box f-orange" x="400" y="130" width="300" height="76" rx="12"/>
+        <path class="lb" d="M396 74 C 300 80, 260 160, 200 166" marker-end="url(#ahb)"/>
+        <path class="lr" d="M550 210 L 550 222"/>
+      </g>
+      <text class="tm" x="36" y="50">my-site/</text>
+      <text class="tm" x="78" y="90">index.html</text>
+      <text class="tm" x="78" y="130">images/</text>
+      <text class="tm" x="116" y="170">cat.jpg</text>
+      <text class="tb" x="416" y="58">local path</text>
+      <text class="tm" x="416" y="88">src="images/cat.jpg"</text>
+      <text class="tr" x="416" y="158">online URL</text>
+      <text class="tm" x="416" y="188">src="https://…/cat.jpg"</text>
+    </svg></div>
+    <figcaption>A local path is relative to your HTML file; an online URL is a full web address.</figcaption>
+  </figure>
+  <div class="sticky warn l"><strong>Online images can disappear</strong> If you hot-link an image from someone else’s site, it breaks the day they move or delete it (and it may be copyrighted). For real projects, keep images in your own project folder.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="alt">
+  <h2><code>alt</code>: backup text</h2>
+  <p><code>alt</code> (alternative text) is a short <b>text description</b> of the image.</p>
+  <pre><code class="language-html">&lt;img src="flower.png" alt="A red rose flower"&gt;</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Left: when the file is found the picture is shown. Right: when the file is missing the browser shows a small broken-image icon and the alt text A red rose flower.">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="44" width="320" height="140" rx="14"/>
+        <rect class="box f-pink" x="60" y="62" width="240" height="104" rx="8"/>
+        <circle class="box f-pink" cx="180" cy="100" r="22"/>
+        <path class="ln" d="M180 124 L 180 156 M180 140 L 196 132"/>
+        <rect class="box f-card" x="380" y="44" width="320" height="140" rx="14"/>
+        <rect class="box f-grey" x="404" y="98" width="24" height="24" rx="3"/>
+      </g>
+      <text class="tb" x="180" y="32" text-anchor="middle">file found</text>
+      <text class="tr" x="540" y="32" text-anchor="middle">file missing: alt shows</text>
+      <text class="t" x="438" y="116">A red rose flower</text>
+    </svg></div>
+    <figcaption>When the picture can’t load, the alt text takes its place.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t6 tilt-a"><h4>Missing image</h4><p>The browser shows the alt text instead.</p></div>
+    <div class="card t5 tilt-b"><h4>Accessibility</h4><p>Screen readers read it aloud to blind and visually impaired users.</p></div>
+    <div class="card t1 tilt-a"><h4>SEO</h4><p>Search engines use it to understand what the image shows.</p></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="img-attributes">
+  <h2>Size, loading and hover text</h2>
+  <h3><code>width</code> and <code>height</code></h3>
+  <p>These set how wide or tall the image appears, in <b>pixels</b>. If you give only one, the browser scales the other to keep the picture’s proportions.</p>
+  <div class="two">
+    <pre><code class="language-html">&lt;img src="/images/cat.jpg" width="100"&gt;</code></pre>
+    <pre><code class="language-html">&lt;img src="/images/cat.jpg" height="500"&gt;</code></pre>
+  </div>
+  <div class="sticky info l"><strong>HTML size vs CSS size</strong> To <b>control</b> how big an image looks, use CSS: it is more flexible and keeps HTML clean (coming in the CSS lessons). But writing the image’s real <code>width</code> and <code>height</code> in HTML is still good practice: the browser reserves the right space before the image loads, so the page doesn’t jump around.</div>
+
+  <h3><code>loading</code>: when should the image load?</h3>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4><code>loading="eager"</code></h4><p>Load the image <b>immediately</b>. This is the default.</p></div>
+    <div class="card t2 tilt-b"><h4><code>loading="lazy"</code></h4><p>Load the image <b>only when it is about to appear</b> on screen.</p></div>
+  </div>
+  <pre><code class="language-html">&lt;img src="mountain.jpg" alt="Snowy mountain" loading="lazy"&gt;</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="A long page with four images. The two images inside the visible screen are loaded. The two images further down are not loaded yet; they load when the user scrolls near them.">
+      <g class="rough">
+        <rect class="box f-card" x="60" y="16" width="220" height="236" rx="10"/>
+        <rect class="box f-green" x="80" y="30" width="180" height="36" rx="6"/>
+        <rect class="box f-green" x="80" y="76" width="180" height="36" rx="6"/>
+        <rect class="box f-grey dash" x="80" y="146" width="180" height="36" rx="6"/>
+        <rect class="box f-grey dash" x="80" y="200" width="180" height="36" rx="6"/>
+        <rect class="lr dash" x="40" y="12" width="260" height="114" rx="10"/>
+        <path class="ln" d="M320 190 C 340 170, 340 140, 320 128" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="170" y="54" text-anchor="middle">loaded</text>
+      <text class="t" x="170" y="100" text-anchor="middle">loaded</text>
+      <text class="t" x="170" y="170" text-anchor="middle">not yet</text>
+      <text class="t" x="170" y="224" text-anchor="middle">not yet</text>
+      <text class="tr" x="320" y="40">visible screen</text>
+      <text class="tm" x="360" y="166">loading="lazy"</text>
+      <text class="ts" x="360" y="190">loads when the user scrolls near it</text>
+      <text class="ts" x="360" y="212">saves time and mobile data</text>
+    </svg></div>
+    <figcaption>Lazy loading is like saying “don’t fetch this picture until the user scrolls near it.”</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Use lazy for images further down</strong> Pages with many images load faster and use less data with <code>loading="lazy"</code>. Keep the main image at the very top eager, so it appears straight away.</div>
+
+  <h3><code>title</code>: extra info on hover</h3>
+  <pre><code class="language-html">&lt;img src="/images/cat.jpg" title="A cute cat" alt="Cat"&gt;</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 180" role="img" aria-label="A mouse pointer resting on an image shows a small tooltip box reading A cute cat">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="20" width="200" height="130" rx="10"/>
+        <path class="box f-card" d="M196 96 L 196 124 L 203 117 L 209 129 L 213 127 L 207 115 L 216 115 Z"/>
+        <rect class="box f-yellow" x="214" y="128" width="104" height="30" rx="4"/>
+      </g>
+      <text class="t" x="110" y="60" text-anchor="middle">cat.jpg</text>
+      <text class="ts" x="226" y="148">A cute cat</text>
+      <text class="tr" x="340" y="70">title on hover</text>
+    </svg></div>
+    <figcaption>Hover the mouse over the image and a small popup shows the title.</figcaption>
+  </figure>
+  <div class="sticky warn l"><strong><code>title</code> is not a replacement for <code>alt</code></strong> Touch-screen users never see hover text, and screen readers rely on <code>alt</code>. Always write <code>alt</code>; add <code>title</code> only as a bonus.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="anchor">
+  <h2>Links with the anchor tag <code>&lt;a&gt;</code></h2>
+  <p>The anchor tag <code>&lt;a&gt;</code> is one of the most important tags in HTML. It creates a <b>hyperlink</b>, the thing that makes the web clickable. Click the link text and you go to another <b>page</b>, another <b>section</b> of the same page, or <b>download a file</b>.</p>
+  <div class="story"><b class="lbl">The door</b>The <code>&lt;a&gt;</code> tag is a <b>door</b>. The text inside it (“Click here”) is the <b>label on the door</b>. The <code>href</code> is the <b>address</b> of the place it leads to. <mark>Clicking the link is opening the door and walking through.</mark></div>
+  <div class="anatomy"><span class="a1">&lt;a</span> <span class="a2">href</span>=<span class="a3">"https://www.google.com"</span><span class="a1">&gt;</span><span class="a4">Click me to go to Google</span><span class="a5">&lt;/a&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Opening tag</b> · the door</p></div>
+    <div><span class="sw a2"></span><p><b><code>href</code></b> · the most important attribute</p></div>
+    <div><span class="sw a3"></span><p><b>Destination</b> · where the door leads</p></div>
+    <div><span class="sw a4"></span><p><b>Link text</b> · the visible, clickable label</p></div>
+    <div><span class="sw a5"></span><p><b>Closing tag</b> · <code>&lt;/a&gt;</code></p></div>
+  </div>
+  <p>Common attributes of <code>&lt;a&gt;</code>: <code>href</code>, <code>target</code>, <code>rel</code> and <code>download</code>. <b><code>href</code></b> (hypertext reference) is the destination address: it tells the browser <i>where to go</i> when the user clicks.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="link-types">
+  <h2>Three kinds of links</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Your website is a building with two rooms, Home page and About Us. An in-page link jumps to a spot inside the Home room. An internal link walks to the About Us room. An external link leaves for another building, google.com.">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="44" width="400" height="200" rx="14"/>
+        <rect class="box f-blue" x="40" y="70" width="170" height="156" rx="10"/>
+        <rect class="box f-green" x="230" y="70" width="170" height="156" rx="10"/>
+        <rect class="box f-yellow" x="56" y="178" width="84" height="34" rx="6"/>
+        <rect class="box f-orange" x="500" y="70" width="200" height="156" rx="12"/>
+        <path class="lb" d="M150 112 C 160 140, 130 160, 110 172" marker-end="url(#ahb)"/>
+        <path class="lr" d="M184 150 C 210 130, 240 130, 266 150" marker-end="url(#ahr)"/>
+        <path class="ln" d="M380 190 C 430 200, 460 190, 494 166" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="220" y="32" text-anchor="middle">Your website</text>
+      <text class="th" x="600" y="56" text-anchor="middle">Another site</text>
+      <text class="t" x="125" y="96" text-anchor="middle">Home page</text>
+      <text class="t" x="315" y="96" text-anchor="middle">About Us</text>
+      <text class="tm" x="98" y="200" text-anchor="middle">#contact</text>
+      <text class="t" x="600" y="152" text-anchor="middle">google.com</text>
+      <text class="tb" x="166" y="146">in-page</text>
+      <text class="tr" x="226" y="122" text-anchor="middle">internal</text>
+      <text class="ts" x="460" y="218" text-anchor="middle">external</text>
+    </svg></div>
+    <figcaption>External = another building, internal = another room, in-page = a spot in the same room.</figcaption>
+  </figure>
+
+  <h3>1 · External link: “go to another building”</h3>
+  <p>Takes the user <b>away from your site</b> to a different website. The <code>href</code> <b>must</b> be the full, absolute URL starting with <code>https://</code> (or the less secure <code>http://</code>).</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">✅ works</span><pre><code class="language-html">&lt;a href="https://www.google.com"&gt;Click me to go to Google&lt;/a&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">❌ won’t work</span><pre><code class="language-html">&lt;a href="www.google.com"&gt;Google&lt;/a&gt;</code></pre></div>
+  </div>
+  <div class="sticky warn l"><strong>Why the second one breaks</strong> Without <code>https://</code>, the browser treats <code>www.google.com</code> as a <b>file in your own site</b> and looks for <code>yoursite/www.google.com</code>, which doesn’t exist.</div>
+
+  <h3>2 · Internal link: “go to another room”</h3>
+  <p>Takes the user to <b>another page inside your own website</b>, like walking down the hall from the Homepage room to the About Us room.</p>
+  <pre><code class="language-html">&lt;a href="/about-us.html"&gt;About Us&lt;/a&gt;</code></pre>
+
+  <h3>3 · In-page link: “go to that chair”</h3>
+  <p>Jumps (scrolls) to a different spot on the <b>very same page</b>. Two steps:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Label the spot with an <code>id</code></b><code>&lt;h2 id="contact"&gt;Contact Us&lt;/h2&gt;</code> <span class="tag">→ “contact” is the name tag of this place</span></div></li>
+    <li><span class="dot">2</span><div><b>Link to it with <code>#</code> + the same name</b><code>&lt;a href="#contact"&gt;Go to Contact&lt;/a&gt;</code> <span class="tag">→ “find id="contact" and jump there”</span></div></li>
+  </ol>
+  <div class="codebox"><span class="cap">in-page link</span><pre><code class="language-html">&lt;a href="#contact"&gt;Go to Contact&lt;/a&gt;
+
+&lt;!-- …lots of content… --&gt;
+
+&lt;h2 id="contact"&gt;Contact Us&lt;/h2&gt;</code></pre></div>
+  <div class="sticky tip"><strong>You’ve used one already</strong> The section list in this site’s sidebar uses in-page links: each one points to a section’s <code>id</code>, like <code>#link-types</code>.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="target-rel-download">
+  <h2><code>target</code>, <code>rel</code> and <code>download</code></h2>
+  <h3><code>target</code>: which tab opens?</h3>
+  <p>By default a link opens in the <b>same tab</b>, replacing the current page. <code>target</code> changes that. Think of each browser tab as a room.</p>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4><code>target="_self"</code> (default)</h4><p>Opens in the <b>same tab</b>: the door leads to another part of the same room. You rarely write it since it is the default.</p></div>
+    <div class="card t2 tilt-b"><h4><code>target="_blank"</code> (most common)</h4><p>Opens in a <b>new tab or window</b>: the door builds a new room. Handy for external sites so users don’t lose yours.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">both values</span><pre><code class="language-html">&lt;a href="page2.html" target="_self"&gt;Go to Page 2 (same tab)&lt;/a&gt;
+
+&lt;a href="https://www.google.com" target="_blank"&gt;
+  Go to Google (new tab)
+&lt;/a&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Left, target self: page A in a tab is replaced by page B in the same tab. Right, target blank: your site stays in its tab and Google opens in a new tab beside it.">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="60" width="110" height="36" rx="8"/>
+        <rect class="box f-green" x="210" y="60" width="110" height="36" rx="8"/>
+        <path class="ln" d="M156 78 L 202 78" marker-end="url(#ah)"/>
+        <path class="ln dash" d="M360 20 L 360 160"/>
+        <rect class="box f-blue" x="410" y="60" width="120" height="36" rx="8"/>
+        <rect class="box f-green" x="550" y="60" width="120" height="36" rx="8"/>
+      </g>
+      <text class="tm" x="180" y="36" text-anchor="middle">target="_self"</text>
+      <text class="t" x="95" y="84" text-anchor="middle">Page A</text>
+      <text class="t" x="265" y="84" text-anchor="middle">Page B</text>
+      <text class="ts" x="180" y="132" text-anchor="middle">same tab: page A is replaced</text>
+      <text class="tm" x="540" y="36" text-anchor="middle">target="_blank"</text>
+      <text class="t" x="470" y="84" text-anchor="middle">Your site</text>
+      <text class="t" x="610" y="84" text-anchor="middle">Google</text>
+      <text class="ts" x="540" y="132" text-anchor="middle">new tab opens, your site stays</text>
+    </svg></div>
+  </figure>
+
+  <h3><code>rel</code>: the relationship</h3>
+  <p><code>rel</code> stands for <b>relationship</b>. It tells the browser and search engines what kind of connection exists between your page and the linked page.</p>
+  <div class="tbl"><table>
+    <tr><th>Value</th><th>What it does</th></tr>
+    <tr><td><code>nofollow</code></td><td>Tells search engines <b>not to follow</b> the link or pass any SEO value to it.</td></tr>
+    <tr><td><code>noopener</code></td><td>Keeps your page <b>safe</b> when a link opens in a new tab (<code>target="_blank"</code>): the new page can’t control your page through <code>window.opener</code>.</td></tr>
+    <tr><td><code>noreferrer</code></td><td><b>Hides your page’s address</b> (the “referrer”) from the site the user goes to. It also implies <code>noopener</code>.</td></tr>
+  </table></div>
+  <pre><code class="language-html">&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;Visit Example&lt;/a&gt;</code></pre>
+  <div class="sticky info l"><strong>Modern browsers help</strong> Current browsers apply <code>noopener</code> to <code>target="_blank"</code> links automatically, but writing it explicitly is still a common, safe habit.</div>
+
+  <h3><code>download</code>: save instead of open</h3>
+  <p>Normally a link <b>opens</b> the file or page. With <code>download</code> (a boolean attribute), the browser <b>downloads</b> the file instead.</p>
+  <pre><code class="language-html">&lt;a href="files/sample.pdf" download&gt;Download PDF&lt;/a&gt;</code></pre>
+  <p>Clicking it saves <code>sample.pdf</code> rather than opening it in the browser. (This works for files on your own site; browsers ignore it for files from other sites.)</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer dashboards are full of these: “Export report” links with <code>download</code>, “Open docs” links with <code>target="_blank" rel="noopener"</code>, and in-page <code>#</code> anchors for long help pages. Security reviews at enterprise customers will flag <code>_blank</code> links to untrusted sites without <code>rel="noopener"</code>.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Ordered list (<code>&lt;ol&gt;</code>)</dt><dd>A list whose items are numbered automatically, used when the order of items matters.</dd></div>
+    <div><dt>Unordered list (<code>&lt;ul&gt;</code>)</dt><dd>A bulleted list, used when the order of items doesn’t matter.</dd></div>
+    <div><dt>List item (<code>&lt;li&gt;</code>)</dt><dd>The element that wraps each item inside an <code>&lt;ol&gt;</code> or <code>&lt;ul&gt;</code>.</dd></div>
+    <div><dt>Description list (<code>&lt;dl&gt;</code>)</dt><dd>A list of terms (<code>&lt;dt&gt;</code>) each followed by its description (<code>&lt;dd&gt;</code>), like a glossary.</dd></div>
+    <div><dt>Nested list</dt><dd>A list placed inside an <code>&lt;li&gt;</code> of another list, used for sub-items or sub-steps.</dd></div>
+    <div><dt>Boolean attribute</dt><dd>An attribute that needs no value; writing its name switches it on, as with <code>reversed</code> or <code>download</code>.</dd></div>
+    <div><dt><code>src</code></dt><dd>The image attribute giving the file’s location, either a local path in your project or a full online URL.</dd></div>
+    <div><dt>Alt text</dt><dd>The <code>alt</code> attribute’s short description of an image, shown if it fails to load and read aloud by screen readers.</dd></div>
+    <div><dt>Lazy loading</dt><dd><code>loading="lazy"</code>: the browser fetches an image only when it is about to scroll into view, saving time and data.</dd></div>
+    <div><dt>Hyperlink</dt><dd>A clickable link, created with <code>&lt;a&gt;</code>, that takes the user to another page, another spot on the page, or a file.</dd></div>
+    <div><dt><code>href</code></dt><dd>The anchor attribute holding the link’s destination address.</dd></div>
+    <div><dt>Absolute vs relative URL</dt><dd>An absolute URL is the full address including <code>https://</code> (for external sites); a relative one, like <code>about-us.html</code>, points to a file within your own site.</dd></div>
+    <div><dt>In-page link</dt><dd>A link whose <code>href</code> is <code>#</code> plus an element’s <code>id</code>, which scrolls to that spot on the same page.</dd></div>
+    <div><dt><code>target="_blank"</code></dt><dd>Makes a link open in a new tab or window instead of replacing the current page.</dd></div>
+    <div><dt><code>rel</code></dt><dd>Describes the relationship to the linked page, e.g. <code>nofollow</code>, <code>noopener</code>, <code>noreferrer</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>You are writing the steps to install Python. Which list fits best?</p>
+      <ol><li><code>&lt;ul&gt;</code></li><li><code>&lt;ol&gt;</code></li><li><code>&lt;dl&gt;</code></li><li>Several <code>&lt;p&gt;</code> tags</li></ol>
+      <p class="why">Installation steps must happen in order, so the numbered ordered list is right.</p></div>
+    <div class="q" data-answer="4"><p>Which code starts a lettered list at “C”?</p>
+      <ol><li><code>&lt;ol type="C"&gt;</code></li><li><code>&lt;ol start="C"&gt;</code></li><li><code>&lt;ol type="A" start="C"&gt;</code></li><li><code>&lt;ol type="A" start="3"&gt;</code></li></ol>
+      <p class="why"><code>start</code> must always be a number; C is the 3rd letter, and <code>type="A"</code> shows letters.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>&lt;ol reversed&gt;</code> with three items show?</p>
+      <ol><li>3, 2, 1</li><li>1, 2, 3 with items in reverse order</li><li>An error, because reversed needs a value</li><li>Roman numerals</li></ol>
+      <p class="why"><code>reversed</code> is a boolean attribute that makes the numbering count down. The items stay in the order you wrote them.</p></div>
+    <div class="q" data-answer="3"><p>In a description list, which tag holds the meaning of a term?</p>
+      <ol><li><code>&lt;dt&gt;</code></li><li><code>&lt;li&gt;</code></li><li><code>&lt;dd&gt;</code></li><li><code>&lt;dl&gt;</code></li></ol>
+      <p class="why"><code>&lt;dt&gt;</code> is the term, <code>&lt;dd&gt;</code> is its description, and <code>&lt;dl&gt;</code> wraps the whole list.</p></div>
+    <div class="q" data-answer="2"><p>Your image path is wrong and the picture fails to load. What does the user see if you wrote <code>alt</code>?</p>
+      <ol><li>A blank page</li><li>The alt text in place of the image</li><li>The title text</li><li>The file name</li></ol>
+      <p class="why">The alt text is the backup that appears when the image can’t be shown (and what screen readers read).</p></div>
+    <div class="q" data-answer="4"><p>A gallery page has 200 photos. Which attribute helps it load fast?</p>
+      <ol><li><code>title="fast"</code></li><li><code>loading="eager"</code></li><li><code>width="10"</code></li><li><code>loading="lazy"</code></li></ol>
+      <p class="why">Lazy loading fetches each photo only as the user scrolls near it, instead of all 200 at once.</p></div>
+    <div class="q" data-answer="3"><p>Why does <code>&lt;a href="www.google.com"&gt;</code> fail?</p>
+      <ol><li><code>href</code> cannot contain dots</li><li>Links need <code>target</code></li><li>Without <code>https://</code> the browser treats it as a file path in your own site</li><li>Google blocks links</li></ol>
+      <p class="why">External links need an absolute URL. Otherwise the address is read as relative to your page.</p></div>
+    <div class="q" data-answer="1"><p>Which pair creates a working in-page jump to a “Pricing” heading?</p>
+      <ol><li><code>&lt;h2 id="pricing"&gt;</code> and <code>&lt;a href="#pricing"&gt;</code></li><li><code>&lt;h2 name="pricing"&gt;</code> and <code>&lt;a href="pricing"&gt;</code></li><li><code>&lt;h2 id="#pricing"&gt;</code> and <code>&lt;a href="id=pricing"&gt;</code></li><li><code>&lt;h2&gt;</code> and <code>&lt;a href="Pricing"&gt;</code></li></ol>
+      <p class="why">Label the spot with <code>id="pricing"</code> and link with <code>#</code> plus the same name.</p></div>
+    <div class="q" data-answer="2"><p>What does the <code>download</code> attribute do on a link to <code>report.pdf</code>?</p>
+      <ol><li>Opens the PDF in a new tab</li><li>Saves the file instead of opening it</li><li>Hides the link from search engines</li><li>Compresses the file</li></ol>
+      <p class="why">Normally the browser opens the file; <code>download</code> tells it to save the file instead.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Use <b>&lt;ol&gt;</b> when order matters, <b>&lt;ul&gt;</b> when it doesn’t and <b>&lt;dl&gt;</b> for terms and meanings; show pictures with <b>&lt;img&gt;</b> and always give it <b>src</b> and <b>alt</b>; and connect pages with <b>&lt;a href&gt;</b>, choosing <b>target</b>, <b>rel</b> and <b>download</b> as needed.</p>
+  <p>Next up: Forms and Inputs, where your page starts collecting information from users.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

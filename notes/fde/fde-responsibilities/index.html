@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FDE Responsibilities · The Forward Deployed Engineer | AIFDE Notes</title>
+<meta name="description" content="The ten responsibilities of a Forward Deployed Engineer, from technical discovery to proven business value, followed step by step through one insurance-claims AI project.">
+<meta name="keywords" content="technical discovery, problem definition, solution architecture, rapid prototyping, production engineering, enterprise integration, deployment, evaluation, customer adoption, business value">
+<meta name="date" content="2026-09-28">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="fde/fde-responsibilities">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>FDE Responsibilities</h1>
+  <p class="byline">Follow one FDE through a real-world style project and learn the ten responsibilities that take a vague customer request all the way to a live solution with measurable results.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="abc-insurance">
+  <h2>Meet the customer: ABC Insurance</h2>
+  <p>A <b>Forward Deployed Engineer (FDE)</b> works directly with the customer, close to their real problem, instead of sitting far away in a product team. The FDE listens, understands the customer’s technology, builds a solution, puts it live, and then checks that the customer really benefits. <mark>An FDE does not just write code; an FDE carries a customer’s problem all the way to a working solution that makes a real difference to the business.</mark></p>
+  <div class="story"><b class="lbl">One story, start to finish</b>To keep things simple, this whole note follows <b>one example</b>. <b>ABC Insurance</b> sells motor and health insurance. When a customer has an accident or a hospital bill, they file a <b>claim</b>. Think of it like a busy railway reservation counter in the days before online booking: every form is read and typed in by hand, and the queue keeps growing.</div>
+  <p>How ABC handles claims today:</p>
+  <div class="notes">
+    <div class="note"><b>500</b>claims arrive every day</div>
+    <div class="note"><b>250</b>claims employees</div>
+    <div class="note"><b>30 min</b>of staff time per claim</div>
+  </div>
+  <p>Every claim comes with documents (claim form, hospital bill, police report, photos), mostly as <b>PDF files</b>. Employees open each PDF, read it, <b>type the details by hand</b> into ABC’s <b>Claims Management System (CMS)</b>, then check everything again. Customers wait too long and are unhappy.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Today's manual process: 500 claim PDFs a day go to 250 claims employees who read and type each one, taking 30 minutes, into the claims management system">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="50" width="170" height="100" rx="14"/>
+        <rect class="box f-yellow" x="260" y="50" width="200" height="100" rx="14"/>
+        <rect class="box f-blue" x="530" y="50" width="170" height="100" rx="14"/>
+        <path class="ln" d="M194 100 L 254 100" marker-end="url(#ah)"/>
+        <path class="ln" d="M464 100 L 524 100" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="105" y="95" text-anchor="middle">Claim PDFs</text>
+      <text class="ts" x="105" y="122" text-anchor="middle">500 a day</text>
+      <text class="th" x="360" y="95" text-anchor="middle">Claims staff</text>
+      <text class="ts" x="360" y="122" text-anchor="middle">read + type by hand</text>
+      <text class="th" x="615" y="95" text-anchor="middle">CMS</text>
+      <text class="ts" x="615" y="122" text-anchor="middle">claims system</text>
+      <text class="tr" x="360" y="186" text-anchor="middle">30 minutes per claim: the slow part</text>
+    </svg></div>
+    <figcaption>Today, people sit in the middle of every claim.</figcaption>
+  </figure>
+  <p>Meera, the Head of Claims, meets the FDE and says: <i>“Our claims process is too slow. We need AI to make it faster.”</i> This one sentence is where the FDE’s journey starts. The people you will meet:</p>
+  <div class="tbl"><table>
+    <tr><th style="width:20%">Person</th><th>Role at ABC Insurance</th></tr>
+    <tr><td><b>Meera</b></td><td>Head of Claims. She owns the business problem and wants faster claims.</td></tr>
+    <tr><td><b>Arjun</b></td><td>IT Manager. He knows ABC’s systems, servers and security rules.</td></tr>
+    <tr><td><b>Anita</b></td><td>A claims officer, one of the daily users of the new solution.</td></tr>
+    <tr><td><b>Rahul</b></td><td>A customer who filed a claim. His claim appears in our examples.</td></tr>
+  </table></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="ten">
+  <h2>The ten responsibilities, at a glance</h2>
+  <p>The FDE’s work follows a natural journey. Each stage answers one main question, and <mark>the output of one stage becomes the input of the next</mark>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The ten responsibilities grouped into four phases: understand (discovery, problem), design (architecture, prototype), build (production, integration, deployment), prove (evaluation, adoption, business value)">
+      <g class="rough">
+        <rect class="box f-orange" x="15" y="20" width="160" height="210" rx="16"/>
+        <rect class="box f-yellow" x="193" y="20" width="160" height="210" rx="16"/>
+        <rect class="box f-blue" x="371" y="20" width="160" height="210" rx="16"/>
+        <rect class="box f-green" x="549" y="20" width="160" height="210" rx="16"/>
+        <path class="ln" d="M177 125 L 190 125" marker-end="url(#ah)"/>
+        <path class="ln" d="M355 125 L 368 125" marker-end="url(#ah)"/>
+        <path class="ln" d="M533 125 L 546 125" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="95" y="58" text-anchor="middle">Understand</text>
+      <text class="th" x="273" y="58" text-anchor="middle">Design</text>
+      <text class="th" x="451" y="58" text-anchor="middle">Build</text>
+      <text class="th" x="629" y="58" text-anchor="middle">Prove</text>
+      <text class="t" x="95" y="100" text-anchor="middle">1 Discovery</text>
+      <text class="t" x="95" y="128" text-anchor="middle">2 Problem</text>
+      <text class="t" x="273" y="100" text-anchor="middle">3 Architecture</text>
+      <text class="t" x="273" y="128" text-anchor="middle">4 Prototype</text>
+      <text class="t" x="451" y="100" text-anchor="middle">5 Production</text>
+      <text class="t" x="451" y="128" text-anchor="middle">6 Integration</text>
+      <text class="t" x="451" y="156" text-anchor="middle">7 Deployment</text>
+      <text class="t" x="629" y="100" text-anchor="middle">8 Evaluation</text>
+      <text class="t" x="629" y="128" text-anchor="middle">9 Adoption</text>
+      <text class="t" x="629" y="156" text-anchor="middle">10 Value</text>
+      <text class="ts" x="95" y="210" text-anchor="middle">before you build</text>
+      <text class="ts" x="273" y="210" text-anchor="middle">plan, then test small</text>
+      <text class="ts" x="451" y="210" text-anchor="middle">make it real</text>
+      <text class="ts" x="629" y="210" text-anchor="middle">show it was worth it</text>
+    </svg></div>
+    <figcaption>Ten responsibilities, four phases.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Responsibility</th><th>Main question</th><th>What happens at ABC Insurance</th></tr>
+    <tr><td>1</td><td>Technical Discovery</td><td>What does the customer already have?</td><td>Learn about the CMS, database, AWS and security rules.</td></tr>
+    <tr><td>2</td><td>Problem Definition</td><td>What problem are we really solving?</td><td>Find that manual PDF reading is the real cause of delay.</td></tr>
+    <tr><td>3</td><td>Solution Architecture</td><td>How will the pieces fit together?</td><td>Design an upload, AI extraction, validation and CMS flow.</td></tr>
+    <tr><td>4</td><td>Rapid Prototyping</td><td>Can this actually work?</td><td>Test the idea on 20 sample claims.</td></tr>
+    <tr><td>5</td><td>Production Engineering</td><td>Can it run reliably every day?</td><td>Add error handling, security, testing and monitoring.</td></tr>
+    <tr><td>6</td><td>Enterprise Integration</td><td>Can it work with existing systems?</td><td>Connect to the CMS, database and login system.</td></tr>
+    <tr><td>7</td><td>Deployment</td><td>How do we make it live safely?</td><td>Set up environments and release to real staff.</td></tr>
+    <tr><td>8</td><td>Evaluation</td><td>Is it really good?</td><td>Measure accuracy and speed against targets.</td></tr>
+    <tr><td>9</td><td>Customer Adoption</td><td>Will people actually use it?</td><td>Train claims staff and support them.</td></tr>
+    <tr><td>10</td><td>Business Value</td><td>What did the business gain?</td><td>Show faster claims and hours saved.</td></tr>
+  </table></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="discovery">
+  <h2>1 · Technical Discovery</h2>
+  <p><b>Technical Discovery</b> means <mark>understanding the customer’s existing technology before building a solution</mark>. The first question is not “what shall I code?” but “What does the customer’s technical world look like, and what must we work with?”</p>
+  <div class="story"><b class="lbl">The family doctor</b>Before giving any medicine, a good doctor examines you, asks questions and checks your reports. An FDE does the same with the customer’s technology. Skip this step and the solution may not fit the customer’s systems, and a lot of work has to be redone later.</div>
+  <p>At ABC, the FDE does <b>not</b> open a code editor. The first days are spent with Arjun and his IT team.</p>
+
+  <h3>Understand the existing technical environment</h3>
+  <p>Where does your application run? Which database do you use? How do your systems talk to each other? Arjun explains: employees use a <b>Claims Web App</b>, which talks to a <b>Backend API</b>, which stores data in a <b>PostgreSQL database</b>. Everything runs on <b>AWS</b>, and staff log in through company <b>single sign-on (SSO)</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Inside AWS, a private network: SSO login, claims web app, claims API, CMS and PostgreSQL. Outside, a new AI service asks whether it can reach the private API.">
+      <g class="rough">
+        <rect class="box f-none dash" x="10" y="30" width="565" height="225" rx="18"/>
+        <rect class="box f-card" x="25" y="95" width="120" height="60" rx="12"/>
+        <rect class="box f-blue" x="170" y="95" width="120" height="60" rx="12"/>
+        <rect class="box f-blue" x="315" y="95" width="100" height="60" rx="12"/>
+        <rect class="box f-green" x="440" y="95" width="120" height="60" rx="12"/>
+        <rect class="box f-grey" x="25" y="185" width="120" height="50" rx="12"/>
+        <path class="ln" d="M147 125 L 166 125" marker-end="url(#ah)"/>
+        <path class="ln" d="M292 125 L 311 125" marker-end="url(#ah)"/>
+        <path class="ln" d="M417 125 L 436 125" marker-end="url(#ah)"/>
+        <path class="ln" d="M85 183 L 85 159" marker-end="url(#ah)"/>
+        <rect class="box f-purple" x="600" y="95" width="110" height="60" rx="12"/>
+        <path class="lr dash" d="M655 92 C 640 50, 280 50, 235 90" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="22" y="58">AWS · private network</text>
+      <text class="t" x="85" y="121" text-anchor="middle">Claims</text>
+      <text class="t" x="85" y="142" text-anchor="middle">web app</text>
+      <text class="t" x="230" y="130" text-anchor="middle">Claims API</text>
+      <text class="t" x="365" y="130" text-anchor="middle">CMS</text>
+      <text class="t" x="500" y="130" text-anchor="middle">PostgreSQL</text>
+      <text class="t" x="85" y="215" text-anchor="middle">SSO login</text>
+      <text class="t" x="655" y="130" text-anchor="middle">AI service</text>
+      <text class="tr" x="440" y="44" text-anchor="middle">can it call this API?</text>
+      <text class="ts" x="655" y="185" text-anchor="middle">new, outside</text>
+      <text class="ts" x="655" y="205" text-anchor="middle">the network</text>
+      <text class="ts" x="365" y="215" text-anchor="middle">limit: 100 requests / minute</text>
+    </svg></div>
+    <figcaption>Discovery draws the customer’s map before anyone decides where the new piece goes.</figcaption>
+  </figure>
+  <p>Why this matters: the new solution must <b>fit into this setup, not fight it</b>; it avoids surprises such as choosing a tool ABC is not allowed to use; and it shows the customer the FDE respects their existing work.</p>
+
+  <h3>List the systems, applications, databases, APIs and infrastructure</h3>
+  <div class="tbl"><table>
+    <tr><th>Component</th><th>What it does at ABC</th><th>Why the FDE cares</th></tr>
+    <tr><td>Claims Web App</td><td>Where employees view and handle claims</td><td>The new feature may appear here for staff</td></tr>
+    <tr><td>Claims Management System (CMS)</td><td>Main system that stores every claim</td><td>The new solution must send data into it</td></tr>
+    <tr><td>Claims API</td><td>The “door” other software uses to talk to the CMS</td><td>Our AI workflow will use it</td></tr>
+    <tr><td>PostgreSQL database</td><td>Stores claim and policy records</td><td>Shows where final data lives</td></tr>
+    <tr><td>AWS cloud</td><td>Where the systems run</td><td>Decides where the new solution can run</td></tr>
+    <tr><td>Login system (SSO)</td><td>Checks who the user is</td><td>The new solution must use the same login</td></tr>
+  </table></div>
+
+  <h3>Understand data sources and data flow</h3>
+  <p>Where does the data come from, where does it go, and how does it move? The FDE traces Rahul’s claim today:</p>
+  <div class="flow"><span>Rahul emails claim PDF</span><span>Upload portal</span><span class="bad">Employee reads PDF</span><span class="bad">Employee types into CMS</span><span>Saved in PostgreSQL</span></div>
+  <div class="tbl"><table>
+    <tr><th style="width:18%">Who</th><th>Says</th></tr>
+    <tr><td>FDE</td><td>“Where is the claim status stored?”</td></tr>
+    <tr><td>Arjun</td><td>“In our PostgreSQL database.”</td></tr>
+    <tr><td>FDE</td><td>“How does the application read it?”</td></tr>
+    <tr><td>Arjun</td><td>“Through our internal Claims API.”</td></tr>
+    <tr><td>FDE</td><td>“Can a new AI system call that API?”</td></tr>
+    <tr><td>Arjun</td><td>“Let me check with the network team.”</td></tr>
+  </table></div>
+  <p>The last question is the most important: it decides <b>how the new solution will connect</b> to the existing system.</p>
+
+  <h3>Identify constraints and dependencies</h3>
+  <p>A <b>constraint</b> is a limitation. A <b>dependency</b> is something the solution relies on to work.</p>
+  <div class="tbl"><table>
+    <tr><th>Constraint at ABC</th><th>What it means</th><th>Effect on our solution</th></tr>
+    <tr><td>Private API</td><td>The Claims API can only be reached from inside ABC’s private network</td><td>The AI service cannot call it from just anywhere on the internet</td></tr>
+    <tr><td>Rate limit</td><td>The API allows only 100 requests per minute</td><td>Claims must be sent at a controlled pace, not all at once</td></tr>
+    <tr><td>Older system</td><td>The CMS uses an older style of API</td><td>Extra care is needed while connecting</td></tr>
+    <tr><td>Large data</td><td>Thousands of PDF pages arrive daily</td><td>Send the AI only what is needed, not everything</td></tr>
+  </table></div>
+  <div class="flow"><span>AI service</span><span>Claims API</span><span>CMS</span><span>Database</span></div>
+  <p>If the Claims API is down, the AI service cannot save any claim details. The FDE must understand these relationships now and plan for them in the design.</p>
+
+  <h3>Understand security, access and compliance</h3>
+  <p>Insurance data is private. The FDE <b>cannot simply connect an AI to all of ABC’s data</b>, so asks: Who may see claim information? How do users log in? What data can the AI see? Where may customer data be stored?</p>
+  <p>ABC has a strict rule: <b>“Customer documents must never leave our approved AWS environment.”</b> And Anita should only see claims assigned to her. So the AI service must run inside ABC’s approved cloud, and users must be checked before they see anything:</p>
+  <div class="flow"><span>Employee</span><span>Login</span><span>Identity verified</span><span>AI feature</span><span class="ok">Only allowed claims shown</span></div>
+
+  <h3>Ask the right technical questions</h3>
+  <div class="tbl"><table>
+    <tr><th>Weak question</th><th>Better question</th><th>Why it is better</th></tr>
+    <tr><td>Do you have an API?</td><td>Which API gives us the claim details?</td><td>Points to one exact system</td></tr>
+    <tr><td>How do we connect?</td><td>How do we authenticate to that API (key, token, OAuth)?</td><td>Tells us the access method</td></tr>
+    <tr><td>What does it return?</td><td>In what format is data returned, and what does an error look like?</td><td>Helps us handle success and failure</td></tr>
+  </table></div>
+
+  <h3>The discovery summary</h3>
+  <p>At the end, the FDE puts all the facts in one place. This summary is the base for every later step.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:24%">Topic</th><th>What the FDE now knows about ABC</th></tr>
+    <tr><td>Problem</td><td>Claims take too long to process.</td></tr>
+    <tr><td>Existing system</td><td>Claims Management System (CMS).</td></tr>
+    <tr><td>Data</td><td>Claim documents are PDFs. Final claim records are in PostgreSQL.</td></tr>
+    <tr><td>Access</td><td>Claim data is available through an internal Claims API.</td></tr>
+    <tr><td>Infrastructure</td><td>All systems run inside AWS.</td></tr>
+    <tr><td>Security</td><td>Users must log in. Documents must stay in ABC’s approved cloud.</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Discovery is learning, not building.</strong> The better you understand the customer’s world, the fewer expensive surprises appear later.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="problem">
+  <h2>2 · Problem Definition</h2>
+  <p><b>Problem Definition</b> is where the FDE works out <mark>what problem the customer is really trying to solve</mark> before deciding what to build. Customers usually describe a feeling (“it is slow”), not the cause. Discovery told us <b>what ABC has</b>; Problem Definition tells us <b>what needs fixing</b>. Without it, you can build a very good solution to the wrong problem.</p>
+
+  <h3>Understand the actual business problem</h3>
+  <p>The FDE investigates the <b>human workflow</b>, not only the software: How long does one claim take? How many arrive each day? What exact steps does an employee follow? After sitting with Anita’s team, the FDE breaks the 30 minutes down:</p>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Step done by the employee</th><th>Time</th><th>Type of work</th></tr>
+    <tr><td>1</td><td>Receive the claim</td><td>2 min</td><td>Simple</td></tr>
+    <tr><td>2</td><td>Read the PDF documents</td><td>8 min</td><td>Manual reading</td></tr>
+    <tr><td>3</td><td>Pick out the needed details</td><td>5 min</td><td>Manual work</td></tr>
+    <tr><td>4</td><td>Type the details into the CMS</td><td>10 min</td><td>Manual typing</td></tr>
+    <tr><td>5</td><td>Check that everything is correct</td><td>5 min</td><td>Verification</td></tr>
+    <tr><td></td><td><b>Total</b></td><td><b>30 min</b></td><td></td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="A 30-minute bar split into receive 2 minutes, read 8, pick out 5, type 10 and check 5. Read, pick out and type together take 23 of the 30 minutes.">
+      <g class="rough">
+        <rect class="box f-grey" x="60" y="70" width="40" height="56"/>
+        <rect class="box f-orange" x="100" y="70" width="160" height="56"/>
+        <rect class="box f-orange" x="260" y="70" width="100" height="56"/>
+        <rect class="box f-orange" x="360" y="70" width="200" height="56"/>
+        <rect class="box f-blue" x="560" y="70" width="100" height="56"/>
+        <path class="lr" d="M102 58 L 102 48 L 558 48 L 558 58"/>
+      </g>
+      <text class="tr" x="330" y="36" text-anchor="middle">23 of 30 minutes: reading, picking out, typing</text>
+      <text class="t" x="180" y="104" text-anchor="middle">Read · 8</text>
+      <text class="t" x="310" y="104" text-anchor="middle">Pick · 5</text>
+      <text class="t" x="460" y="104" text-anchor="middle">Type · 10</text>
+      <text class="t" x="610" y="104" text-anchor="middle">Check · 5</text>
+      <text class="ts" x="80" y="150" text-anchor="middle">Receive 2</text>
+      <text class="ts" x="60" y="172" text-anchor="middle">0 min</text>
+      <text class="ts" x="660" y="172" text-anchor="middle">30 min</text>
+    </svg></div>
+    <figcaption>Most of the time goes into manual reading and typing. That is where the delay really is.</figcaption>
+  </figure>
+
+  <h3>Separate the symptom from the problem</h3>
+  <div class="tbl"><table>
+    <tr><th>What the customer says</th><th>The business impact</th><th>The technical cause</th></tr>
+    <tr><td>“Our system is slow.”</td><td>Claims take too long and customers wait.</td><td>A manual document-review step waits for a human every single time.</td></tr>
+  </table></div>
+  <div class="flow"><span class="bad">Symptom: “system is slow”</span><span class="hl">Impact: claims take too long</span><span class="ok">Cause: manual document review</span></div>
+  <div class="sticky warn l"><strong>Fixing the symptom</strong> If the FDE had just “made the system faster”, say with a bigger server, claims would still wait for humans to read PDFs. The real delay would remain.</div>
+
+  <h3>Identify the root technical problem</h3>
+  <p>The FDE walks the process step by step to find where the delay is created:</p>
+  <div class="flow"><span>PDF uploaded</span><span class="bad">Employee reads PDF</span><span class="bad">Employee extracts details</span><span class="bad">Employee types into CMS</span><span>Employee verifies</span></div>
+  <p><b>Root technical problem:</b> <mark>“There is no automated step in the claims workflow to read claim documents and pass their details to the CMS.”</mark></p>
+
+  <h3>Define requirements and constraints</h3>
+  <p>A <b>requirement</b> is what the solution must do. A <b>constraint</b> is what it must respect or cannot do.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:20%">Type</th><th>ABC Insurance</th></tr>
+    <tr><td>Requirement</td><td>The system must read claim documents and pick out key details automatically.</td></tr>
+    <tr><td>Requirement</td><td>An employee must still be able to check the details before they are final.</td></tr>
+    <tr><td>Constraint</td><td>Customer documents must not be stored outside ABC’s approved cloud.</td></tr>
+    <tr><td>Constraint</td><td>The solution must work with the existing Claims Management System.</td></tr>
+    <tr><td>Constraint</td><td>Only authorised employees can see a claim.</td></tr>
+  </table></div>
+
+  <h3>Identify the expected outcomes</h3>
+  <p>Meera says: “We want employees to spend less time reading documents.” The FDE turns that into a before-and-after picture:</p>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">Before</th><th style="width:50%">After</th></tr>
+    <tr><td>Employee reads the document</td><td>AI reads the document</td></tr>
+    <tr><td>Employee picks out details</td><td>AI picks out details</td></tr>
+    <tr><td>Employee types details into the CMS</td><td>Details are sent to the CMS automatically</td></tr>
+    <tr><td>Employee verifies</td><td>Employee only checks and verifies</td></tr>
+  </table></div>
+  <p>Expected outcomes: <b>less manual work</b>, <b>faster claim processing</b>, <b>fewer typing mistakes</b>, and <b>more claims handled every day</b>.</p>
+
+  <h3>Write a clear technical problem statement</h3>
+  <div class="two">
+    <div class="card t3 tilt-a"><h4>Before (vague)</h4><p>“We need AI to make claims faster.”</p></div>
+    <div class="card t2 tilt-b"><h4>After (clear)</h4><p>“Employees today read PDF claim documents and type the details into the CMS by hand. We need an automated workflow that extracts the required claim details from the PDFs and sends them to the existing CMS, while following ABC’s security rules and keeping an employee in the loop for verification.”</p></div>
+  </div>
+  <p>A good problem statement says four things: <b>what is happening now, who is affected, what is needed, and what limits apply</b>.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="architecture">
+  <h2>3 · Solution Architecture</h2>
+  <p><b>Solution Architecture</b> means designing <mark>how all the pieces will work together</mark> to solve the problem. It is the blueprint, like a house plan drawn before construction starts. Discovery showed what ABC has; Problem Definition showed what must be solved.</p>
+
+  <h3>Design the overall solution</h3>
+  <p>The goal: <b>read claim documents automatically, pick out the important details, and send them to the existing claim system</b>. One key design choice: <b>the AI does the reading and typing, but an employee still verifies the result</b>. That keeps quality high and builds trust.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Upload PDF, document service, AI extraction with a retry queue on failure, validation, then employee verifies, Claims API, CMS and PostgreSQL database">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="70" width="140" height="62" rx="12"/>
+        <rect class="box f-blue" x="200" y="70" width="140" height="62" rx="12"/>
+        <rect class="box f-purple" x="380" y="70" width="140" height="62" rx="12"/>
+        <rect class="box f-yellow" x="560" y="70" width="140" height="62" rx="12"/>
+        <path class="ln" d="M162 101 L 196 101" marker-end="url(#ah)"/>
+        <path class="ln" d="M342 101 L 376 101" marker-end="url(#ah)"/>
+        <path class="ln" d="M522 101 L 556 101" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M480 68 C 485 25, 415 25, 420 64" marker-end="url(#ahr)"/>
+        <path class="ln" d="M630 134 L 630 184" marker-end="url(#ah)"/>
+        <rect class="box f-green" x="560" y="188" width="140" height="62" rx="12"/>
+        <rect class="box f-blue" x="380" y="188" width="140" height="62" rx="12"/>
+        <rect class="box f-blue" x="200" y="188" width="140" height="62" rx="12"/>
+        <rect class="box f-grey" x="20" y="188" width="140" height="62" rx="12"/>
+        <path class="ln" d="M558 219 L 524 219" marker-end="url(#ah)"/>
+        <path class="ln" d="M378 219 L 344 219" marker-end="url(#ah)"/>
+        <path class="ln" d="M198 219 L 164 219" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="90" y="106" text-anchor="middle">Upload PDF</text>
+      <text class="t" x="270" y="97" text-anchor="middle">Document</text>
+      <text class="t" x="270" y="118" text-anchor="middle">service</text>
+      <text class="t" x="450" y="106" text-anchor="middle">AI extraction</text>
+      <text class="t" x="630" y="106" text-anchor="middle">Validation</text>
+      <text class="tr" x="530" y="34">fail → retry queue</text>
+      <text class="t" x="630" y="215" text-anchor="middle">Employee</text>
+      <text class="t" x="630" y="236" text-anchor="middle">verifies</text>
+      <text class="t" x="450" y="224" text-anchor="middle">Claims API</text>
+      <text class="t" x="270" y="224" text-anchor="middle">CMS</text>
+      <text class="t" x="90" y="224" text-anchor="middle">PostgreSQL</text>
+      <text class="ts" x="660" y="165">human check</text>
+    </svg></div>
+    <figcaption>The AI does the heavy lifting; a person still approves before anything is final.</figcaption>
+  </figure>
+
+  <h3>Identify the required components</h3>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Component</th><th>Its job at ABC Insurance</th></tr>
+    <tr><td>1</td><td>Document Upload Service</td><td>Receives the claim PDF from the employee or portal</td></tr>
+    <tr><td>2</td><td>Document Storage</td><td>Keeps the PDF safely inside ABC’s approved cloud</td></tr>
+    <tr><td>3</td><td>AI Document Processing</td><td>Reads the document and extracts name, policy number, amount and date</td></tr>
+    <tr><td>4</td><td>Validation Service</td><td>Checks the extracted details (does this policy number exist?)</td></tr>
+    <tr><td>5</td><td>Backend API</td><td>Passes the checked details to the CMS</td></tr>
+    <tr><td>6</td><td>Claims Management System</td><td>Existing system that stores the claim</td></tr>
+    <tr><td>7</td><td>Database</td><td>Stores the final claim record</td></tr>
+    <tr><td>8</td><td>Authentication</td><td>Makes sure only authorised users can use the system</td></tr>
+  </table></div>
+
+  <h3>Define the data flow</h3>
+  <div class="flow"><span>Employee</span><span>Upload PDF</span><span>Document service</span><span class="hl">AI extraction</span><span>Validation</span><span>Claims API</span><span>CMS</span><span class="ok">Database</span></div>
+  <p>Suppose the AI reads Rahul’s claim and extracts:</p>
+  <div class="tbl"><table>
+    <tr><th>Field</th><th>Extracted value</th></tr>
+    <tr><td>Customer name</td><td>Rahul</td></tr>
+    <tr><td>Policy number</td><td>P12345</td></tr>
+    <tr><td>Claim amount</td><td>₹50,000</td></tr>
+    <tr><td>Accident date</td><td>10/09/2026 (10 September)</td></tr>
+  </table></div>
+
+  <h3>Select technologies that fit</h3>
+  <p>Choose technology because it <b>fits the customer’s needs</b>, not because it is popular.</p>
+  <div class="tbl"><table>
+    <tr><th>Part</th><th>Choice for ABC</th><th>Why it fits</th></tr>
+    <tr><td>Cloud</td><td>AWS</td><td>ABC already runs on AWS and its security rules allow it</td></tr>
+    <tr><td>Database</td><td>PostgreSQL</td><td>ABC already uses it, so no new database is needed</td></tr>
+    <tr><td>API style</td><td>REST API</td><td>Simple, and matches the existing Claims API</td></tr>
+    <tr><td>AI</td><td>Document AI / LLM service</td><td>Reads PDFs, extracts details, and can run inside ABC’s approved cloud</td></tr>
+  </table></div>
+
+  <h3>Check the four qualities</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Scalability</h4><p>What happens when work grows? 500 claims a day today, maybe 5,000 next year, without a full rebuild.</p></div>
+    <div class="card t3 tilt-b"><h4>Reliability</h4><p>What happens when something fails? If the AI fails on one claim, don’t crash or lose it: <b>retry later</b> from a queue.</p></div>
+    <div class="card t4 tilt-a"><h4>Security</h4><p>Is customer data protected? Only authorised users and services can reach the documents.</p></div>
+    <div class="card t2 tilt-b"><h4>Maintainability</h4><p>Can another engineer understand it? Separate services (upload, AI, validation, integration), each with one clear job.</p></div>
+  </div>
+  <div class="flow"><span>Claim</span><span>AI service</span><span class="bad">Failure</span><span class="hl">Retry queue</span><span class="ok">Process again</span></div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="prototyping">
+  <h2>4 · Rapid Prototyping</h2>
+  <p><b>Rapid Prototyping</b> means building a <b>small, quick test version</b> to answer one question: <mark>“Can we actually make this work?”</mark> The architecture on paper looks good, but paper is not proof. Test the riskiest parts early, with real ABC data.</p>
+  <div class="flow"><span>Customer problem</span><span class="hl">Quick prototype</span><span>Test with real data</span><span>Customer feedback</span><span>Improve</span><span class="ok">Production solution</span></div>
+
+  <h3>Why prototype?</h3>
+  <p>Many unknowns remain: Will the AI understand ABC’s documents? Will the details be accurate? Can we reach the Claims API? Is it fast enough? Will staff like this way of working?</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Without a prototype, two months of building end with a problem found late. With a prototype, a few days of testing find the problem early, then the full build follows.">
+      <g class="rough">
+        <rect class="box f-orange" x="170" y="35" width="440" height="44" rx="10"/>
+        <path class="box f-orange" d="M622 40 L 652 70 M652 40 L 622 70"/>
+        <rect class="box f-green" x="170" y="130" width="70" height="44" rx="10"/>
+        <path class="box f-none" d="M252 150 L 262 162 L 282 136"/>
+        <rect class="box f-blue" x="300" y="130" width="330" height="44" rx="10"/>
+      </g>
+      <text class="t" x="155" y="62" text-anchor="end">No prototype</text>
+      <text class="t" x="155" y="157" text-anchor="end">Prototype first</text>
+      <text class="t" x="390" y="62" text-anchor="middle">build everything (2 months)</text>
+      <text class="ts" x="640" y="100" text-anchor="middle">problem found</text>
+      <text class="ts" x="640" y="118" text-anchor="middle">at the end</text>
+      <text class="t" x="205" y="157" text-anchor="middle">PoC</text>
+      <text class="ts" x="205" y="196" text-anchor="middle">a few days</text>
+      <text class="t" x="465" y="157" text-anchor="middle">build the right thing</text>
+      <text class="tb" x="465" y="200" text-anchor="middle">problems found early, cheaply</text>
+    </svg></div>
+    <figcaption>Prototype first, so you do not waste months building the wrong thing.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">Without a prototype</th><th style="width:50%">With a prototype</th></tr>
+    <tr><td>Idea</td><td>Idea</td></tr>
+    <tr><td>Build everything (2 months)</td><td>Build a small prototype (a few days)</td></tr>
+    <tr><td>Problem discovered at the end</td><td>Test with real claims</td></tr>
+    <tr><td>Large amount of rework</td><td>Find problems early and improve</td></tr>
+    <tr><td>Wasted time and money</td><td>Then build the production system</td></tr>
+  </table></div>
+
+  <h3>Build a quick Proof of Concept</h3>
+  <p>A <b>Proof of Concept (PoC)</b> is a small working experiment that proves an idea can work. It doesn’t need to look beautiful. ABC has thousands of old claim PDFs; the FDE picks just <b>20 samples</b> of different types (motor and health).</p>
+  <div class="flow"><span>Thousands of PDFs</span><span class="hl">Pick 20 samples</span><span>AI extracts details</span><span>Simple screen</span><span class="ok">Check results</span></div>
+  <p>The screen shows the PDF on the left and the AI’s extracted details on the right, so Anita can quickly see whether the name, policy number, amount and date are right.</p>
+
+  <h3>Test technical feasibility</h3>
+  <p><b>Technical feasibility</b> means checking whether the technology truly works in the customer’s real environment. Working on a laptop is not the same as working inside ABC’s setup.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:50%">What the FDE assumed</th><th style="width:50%">What the prototype showed</th></tr>
+    <tr><td>All claim PDFs contain readable text</td><td>Many hospital bills are <b>scanned pictures</b> of paper</td></tr>
+    <tr><td>Simple text extraction is enough</td><td>An <b>OCR</b> (image-to-text) step is also needed</td></tr>
+  </table></div>
+  <p>Finding this in a prototype is far better than finding it after the full system is built.</p>
+
+  <h3>Connect APIs and data sources quickly</h3>
+  <div class="flow"><span>Prototype</span><span>Claims API</span><span>Create a test claim</span><span class="ok">CMS received it?</span></div>
+  <p>Even a rough connection test teaches a lot: maybe the API needs an <b>OAuth token</b>, or returns data in an <b>unexpected format</b>. Much cheaper to learn now.</p>
+
+  <h3>Experiment with AI models</h3>
+  <p>Try a few models on the same 20 samples and compare fairly:</p>
+  <div class="tbl"><table>
+    <tr><th>What to compare</th><th>Model A</th><th>Model B</th></tr>
+    <tr><td>Accuracy on claim fields</td><td>Good</td><td>Very good</td></tr>
+    <tr><td>Response speed</td><td>Fast</td><td>A little slower</td></tr>
+    <tr><td>Cost</td><td>Lower</td><td>Higher</td></tr>
+    <tr><td>Handling scanned bills</td><td>Weak</td><td>Strong</td></tr>
+  </table></div>
+  <p>The aim is not to lock the final design today, but to learn the trade-offs (e.g. better accuracy, higher cost).</p>
+
+  <h3>Validate assumptions with the customer</h3>
+  <div class="flow"><span>FDE’s assumption</span><span>Build prototype</span><span>Show customer</span><span>Feedback</span><span class="hl">Missing need found</span><span class="ok">Change solution</span></div>
+  <p>Anita tries it and says: <i>“For health claims we also need the <b>hospital name</b> and the <b>admission date</b>.”</i> The FDE hadn’t known this. It goes into the requirements long before production.</p>
+
+  <h3>Refine with feedback, then move to production</h3>
+  <p>The first prototype will never be perfect. The FDE relies on <b>iteration</b>:</p>
+  <div class="flow"><span>Build</span><span>Customer tests</span><span>Collect feedback</span><span>Find problems</span><span>Make changes</span><span class="ok">Test again</span></div>
+  <div class="tbl"><table>
+    <tr><th></th><th>Prototype</th><th>Production</th></tr>
+    <tr><td>Data</td><td>20 sample claims</td><td>Thousands of claims every day</td></tr>
+    <tr><td>Screen</td><td>Simple test page</td><td>Proper application for staff</td></tr>
+    <tr><td>Login</td><td>Basic or none</td><td>Company login and access control</td></tr>
+    <tr><td>Setup</td><td>Manual</td><td>Automated</td></tr>
+    <tr><td>Testing</td><td>Limited</td><td>Complete</td></tr>
+  </table></div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="production">
+  <h2>5 · Production Engineering</h2>
+  <p><b>Production Engineering</b> turns a working prototype into a <b>real, reliable system</b> people use every day. <mark>A prototype proves the idea works; production engineering makes sure it keeps working in the real world.</mark> At ABC: 500 real claims a day, 250 employees, real customer data, and no falling over when something goes wrong.</p>
+  <div class="flow"><span>Prototype</span><span>Better architecture</span><span>Real data</span><span>Security</span><span>Error handling</span><span>Performance</span><span>Monitoring</span><span>Automated deployment</span><span class="ok">Production</span></div>
+  <p>This move from <b>PoC to production</b> is usually where most of the engineering effort goes.</p>
+
+  <h3>Write maintainable code</h3>
+  <p>Prototype code is written fast, often all in one file. Production code must be <b>clean, organised and easy for another engineer to understand</b>.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">prototype</span><pre><code class="language-plaintext">app.js
+  - API code
+  - AI code
+  - database code
+  - login
+  - error handling</code></pre></div>
+    <div class="codebox"><span class="cap">production</span><pre><code class="language-plaintext">claims-app/
+|-- api/
+|-- authentication/
+|-- ai-service/
+|-- database/
+|-- configuration/
+|-- error-handling/</code></pre></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Avoid code only <b>you</b> understand. If you are unavailable tomorrow, ABC’s own engineers must still be able to maintain it. You will leave; the system stays.</div>
+
+  <h3>Error handling and logging</h3>
+  <p>A prototype might just say “Error”. Production must handle problems politely <b>and record what happened</b>. If the Claims API is unavailable, the system keeps the claim in a queue, tells the user “The claim will be saved shortly”, and writes a log entry:</p>
+  <div class="flow"><span>AI service</span><span class="bad">Claims API unavailable</span><span>Error handling</span><span>Log the problem</span><span class="ok">Retry later</span></div>
+  <pre class="out"><code>2026-09-18 10:30:12  ERROR  Claims API request failed
+Claim ID: C-88421   Reason: Timeout   Action: Queued for retry</code></pre>
+  <p>Now an engineer can see what failed, when, and for which claim.</p>
+
+  <h3>Testing and debugging</h3>
+  <div class="tbl"><table>
+    <tr><th>Test type</th><th>Example at ABC</th><th>Expected result</th></tr>
+    <tr><td>Normal case</td><td>Anita uploads a clear motor claim PDF</td><td>Correct details extracted and saved</td></tr>
+    <tr><td>Error case</td><td>The Claims API is down during upload</td><td>System handles the error and retries</td></tr>
+    <tr><td>Security case</td><td>A user tries to open a claim not assigned to them</td><td>Access denied</td></tr>
+  </table></div>
+  <p>Meera reports: “Sometimes the AI puts the wrong amount.” The FDE follows the data step by step:</p>
+  <div class="flow"><span>Document</span><span>Text extraction</span><span>AI reading</span><span>Validation</span><span class="bad">Saved amount</span></div>
+  <p>The mistake happens when a bill shows <b>two amounts</b> (total and paid). The FDE fixes that rule.</p>
+
+  <h3>Performance and scalability</h3>
+  <p><b>Performance</b> = how fast the system works. <b>Scalability</b> = whether it can handle more users and more work. The FDE thinks about response time, users, requests, database load, AI delay and resource use.</p>
+  <div class="flow"><span>100 claims/day</span><span>500 claims/day</span><span>5,000 claims/day</span><span class="hl">more</span></div>
+  <p>If 250 employees upload at the start of the day, the system must not slow down or fall over.</p>
+
+  <h3>Security</h3>
+  <p>Production uses <b>real customer data</b>. The FDE covers secure login and authorisation, protection of passwords, keys and other secrets, encryption of data at rest and in transit, and API security and access control.</p>
+  <div class="flow"><span>Employee</span><span>Login</span><span>Authentication</span><span>Authorisation</span><span>Claims feature</span><span class="ok">Only allowed data</span></div>
+
+  <h3>Configuration and environments</h3>
+  <p>The app runs in development, testing and production, each with its own settings. <b>Never hard-code these values.</b></p>
+  <div class="tbl"><table>
+    <tr><th>Setting</th><th>Development</th><th>Production</th></tr>
+    <tr><td>Database</td><td><code>dev-database</code></td><td><code>production-database</code></td></tr>
+    <tr><td>Claims API address</td><td>test Claims API</td><td>real Claims API</td></tr>
+    <tr><td>Documents</td><td>sample files</td><td>real claim files</td></tr>
+  </table></div>
+  <p>With proper configuration, the same code runs everywhere without changes.</p>
+
+  <h3>Monitoring and reliability</h3>
+  <p>“It is deployed, my work is finished” is never true. <b>Monitoring</b> tells you what is happening (errors, response times, failed API calls, request counts). <b>Reliability</b> means the system keeps working even when one part has a problem. If the AI service suddenly takes 10 seconds per document, monitoring raises an alert before staff start complaining.</p>
+
+  <h3>Documentation and handover</h3>
+  <div class="flow"><span>Architecture</span><span>APIs</span><span>Database</span><span>Configuration</span><span>Deployment</span><span>Monitoring</span><span>Troubleshooting</span></div>
+  <p>A useful note might say: <i>“The application reads claim documents from the upload service. It runs on AWS. If the Claims API fails, check the API logs first.”</i></p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="integration">
+  <h2>6 · Enterprise Integration</h2>
+  <p><b>Enterprise Integration</b> means <mark>connecting the solution to the customer’s existing systems so they exchange data correctly</mark>. Real companies already have applications, databases, APIs, login systems, cloud infrastructure and sometimes very old (legacy) software. The FDE almost never builds everything from scratch. At ABC, the new AI workflow works <b>with</b> the CMS, Policy System, payment system and SSO; it does <b>not</b> replace them.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 280" role="img" aria-label="The new AI claims workflow in the centre, connected to the policy system (read), the claims management system (write), the SSO login (read) and the email system (send)">
+      <g class="rough">
+        <rect class="box f-purple" x="260" y="105" width="200" height="70" rx="16"/>
+        <rect class="box f-blue" x="15" y="20" width="200" height="66" rx="12"/>
+        <rect class="box f-blue" x="505" y="20" width="200" height="66" rx="12"/>
+        <rect class="box f-grey" x="15" y="194" width="200" height="66" rx="12"/>
+        <rect class="box f-green" x="505" y="194" width="200" height="66" rx="12"/>
+        <path class="lb" d="M217 70 L 268 102" marker-end="url(#ahb)"/>
+        <path class="lr" d="M452 102 L 503 70" marker-end="url(#ahr)"/>
+        <path class="lb" d="M217 210 L 268 178" marker-end="url(#ahb)"/>
+        <path class="lr" d="M452 178 L 503 210" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="360" y="140" text-anchor="middle">AI workflow</text>
+      <text class="ts" x="360" y="162" text-anchor="middle">the new piece</text>
+      <text class="t" x="115" y="48" text-anchor="middle">Policy System</text>
+      <text class="ts" x="115" y="72" text-anchor="middle">read · valid policy?</text>
+      <text class="t" x="605" y="48" text-anchor="middle">CMS</text>
+      <text class="ts" x="605" y="72" text-anchor="middle">write · create claim</text>
+      <text class="t" x="115" y="222" text-anchor="middle">SSO login</text>
+      <text class="ts" x="115" y="246" text-anchor="middle">read · who is the user?</text>
+      <text class="t" x="605" y="222" text-anchor="middle">Email system</text>
+      <text class="ts" x="605" y="246" text-anchor="middle">send · notify customer</text>
+    </svg></div>
+    <figcaption>Integration: the new workflow plugs into the systems ABC already runs.</figcaption>
+  </figure>
+
+  <h3>Work with APIs</h3>
+  <p>An <b>API</b> is a way for one software system to talk to another. The FDE must understand the <b>endpoint</b> (address), the <b>request</b> (what to send), the <b>response</b>, how to authenticate, what errors look like, and the rate limits. ABC’s Claims API creates a claim like this:</p>
+  <div class="codebox"><span class="cap">POST /claims · request body</span><pre><code class="language-json">{
+  "customerName": "Rahul",
+  "policyNumber": "P12345",
+  "claimAmount": 50000,
+  "accidentDate": "2026-09-10"
+}</code></pre></div>
+  <p>The API answers with a success message and a claim ID, or with an error the FDE must handle.</p>
+  <div class="flow"><span>AI workflow</span><span class="op">POST /claims</span><span>CMS creates claim</span><span>Claim ID returned</span><span class="ok">Shown to employee</span></div>
+  <div class="sticky info l"><strong>Same date, two formats</strong> The extracted value “10/09/2026” becomes <code>"2026-09-10"</code> (ISO format, year-month-day) in the API request. Converting formats like this is everyday integration work.</div>
+
+  <h3>Database integration</h3>
+  <p>Sometimes the needed information sits in a database. Should we query it directly, or go through an existing service? It depends on ABC’s architecture and security rules. <mark class="g">The safer choice is usually through a service, not straight to the database.</mark></p>
+  <div class="flow"><span>AI application</span><span class="hl">Integration service</span><span>Policy database</span><span class="ok">Policy information</span></div>
+  <div class="tbl"><table>
+    <tr><th><code>policy_number</code></th><th><code>customer_name</code></th><th><code>status</code></th></tr>
+    <tr><td>P12345</td><td>Rahul</td><td>Active</td></tr>
+    <tr><td>P12346</td><td>Priya</td><td>Expired</td></tr>
+  </table></div>
+
+  <h3>Authentication and authorisation</h3>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Authentication</h4><p>“<b>Who are you?</b>” Anita logs in with her company account, and the system confirms her identity.</p></div>
+    <div class="card t4 tilt-b"><h4>Authorisation</h4><p>“<b>What may you access?</b>” She can open only claims assigned to her team, even though the AI could technically read every claim.</p></div>
+  </div>
+  <div class="flow"><span>Anita</span><span>Login</span><span>Authentication</span><span>Authorisation</span><span class="ok">Claims she may see</span></div>
+
+  <h3>Common integration problems</h3>
+  <div class="tbl"><table>
+    <tr><th>Problem</th><th>How the FDE handles it</th></tr>
+    <tr><td>Old (legacy) system with an older API</td><td>Add a small translation layer so both sides understand each other</td></tr>
+    <tr><td>Data format mismatch (e.g. date formats)</td><td>Convert data into the format the CMS expects before sending</td></tr>
+    <tr><td>API returns errors or is slow</td><td>Retry safely and show a clear message to the user</td></tr>
+    <tr><td>Rate limit of 100 requests per minute</td><td>Send claims through a queue at a controlled speed</td></tr>
+  </table></div>
+  <p>Integration is not only about connecting systems, but connecting them <b>safely, correctly and reliably</b>.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="deployment">
+  <h2>7 · Deployment</h2>
+  <p><b>Deployment</b> means <mark>making the finished solution run in a real environment where people can use it</mark>, not just on the FDE’s laptop. The question now: “How do we get this running somewhere real, safely?”</p>
+  <div class="flow"><span>Code ready</span><span>Build</span><span>Deploy</span><span>Real users start</span><span class="hl">Watch and fix</span></div>
+
+  <h3>Separate environments</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Three environments in a row: development with sample claims, testing with test claims, production with real customer claims. A dashed rollback arrow returns from production to the previous version.">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="40" width="190" height="100" rx="14"/>
+        <rect class="box f-blue" x="265" y="40" width="190" height="100" rx="14"/>
+        <rect class="box f-green" x="510" y="40" width="190" height="100" rx="14"/>
+        <path class="ln" d="M213 90 L 259 90" marker-end="url(#ah)"/>
+        <path class="ln" d="M458 90 L 504 90" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M605 144 C 600 195, 380 195, 368 146" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="115" y="82" text-anchor="middle">Development</text>
+      <text class="ts" x="115" y="108" text-anchor="middle">FDE builds · sample claims</text>
+      <text class="th" x="360" y="82" text-anchor="middle">Testing</text>
+      <text class="ts" x="360" y="108" text-anchor="middle">all parts together · test claims</text>
+      <text class="th" x="605" y="82" text-anchor="middle">Production</text>
+      <text class="ts" x="605" y="108" text-anchor="middle">real staff · real claims</text>
+      <text class="tr" x="486" y="200" text-anchor="middle">rollback if it breaks</text>
+    </svg></div>
+    <figcaption>Never test in the place where real employees and real customers are working.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Environment</th><th>Purpose</th><th>Data used</th></tr>
+    <tr><td>Development</td><td>FDE builds and experiments</td><td>Fake or sample claims</td></tr>
+    <tr><td>Testing</td><td>Check everything works together</td><td>Test claims</td></tr>
+    <tr><td>Production</td><td>Real staff do real work</td><td>Real customer claims</td></tr>
+  </table></div>
+
+  <h3>Configure infrastructure and settings</h3>
+  <div class="tbl"><table>
+    <tr><th>What is set up</th><th>Example at ABC</th></tr>
+    <tr><td>Servers and compute</td><td>Servers in ABC’s approved AWS environment</td></tr>
+    <tr><td>Storage</td><td>Secure storage for claim documents inside the approved cloud</td></tr>
+    <tr><td>Network access</td><td>Permission to reach the private Claims API</td></tr>
+    <tr><td>Settings and secrets</td><td>Database address and API keys, kept outside the code</td></tr>
+  </table></div>
+
+  <h3>Release step by step</h3>
+  <p>A careful FDE does not switch on everything for everyone at once:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Pilot with Anita’s team</b>A small, friendly group uses it first.</div></li>
+    <li><span class="dot">2</span><div><b>Check results</b>Look at errors, speed and feedback.</div></li>
+    <li><span class="dot">3</span><div><b>Release to more teams</b>Widen gradually.</div></li>
+    <li><span class="dot">4</span><div><b>Release to all 250 staff</b>Only once it is proven. <span class="tag">→ keep a rollback plan ready</span></div></li>
+  </ol>
+  <p>A <b>rollback plan</b> lets the team quickly return to the previous working version if something goes seriously wrong, instead of stopping claims work.</p>
+
+  <h3>Monitor and troubleshoot</h3>
+  <p>On the first Monday the dashboard shows document processing slowing at 10 a.m. Many staff are uploading at once. The FDE increases processing capacity and response times return to normal.</p>
+  <div class="flow"><span>System live</span><span>Monitoring dashboard</span><span class="bad">Issue detected</span><span>FDE investigates</span><span class="ok">Fix applied</span></div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="evaluation">
+  <h2>8 · Evaluation</h2>
+  <p><b>Evaluation</b> means <mark>checking whether the live solution really works well and really solves the problem</mark>, with facts, not opinions. Running is not enough; it must be good.</p>
+
+  <h3>Agree success criteria first</h3>
+  <div class="tbl"><table>
+    <tr><th>Success criterion for ABC</th><th>Target</th></tr>
+    <tr><td>Accuracy of extracted claim fields</td><td>At least 90% correct</td></tr>
+    <tr><td>Time to extract details from one document</td><td>Under 30 seconds</td></tr>
+    <tr><td>Employee time per claim</td><td>From 30 minutes to under 10 minutes</td></tr>
+    <tr><td>Manual typing of claim details</td><td>Almost none</td></tr>
+  </table></div>
+  <p>Agreeing this up front means nobody argues later about whether the project succeeded.</p>
+
+  <h3>Test against known answers</h3>
+  <p>The FDE takes <b>200 real claims</b> that Anita’s team already processed by hand, runs them through the AI, and compares each field with the correct value staff typed earlier. This checks <b>functionality</b> (does it do what it should?) and <b>performance</b> (how fast and stable?).</p>
+  <div class="flow"><span>Real claim</span><span>AI extracts details</span><span>Compare with correct answer</span><span class="ok">Score</span></div>
+
+  <h3>Find the gaps</h3>
+  <div class="tbl"><table>
+    <tr><th>Measure</th><th>Target</th><th>Actual</th><th>Gap</th></tr>
+    <tr><td>Field accuracy</td><td>90%</td><td>78%</td><td>12 points short</td></tr>
+    <tr><td>Extraction time</td><td>Under 30 s</td><td>18 s</td><td>Target met</td></tr>
+    <tr><td>Employee time per claim</td><td>Under 10 min</td><td>9 min</td><td>Target met</td></tr>
+  </table></div>
+  <p>Speed is fine; <b>accuracy is the problem</b>. Digging into the wrong answers shows a pattern: most mistakes come from <b>scanned and handwritten forms</b>.</p>
+
+  <h3>Iterate and re-test</h3>
+  <div class="flow"><span class="bad">Low accuracy on scanned forms</span><span>Improve image reading</span><span>Re-test</span><span class="ok">Accuracy rises</span></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Accuracy bar chart: first test 78 percent, below the 90 percent target line; after the fix 92 percent, above the target">
+      <g class="rough">
+        <rect class="box f-orange" x="150" y="40" width="390" height="44" rx="6"/>
+        <rect class="box f-green" x="150" y="110" width="460" height="44" rx="6"/>
+        <path class="ln" d="M150 30 L 150 170"/>
+        <path class="lr dash" d="M600 22 L 600 172"/>
+      </g>
+      <text class="t" x="138" y="67" text-anchor="end">First test</text>
+      <text class="t" x="138" y="137" text-anchor="end">After fix</text>
+      <text class="th" x="552" y="72">78%</text>
+      <text class="th" x="622" y="142">92%</text>
+      <text class="tr" x="592" y="192" text-anchor="end">target 90%</text>
+      <text class="ts" x="150" y="190" text-anchor="middle">0%</text>
+    </svg></div>
+    <figcaption>Same 200 claims, re-tested: from 78% to 92%, past the 90% target.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Remember</strong> If it cannot be measured, it cannot be improved. Evaluation turns “we think it works” into “we know it works”.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="adoption">
+  <h2>9 · Customer Adoption</h2>
+  <p><b>Customer Adoption</b> means <mark>making sure the customer’s people actually start using the solution, and use it correctly</mark>. A working system nobody uses has no value. Some ABC staff are nervous (“What if the AI makes a mistake and I get blamed?”); others don’t know where to click. If they keep working the old way, ABC gains nothing.</p>
+
+  <h3>Help people start</h3>
+  <div class="flow"><span>Tool ready</span><span class="bad">Staff unsure</span><span>Demo + short training</span><span class="ok">Staff start using it</span></div>
+  <ul>
+    <li>Run a short live demo with <b>real claims</b>.</li>
+    <li>Start with a friendly pilot group (Anita’s team) who become <b>champions</b> and help colleagues.</li>
+    <li>Say clearly that the employee <b>still verifies</b> every claim. The AI is a helper, not a replacement.</li>
+  </ul>
+
+  <h3>Guides and documentation</h3>
+  <div class="tbl"><table>
+    <tr><th>Guide</th><th>What it explains</th></tr>
+    <tr><td>User quick-start</td><td>How to upload a claim and check the extracted details</td></tr>
+    <tr><td>Common issues</td><td>What to do if a field is extracted wrongly</td></tr>
+    <tr><td>Support contacts</td><td>Who to call for access problems</td></tr>
+    <tr><td>Technical guide for ABC IT</td><td>How the system works and how to troubleshoot it</td></tr>
+  </table></div>
+  <p>Give people the instructions they need, not just the tool.</p>
+
+  <h3>Listen for patterns in feedback</h3>
+  <div class="tbl"><table>
+    <tr><th>What users say</th><th>What the FDE does</th></tr>
+    <tr><td>“It misreads the accident date.”</td><td>Checks date formats and improves the reading rule</td></tr>
+    <tr><td>“I cannot find the upload button.”</td><td>Makes the screen simpler and clearer</td></tr>
+    <tr><td>“I do not trust the amounts.”</td><td>Highlights uncertain fields so employees know where to look</td></tr>
+  </table></div>
+
+  <h3>Support adoption after go-live</h3>
+  <div class="notes">
+    <div class="note"><b>20</b>users · week 1: fix early issues, sit with the pilot team</div>
+    <div class="note"><b>60</b>users · week 2: train more teams</div>
+    <div class="note"><b>200</b>users · week 4: share success stories, keep improving</div>
+  </div>
+  <div class="sticky warn l"><strong>Adoption is a people problem.</strong> The best technology fails if people do not trust or understand it.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="business-value">
+  <h2>10 · Business Value</h2>
+  <p><b>Business Value</b> means <mark>showing that the solution truly matters to the customer’s business</mark>, not only that it works technically. It answers the leader’s question: “So what did we gain?” Meera doesn’t care about extraction models or APIs; she cares about customers getting claims settled faster and her team coping without stress.</p>
+
+  <h3>Connect the solution to business goals</h3>
+  <div class="flow"><span class="hl">Goal: settle claims faster</span><span>AI reads claim documents</span><span>Less manual typing</span><span class="ok">Faster claims</span></div>
+  <p>This is why Problem Definition mattered: the goal was set at the start, so now it can be proven.</p>
+
+  <h3>Choose measurable outcomes</h3>
+  <div class="tbl"><table>
+    <tr><th>Measure</th><th>Why it matters to ABC</th></tr>
+    <tr><td>Time needed per claim</td><td>Directly shows faster claim processing</td></tr>
+    <tr><td>Claims processed per day</td><td>Shows how much more work the team can handle</td></tr>
+    <tr><td>Data-entry errors</td><td>Shows better quality</td></tr>
+    <tr><td>Employee hours saved</td><td>Shows cost and effort saved</td></tr>
+  </table></div>
+
+  <h3>Measure the impact</h3>
+  <div class="tbl"><table>
+    <tr><th>Measure</th><th>Before</th><th>After</th></tr>
+    <tr><td>Employee time per claim</td><td>30 minutes</td><td>8 minutes</td></tr>
+    <tr><td>Time saved per claim</td><td>None</td><td>22 minutes</td></tr>
+    <tr><td>Typing of claim details</td><td>Every claim</td><td>Only corrections</td></tr>
+  </table></div>
+  <div class="notes">
+    <div class="note"><b>22 min</b>saved per claim</div>
+    <div class="note"><b>11,000</b>minutes saved a day (22 × 500)</div>
+    <div class="note"><b>≈183 h</b>of work saved every day</div>
+    <div class="note"><b>≈73%</b>faster per claim (30 → 8 min)</div>
+  </div>
+
+  <h3>Speak in business terms</h3>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4>Technical way (avoid)</h4><p>“We improved extraction accuracy to 92% and reduced API latency.”</p></div>
+    <div class="card t2 tilt-b"><h4>Business way (use)</h4><p>“Claims now finish about 73% faster, so the same team can handle far more claims each day, and customers get answers sooner.”</p></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> If the customer’s leadership cannot explain the value in one sentence, your work is not finished.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="recap">
+  <h2>The full journey: recap and timeline</h2>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Responsibility</th><th>What the FDE did for ABC Insurance</th></tr>
+    <tr><td>1</td><td>Technical Discovery</td><td>Learned about the CMS, PostgreSQL, AWS, the private Claims API and security rules.</td></tr>
+    <tr><td>2</td><td>Problem Definition</td><td>Found manual PDF reading and typing was the real cause and wrote a clear problem statement.</td></tr>
+    <tr><td>3</td><td>Solution Architecture</td><td>Designed upload → AI extraction → validation → CMS, with an employee still verifying.</td></tr>
+    <tr><td>4</td><td>Rapid Prototyping</td><td>Tested 20 sample claims; found scanned bills and the missing hospital name early.</td></tr>
+    <tr><td>5</td><td>Production Engineering</td><td>Clean code, error handling, tests, security, monitoring and documentation.</td></tr>
+    <tr><td>6</td><td>Enterprise Integration</td><td>Connected safely to the CMS, policy data and login system, replacing nothing.</td></tr>
+    <tr><td>7</td><td>Deployment</td><td>Set up environments and released step by step, with a rollback plan.</td></tr>
+    <tr><td>8</td><td>Evaluation</td><td>Measured accuracy against targets, found a 12-point gap and closed it.</td></tr>
+    <tr><td>9</td><td>Customer Adoption</td><td>Trained staff, wrote guides, supported growth from 20 to 200 users.</td></tr>
+    <tr><td>10</td><td>Business Value</td><td>Showed claims got about 73% faster and roughly 183 hours were saved every day.</td></tr>
+  </table></div>
+
+  <h3>A possible 12-week plan</h3>
+  <p>The stages are not always strictly one after another, but a real project usually moves in this order. The weeks are illustrative.</p>
+  <div class="tbl"><table>
+    <tr><th>When</th><th>Stage</th><th>What the FDE delivers</th></tr>
+    <tr><td>Weeks 1–2</td><td>Discovery and Problem Definition</td><td>Discovery summary, workflow breakdown (30 min per claim), problem statement, agreed requirements and constraints</td></tr>
+    <tr><td>Week 3</td><td>Solution Architecture</td><td>Architecture diagram, components, data flow and technology choices reviewed with Arjun</td></tr>
+    <tr><td>Weeks 4–5</td><td>Rapid Prototyping</td><td>Prototype on 20 sample claims, feasibility findings (scanned bills, OAuth), model comparison, first feedback</td></tr>
+    <tr><td>Weeks 6–9</td><td>Production Engineering and Enterprise Integration</td><td>Production code, tests, security, monitoring, connections to the CMS, policy data and login</td></tr>
+    <tr><td>Week 10</td><td>Deployment</td><td>Environments ready, pilot with Anita’s team, then all staff, with a rollback plan</td></tr>
+    <tr><td>Week 11</td><td>Evaluation</td><td>Test on 200 real claims, gap report, improvements, re-test</td></tr>
+    <tr><td>Week 12 onwards</td><td>Adoption and Business Value</td><td>Training, guides, support, before-and-after numbers shared with Meera and leadership</td></tr>
+  </table></div>
+
+  <h3>Why the stages overlap</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 265" role="img" aria-label="Ten numbered stages in a row with three arrows looping back: prototype back to problem definition for a new requirement, evaluation back to production for the accuracy gap, adoption back to architecture for a design tweak">
+      <g class="rough">
+        <circle class="box f-orange" cx="45" cy="130" r="22"/>
+        <circle class="box f-orange" cx="115" cy="130" r="22"/>
+        <circle class="box f-yellow" cx="185" cy="130" r="22"/>
+        <circle class="box f-yellow" cx="255" cy="130" r="22"/>
+        <circle class="box f-blue" cx="325" cy="130" r="22"/>
+        <circle class="box f-blue" cx="395" cy="130" r="22"/>
+        <circle class="box f-blue" cx="465" cy="130" r="22"/>
+        <circle class="box f-green" cx="535" cy="130" r="22"/>
+        <circle class="box f-green" cx="605" cy="130" r="22"/>
+        <circle class="box f-green" cx="675" cy="130" r="22"/>
+        <path class="lr" d="M255 106 C 245 62, 125 62, 115 104" marker-end="url(#ahr)"/>
+        <path class="lr" d="M535 106 C 525 40, 335 40, 325 104" marker-end="url(#ahr)"/>
+        <path class="lb" d="M605 188 C 595 245, 195 245, 185 190" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="45" y="136" text-anchor="middle">1</text>
+      <text class="t" x="115" y="136" text-anchor="middle">2</text>
+      <text class="t" x="185" y="136" text-anchor="middle">3</text>
+      <text class="t" x="255" y="136" text-anchor="middle">4</text>
+      <text class="t" x="325" y="136" text-anchor="middle">5</text>
+      <text class="t" x="395" y="136" text-anchor="middle">6</text>
+      <text class="t" x="465" y="136" text-anchor="middle">7</text>
+      <text class="t" x="535" y="136" text-anchor="middle">8</text>
+      <text class="t" x="605" y="136" text-anchor="middle">9</text>
+      <text class="t" x="675" y="136" text-anchor="middle">10</text>
+      <text class="ts" x="45" y="174" text-anchor="middle">Discover</text>
+      <text class="ts" x="115" y="174" text-anchor="middle">Problem</text>
+      <text class="ts" x="185" y="174" text-anchor="middle">Design</text>
+      <text class="ts" x="255" y="174" text-anchor="middle">Proto</text>
+      <text class="ts" x="325" y="174" text-anchor="middle">Prod.</text>
+      <text class="ts" x="395" y="174" text-anchor="middle">Integrate</text>
+      <text class="ts" x="465" y="174" text-anchor="middle">Deploy</text>
+      <text class="ts" x="535" y="174" text-anchor="middle">Evaluate</text>
+      <text class="ts" x="605" y="174" text-anchor="middle">Adopt</text>
+      <text class="ts" x="675" y="174" text-anchor="middle">Value</text>
+      <text class="tr" x="185" y="66" text-anchor="middle">new need</text>
+      <text class="tr" x="430" y="40" text-anchor="middle">accuracy gap</text>
+      <text class="tb" x="395" y="258" text-anchor="middle">users ask for a design tweak</text>
+    </svg></div>
+    <figcaption>Real work loops back whenever something new is learned.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Prototype → Problem Definition.</b> Anita asks for the hospital name: a new requirement, so the problem statement is updated.</li>
+    <li><b>Evaluation → Production Engineering.</b> The 12-point accuracy gap sends the FDE back to improve how scanned forms are read.</li>
+    <li><b>Adoption → Architecture.</b> Users ask to highlight uncertain fields, a small design change.</li>
+  </ul>
+  <p>Because the FDE sits with the customer every day, these changes are noticed early and fixed cheaply, not months later.</p>
+
+  <h3>Key ideas to remember</h3>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Understand before you build</h4><p>Discovery and Problem Definition come first.</p></div>
+    <div class="card t7 tilt-b"><h4>Design, then test small</h4><p>Architecture and prototypes reduce risk.</p></div>
+    <div class="card t1 tilt-a"><h4>Make it real</h4><p>Production, integration and deployment turn an idea into a working system.</p></div>
+    <div class="card t2 tilt-b"><h4>Prove it</h4><p>Evaluation, adoption and business value show the work was worth it.</p></div>
+  </div>
+  <p class="sticky info"><strong>About the numbers</strong> 500 claims a day, 100 requests per minute, 90% accuracy, 30 → 8 minutes per claim and the 12-week plan are illustrative examples for learning, not real data.</p>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="mistakes">
+  <h2>Common mistakes and good FDE habits</h2>
+  <p>Knowing the responsibilities is one thing; doing them well is another.</p>
+  <div class="tbl"><table>
+    <tr><th>Common mistake</th><th>What could happen at ABC</th><th>Better habit</th></tr>
+    <tr><td>Start coding before understanding the systems</td><td>The solution cannot reach the private Claims API</td><td>Finish Technical Discovery first</td></tr>
+    <tr><td>Solve the symptom, not the cause</td><td>A bigger server is bought, but claims still wait for humans</td><td>Trace the workflow and find the root problem</td></tr>
+    <tr><td>Skip the prototype</td><td>Scanned bills are discovered two months late</td><td>Test on small real data first</td></tr>
+    <tr><td>Choose popular tools blindly</td><td>A tool that breaks ABC’s cloud rules is selected</td><td>Choose technology that fits requirements</td></tr>
+    <tr><td>Ignore errors and logs</td><td>Failed claims disappear and nobody knows why</td><td>Handle errors and log everything important</td></tr>
+    <tr><td>Forget security</td><td>One employee sees another team’s claims</td><td>Design authentication and authorisation early</td></tr>
+    <tr><td>Declare victory at go-live</td><td>A slow response goes unnoticed for weeks</td><td>Monitor and evaluate against agreed targets</td></tr>
+    <tr><td>Explain results in technical words</td><td>Leadership does not see the value</td><td>Speak in business terms and numbers</td></tr>
+  </table></div>
+  <h3>Skills of a good FDE</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Curiosity</h4><p>Keeps asking questions until the real problem is clear.</p></div>
+    <div class="card t2 tilt-b"><h4>Technical depth</h4><p>Can design, build and debug real systems.</p></div>
+    <div class="card t8 tilt-a"><h4>Clear communication</h4><p>Explains ideas simply to engineers and business leaders alike.</p></div>
+    <div class="card t5 tilt-b"><h4>Ownership</h4><p>Cares about the customer’s result, not only about finishing tasks.</p></div>
+    <div class="card t7 tilt-a"><h4>Comfort with uncertainty</h4><p>Experiments quickly and learns from feedback.</p></div>
+  </div>
+  <p>These habits are the subject of the next note, <i>The FDE Mindset</i>.</p>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Technical Discovery</dt><dd>Understanding a customer’s existing systems, data flows, constraints and security rules before designing or building anything.</dd></div>
+    <div><dt>Problem Definition</dt><dd>Turning a vague customer complaint into a clear statement of the real problem, its root cause, requirements, constraints and expected outcomes.</dd></div>
+    <div><dt>Root cause</dt><dd>The actual reason behind a problem, as opposed to the symptom the customer notices (e.g. manual PDF reading, not “the system is slow”).</dd></div>
+    <div><dt>Requirement vs constraint</dt><dd>A requirement is what the solution must do; a constraint is a limit it must respect, such as “documents must stay in the approved cloud”.</dd></div>
+    <div><dt>Solution Architecture</dt><dd>The blueprint of a solution: its components, how data flows between them, and the technologies chosen to fit the customer.</dd></div>
+    <div><dt>Technical feasibility</dt><dd>Whether a proposed technology can really work in the customer’s actual environment, usually checked with a prototype.</dd></div>
+    <div><dt>OCR</dt><dd>Optical Character Recognition: converting text in an image, such as a scanned bill, into machine-readable text.</dd></div>
+    <div><dt>Production Engineering</dt><dd>Turning a working prototype into a reliable everyday system with clean code, error handling, testing, security, configuration and monitoring.</dd></div>
+    <div><dt>Rate limit</dt><dd>The maximum number of requests an API accepts in a period of time, e.g. 100 requests per minute.</dd></div>
+    <div><dt>Enterprise Integration</dt><dd>Connecting a new solution to a customer’s existing systems so they exchange data safely, correctly and reliably.</dd></div>
+    <div><dt>Authentication vs authorisation</dt><dd>Authentication answers “who are you?”; authorisation answers “what are you allowed to access?”.</dd></div>
+    <div><dt>Rollback plan</dt><dd>A prepared way to quickly return to the previous working version if a new release causes serious problems.</dd></div>
+    <div><dt>Success criteria</dt><dd>Measurable targets agreed with the customer in advance, such as “at least 90% field accuracy”, used to judge whether a solution is good.</dd></div>
+    <div><dt>Customer adoption</dt><dd>Getting the customer’s people to actually use the solution correctly, through demos, training, guides and support.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Meera says “We need AI to make claims faster.” What should the FDE do first?</p>
+      <ol><li>Pick the most accurate AI model</li><li>Learn ABC’s existing systems, data flow and security rules</li><li>Write the production code</li><li>Buy a bigger server</li></ol>
+      <p class="why">Technical Discovery comes first: understand the customer’s world before building anything.</p></div>
+    <div class="q" data-answer="4"><p>Which is the <b>root technical problem</b> at ABC?</p>
+      <ol><li>The servers are too small</li><li>Customers file too many claims</li><li>PostgreSQL is too slow</li><li>No automated step reads claim documents and passes details to the CMS</li></ol>
+      <p class="why">23 of 30 minutes go into manual reading, picking out and typing. “Slow system” was only the symptom.</p></div>
+    <div class="q" data-answer="1"><p>“Customer documents must never leave our approved AWS environment.” This is a…</p>
+      <ol><li>Constraint</li><li>Requirement</li><li>Success criterion</li><li>Symptom</li></ol>
+      <p class="why">It is a limit the solution must respect, not something the solution does.</p></div>
+    <div class="q" data-answer="3"><p>The prototype on 20 samples reveals many hospital bills are scanned images. What is the main lesson?</p>
+      <ol><li>Prototypes are a waste of time</li><li>The project should be cancelled</li><li>Testing small with real data finds problems early and cheaply</li><li>Only text PDFs should be accepted</li></ol>
+      <p class="why">Finding the need for OCR in week 4 costs far less than finding it after two months of building.</p></div>
+    <div class="q" data-answer="2"><p>The Claims API is down when the AI tries to save a claim. What should a production system do?</p>
+      <ol><li>Crash so engineers notice</li><li>Queue the claim, tell the user, log the error and retry later</li><li>Silently drop the claim</li><li>Write directly to the database instead</li></ol>
+      <p class="why">Good error handling keeps the claim safe and records what happened for investigation.</p></div>
+    <div class="q" data-answer="4"><p>Anita can log in, but she must only see her team’s claims. Which check enforces that?</p>
+      <ol><li>Authentication</li><li>Rate limiting</li><li>Monitoring</li><li>Authorisation</li></ol>
+      <p class="why">Authentication proves who she is; authorisation decides what she may access.</p></div>
+    <div class="q" data-answer="1"><p>Why release first to Anita’s team rather than all 250 staff at once?</p>
+      <ol><li>To catch problems with a small group, with a rollback plan ready</li><li>Because the servers can only hold 20 users</li><li>Because other teams don’t handle claims</li><li>To avoid writing documentation</li></ol>
+      <p class="why">A step-by-step release limits the damage if something goes wrong.</p></div>
+    <div class="q" data-answer="3"><p>Which sentence best communicates business value to leadership?</p>
+      <ol><li>“We reduced API latency by 40 ms.”</li><li>“Extraction accuracy is now 92%.”</li><li>“Claims now finish about 73% faster, so the same team handles far more each day.”</li><li>“We switched to Model B.”</li></ol>
+      <p class="why">Leaders care about outcomes in business terms, not technical metrics.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">An FDE takes a vague request like <b>“make claims faster”</b> and carries it through <b>discovery, problem definition, architecture, prototyping, production, integration, deployment, evaluation, adoption and business value</b>, ending with a live solution and <b>measurable results</b>.</p>
+  <p>Next up: <b>The FDE Mindset</b>, the seven habits of thinking that make an FDE good at every one of these stages.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

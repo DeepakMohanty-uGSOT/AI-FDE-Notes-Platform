@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Basics · Part 1 · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Your first Python programs: what Python is, print(), syntax and indentation, comments, identifiers, variables, naming conventions, data types, literals, type conversion, and input/output.">
+<meta name="keywords" content="print(), indentation, comments, variables, data types, type conversion, input()">
+<meta name="date" content="2026-09-21">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/python-basics-1">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Python Basics · Part 1</h1>
+  <p class="byline">From “what is a program?” to writing your first small Python programs that store values, convert them, ask the user for input and print a result.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what-is-python">
+  <h2>What is Python?</h2>
+  <div class="story"><b class="lbl">Ordering at a dhaba</b>You don’t walk into the kitchen and operate the stove yourself. You tell the waiter “one paneer tikka, less spicy”, and he turns that into actions in the kitchen. <mark>A programming language is how you give a computer instructions in words you can read, and Python’s interpreter is the waiter that carries them out.</mark></div>
+  <p>A <b>programming language</b> lets you write instructions for a computer in a form that is far easier to read and write than raw binary. Python uses an <b>interpreter</b>: a program that reads your code and runs it, statement by statement.</p>
+  <p>Python was created by <b>Guido van Rossum</b> and first released in <b>1991</b>. It is named after the comedy show <i>Monty Python’s Flying Circus</i>, not the snake. The version used today, and in this course, is <b>Python 3</b>.</p>
+
+  <h3>What kind of language Python is</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>High-level</h4><p>Code reads close to plain English, not low-level machine instructions.</p></div>
+    <div class="card t2 tilt-b"><h4>General-purpose</h4><p>The same language builds websites, analyses data, automates tasks and trains AI models.</p></div>
+    <div class="card t3 tilt-a"><h4>Interpreted</h4><p>The interpreter runs your statements directly, so you can test code quickly.</p></div>
+    <div class="card t5 tilt-b"><h4>Dynamically typed</h4><p>You never declare a variable’s type. Python works it out from the value.</p></div>
+  </div>
+
+  <h3>Key features and where it is used</h3>
+  <div class="two">
+    <ul>
+      <li>Simple, readable syntax</li>
+      <li>Free and open source</li>
+      <li>Cross-platform: the same program runs on Windows, macOS and Linux</li>
+      <li>A large standard library plus a huge ecosystem of third-party packages</li>
+      <li>Supports procedural, object-oriented and functional styles</li>
+    </ul>
+    <ul>
+      <li>Automation and scripting</li>
+      <li>Data science and analytics</li>
+      <li>AI and machine learning</li>
+      <li>Web development (backend)</li>
+      <li>DevOps and software testing</li>
+    </ul>
+  </div>
+
+  <h3>How Python code becomes something that runs</h3>
+  <p>You write instructions in a <code>.py</code> <b>source file</b>. On its own that file does nothing; the Python interpreter reads it and executes it.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="app.py source file goes to the Python interpreter, which executes it, which produces output on screen">
+      <g class="rough">
+        <rect class="box f-yellow" x="12" y="50" width="144" height="80" rx="14"/>
+        <rect class="box f-blue" x="196" y="50" width="144" height="80" rx="14"/>
+        <rect class="box f-purple" x="380" y="50" width="144" height="80" rx="14"/>
+        <rect class="box f-green" x="564" y="50" width="144" height="80" rx="14"/>
+        <path class="lr" d="M160 90 L 190 90" marker-end="url(#ahr)"/>
+        <path class="lr" d="M344 90 L 374 90" marker-end="url(#ahr)"/>
+        <path class="lr" d="M528 90 L 558 90" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="84" y="94" text-anchor="middle">app.py</text>
+      <text class="ts" x="84" y="118" text-anchor="middle">source code</text>
+      <text class="th" x="268" y="94" text-anchor="middle">Python</text>
+      <text class="ts" x="268" y="118" text-anchor="middle">interpreter</text>
+      <text class="th" x="452" y="94" text-anchor="middle">Runs</text>
+      <text class="ts" x="452" y="118" text-anchor="middle">top to bottom</text>
+      <text class="th" x="636" y="94" text-anchor="middle">Output</text>
+      <text class="ts" x="636" y="118" text-anchor="middle">on the screen</text>
+      <text class="ts" x="360" y="172" text-anchor="middle">(under the hood: the file is first compiled to bytecode, then the Python VM runs it)</text>
+    </svg></div>
+    <figcaption>Source code → interpreter → execution → output.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>A small precision</strong> “Interpreted” doesn’t mean Python looks at one line, runs it, then reads the next. The standard interpreter (CPython) first <b>compiles the whole file to bytecode</b>, then runs that bytecode statement by statement. That is why a syntax error anywhere in the file stops it before even the first line runs.</div>
+
+  <h3>Setting up Python</h3>
+  <p>Check whether Python is installed:</p>
+  <pre><code class="language-bash">python --version</code></pre>
+  <pre class="out"><code>Python 3.12.4</code></pre>
+  <p>(Your version number may differ; anything starting with 3 is fine.) If it is missing, install it from <b>python.org</b>. Any editor works, but an IDE such as <b>VS Code</b> or <b>PyCharm</b> highlights mistakes as you type.</p>
+
+  <h3>The road through this module</h3>
+  <div class="flow"><span class="hl">What is Python</span><span>First program</span><span>Syntax · indentation · comments</span><span>Identifiers · variables · naming</span><span>Data types · literals · conversion</span><span class="ok">Input &amp; output</span></div>
+  <p>That is this note. <b>Part 2</b> continues with operators, strings, booleans, <code>None</code>, built-in functions, common errors and exercises, and then the module moves on to control flow.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="first-program">
+  <h2>Your first Python program</h2>
+  <pre><code class="language-python">print("Hello, World!")</code></pre>
+  <pre class="out"><code>Hello, World!</code></pre>
+  <p>A <mark>statement is one instruction</mark>. The line above is one statement. Python runs statements one after another, from top to bottom.</p>
+  <h3>Understanding <code>print()</code></h3>
+  <p><code>print</code> is a <b>built-in function</b>. You <b>call</b> a function by writing its name followed by parentheses; whatever you put inside is the <b>argument</b> passed to it.</p>
+  <div class="anatomy"><span class="a1">print</span><span class="a2">(</span><span class="a3">"Hello, World!"</span><span class="a2">)</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>print</code>: the function being called</p></div>
+    <div><span class="sw a2"></span><p><code>( )</code>: marks this as a function call</p></div>
+    <div><span class="sw a3"></span><p><code>"Hello, World!"</code>: the argument, a string, that <code>print()</code> displays on the screen (the console)</p></div>
+  </div>
+  <h3>Running a Python program</h3>
+  <p>Save your code in a <code>.py</code> file and run it from the terminal:</p>
+  <pre><code class="language-bash">python app.py</code></pre>
+  <p>Most editors also have a “Run” button that does the same thing.</p>
+  <h3>What happens when it runs</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Python reads the statement</b><code>print("Hello, World!")</code></div></li>
+    <li><span class="dot">2</span><div><b>It calls <code>print()</code></b>with the given argument</div></li>
+    <li><span class="dot">3</span><div><b>Text appears on the screen</b><code>Hello, World!</code></div></li>
+  </ol>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="syntax">
+  <h2>Syntax: the rules Python follows</h2>
+  <p><b>Syntax</b> is the set of rules Python code must follow, just as English has grammar. A statement that follows the rules is <b>valid</b>; one that breaks a rule is <b>invalid</b>, and Python refuses to run it with a <code>SyntaxError</code>.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">print("Deployment successful")</code></pre></div>
+    <div class="codebox"><span class="cap">❌ invalid: no closing quote or parenthesis</span><pre><code class="language-python">print("Deployment successful</code></pre></div>
+  </div>
+  <pre class="out"><code>  File "app.py", line 1
+    print("Deployment successful
+          ^
+SyntaxError: unterminated string literal (detected at line 1)</code></pre>
+
+  <h3>Statements run in order</h3>
+  <p>A program can contain one statement or thousands. Python runs them <b>in the exact order they appear</b>, top to bottom, unless something like a condition or a loop (coming soon) changes that order.</p>
+  <pre><code class="language-python">print("Connecting to server...")
+print("Connection established")
+print("Server ready to accept requests")</code></pre>
+  <pre class="out"><code>Connecting to server...
+Connection established
+Server ready to accept requests</code></pre>
+
+  <h3>Python is case-sensitive</h3>
+  <p>Uppercase and lowercase letters are different characters to Python, so two names that differ only in capitalisation are <b>two separate names</b> pointing at two different values.</p>
+  <pre><code class="language-python">name = "Deepak"
+Name = "Python"
+
+print(name)
+print(Name)</code></pre>
+  <pre class="out"><code>Deepak
+Python</code></pre>
+  <div class="sticky warn"><strong>Classic beginner slip</strong> <code>Print("hi")</code> fails with <code>NameError: name 'Print' is not defined</code>. The function is <code>print</code>, all lowercase.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="indentation">
+  <h2>Indentation: how Python groups code into blocks</h2>
+  <div class="story"><b class="lbl">Sub-points in a to-do list</b>When you write “Go to market” and then indent “buy tomatoes” and “buy onions” under it, everyone understands those two belong to the market trip. <mark>Python reads indentation the same way: indented lines belong to the line above them.</mark></div>
+  <p><b>Indentation</b> is the blank space at the start of a line. In many languages it is only for neatness. In Python it is <b>part of the syntax</b>: it decides which lines belong together as a <b>block</b>.</p>
+  <p>Whenever a group of statements should run together under some condition, that group is indented one level deeper than the line that introduces it:</p>
+  <pre><code class="language-python">attendance_days = 22
+
+if attendance_days &gt;= 20:
+    print("Eligible for bonus")</code></pre>
+  <pre class="out"><code>Eligible for bonus</code></pre>
+  <p>The indented <code>print</code> belongs to the <code>if</code> above it, so it runs only when the condition is true. (You will study <code>if</code> properly in the Control Flow note; for now, focus on how indentation marks the block.)</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="An if line, two indented lines inside a green block that belong to the if, and an unindented line after it that always runs">
+      <g class="rough">
+        <rect class="box f-green" x="66" y="74" width="300" height="80" rx="12"/>
+        <path class="lr" d="M470 114 L 374 114" marker-end="url(#ahr)"/>
+        <path class="ln" d="M470 190 L 260 190" marker-end="url(#ah)"/>
+        <path class="lb dash" d="M40 70 L 40 160"/>
+      </g>
+      <text class="tm" x="40" y="52">if attendance_days &gt;= 20:</text>
+      <text class="tm" x="80" y="104">print("Eligible for bonus")</text>
+      <text class="tm" x="80" y="136">print("Well done")</text>
+      <text class="tm" x="40" y="194">print("Done")</text>
+      <text class="tr" x="480" y="110">the if-block</text>
+      <text class="ts" x="480" y="132">indented 4 spaces: runs only</text>
+      <text class="ts" x="480" y="150">when the condition is true</text>
+      <text class="ts" x="480" y="194">back at the left edge: always runs</text>
+    </svg></div>
+    <figcaption>The indentation, not brackets, tells Python where a block starts and ends.</figcaption>
+  </figure>
+  <h3>Without correct indentation</h3>
+  <p>If Python expects an indented block and doesn’t find one, it raises an error before the program even starts:</p>
+  <pre><code class="language-python">if attendance_days &gt;= 20:
+print("Eligible for bonus")</code></pre>
+  <pre class="out"><code>IndentationError: expected an indented block after 'if' statement on line 1</code></pre>
+  <h3>Rules to follow</h3>
+  <ul>
+    <li>Use <b>4 spaces</b> per level. This is the accepted standard in the Python community.</li>
+    <li><b>Don’t mix tabs and spaces</b> in the same block. They can look identical on screen but Python does not treat them as equal.</li>
+    <li>Every line in the same block must have <b>exactly the same</b> indentation; inconsistent indentation is also an <code>IndentationError</code>.</li>
+  </ul>
+  <p><code>if</code> statements, loops and functions all use indentation in the same way to define their blocks.</p>
+  <div class="sticky tip"><strong>Let the editor do it</strong> Set VS Code or PyCharm to “insert spaces” with a tab size of 4. Then the <kbd>Tab</kbd> key always produces 4 spaces and you never mix the two.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="comments">
+  <h2>Comments: notes inside your code</h2>
+  <p>A <b>comment</b> is text in your source code written for humans and <mark>completely ignored by the interpreter</mark>. Use comments to explain what a piece of code does, leave a reminder for yourself or a teammate, or temporarily disable a line while testing without deleting it.</p>
+  <h3>Single-line (standalone) comments</h3>
+  <p>Start with <code>#</code>. Everything from the <code>#</code> to the end of the line is ignored.</p>
+  <pre><code class="language-python"># Calculate the employee's net salary after deductions
+net_salary = 45000 - 3200
+print(net_salary)</code></pre>
+  <pre class="out"><code>41800</code></pre>
+  <h3>Inline comments</h3>
+  <p>A comment at the end of a line that already has code:</p>
+  <pre><code class="language-python">retry_limit = 3  # maximum number of retry attempts allowed</code></pre>
+  <h3>Multi-line (block) comments</h3>
+  <p>Python has no special multi-line comment symbol. Write several single-line comments, each starting with its own <code>#</code>:</p>
+  <pre><code class="language-python"># This section calculates the final payable amount
+# after applying tax and any applicable discount
+# before displaying it to the customer
+total_payable = 1000</code></pre>
+  <h3>Docstring-style notes</h3>
+  <p>A triple-quoted string written on its own (not assigned to anything) is evaluated and then thrown away, so it can hold a longer note across several lines:</p>
+  <pre><code class="language-python">"""
+This program calculates an employee's net salary
+by subtracting deductions from the basic salary.
+"""
+net_salary = 45000 - 3200</code></pre>
+  <div class="sticky info l"><strong>Strictly speaking</strong> a triple-quoted string is not a comment, it is a string that nobody uses. When it is the <b>first statement</b> of a file, function or class it becomes that object’s <b>docstring</b>, which <code>help()</code> can show. You will use these properly in the Functions note.</div>
+  <h3>Writing useful comments</h3>
+  <p>A good comment explains <b>why</b>, especially when the reason isn’t obvious from the code. A comment that only repeats the code adds nothing.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">❌ just repeats the code</span><pre><code class="language-python">quantity = 5  # bad comment: just repeats the code</code></pre></div>
+    <div class="codebox"><span class="cap">✅ explains the reason</span><pre><code class="language-python">quantity = 5  # good comment: default order quantity when the customer does not specify one</code></pre></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="identifiers">
+  <h2>Identifiers: naming things</h2>
+  <p>Look at a number sitting alone in code:</p>
+  <pre><code class="language-python">95</code></pre>
+  <p>Is it an age? A score? A quantity? There is no way to tell. Attach a name and it means something:</p>
+  <pre><code class="language-python">marks = 95</code></pre>
+  <p>An <b>identifier</b> is the technical word for <mark>any name you create to refer to something</mark>: a variable, a function, a class. Every identifier must follow Python’s naming rules.</p>
+  <h3>Rules for identifiers</h3>
+  <ul>
+    <li>May contain letters (<code>a–z</code>, <code>A–Z</code>), digits (<code>0–9</code>) and the underscore <code>_</code>.</li>
+    <li>Must start with a letter or underscore, <b>never a digit</b>.</li>
+    <li>No spaces, and no symbols such as <code>@</code>, <code>$</code> or <code>-</code>.</li>
+    <li>Cannot be a reserved <b>keyword</b>.</li>
+    <li>Case-sensitive: <code>age</code>, <code>Age</code> and <code>AGE</code> are three different names.</li>
+    <li>No fixed maximum length, but clear, concise names are easier to read.</li>
+  </ul>
+  <div class="two">
+    <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">student_name = "Rahul"
+age2 = 20
+_total = 100</code></pre></div>
+    <div class="codebox"><span class="cap">❌ invalid: SyntaxError</span><pre><code class="language-python">2age = 20               # starts with a digit
+student name = "Rahul"  # contains a space</code></pre></div>
+  </div>
+  <h3>Python keywords</h3>
+  <p>A <b>keyword</b> is a word with a fixed meaning built into the language, so it cannot be used as a name. Python 3 has <b>35</b> of them:</p>
+  <div class="tbl"><table>
+    <tr><td><code>False</code></td><td><code>None</code></td><td><code>True</code></td><td><code>and</code></td><td><code>as</code></td><td><code>assert</code></td><td><code>async</code></td></tr>
+    <tr><td><code>await</code></td><td><code>break</code></td><td><code>class</code></td><td><code>continue</code></td><td><code>def</code></td><td><code>del</code></td><td><code>elif</code></td></tr>
+    <tr><td><code>else</code></td><td><code>except</code></td><td><code>finally</code></td><td><code>for</code></td><td><code>from</code></td><td><code>global</code></td><td><code>if</code></td></tr>
+    <tr><td><code>import</code></td><td><code>in</code></td><td><code>is</code></td><td><code>lambda</code></td><td><code>nonlocal</code></td><td><code>not</code></td><td><code>or</code></td></tr>
+    <tr><td><code>pass</code></td><td><code>raise</code></td><td><code>return</code></td><td><code>try</code></td><td><code>while</code></td><td><code>with</code></td><td><code>yield</code></td></tr>
+  </table></div>
+  <p>Using any of them as a variable name is a <code>SyntaxError</code>. You don’t need to memorise the list; you’ll meet each word with the concept it belongs to. To print the list yourself: <code>import keyword; print(keyword.kwlist)</code>.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="variables">
+  <h2>Variables: giving names to data</h2>
+  <div class="story"><b class="lbl">Luggage tags at the station</b>A tag that says “Sharma, Coach B2” isn’t the suitcase; it’s tied to the suitcase so you can find it. <mark>A Python variable is a name tag tied to a value in memory.</mark> Re-tie the tag to another bag and the name now finds that bag instead.</div>
+  <p>A <b>variable</b> is a name that refers to a value stored in memory. Once created, you use the name anywhere to read, use or change the value, instead of repeating the value everywhere. Variables let a program store information, calculate with it and reuse the results.</p>
+  <h3>Creating a variable</h3>
+  <p>Write the name, the assignment operator <code>=</code>, then the value. No type declaration is needed: the variable comes into existence the moment a value is assigned.</p>
+  <pre><code class="language-python">employee_name = "Deepak"
+employee_age = 30</code></pre>
+  <h3>Understanding assignment</h3>
+  <div class="anatomy"><span class="a1">employee_age</span> <span class="a3">=</span> <span class="a2">30</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>the variable name</p></div>
+    <div><span class="sw a3"></span><p>the assignment operator: put the value on the right into the name on the left</p></div>
+    <div><span class="sw a2"></span><p>the value being stored</p></div>
+  </div>
+  <div class="sticky warn l"><strong><code>=</code> is not “equals”</strong> In maths, <code>=</code> states that two things are equal. In Python it is an <b>action</b>: “assign the right-hand value to the left-hand name”. Checking equality uses <code>==</code>, which you’ll see in Part 2.</div>
+  <h3>Reading a variable</h3>
+  <pre><code class="language-python">employee_age = 30
+print(employee_age)</code></pre>
+  <pre class="out"><code>30</code></pre>
+  <h3>Changing (updating) a variable</h3>
+  <p>Assigning a new value to the same name does <b>not</b> create a second variable. The same name now refers to the new value.</p>
+  <pre><code class="language-python">stock_count = 20
+print(stock_count)
+
+stock_count = 15
+print(stock_count)</code></pre>
+  <pre class="out"><code>20
+15</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="The name stock_count first points to the object 20, then is moved to point to the object 15">
+      <g class="rough">
+        <rect class="box f-yellow" x="50" y="86" width="170" height="50" rx="10"/>
+        <rect class="box f-grey" x="420" y="20" width="110" height="64" rx="14"/>
+        <rect class="box f-blue" x="420" y="138" width="110" height="64" rx="14"/>
+        <path class="ln dash" d="M224 102 L 412 56" marker-end="url(#ah)"/>
+        <path class="lr" d="M224 122 L 412 166" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="135" y="116" text-anchor="middle">stock_count</text>
+      <text class="tr" x="135" y="72" text-anchor="middle">the name (tag)</text>
+      <text class="th" x="475" y="62" text-anchor="middle">20</text>
+      <text class="th" x="475" y="180" text-anchor="middle">15</text>
+      <text class="ts" x="548" y="48">1st assignment</text>
+      <text class="ts" x="548" y="68">(no longer used)</text>
+      <text class="ts" x="548" y="166">2nd assignment</text>
+      <text class="ts" x="548" y="186">name points here</text>
+    </svg></div>
+    <figcaption>Re-assigning moves the tag; the old value isn’t edited, it is simply no longer referred to.</figcaption>
+  </figure>
+  <h3>Several variables in one line</h3>
+  <p>List the names and the values, separated by commas. Each name gets the value in the same position.</p>
+  <pre><code class="language-python">employee_name, employee_age, department = "Rahul", 21, "Bengaluru"
+
+print(employee_name)
+print(employee_age)
+print(department)</code></pre>
+  <pre class="out"><code>Rahul
+21
+Bengaluru</code></pre>
+  <h3>The same value for several variables</h3>
+  <p>Chain the assignment instead of repeating it:</p>
+  <pre><code class="language-python">retries_allowed = max_retries = default_retries = 3
+
+print(retries_allowed, max_retries, default_retries)</code></pre>
+  <pre class="out"><code>3 3 3</code></pre>
+  <h3>Variables refer to objects</h3>
+  <p>In Python every value is an <b>object</b> in memory, and a variable is a <mark>label attached to that object</mark>, not a box that holds it. Writing <code>employee_age = 31</code> after <code>employee_age = 30</code> doesn’t change the object <code>30</code>; Python points the name at a different object, <code>31</code>. In the chained example above, all three names are tags on the <b>same</b> object:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Three names, retries_allowed, max_retries and default_retries, all point to one object, the integer 3">
+      <g class="rough">
+        <rect class="box f-yellow" x="40" y="16" width="200" height="44" rx="10"/>
+        <rect class="box f-yellow" x="40" y="78" width="200" height="44" rx="10"/>
+        <rect class="box f-yellow" x="40" y="140" width="200" height="44" rx="10"/>
+        <rect class="box f-blue" x="470" y="68" width="110" height="64" rx="14"/>
+        <path class="lr" d="M244 40 L 462 88" marker-end="url(#ahr)"/>
+        <path class="lr" d="M244 100 L 462 100" marker-end="url(#ahr)"/>
+        <path class="lr" d="M244 160 L 462 114" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="140" y="43" text-anchor="middle">retries_allowed</text>
+      <text class="tm" x="140" y="105" text-anchor="middle">max_retries</text>
+      <text class="tm" x="140" y="167" text-anchor="middle">default_retries</text>
+      <text class="th" x="525" y="110" text-anchor="middle">3</text>
+      <text class="ts" x="525" y="156" text-anchor="middle">one int object</text>
+    </svg></div>
+    <figcaption>Three tags, one object. Re-assigning one name later only moves that one tag.</figcaption>
+  </figure>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="naming">
+  <h2>Naming conventions: writing meaningful code</h2>
+  <p><b>Naming conventions</b> are the rules and common practices for giving consistent, meaningful names to variables, functions, classes and other identifiers. Good names make code <b>easier to read, understand and maintain</b>.</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">❌ unclear: what is 50000?</span><pre><code class="language-python">x = 50000
+y = 450</code></pre></div>
+    <div class="codebox"><span class="cap">✅ meaningful</span><pre><code class="language-python">monthly_salary = 50000
+total_marks = 450</code></pre></div>
+  </div>
+  <p><code>monthly_salary</code> immediately tells you what 50000 is. Choose names that describe <b>what the value represents</b>, for you and for every developer after you.</p>
+  <h3>Use snake_case</h3>
+  <p>Python variables and functions are written in <mark>snake_case</mark>: all lowercase, words joined by underscores, no spaces.</p>
+  <pre><code class="language-python">student_name = "Rahul"
+total_marks = 450
+monthly_salary = 50000</code></pre>
+  <h3>The rules, one by one</h3>
+  <div class="tbl"><table>
+    <tr><th>Rule</th><th>❌ Not allowed</th><th>✅ Allowed</th></tr>
+    <tr><td>Letters, digits and underscores only</td><td>—</td><td><code>student_name</code>, <code>marks_2026</code>, <code>marks2</code>, <code>total_marks_2026</code></td></tr>
+    <tr><td>Cannot start with a digit</td><td><code>2name</code>, <code>2student</code></td><td><code>name2</code></td></tr>
+    <tr><td>No spaces</td><td><code>student name</code></td><td><code>student_name</code></td></tr>
+    <tr><td>No special characters except <code>_</code></td><td><code>student-name</code></td><td><code>student_name</code></td></tr>
+    <tr><td>No keywords</td><td><code>class</code></td><td><code>class_name</code></td></tr>
+  </table></div>
+  <pre><code class="language-python">student_name = "Rahul"     # ✅ Allowed
+marks_2026 = 450           # ✅ Allowed
+2student = "Rahul"         # ❌ Not allowed (starts with a digit)
+student name = "Rahul"     # ❌ Not allowed (space)
+student-name = "Rahul"     # ❌ Not allowed (Python reads this as student minus name)
+class = "BTech"            # ❌ Not allowed (keyword)</code></pre>
+  <p>Common keywords to steer clear of include <code>if</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>class</code>, <code>def</code>, <code>return</code> and <code>import</code>.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer engagement, other engineers (and the customer’s own team) will maintain your scripts after you leave. <code>invoice_total_inr</code> survives a hand-over; <code>x2</code> does not.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="data-types">
+  <h2>Data and data types</h2>
+  <pre><code class="language-python">10
+"10"</code></pre>
+  <p>These look alike, but Python treats them completely differently: the first is a <b>number</b> you can calculate with, the second is <b>text</b>. <mark>Every value has a data type, and the type decides which operations are allowed on it.</mark> Using an unsupported operation raises an error (for example <code>"10" + 5</code> is a <code>TypeError</code>).</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4><code>int</code> · integer</h4><p>A whole number: positive, negative or zero.<br><code>employee_age = 30</code></p></div>
+    <div class="card t2 tilt-b"><h4><code>float</code> · decimal</h4><p>A number with a decimal point, for prices and measurements.<br><code>unit_price = 99.50</code></p></div>
+    <div class="card t3 tilt-a"><h4><code>str</code> · string</h4><p>A sequence of characters: text.<br><code>employee_name = "Deepak"</code></p></div>
+    <div class="card t5 tilt-b"><h4><code>bool</code> · boolean</h4><p>Only <code>True</code> or <code>False</code>: the two outcomes of a decision (more in Part 2).<br><code>is_logged_in = True</code></p></div>
+    <div class="card t6 tilt-a"><h4><code>NoneType</code></h4><p>The special value <code>None</code>: a deliberate “no value yet” (more in Part 2).<br><code>last_login_time = None</code></p></div>
+  </div>
+  <h3>Checking a value’s type</h3>
+  <p>The built-in <code>type()</code> tells you exactly what type a value or variable is, handy whenever you’re unsure what you are dealing with.</p>
+  <pre><code class="language-python">print(type(20))
+print(type(99.5))
+print(type("Python"))
+print(type(True))
+print(type(None))</code></pre>
+  <pre class="out"><code>&lt;class 'int'&gt;
+&lt;class 'float'&gt;
+&lt;class 'str'&gt;
+&lt;class 'bool'&gt;
+&lt;class 'NoneType'&gt;</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Value</th><th>Type</th></tr>
+    <tr><td><code>10</code></td><td><code>int</code></td></tr>
+    <tr><td><code>10.5</code></td><td><code>float</code></td></tr>
+    <tr><td><code>"10"</code></td><td><code>str</code></td></tr>
+    <tr><td><code>True</code></td><td><code>bool</code></td></tr>
+    <tr><td><code>None</code></td><td><code>NoneType</code></td></tr>
+  </table></div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="literals">
+  <h2>Literals: values written straight into code</h2>
+  <p>A <b>literal</b> is a <mark>fixed value typed directly into your source code</mark>, rather than calculated or read from somewhere else. Every number, quoted text, <code>True</code>, <code>False</code> or <code>None</code> you type is a literal.</p>
+  <div class="tbl"><table>
+    <tr><th>Kind</th><th>What it is</th><th>Examples</th></tr>
+    <tr><td>Integer literal</td><td>Whole number, no decimal point; positive, negative or zero</td><td><code>10</code> · <code>-20</code> · <code>0</code></td></tr>
+    <tr><td>Floating-point literal</td><td>Number with a decimal point</td><td><code>10.5</code> · <code>-3.14</code></td></tr>
+    <tr><td>String literal</td><td>Text inside single or double quotes</td><td><code>"Hello"</code> · <code>'Python'</code></td></tr>
+    <tr><td>Boolean literal</td><td>One of exactly two values</td><td><code>True</code> · <code>False</code></td></tr>
+    <tr><td>None literal</td><td>The absence of a value</td><td><code>None</code></td></tr>
+  </table></div>
+  <pre><code class="language-python">10       # positive integer
+-20      # negative integer
+0        # zero
+10.5     # positive float
+-3.14    # negative float
+"Hello"  # double quotes
+'Python' # single quotes
+True
+False
+None</code></pre>
+  <p>In <code>age = 20</code>, the <code>20</code> is an <b>integer literal</b>: a fixed whole number written directly in the code.</p>
+  <div class="sticky warn"><strong>Capital letters matter</strong> <code>True</code>, <code>False</code> and <code>None</code> must start with a capital. <code>true</code> is just an unknown name: <code>NameError: name 'true' is not defined. Did you mean: 'True'?</code></div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="conversion">
+  <h2>Type conversion: changing one type into another</h2>
+  <p>Sometimes a value is stored as one type but you need it as another. The most common case: <b>anything a user types arrives as text</b>, even if it looks like a number.</p>
+  <pre><code class="language-python">age = "20"</code></pre>
+  <p>The quotes make this a string, and you can’t do arithmetic on text. <b>Type conversion</b> (also called <b>type casting</b>) turns a value of one type into another so it can be used correctly.</p>
+  <div class="tbl"><table>
+    <tr><th>Function</th><th>Converts a value to…</th></tr>
+    <tr><td><code>int(value)</code></td><td>an integer (whole number), when possible</td></tr>
+    <tr><td><code>float(value)</code></td><td>a floating-point (decimal) number</td></tr>
+    <tr><td><code>str(value)</code></td><td>text (a string)</td></tr>
+    <tr><td><code>bool(value)</code></td><td><code>True</code> or <code>False</code></td></tr>
+  </table></div>
+  <pre><code class="language-python">age = int("20")              # the text "20" becomes the integer 20
+print(age, type(age))
+
+price = float("99.5")        # the text "99.5" becomes the number 99.5
+print(price)
+
+age_text = str(20)           # the integer 20 becomes the string "20"
+print(age_text, type(age_text))
+
+print(bool(1), bool(0))      # 1 becomes True, 0 becomes False</code></pre>
+  <pre class="out"><code>20 &lt;class 'int'&gt;
+99.5
+20 &lt;class 'str'&gt;
+True False</code></pre>
+  <p>Notice that <code>20</code> and <code>"20"</code> print the same; only <code>type()</code> reveals the difference.</p>
+  <div class="sticky info l"><strong>How <code>bool()</code> decides</strong> <code>0</code>, <code>0.0</code>, the empty string <code>""</code> and <code>None</code> become <code>False</code>; almost everything else becomes <code>True</code>. So <code>bool("False")</code> is <code>True</code>, because it is a non-empty string!</div>
+  <h3>When conversion fails</h3>
+  <p>Not every value can become every type. If the text isn’t a valid number, Python raises a <code>ValueError</code>:</p>
+  <pre><code class="language-python">int("hello")</code></pre>
+  <pre class="out"><code>ValueError: invalid literal for int() with base 10: 'hello'</code></pre>
+  <p>There is simply no sensible whole number that <code>"hello"</code> could mean.</p>
+  <h3>Explicit vs implicit conversion</h3>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Explicit</h4><p>You call <code>int()</code>, <code>float()</code> or <code>str()</code> yourself, as above.</p></div>
+    <div class="card t2 tilt-b"><h4>Implicit (type coercion)</h4><p>Python converts automatically: adding an <code>int</code> and a <code>float</code> gives a <code>float</code>.</p></div>
+  </div>
+  <pre><code class="language-python">result = 5 + 2.5
+print(result, type(result))</code></pre>
+  <pre class="out"><code>7.5 &lt;class 'float'&gt;</code></pre>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="input-output">
+  <h2>Input and output: making programs interactive</h2>
+  <p>So far every program has printed fixed text. Real programs talk to the person using them: they <b>accept information and respond</b>.</p>
+  <h3>Output with <code>print()</code></h3>
+  <p><code>print()</code> can show several values at once, separated by commas. By default it puts <b>one space</b> between them.</p>
+  <pre><code class="language-python">employee_name = "Rahul"
+employee_age = 21
+
+print(employee_name, employee_age)</code></pre>
+  <pre class="out"><code>Rahul 21</code></pre>
+  <div class="two">
+    <div>
+      <h3>The <code>sep</code> parameter</h3>
+      <p>Replaces the space placed <b>between</b> values.</p>
+      <pre><code class="language-python">print("2026", "09", "21", sep="-")</code></pre>
+      <pre class="out"><code>2026-09-21</code></pre>
+    </div>
+    <div>
+      <h3>The <code>end</code> parameter</h3>
+      <p>Replaces the newline printed <b>after</b> the output, so the next <code>print()</code> continues on the same line.</p>
+      <pre><code class="language-python">print("Processing", end=" ")
+print("request")</code></pre>
+      <pre class="out"><code>Processing request</code></pre>
+    </div>
+  </div>
+  <h3>Taking input with <code>input()</code></h3>
+  <p><code>input()</code> pauses the program, waits for the user to type something and press <kbd>Enter</kbd>, and returns what they typed. The optional text in the brackets is shown as a prompt.</p>
+  <pre><code class="language-python">employee_name = input("Enter employee name: ")
+print("Welcome,", employee_name)</code></pre>
+  <pre class="out"><code>Enter employee name: Priya
+Welcome, Priya</code></pre>
+  <h3><code>input()</code> always returns a string</h3>
+  <p>This is one of the most important rules to remember: <mark>whatever the user types, even digits, <code>input()</code> gives you a <code>str</code></mark>.</p>
+  <pre><code class="language-python">age = input("Enter your age: ")
+print(type(age))</code></pre>
+  <pre class="out"><code>Enter your age: 20
+&lt;class 'str'&gt;</code></pre>
+  <p>The user typed 20, but Python stored the string <code>"20"</code>, not the integer <code>20</code>.</p>
+  <h3>Converting user input</h3>
+  <p>So convert it with <code>int()</code> or <code>float()</code> before calculating:</p>
+  <pre><code class="language-python">age = int(input("Enter your age: "))
+years_until_retirement = 60 - age
+print(years_until_retirement)</code></pre>
+  <pre class="out"><code>Enter your age: 22
+38</code></pre>
+  <div class="sticky warn"><strong>Forget to convert and it breaks</strong> Without <code>int()</code>, <code>60 - age</code> raises <code>TypeError: unsupported operand type(s) for -: 'int' and 'str'</code>. And if the user types <code>twenty</code>, even <code>int()</code> raises a <code>ValueError</code>. You will learn to handle that gracefully in the Error Handling note.</div>
+  <h3>The overall input-to-output flow</h3>
+  <p>Almost every interactive program follows this sequence:</p>
+  <div class="flow"><span>User types</span><span class="op">input()</span><span class="hl">string</span><span class="op">int() / float()</span><span>processing</span><span class="ok">print()</span></div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="recap">
+  <h2>Part 1 at a glance</h2>
+  <div class="tbl"><table>
+    <tr><th>Concept</th><th>What to remember</th></tr>
+    <tr><td>Python</td><td>A high-level, interpreted language; the interpreter runs your <code>.py</code> file top to bottom.</td></tr>
+    <tr><td>Syntax and indentation</td><td>Strict rules; indentation is part of the syntax and defines blocks (4 spaces per level).</td></tr>
+    <tr><td>Comments</td><td>Start with <code>#</code>, are ignored by Python, and should explain <i>why</i>, not <i>what</i>.</td></tr>
+    <tr><td>Identifiers and keywords</td><td>Letters, digits, underscores; no leading digit; not a keyword; case-sensitive.</td></tr>
+    <tr><td>Variables</td><td>A name that refers to a value; <code>=</code> assigns, it does not mean “is equal to”.</td></tr>
+    <tr><td>Naming conventions</td><td><code>snake_case</code> for variables and functions; meaningful names over vague ones.</td></tr>
+    <tr><td>Data types</td><td><code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>, <code>NoneType</code>; check with <code>type()</code>.</td></tr>
+    <tr><td>Literals</td><td>Fixed values written in code: <code>10</code>, <code>10.5</code>, <code>"Hello"</code>, <code>True</code>, <code>None</code>.</td></tr>
+    <tr><td>Type conversion</td><td><code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>; an impossible conversion raises <code>ValueError</code>.</td></tr>
+    <tr><td>Input and output</td><td><code>print()</code> with <code>sep</code> and <code>end</code>; <code>input()</code> always returns a string.</td></tr>
+  </table></div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Interpreter</dt><dd>The program that reads Python source code and executes it; you run it with <code>python app.py</code>.</dd></div>
+    <div><dt>Statement</dt><dd>A single instruction in a program, such as <code>print("Hi")</code> or <code>x = 5</code>; Python runs statements top to bottom.</dd></div>
+    <div><dt>Syntax</dt><dd>The grammar rules Python code must follow; breaking them causes a <code>SyntaxError</code> before the program runs.</dd></div>
+    <div><dt>Indentation</dt><dd>Leading spaces on a line; in Python they are part of the syntax and decide which lines form a block (4 spaces per level).</dd></div>
+    <div><dt>Comment</dt><dd>Text starting with <code>#</code> that the interpreter ignores, written to explain the code to humans.</dd></div>
+    <div><dt>Identifier</dt><dd>Any name you create for a variable, function or class; letters, digits and underscores, not starting with a digit.</dd></div>
+    <div><dt>Keyword</dt><dd>One of Python’s 35 reserved words (like <code>if</code>, <code>class</code>, <code>True</code>) that cannot be used as a name.</dd></div>
+    <div><dt>Variable</dt><dd>A name that refers to an object in memory, created by assignment with <code>=</code>.</dd></div>
+    <div><dt>snake_case</dt><dd>The Python naming style for variables and functions: lowercase words joined by underscores, like <code>monthly_salary</code>.</dd></div>
+    <div><dt>Data type</dt><dd>The kind of a value (<code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>, <code>NoneType</code>), which decides what operations are valid on it.</dd></div>
+    <div><dt>Literal</dt><dd>A fixed value written directly in source code, such as <code>42</code>, <code>3.14</code>, <code>"hi"</code> or <code>None</code>.</dd></div>
+    <div><dt>Type conversion</dt><dd>Turning a value of one type into another, explicitly with <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>, or implicitly as in <code>5 + 2.5</code>.</dd></div>
+    <div><dt>input()</dt><dd>A built-in function that waits for the user to type a line and returns it, always as a string.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What does Python use to decide which lines belong to an <code>if</code> block?</p>
+      <ol><li>Curly braces <code>{ }</code></li><li>Semicolons</li><li>Indentation</li><li>Blank lines</li></ol>
+      <p class="why">In Python, indentation is part of the syntax: the lines indented under the <code>if</code> form its block.</p></div>
+    <div class="q" data-answer="2"><p>Which of these is a valid variable name?</p>
+      <ol><li><code>2nd_place</code></li><li><code>_total_2026</code></li><li><code>total-marks</code></li><li><code>class</code></li></ol>
+      <p class="why">It starts with an underscore and uses only letters, digits and underscores. The others start with a digit, contain <code>-</code>, or are a keyword.</p></div>
+    <div class="q" data-answer="4"><p>The user types <code>25</code> at <code>age = input("Age: ")</code>. What is <code>type(age)</code>?</p>
+      <ol><li><code>int</code></li><li><code>float</code></li><li><code>bool</code></li><li><code>str</code></li></ol>
+      <p class="why"><code>input()</code> always returns a string. Convert with <code>int()</code> before doing maths.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>print("a", "b", "c", sep="-", end="!")</code> show?</p>
+      <ol><li><code>a-b-c!</code></li><li><code>a b c!</code></li><li><code>a-b-c-!</code></li><li><code>abc-!</code></li></ol>
+      <p class="why"><code>sep</code> goes between the values and <code>end</code> goes once, after the last one.</p></div>
+    <div class="q" data-answer="3"><p>What happens with <code>int("hello")</code>?</p>
+      <ol><li>It returns 0</li><li>It returns <code>None</code></li><li>It raises a <code>ValueError</code></li><li>It raises a <code>SyntaxError</code></li></ol>
+      <p class="why">The code is valid syntax, but “hello” is not a number, so the conversion fails at run time with <code>ValueError</code>.</p></div>
+    <div class="q" data-answer="2"><p>After <code>x = 10</code> and then <code>x = 20</code>, what is true?</p>
+      <ol><li>There are now two variables called <code>x</code></li><li>The name <code>x</code> now refers to 20</li><li>The object 10 was changed into 20</li><li>It is an error to assign twice</li></ol>
+      <p class="why">Re-assignment moves the name to a new object; it doesn’t create a second variable or modify the old value.</p></div>
+    <div class="q" data-answer="4"><p>What is the type of <code>5 + 2.5</code>?</p>
+      <ol><li><code>int</code></li><li><code>str</code></li><li>An error</li><li><code>float</code></li></ol>
+      <p class="why">Implicit conversion: mixing an <code>int</code> and a <code>float</code> produces a <code>float</code> (7.5).</p></div>
+    <div class="q" data-answer="1"><p>Which comment is most useful?</p>
+      <ol><li><code>timeout = 30  # API is slow during month-end batch jobs</code></li><li><code>timeout = 30  # set timeout to 30</code></li><li><code>timeout = 30  # timeout</code></li><li><code>timeout = 30  # variable</code></li></ol>
+      <p class="why">Good comments explain <i>why</i>. The others just repeat what the code already says.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Python runs your <b>statements top to bottom</b>, uses <b>indentation</b> to group them, stores values under <b>variable names</b> that point to typed objects (<b>int, float, str, bool, None</b>), and talks to users through <b>print()</b> and <b>input()</b>, which always hands you a <b>string</b> to convert.</p>
+  <p>Next up: Python Basics · Part 2, where you’ll work with operators, strings, booleans, <code>None</code> and the most useful built-in functions.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

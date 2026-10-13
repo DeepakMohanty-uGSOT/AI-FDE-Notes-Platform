@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modules &amp; Packages · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Split a growing program into modules and packages: creating and importing your own modules, import, from ... import, aliases, installing packages with pip, building a package with __init__.py, and the if __name__ == &quot;__main__&quot; guard.">
+<meta name="keywords" content="module, import, from import, alias, package, __init__.py, pip, __name__">
+<meta name="date" content="2026-09-28">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/modules-packages">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Modules &amp; Packages</h1>
+  <p class="byline">Break a big program into tidy files and folders, borrow code from Python’s library and from the internet, and keep test code from running when you only meant to import.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why modules and packages are needed</h2>
+  <p>Until now every program has lived in a <b>single file</b>. That’s fine for small programs, but think about what happens as a program grows. A complete student management system soon needs:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Student data</h4><p>add, remove, update students</p></div>
+    <div class="card t2 tilt-b"><h4>Marks</h4><p>totals, averages, grades</p></div>
+    <div class="card t3 tilt-a"><h4>Attendance</h4><p>tracking who came in</p></div>
+    <div class="card t4 tilt-b"><h4>Reports</h4><p>report generation</p></div>
+    <div class="card t5 tilt-a"><h4>Validation</h4><p>checking user input</p></div>
+    <div class="card t7 tilt-b"><h4>Fees</h4><p>fee management</p></div>
+  </div>
+  <p>Put all of that in one file and you get a 2000-line monster. Finding one function is slow, several people editing the same file collide, and every small change risks breaking something unrelated a few hundred lines away.</p>
+  <div class="story"><b class="lbl">The kirana shop vs the supermarket</b>In a tiny kirana shop, everything sits in one heap behind the counter and only the owner can find anything. A supermarket puts rice in one aisle, soap in another, biscuits in a third. <mark>Modules are the aisles of your program: smaller, focused files, each with one clear job.</mark></div>
+  <div class="codebox"><span class="cap">the same project, split into files</span><pre><code class="language-plaintext">student_project/
+│
+├── main.py
+├── students.py
+├── marks.py
+├── attendance.py
+├── reports.py
+├── validation.py
+└── fees.py</code></pre></div>
+  <p>Each separate <code>.py</code> file is a <b>module</b>. A folder that groups several related modules is a <b>package</b>, which we’ll get to shortly.</p>
+
+  <h3>Code organisation and reuse</h3>
+  <p>Every module has one responsibility, so anyone can guess where something lives:</p>
+  <div class="flow"><span>Need to fix how grades are calculated?</span><span class="ok">Open marks.py, not a 2000-line file</span></div>
+  <p>Modules also make <b>reuse</b> possible across programs. A good module isn’t tied to one project: write it once, then bring it into any program without copy-pasting.</p>
+
+  <h3>Avoiding duplicate code</h3>
+  <p>Functions remove repetition <i>within</i> a file. Modules extend the same idea <i>across</i> files. Without modules, two programs that both need <code>calculate_average()</code> each carry their own copy, and the old problems return:</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>More code</h4><p>The same function lives in two places.</p></div>
+    <div class="card t4 tilt-b"><h4>Hard to maintain</h4><p>Fix a bug in one copy, forget the other.</p></div>
+    <div class="card t6 tilt-a"><h4>More mistakes</h4><p>The two copies slowly drift apart.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Left: two programs each with their own copy of calculate_average, marked wrong. Right: one marks.py with the only copy, imported by program_one.py and program_two.py">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="30" width="250" height="76" rx="12"/>
+        <rect class="box f-orange" x="20" y="140" width="250" height="76" rx="12"/>
+        <rect class="box f-green" x="470" y="20" width="230" height="70" rx="12"/>
+        <rect class="box f-blue" x="350" y="170" width="170" height="60" rx="12"/>
+        <rect class="box f-blue" x="540" y="170" width="170" height="60" rx="12"/>
+        <path class="lb" d="M435 166 C 450 130, 500 110, 560 94" marker-end="url(#ahb)"/>
+        <path class="lb" d="M625 166 L 610 96" marker-end="url(#ahb)"/>
+        <path class="ln dash" d="M310 10 L 310 240"/>
+      </g>
+      <text class="tm" x="145" y="62" text-anchor="middle">program_one.py</text>
+      <text class="ts" x="145" y="88" text-anchor="middle">own copy of calculate_average()</text>
+      <text class="tm" x="145" y="172" text-anchor="middle">program_two.py</text>
+      <text class="ts" x="145" y="198" text-anchor="middle">ANOTHER copy</text>
+      <text class="tr" x="145" y="240" text-anchor="middle">✗ copy-paste</text>
+      <text class="tm" x="585" y="50" text-anchor="middle">marks.py</text>
+      <text class="ts" x="585" y="74" text-anchor="middle">the ONE copy</text>
+      <text class="tm" x="435" y="205" text-anchor="middle">program_one.py</text>
+      <text class="tm" x="625" y="205" text-anchor="middle">program_two.py</text>
+      <text class="tb" x="400" y="120" text-anchor="middle">import</text>
+      <text class="tb" x="660" y="140">import</text>
+    </svg></div>
+    <figcaption>One copy in one module; every program imports it. Fix a bug once and everyone benefits.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="codebox"><span class="cap">program_one.py</span><pre><code class="language-python">import marks
+print(marks.calculate_average([85, 72, 91]))</code></pre></div>
+    <div class="codebox"><span class="cap">program_two.py</span><pre><code class="language-python">import marks
+print(marks.calculate_average([60, 75, 90]))</code></pre></div>
+  </div>
+  <pre class="out"><code>82.66666666666667      ← program_one.py
+75.0                   ← program_two.py</code></pre>
+
+  <h3>Separating related functionality</h3>
+  <p>Group code by what it does. Everything about marks goes in one module, everything about attendance in another:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">marks.py: only marks</span><pre><code class="language-python">def calculate_total(marks_list):
+    return sum(marks_list)
+
+def calculate_average(marks_list):
+    return sum(marks_list) / len(marks_list)
+
+def calculate_grade(average):
+    return "A" if average &gt;= 75 else "B"</code></pre></div>
+    <div class="codebox"><span class="cap">attendance.py: only attendance</span><pre><code class="language-python">def mark_present(name):
+    print(name, "is present")
+
+def mark_absent(name):
+    print(name, "is absent")
+
+def attendance_percentage(present, total_days):
+    return present / total_days * 100</code></pre></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="module">
+  <h2>What is a module?</h2>
+  <p>A <b>module</b> is simply <mark>a Python file (<code>.py</code>) containing code, such as functions and variables, that other Python files can import and use</mark>. There’s nothing special to do to “make” one: any Python file is a module the moment another file imports it.</p>
+  <div class="flow"><span>A .py file</span><span>contains functions, variables…</span><span>another file imports it</span><span class="ok">that file is now a module</span></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">greetings.py: a normal Python file</span><pre><code class="language-python">def say_hello(name):
+    print("Hello,", name)</code></pre></div>
+    <div class="codebox"><span class="cap">main.py: importing makes it a module</span><pre><code class="language-python">import greetings
+greetings.say_hello("Rahul")</code></pre></div>
+  </div>
+  <pre class="out"><code>Hello, Rahul</code></pre>
+  <div class="sticky info l"><strong>Think toolbox.</strong> Each module is a toolbox holding related tools (functions). Any program can borrow from it.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="first-module">
+  <h2>Creating and using your first module</h2>
+  <p>Create a small project with two files side by side:</p>
+  <pre><code class="language-plaintext">student_project/
+│
+├── main.py
+└── marks.py</code></pre>
+  <div class="codebox"><span class="cap">marks.py</span><pre><code class="language-python">PASS_MARK = 50
+
+def calculate_total(marks_list):
+    return sum(marks_list)
+
+def calculate_average(marks_list):
+    return sum(marks_list) / len(marks_list)
+
+def is_pass(mark):
+    return mark &gt;= PASS_MARK</code></pre></div>
+  <div class="tbl"><table>
+    <tr><th>Inside <code>marks.py</code></th><th>What it is</th></tr>
+    <tr><td><code>PASS_MARK</code></td><td>a variable</td></tr>
+    <tr><td><code>calculate_total()</code></td><td>a function</td></tr>
+    <tr><td><code>calculate_average()</code></td><td>a function</td></tr>
+    <tr><td><code>is_pass()</code></td><td>a function (it uses <code>PASS_MARK</code> from the same file)</td></tr>
+  </table></div>
+  <p>Notice that <code>is_pass()</code> uses <code>PASS_MARK</code> freely: everything inside a module can use everything else in that module.</p>
+  <h3>Importing a custom module</h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">import module_name</code></pre></div>
+  <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">import marks</code></pre></div>
+  <p>Two things to notice: you write the name <b>without</b> <code>.py</code>, and imports usually go at the <b>top</b> of the file.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>main.py runs <code>import marks</code></b></div></li>
+    <li><span class="dot">2</span><div><b>Python finds marks.py</b>in the same folder as main.py.</div></li>
+    <li><span class="dot">3</span><div><b>Loads it</b>and makes everything inside available as <code>marks.something</code>.</div></li>
+  </ol>
+  <h3>Using functions and variables from a module</h3>
+  <p>Once imported, reach anything inside with <b>dot notation</b>: <code>module_name.item_name</code>.</p>
+  <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">import marks
+
+scores = [85, 72, 91, 68, 79]
+
+print(marks.calculate_total(scores))
+print(marks.calculate_average(scores))
+print(marks.PASS_MARK)
+print(marks.is_pass(45))</code></pre></div>
+  <pre class="out"><code>395
+79.0
+50
+False</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="main.py on the left calls marks.calculate_total; the dot leads into the marks.py box on the right, which contains PASS_MARK, calculate_total, calculate_average and is_pass">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="60" width="270" height="120" rx="14"/>
+        <rect class="box f-green" x="420" y="20" width="280" height="200" rx="14"/>
+        <rect class="box f-yellow" x="440" y="94" width="240" height="34" rx="8"/>
+        <path class="lr" d="M294 120 C 340 120, 380 112, 434 111" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="155" y="96" text-anchor="middle">main.py</text>
+      <text class="tm" x="155" y="132" text-anchor="middle">marks.calculate_total()</text>
+      <text class="ts" x="155" y="160" text-anchor="middle">module name . item name</text>
+      <text class="th" x="560" y="54" text-anchor="middle">marks.py</text>
+      <text class="tm" x="460" y="84">PASS_MARK</text>
+      <text class="tm" x="460" y="117">calculate_total()</text>
+      <text class="tm" x="460" y="152">calculate_average()</text>
+      <text class="tm" x="460" y="182">is_pass()</text>
+      <text class="tr" x="362" y="100" text-anchor="middle">the dot</text>
+    </svg></div>
+    <figcaption>The <code>marks.</code> prefix says exactly which file to look in.</figcaption>
+  </figure>
+  <p>The prefix matters because two modules may each have a function with the same name; the prefix keeps them apart.</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="naming">
+  <h2>Module naming and file structure</h2>
+  <p>A module’s name is its filename minus <code>.py</code>, so it follows the same rules as a variable name.</p>
+  <div class="tbl"><table>
+    <tr><th>File name</th><th></th><th>Why</th></tr>
+    <tr><td><code>marks.py</code></td><td>✅</td><td><code>import marks</code></td></tr>
+    <tr><td><code>student_utils.py</code></td><td>✅</td><td><code>import student_utils</code></td></tr>
+    <tr><td><code>my marks.py</code></td><td>❌</td><td>spaces are not allowed</td></tr>
+    <tr><td><code>2marks.py</code></td><td>❌</td><td>cannot start with a number</td></tr>
+    <tr><td><code>student-utils.py</code></td><td>❌</td><td>hyphens are not allowed</td></tr>
+    <tr><td><code>math.py</code></td><td>⚠️</td><td>avoid built-in module names</td></tr>
+  </table></div>
+  <ul>
+    <li>Use <b>lowercase</b> letters, with underscores if needed (<code>student_utils</code>).</li>
+    <li>Pick a name that describes what the module contains.</li>
+  </ul>
+  <div class="sticky warn"><strong>Don’t shadow the standard library.</strong> If you name your file <code>random.py</code> or <code>math.py</code>, Python may import <b>yours</b> instead of the real one, and you get baffling errors like “module 'random' has no attribute 'randint'”.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="import">
+  <h2>The <code>import</code> statement</h2>
+  <p>Without <code>import</code>, a file can only use what is written inside it plus built-ins like <code>print()</code> and <code>len()</code>. Python ships with hundreds of ready-made modules, and you have your own too. <code>import</code> is how a file <b>borrows code from another module</b>.</p>
+  <pre><code class="language-python">print(sqrt(16))</code></pre>
+  <pre class="out"><code>NameError: name 'sqrt' is not defined</code></pre>
+  <p>Python doesn’t know <code>sqrt</code>: it lives in the <code>math</code> module, which we haven’t brought in.</p>
+  <div class="flow"><span>Code lives in another module</span><span class="bad">our file can’t see it automatically</span><span class="ok">import makes it available</span></div>
+  <pre><code class="language-python">import math</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Python locates the math module</b></div></li>
+    <li><span class="dot">2</span><div><b>Runs it once and loads its contents</b><span class="tag">→ a second import of the same module reuses it</span></div></li>
+    <li><span class="dot">3</span><div><b>Everything inside math is now reachable</b>Importing doesn’t <i>use</i> anything yet; it only makes the contents reachable.</div></li>
+  </ol>
+  <h3>Accessing members with dot notation</h3>
+  <pre><code class="language-python">import math
+
+print(math.sqrt(16))
+print(math.pi)
+print(math.factorial(5))</code></pre>
+  <pre class="out"><code>4.0
+3.141592653589793
+120</code></pre>
+  <p>The module name in front tells Python where to look, which keeps things clear when two modules share a member name:</p>
+  <pre><code class="language-python">import math
+import cmath
+
+print(math.sqrt(16))      # from the math module
+print(cmath.sqrt(-16))    # from the cmath module, a different function</code></pre>
+  <pre class="out"><code>4.0
+4j</code></pre>
+  <p><code>cmath</code> works with complex numbers, so it can take the square root of a negative number (<code>4j</code>); <code>math.sqrt(-16)</code> would raise an error. Same name, different function. The same dot notation works with our own module:</p>
+  <pre><code class="language-python">import marks
+
+print(marks.PASS_MARK)
+print(marks.calculate_average([85, 72, 91]))</code></pre>
+  <pre class="out"><code>50
+82.66666666666667</code></pre>
+  <h3>Importing multiple modules</h3>
+  <div class="two">
+    <div class="codebox"><span class="cap">one per line (recommended)</span><pre><code class="language-python">import math
+import random
+import marks</code></pre></div>
+    <div class="codebox"><span class="cap">several on one line</span><pre><code class="language-python">import math, random, marks</code></pre></div>
+  </div>
+  <p>Both work the same, but one per line is easier to read and is what most Python code uses.</p>
+  <pre><code class="language-python">import math
+import random
+import marks
+
+print(math.sqrt(25))
+print(random.randint(1, 10))
+print(marks.PASS_MARK)</code></pre>
+  <pre class="out"><code>5.0
+7          ← random: any whole number from 1 to 10
+50</code></pre>
+  <h3>Aliases with <code>as</code></h3>
+  <p>When a module name is long, give it a short nickname, an <b>alias</b>:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">import module_name as alias</code></pre></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">without alias</span><pre><code class="language-python">import student_management_utils
+print(student_management_utils.calculate_grade(85))</code></pre></div>
+    <div class="codebox"><span class="cap">with alias</span><pre><code class="language-python">import student_management_utils as sm
+print(sm.calculate_grade(85))</code></pre></div>
+  </div>
+  <p>After aliasing, <b>you must use the alias</b>; the original name isn’t defined in your file:</p>
+  <pre><code class="language-python">import math as m
+
+print(m.sqrt(16))       # works
+print(math.sqrt(16))    # NameError</code></pre>
+  <pre class="out"><code>4.0
+NameError: name 'math' is not defined</code></pre>
+  <div class="sticky tip l"><strong>Aliases you’ll see everywhere</strong> <code>import pandas as pd</code>, <code>import numpy as np</code>. These are community conventions, so stick to them.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="from-import">
+  <h2><code>from ... import</code>: bring in just what you need</h2>
+  <p>With <code>import math</code> you write <code>math.</code> in front of everything. When you need only one or two members, pull them <b>directly</b> into your file:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">from module_name import member_name</code></pre></div>
+  <div class="anatomy"><span class="a6">from</span> <span class="a1">math</span> <span class="a6">import</span> <span class="a2">sqrt</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>the module to look in</p></div>
+    <div><span class="sw a2"></span><p>the specific member you want added to your file</p></div>
+  </div>
+  <pre><code class="language-python">from math import sqrt
+print(sqrt(16))
+
+from math import pi
+print(pi)
+
+from marks import calculate_average
+scores = [85, 72, 91]
+print(calculate_average(scores))</code></pre>
+  <pre class="out"><code>4.0
+3.141592653589793
+82.66666666666667</code></pre>
+  <p>Now you write <code>sqrt(16)</code>, not <code>math.sqrt(16)</code>: the name was brought straight into your file.</p>
+  <h3>Only the named member is imported</h3>
+  <pre><code class="language-python">from math import sqrt
+
+print(sqrt(16))     # works
+print(pi)           # NameError: name 'pi' is not defined
+print(math.pi)      # NameError: name 'math' is not defined</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Two ways to import. import math adds only the name math to your file, and you reach sqrt and pi through it. from math import sqrt adds only the name sqrt; pi and math itself are not added">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="20" width="330" height="220" rx="14"/>
+        <rect class="box f-card" x="370" y="20" width="330" height="220" rx="14"/>
+        <rect class="box f-green" x="50" y="100" width="270" height="50" rx="10"/>
+        <rect class="box f-green" x="400" y="100" width="130" height="50" rx="10"/>
+        <rect class="box f-grey dash" x="545" y="100" width="130" height="50" rx="10"/>
+      </g>
+      <text class="tm" x="185" y="56" text-anchor="middle">import math</text>
+      <text class="ts" x="185" y="84" text-anchor="middle">names added to your file:</text>
+      <text class="tm" x="185" y="130" text-anchor="middle">math</text>
+      <text class="ts" x="185" y="186" text-anchor="middle">use math.sqrt, math.pi …</text>
+      <text class="tb" x="185" y="218" text-anchor="middle">prefix every time</text>
+      <text class="tm" x="535" y="56" text-anchor="middle">from math import sqrt</text>
+      <text class="ts" x="535" y="84" text-anchor="middle">names added to your file:</text>
+      <text class="tm" x="465" y="130" text-anchor="middle">sqrt</text>
+      <text class="ts" x="610" y="130" text-anchor="middle">pi, math ✗</text>
+      <text class="ts" x="535" y="186" text-anchor="middle">use sqrt(16) directly</text>
+      <text class="tr" x="535" y="218" text-anchor="middle">only what you named</text>
+    </svg></div>
+    <figcaption><code>import math</code> adds one name, <code>math</code>. <code>from math import sqrt</code> adds one name, <code>sqrt</code>, and nothing else.</figcaption>
+  </figure>
+  <h3>Importing multiple members</h3>
+  <pre><code class="language-python">from math import sqrt, pi, factorial
+from marks import calculate_total, calculate_average, PASS_MARK
+
+print(sqrt(25))
+print(pi)
+print(factorial(5))
+
+scores = [85, 72, 91, 68, 79]
+print(calculate_total(scores))
+print(calculate_average(scores))
+print(PASS_MARK)</code></pre>
+  <pre class="out"><code>5.0
+3.141592653589793
+120
+395
+79.0
+50</code></pre>
+  <h3>Aliases with <code>from ... import ... as</code></h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">from module_name import member_name as alias</code></pre></div>
+  <pre><code class="language-python">from math import factorial as fact
+
+print(fact(5))
+# print(factorial(5))   -&gt; NameError: only fact works now</code></pre>
+  <pre class="out"><code>120</code></pre>
+  <p>Aliases also <b>solve name clashes</b>. Suppose <code>marks.py</code> and <code>attendance.py</code> both define <code>calculate_average</code>:</p>
+  <pre><code class="language-python">from marks import calculate_average as marks_average
+from attendance import calculate_average as attendance_average
+
+print(marks_average([85, 72, 91]))
+print(attendance_average([90, 80, 100]))</code></pre>
+  <pre class="out"><code>82.66666666666667
+90.0</code></pre>
+  <div class="sticky warn l"><strong>Silent replacement</strong> Without aliases, the second <code>from attendance import calculate_average</code> would quietly overwrite the first, because both use the same name.</div>
+  <h3>When to use which</h3>
+  <div class="tbl"><table>
+    <tr><th>Style</th><th>Use it when…</th><th>Example</th></tr>
+    <tr><td><code>import module</code></td><td>you use many things from the module, or seeing where a function comes from helps readability</td><td><code>marks.calculate_average()</code> tells you at a glance which module it belongs to</td></tr>
+    <tr><td><code>from module import name</code></td><td>you need just a few specific members and want shorter code</td><td><code>calculate_average()</code></td></tr>
+  </table></div>
+  <div class="two">
+    <div class="codebox"><span class="cap">import module</span><pre><code class="language-python">import marks
+print(marks.calculate_total([85, 72, 91]))
+print(marks.calculate_average([85, 72, 91]))</code></pre></div>
+    <div class="codebox"><span class="cap">from module import name</span><pre><code class="language-python">from marks import calculate_average
+print(calculate_average([85, 72, 91]))</code></pre></div>
+  </div>
+  <h3>A caution about <code>from module import *</code></h3>
+  <p>Python also lets you import <b>all</b> public names from a module at once:</p>
+  <pre><code class="language-python">from math import *
+
+print(sqrt(16))
+print(pow(2, 3))
+print(factorial(5))</code></pre>
+  <pre class="out"><code>4.0
+8.0
+120</code></pre>
+  <p>Instead of the explicit version:</p>
+  <pre><code class="language-python">import math
+
+print(math.sqrt(16))
+print(math.pow(2, 3))
+print(math.factorial(5))</code></pre>
+  <div class="sticky warn"><strong>Why <code>*</code> is risky: look at that <code>8.0</code>.</strong> Python’s built-in <code>pow(2, 3)</code> returns the integer <code>8</code>. But <code>from math import *</code> silently replaced it with <code>math.pow</code>, which always returns a float. That is exactly the danger: <code>*</code> dumps dozens of names into your file, can overwrite names you already have, and hides where each name came from. Prefer explicit imports.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="packages">
+  <h2>Python packages</h2>
+  <p>Modules work well for a small project. But after a few months, the student project looks like this:</p>
+  <pre><code class="language-plaintext">student_project/
+│
+├── main.py
+├── marks.py
+├── grades.py
+├── report_card.py
+├── attendance.py
+├── leave.py
+├── fees.py
+├── receipts.py
+└── scholarships.py</code></pre>
+  <p>Everything is in one folder. It’s hard to see which files belong together, and what if you need <b>two</b> files with the same name? You need a way to group related modules: a <b>package</b>.</p>
+  <h3>What is a package?</h3>
+  <p>A <b>package</b> is <mark>a folder that contains related Python modules, along with a special file called <code>__init__.py</code></mark>.</p>
+  <div class="flow"><span>A folder</span><span>contains related modules (.py files)</span><span>contains an __init__.py file</span><span class="ok">that folder is a package</span></div>
+  <pre><code class="language-plaintext">student_project/
+│
+├── main.py
+│
+├── school/
+│   ├── __init__.py
+│   ├── marks.py
+│   ├── grades.py
+│   └── report_card.py
+│
+└── accounts/
+    ├── __init__.py
+    ├── fees.py
+    └── receipts.py</code></pre>
+  <div class="story"><b class="lbl">The labelled cupboard</b>If a module is a toolbox, a package is a <b>labelled shelf</b> in the cupboard that keeps related toolboxes together: all academic boxes on the “school” shelf, all money boxes on the “accounts” shelf.</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Nested boxes: the package school contains the modules marks.py and grades.py; marks.py contains the function calculate_average. The dotted path school.marks.calculate_average walks from package to module to function">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="20" width="680" height="190" rx="18"/>
+        <rect class="box f-green" x="50" y="70" width="360" height="120" rx="14"/>
+        <rect class="box f-green" x="440" y="70" width="230" height="120" rx="14"/>
+        <rect class="box f-blue" x="80" y="120" width="300" height="50" rx="10"/>
+      </g>
+      <text class="th" x="44" y="56">school/</text>
+      <text class="ts" x="160" y="54">package (folder + __init__.py)</text>
+      <text class="tm" x="70" y="100">marks.py</text>
+      <text class="ts" x="160" y="100">module</text>
+      <text class="tm" x="230" y="151" text-anchor="middle">calculate_average()</text>
+      <text class="tm" x="555" y="125" text-anchor="middle">grades.py</text>
+      <text class="ts" x="555" y="150" text-anchor="middle">module</text>
+      <text class="tm" x="360" y="245" text-anchor="middle">school . marks . calculate_average()</text>
+      <text class="tr" x="190" y="245" text-anchor="end">folder → file → tool</text>
+    </svg></div>
+    <figcaption>A package is one more level of organisation. Python reads the dots left to right: package → module → function.</figcaption>
+  </figure>
+  <h3>Module vs package</h3>
+  <div class="tbl"><table>
+    <tr><th></th><th>What it is</th><th>Example</th></tr>
+    <tr><td><b>Module</b></td><td>a single <code>.py</code> file</td><td><code>marks.py</code></td></tr>
+    <tr><td><b>Package</b></td><td>a folder of modules</td><td><code>school/</code></td></tr>
+  </table></div>
+  <p>You have already used a package! Python’s own <code>json</code> is really a folder with several modules inside. Print both to see:</p>
+  <pre><code class="language-python">import math
+import json
+
+print(math)     # a single built-in module
+print(json)     # a package - comes from json/__init__.py</code></pre>
+  <pre class="out"><code>&lt;module 'math' (built-in)&gt;
+&lt;module 'json' from 'C:\\Python314\\Lib\\json\\__init__.py'&gt;</code></pre>
+  <p><code>math</code> is a single built-in module. <code>json</code> comes from an <code>__init__.py</code> inside a <code>json</code> <b>folder</b>: that’s a package. (Your path will differ depending on where Python is installed.)</p>
+  <h3>Why packages are useful</h3>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Better organisation</h4><p>Related modules are grouped, so large projects stay easy to navigate.</p></div>
+    <div class="card t2 tilt-b"><h4>No name clashes</h4><p>Two modules can share a name if they live in different packages.</p></div>
+    <div class="card t5 tilt-b"><h4>Easy to share</h4><p>A whole package can be shared and installed as one unit.</p></div>
+    <div class="card t3 tilt-a"><h4>Reuse other people’s code</h4><p>Thousands of ready-made packages exist, so you don’t write everything yourself.</p></div>
+  </div>
+  <p>For example, the school and the sports department can both have a <code>marks.py</code>:</p>
+  <pre><code class="language-plaintext">project/
+│
+├── school/
+│   ├── __init__.py
+│   └── marks.py        → school.marks
+│
+└── sports/
+    ├── __init__.py
+    └── marks.py        → sports.marks</code></pre>
+  <p>The biggest advantage is the last one. Developers worldwide publish packages on <b>PyPI</b>, the <b>Python Package Index</b> (pypi.org), and anyone can install them for free.</p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="pip">
+  <h2>Installing packages with pip</h2>
+  <p>PyPI packages don’t come with Python; you install them first with <b>pip</b>, the <b>Package Installer for Python</b>.</p>
+  <div class="codebox"><span class="cap">syntax (terminal)</span><pre><code class="language-bash">pip install package_name</code></pre></div>
+  <div class="sticky warn l"><strong>Terminal, not .py file.</strong> <code>pip install</code> is typed in the <b>terminal</b>, never inside a Python file. In VS Code open one with <b>Terminal → New Terminal</b>.</div>
+  <p>Let’s install a small, fun package called <code>emoji</code>:</p>
+  <div class="cmd"><p class="what">Try it</p><pre><code class="language-bash">pip install emoji</code></pre></div>
+  <pre class="out"><code>Collecting emoji
+  Downloading emoji-2.16.0-py3-none-any.whl (… kB)
+Installing collected packages: emoji
+Successfully installed emoji-2.16.0</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Collecting</b>pip looks up <code>emoji</code> on PyPI.</div></li>
+    <li><span class="dot">2</span><div><b>Downloading</b>it fetches the package file (the version number you see may be newer).</div></li>
+    <li><span class="dot">3</span><div><b>Installing</b>it copies the package into your Python’s <code>site-packages</code> folder.</div></li>
+    <li><span class="dot">4</span><div><b>Done</b>Any program on this Python can now <code>import emoji</code>.</div></li>
+  </ol>
+  <p>Run the same command again and pip doesn’t download twice:</p>
+  <pre class="out"><code>Requirement already satisfied: emoji in …\site-packages (2.16.0)</code></pre>
+  <h3>Other useful pip commands</h3>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td><code>pip list</code></td><td>show all installed packages</td></tr>
+    <tr><td><code>pip show emoji</code></td><td>show details about one package</td></tr>
+    <tr><td><code>pip uninstall emoji</code></td><td>remove a package</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On customer projects you’ll record every package in a <code>requirements.txt</code> and install them all with <code>pip install -r requirements.txt</code>, usually inside a virtual environment, so the server gets exactly the same packages as your laptop.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="installed">
+  <h2>Importing from installed packages</h2>
+  <p>Once installed, a package is imported exactly like any module, with everything from the last two sections.</p>
+  <h3>Using <code>import</code></h3>
+  <pre><code class="language-python">import emoji
+
+print(emoji.emojize("Great job :thumbs_up:"))
+print(emoji.emojize("Python is fun :snake:"))</code></pre>
+  <pre class="out"><code>Great job 👍
+Python is fun 🐍</code></pre>
+  <p><code>emoji.emojize()</code> replaces codes like <code>:thumbs_up:</code> with real emojis. You didn’t write it; someone else did, and you simply <b>installed</b> and <b>imported</b> it.</p>
+  <h3>Using <code>from ... import</code></h3>
+  <pre><code class="language-python">from emoji import emojize, demojize
+
+print(emojize("Rahul scored 95 :party_popper:"))
+print(demojize("I love Python 🐍"))</code></pre>
+  <pre class="out"><code>Rahul scored 95 🎉
+I love Python :snake:</code></pre>
+  <h3>Using an alias</h3>
+  <pre><code class="language-python">import emoji as em
+
+message = "Rahul scored 95 🎉🎉"
+
+print(em.emoji_count(message))
+print(em.is_emoji("🎉"))</code></pre>
+  <pre class="out"><code>2
+True</code></pre>
+  <h3>What if the package isn’t installed?</h3>
+  <pre><code class="language-python">import emoji
+
+print(emoji.emojize("Great job :thumbs_up:"))</code></pre>
+  <pre class="out"><code>Traceback (most recent call last):
+  File "main.py", line 1, in &lt;module&gt;
+    import emoji
+ModuleNotFoundError: No module named 'emoji'</code></pre>
+  <p>The fix isn’t in your code. Run <code>pip install emoji</code> in the terminal first.</p>
+  <div class="two">
+    <div class="flow v"><span class="op">pip install emoji</span><span class="hl">in the TERMINAL</span><span>once</span></div>
+    <div class="flow v"><span class="op">import emoji</span><span class="hl">in your .py FILE</span><span>every program that uses it</span></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="own-package">
+  <h2>Building your own package</h2>
+  <p>Let’s turn the marks and attendance modules into a package called <code>school</code>:</p>
+  <pre><code class="language-plaintext">student_project/
+│
+├── main.py
+│
+└── school/
+    ├── __init__.py       # empty file - makes school a package
+    ├── marks.py
+    └── attendance.py</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create the folder</b>Make <code>school</code> inside <code>student_project</code>. Package names follow module rules: lowercase, no spaces.</div></li>
+    <li><span class="dot">2</span><div><b>Add <code>__init__.py</code></b>Inside <code>school</code>, create an <b>empty</b> file named <code>__init__.py</code> (two underscores before and after). It tells Python “this folder is a package”, and can stay completely empty.</div></li>
+    <li><span class="dot">3</span><div><b>Add the modules</b>Write <code>marks.py</code> and <code>attendance.py</code> inside the folder.</div></li>
+    <li><span class="dot">4</span><div><b>Import from main.py</b>Use dot notation: <code>package.module</code>.</div></li>
+  </ol>
+  <div class="two">
+    <div class="codebox"><span class="cap">school/marks.py</span><pre><code class="language-python">def calculate_total(marks_list):
+    return sum(marks_list)
+
+def calculate_average(marks_list):
+    return sum(marks_list) / len(marks_list)</code></pre></div>
+    <div class="codebox"><span class="cap">school/attendance.py</span><pre><code class="language-python">def attendance_percentage(present, total_days):
+    return present / total_days * 100</code></pre></div>
+  </div>
+  <h3>Three ways to import from the package</h3>
+  <div class="codebox"><span class="cap">1 · import package.module</span><pre><code class="language-python">import school.marks
+
+scores = [85, 72, 91, 68, 79]
+
+print(school.marks.calculate_total(scores))
+print(school.marks.calculate_average(scores))</code></pre></div>
+  <pre class="out"><code>395
+79.0</code></pre>
+  <div class="codebox"><span class="cap">2 · from package import module</span><pre><code class="language-python">from school import marks, attendance
+
+scores = [85, 72, 91, 68, 79]
+
+print(marks.calculate_average(scores))
+print(attendance.attendance_percentage(45, 50))</code></pre></div>
+  <pre class="out"><code>79.0
+90.0</code></pre>
+  <div class="codebox"><span class="cap">3 · from package.module import function</span><pre><code class="language-python">from school.marks import calculate_average
+
+print(calculate_average([85, 72, 91, 68, 79]))</code></pre></div>
+  <pre class="out"><code>79.0</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Import line</th><th>How you call it</th></tr>
+    <tr><td><code>import school.marks</code></td><td><code>school.marks.calculate_average()</code></td></tr>
+    <tr><td><code>from school import marks</code></td><td><code>marks.calculate_average()</code></td></tr>
+    <tr><td><code>from school.marks import calculate_average</code></td><td><code>calculate_average()</code></td></tr>
+  </table></div>
+  <p><mark>A package is just one more level of organisation:</mark> like going into a folder, opening a file and picking a tool.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="name-main">
+  <h2><code>__name__</code> and <code>"__main__"</code></h2>
+  <h3>The problem: code that runs when you only wanted to import</h3>
+  <p>Suppose <code>marks.py</code> has a function plus two lines at the bottom to quickly test it:</p>
+  <div class="codebox"><span class="cap">marks.py</span><pre><code class="language-python">def calculate_average(marks_list):
+    return sum(marks_list) / len(marks_list)
+
+print("Testing marks module...")
+print(calculate_average([80, 90, 100]))</code></pre></div>
+  <p>Run <code>python marks.py</code> directly and the test lines are useful:</p>
+  <pre class="out"><code>Testing marks module...
+90.0</code></pre>
+  <p>Now <code>main.py</code> imports it:</p>
+  <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">import marks
+
+print(marks.calculate_average([85, 72, 91]))</code></pre></div>
+  <p>You might expect only <code>82.66666666666667</code>. But Python actually prints:</p>
+  <pre class="out"><code>Testing marks module...
+90.0
+82.66666666666667</code></pre>
+  <p>The first two lines came from <code>marks.py</code>. Why? When Python sees <code>import marks</code>, it loads <code>marks.py</code> and <b>executes all its top-level code</b>: the <code>def</code> (stores the function) <i>and</i> the two prints.</p>
+  <div class="flow"><span class="op">import marks</span><span>Python runs marks.py top to bottom</span><span>def stored ✓</span><span class="bad">test prints run too ✗</span></div>
+  <p>We want the function available when imported, but the test code to run <b>only when the file is executed directly</b>. That’s what <code>__name__</code> is for.</p>
+  <h3>What is <code>__name__</code>?</h3>
+  <p>Every Python file automatically gets a special variable called <code>__name__</code>. Python sets its value depending on <b>how the file is being used</b>:</p>
+  <div class="grid two">
+    <div class="card t2 tilt-a"><h4>Run directly</h4><p><code>python marks.py</code><br>→ <code>__name__ = "__main__"</code></p></div>
+    <div class="card t1 tilt-b"><h4>Imported</h4><p><code>import marks</code><br>→ <code>__name__ = "marks"</code> (the module name)</p></div>
+  </div>
+  <p>See it for yourself:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">show_name.py</span><pre><code class="language-python">print(__name__)</code></pre></div>
+    <div class="codebox"><span class="cap">other.py</span><pre><code class="language-python">import show_name</code></pre></div>
+  </div>
+  <div class="two">
+    <div><p><code>python show_name.py</code>:</p><pre class="out"><code>__main__</code></pre><p>because this file is the starting point.</p></div>
+    <div><p><code>python other.py</code>:</p><pre class="out"><code>show_name</code></pre><p>because <code>show_name.py</code> is now being imported, not run directly.</p></div>
+  </div>
+  <h3>What does <code>"__main__"</code> mean?</h3>
+  <p><code>"__main__"</code> is the special name Python gives to <mark>the file that starts the program</mark>. Run <code>marks.py</code> and it is the starting file, so its <code>__name__</code> is <code>"__main__"</code>. Run <code>main.py</code> (which imports marks) and <code>main.py</code> is the starting file, while <code>marks.py</code> is just an imported file with <code>__name__ = "marks"</code>.</p>
+  <h3>Using it with <code>if</code></h3>
+  <pre><code class="language-python">if __name__ == "__main__":
+    print("This file is being run directly")</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 260" role="img" aria-label="Decision: is __name__ equal to __main__? Yes means the file was run directly, so run the code. No means it was imported, so skip the code">
+      <g class="rough">
+        <path class="box f-yellow" d="M260 20 L 420 75 L 260 130 L 100 75 Z"/>
+        <rect class="box f-green" x="20" y="180" width="200" height="60" rx="12"/>
+        <rect class="box f-grey" x="300" y="180" width="200" height="60" rx="12"/>
+        <path class="lb" d="M160 104 C 140 130, 125 150, 120 174" marker-end="url(#ahb)"/>
+        <path class="lr" d="M360 104 C 380 130, 395 150, 400 174" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="260" y="70" text-anchor="middle">__name__ ==</text>
+      <text class="tm" x="260" y="90" text-anchor="middle">"__main__" ?</text>
+      <text class="tb" x="110" y="146" text-anchor="middle">YES</text>
+      <text class="tr" x="410" y="146" text-anchor="middle">NO</text>
+      <text class="th" x="120" y="212" text-anchor="middle">run code</text>
+      <text class="ts" x="120" y="232" text-anchor="middle">file run directly</text>
+      <text class="th" x="400" y="212" text-anchor="middle">skip code</text>
+      <text class="ts" x="400" y="232" text-anchor="middle">file was imported</text>
+    </svg></div>
+    <figcaption>The guard runs its block only when this file is the program’s starting point.</figcaption>
+  </figure>
+  <h3>Fixing our original problem</h3>
+  <div class="codebox"><span class="cap">marks.py (fixed)</span><pre><code class="language-python">def calculate_average(marks_list):
+    return sum(marks_list) / len(marks_list)
+
+if __name__ == "__main__":
+    print("Testing marks module...")
+    print(calculate_average([80, 90, 100]))</code></pre></div>
+  <p>The file now has two parts: the <b>function</b>, usable by other files, and the <b>guarded test code</b>, which only runs directly.</p>
+  <div class="two">
+    <div>
+      <p><b>Run <code>python marks.py</code></b></p>
+      <ol class="path">
+        <li><span class="dot">1</span><div>Python sets <code>__name__ = "__main__"</code></div></li>
+        <li><span class="dot">2</span><div><code>if "__main__" == "__main__":</code> is <b>True</b></div></li>
+      </ol>
+      <pre class="out"><code>Testing marks module...
+90.0</code></pre>
+    </div>
+    <div>
+      <p><b>Run <code>python main.py</code></b> (which imports marks)</p>
+      <ol class="path">
+        <li><span class="dot">1</span><div>Inside marks.py, <code>__name__ = "marks"</code></div></li>
+        <li><span class="dot">2</span><div><code>if "marks" == "__main__":</code> is <b>False</b>, so the tests are skipped</div></li>
+      </ol>
+      <pre class="out"><code>82.66666666666667</code></pre>
+    </div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Nearly every runnable Python script you hand to a customer ends with <code>if __name__ == "__main__": main()</code>. It lets the same file work as a command-line tool <i>and</i> as an importable library for tests or other services.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Module</dt><dd>A single Python file (<code>.py</code>) whose functions and variables other files can import and use.</dd></div>
+    <div><dt>import</dt><dd>The statement that loads a module and makes its contents reachable, e.g. <code>import math</code>, then <code>math.sqrt(16)</code>.</dd></div>
+    <div><dt>Dot notation</dt><dd>Reaching a member inside a module or package with <code>name.member</code>, e.g. <code>marks.PASS_MARK</code> or <code>school.marks.calculate_total()</code>.</dd></div>
+    <div><dt>from ... import</dt><dd>An import form that adds only the named members to your file, e.g. <code>from math import sqrt</code>, so you call <code>sqrt()</code> without a prefix.</dd></div>
+    <div><dt>Alias (as)</dt><dd>A nickname given to a module or member at import time, e.g. <code>import math as m</code>; afterwards only the alias works.</dd></div>
+    <div><dt>from module import *</dt><dd>Imports all public names of a module at once; discouraged because it hides where names come from and can overwrite existing names.</dd></div>
+    <div><dt>Package</dt><dd>A folder of related modules containing an <code>__init__.py</code> file, e.g. <code>school/</code>.</dd></div>
+    <div><dt>__init__.py</dt><dd>A (usually empty) file inside a folder that marks the folder as a Python package.</dd></div>
+    <div><dt>PyPI</dt><dd>The Python Package Index: the public online collection of packages that anyone can install.</dd></div>
+    <div><dt>pip</dt><dd>The Package Installer for Python, run in the terminal, e.g. <code>pip install emoji</code>, <code>pip list</code>, <code>pip uninstall emoji</code>.</dd></div>
+    <div><dt>ModuleNotFoundError</dt><dd>The error raised when you import a module or package Python can’t find, often because it isn’t installed yet.</dd></div>
+    <div><dt>__name__</dt><dd>A special variable in every file: <code>"__main__"</code> when the file is run directly, or the module’s name when it is imported.</dd></div>
+    <div><dt>if __name__ == "__main__":</dt><dd>A guard that runs its block only when the file is the program’s starting point, not when it is imported.</dd></div>
+  </dl>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>You have <code>marks.py</code> next to <code>main.py</code>. Which line imports it?</p>
+      <ol><li><code>import marks.py</code></li><li><code>import marks</code></li><li><code>include marks</code></li><li><code>from marks.py import *</code></li></ol>
+      <p class="why">You write the module name without the <code>.py</code> extension.</p></div>
+    <div class="q" data-answer="4"><p>After <code>from math import sqrt</code>, which line fails?</p>
+      <ol><li><code>print(sqrt(9))</code></li><li><code>x = sqrt(16) + 1</code></li><li><code>print(sqrt(2) &gt; 1)</code></li><li><code>print(math.pi)</code></li></ol>
+      <p class="why">Only <code>sqrt</code> was added to your file; the name <code>math</code> itself was not.</p></div>
+    <div class="q" data-answer="1"><p>After <code>import math as m</code>, what does <code>math.sqrt(16)</code> do?</p>
+      <ol><li>Raises <code>NameError</code></li><li>Returns 4.0</li><li>Returns 4</li><li>Imports math again</li></ol>
+      <p class="why">With an alias, only <code>m</code> is defined in your file. Use <code>m.sqrt(16)</code>.</p></div>
+    <div class="q" data-answer="3"><p>Which file name can be imported as a module?</p>
+      <ol><li><code>student-utils.py</code></li><li><code>2marks.py</code></li><li><code>student_utils.py</code></li><li><code>my marks.py</code></li></ol>
+      <p class="why">Module names follow variable naming rules: no hyphens, no spaces, can’t start with a digit.</p></div>
+    <div class="q" data-answer="2"><p>What turns an ordinary folder of modules into a package?</p>
+      <ol><li>Naming it in capitals</li><li>An <code>__init__.py</code> file inside it</li><li>Running <code>pip install</code> on it</li><li>A <code>main.py</code> inside it</li></ol>
+      <p class="why"><code>__init__.py</code> (it can be empty) marks the folder as a package.</p></div>
+    <div class="q" data-answer="4"><p>Where do you type <code>pip install emoji</code>?</p>
+      <ol><li>At the top of your .py file</li><li>Inside an <code>if __name__ == "__main__":</code> block</li><li>In the Python <code>&gt;&gt;&gt;</code> shell</li><li>In the terminal</li></ol>
+      <p class="why">pip is a command-line tool. Your .py file only contains <code>import emoji</code>.</p></div>
+    <div class="q" data-answer="3"><p><code>main.py</code> runs <code>import marks</code>. Inside <code>marks.py</code>, what is <code>__name__</code>?</p>
+      <ol><li><code>"__main__"</code></li><li><code>"main"</code></li><li><code>"marks"</code></li><li><code>None</code></li></ol>
+      <p class="why">An imported file’s <code>__name__</code> is its module name. Only the starting file gets <code>"__main__"</code>.</p></div>
+    <div class="q" data-answer="1"><p>Why did test prints at the bottom of <code>marks.py</code> appear when <code>main.py</code> imported it?</p>
+      <ol><li>Importing runs the module’s top-level code</li><li>print() always runs twice</li><li>main.py copied the prints</li><li>pip ran the file</li></ol>
+      <p class="why">Import executes the module top to bottom. Wrap test code in <code>if __name__ == "__main__":</code>.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A <b>module</b> is one <code>.py</code> file and a <b>package</b> is a folder of modules with <b>__init__.py</b>; you bring their code in with <b>import</b> (use <code>module.name</code>) or <b>from … import</b> (use the name directly), rename with <b>as</b>, install outside packages with <b>pip</b>, and guard test code with <b>if __name__ == "__main__"</b>.</p>
+  <p>Next up: <b>Working with Data</b>, where your programs start reading and writing real files.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

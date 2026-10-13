@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Environment Setup · Linux | AIFDE Notes</title>
+<meta name="description" content="Get a real Linux machine in the cloud: create an AWS account, launch an Ubuntu EC2 instance, connect over SSH with a key pair, and run your first commands.">
+<meta name="keywords" content="AWS, EC2, instance, AMI, key pair, SSH, security group, cloud vs local">
+<meta name="date" content="2026-09-08">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/environment-setup">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Environment Setup</h1>
+  <p class="byline">Launch your own Ubuntu server on AWS, connect to it securely over SSH from your laptop, and run your first Linux commands on a real cloud machine.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="cloud">
+  <h2>Linux in the cloud: what is AWS?</h2>
+  <p>You can run Linux on your own computer inside a virtual machine (for example with <b>VirtualBox</b>). In this note we do it the way companies do: on <b>AWS</b>, a cloud platform. Instead of running Linux on your laptop, you run it on a <b>remote machine in the cloud</b> that you can reach from anywhere over the internet.</p>
+  <div class="story"><b class="lbl">Booking a cab instead of buying a car</b>You don’t need to own a car to get across the city; you book an Ola or Uber, use it for as long as you need, and pay only for that. <mark>AWS lets you “book” a computer on the internet in the same way</mark>: pick the size, use it, and switch it off when you’re done.</div>
+  <p><b>AWS (Amazon Web Services)</b> is a cloud computing platform that lets you create and use virtual computers over the internet. These virtual computers are called <mark>instances</mark>. An instance behaves like a real computer with its own CPU, RAM, storage and operating system, but it runs on Amazon’s infrastructure instead of your machine. In simple words: <b>a computer that lives on the internet</b>.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why-aws">
+  <h2>Why use AWS, and what is EC2?</h2>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>No powerful laptop needed</h4><p>The heavy lifting happens on Amazon’s hardware.</p></div>
+    <div class="card t2 tilt-b"><h4>Access from anywhere</h4><p>Reach your Linux machine from any computer with internet.</p></div>
+    <div class="card t7 tilt-a"><h4>Safe to experiment</h4><p>Break something? Stop it, restart it, or create a fresh instance in minutes.</p></div>
+    <div class="card t5 tilt-b"><h4>What companies use</h4><p>Most real-world production systems run in the cloud. Essential for cloud, DevOps, IT and FDE roles.</p></div>
+  </div>
+  <p>The AWS service that gives you virtual machines is <mark>EC2 (Elastic Compute Cloud)</mark>. With EC2 you can:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Launch a Linux server</b>Such as Ubuntu, in a few clicks.</div></li>
+    <li><span class="dot">2</span><div><b>Connect to it using SSH</b>A secure, encrypted remote terminal.</div></li>
+    <li><span class="dot">3</span><div><b>Run Linux commands</b>Exactly as you would on a normal computer.</div></li>
+  </ol>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="local-vs-cloud">
+  <h2>Local installation vs cloud installation</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Left: a laptop running VirtualBox with a Linux VM inside, using the laptop's own CPU and RAM. Right: the laptop connects over the internet to an EC2 instance running Linux in an AWS data centre.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="300" height="190" rx="16"/>
+        <rect class="box f-green" x="60" y="80" width="220" height="70" rx="12"/>
+        <rect class="box f-blue" x="355" y="80" width="105" height="70" rx="12"/>
+        <rect class="box f-orange" x="540" y="30" width="160" height="190" rx="16"/>
+        <rect class="box f-green" x="560" y="80" width="120" height="70" rx="12"/>
+        <path class="lb dash" d="M465 118 L 552 118" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tr" x="170" y="62" text-anchor="middle">your laptop</text>
+      <text class="t" x="170" y="112" text-anchor="middle">VirtualBox VM</text>
+      <text class="ts" x="170" y="134" text-anchor="middle">Linux inside</text>
+      <text class="ts" x="170" y="184" text-anchor="middle">uses your CPU, RAM, disk</text>
+      <text class="ts" x="170" y="204" text-anchor="middle">works offline</text>
+      <text class="t" x="407" y="112" text-anchor="middle">laptop</text>
+      <text class="ts" x="407" y="134" text-anchor="middle">SSH client</text>
+      <text class="ts" x="503" y="106" text-anchor="middle">internet</text>
+      <text class="tr" x="620" y="62" text-anchor="middle">AWS cloud</text>
+      <text class="t" x="620" y="112" text-anchor="middle">EC2</text>
+      <text class="ts" x="620" y="134" text-anchor="middle">Linux server</text>
+      <text class="ts" x="620" y="184" text-anchor="middle">Amazon’s</text>
+      <text class="ts" x="620" y="204" text-anchor="middle">hardware</text>
+    </svg></div>
+    <figcaption>Local: Linux borrows your laptop’s hardware. Cloud: your laptop is just the window into a remote server.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Feature</th><th>Local installation (VirtualBox)</th><th>Cloud installation (AWS EC2)</th></tr>
+    <tr><td>Where it runs</td><td>On your personal computer</td><td>On remote cloud servers</td></tr>
+    <tr><td>Hardware usage</td><td>Your system’s RAM, CPU and storage</td><td>AWS cloud hardware</td></tr>
+    <tr><td>Internet requirement</td><td>Not required after setup</td><td>Required to access it</td></tr>
+    <tr><td>Accessibility</td><td>Only from your computer</td><td>From anywhere</td></tr>
+    <tr><td>Setup requirement</td><td>Virtualisation software like VirtualBox</td><td>An AWS account</td></tr>
+    <tr><td>Performance depends on</td><td>Your system’s performance</td><td>The instance type you select</td></tr>
+    <tr><td>Real-world usage</td><td>Mainly learning and practice</td><td>Real production environments</td></tr>
+    <tr><td>Scalability</td><td>Limited by your hardware</td><td>Scale easily by changing the instance type</td></tr>
+    <tr><td>Risk to main system</td><td>Safe, but on the same physical machine</td><td>Completely separate from your system</td></tr>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="account">
+  <h2>Create your AWS account</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Visit the AWS website</b>Open your browser and go to <code>https://aws.amazon.com/</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Create an AWS account</b>Click <b>Create an AWS Account</b> to start.</div></li>
+    <li><span class="dot">3</span><div><b>Enter your email address</b>Use an email you can access; AWS sends important account information there. Verify the email with the code AWS sends, then create your password.</div></li>
+    <li><span class="dot">4</span><div><b>Fill in your personal information</b>Name, company (if any) and contact details.</div></li>
+    <li><span class="dot">5</span><div><b>Payment information (no worries!)</b>AWS needs a card to verify your identity and prevent misuse of the free tier. You are <b>not charged</b> unless you go beyond the free-tier limits.</div></li>
+    <li><span class="dot">6</span><div><b>Identity verification</b>Choose a phone call or text message, enter the verification code, and answer any identity questions.</div></li>
+    <li><span class="dot">7</span><div><b>Choose a support plan</b>Select the free <b>Basic support</b> plan. No charge here either.</div></li>
+    <li><span class="dot">8</span><div><b>Welcome to AWS</b>Your account is ready, and AWS offers to guide you through your first resources.</div></li>
+    <li><span class="dot">9</span><div><b>Explore the AWS Management Console</b>The console dashboard is the control centre for all your AWS resources. It looks overwhelming at first; take your time. <span class="tag">→ next: launch a server</span></div></li>
+  </ol>
+  <div class="sticky warn l"><strong>Protect your wallet</strong> Set up a <b>billing alert / budget</b> in the console on day one, and <b>stop</b> instances when you’re not using them. Free-tier limits are real, and a forgotten machine keeps billing.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="launch">
+  <h2>Launch an EC2 instance: name, image and size</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Sign in to the AWS Management Console</b>Use your AWS account credentials.</div></li>
+    <li><span class="dot">2</span><div><b>Open the EC2 console</b>Type <b>EC2</b> in the services search bar and click it. This is where you manage your instances.</div></li>
+    <li><span class="dot">3</span><div><b>Click “Launch instance”</b>This opens a single page where you configure the new machine step by step.</div></li>
+    <li><span class="dot">4</span><div><b>Give it a name</b>A meaningful name makes it easy to find later. Here: <code>aws_instance</code>.</div></li>
+    <li><span class="dot">5</span><div><b>Choose an Amazon Machine Image (AMI)</b>An AMI is a pre-configured template containing the operating system and software for your instance, from AWS or the AWS Marketplace. Choose <b>Ubuntu</b>.</div></li>
+    <li><span class="dot">6</span><div><b>Choose an instance type</b>This is the “power” of the computer: CPU, memory and network. Pick one marked <b>Free tier eligible</b>, such as <code>t2.micro</code> (or <code>t3.micro</code> in regions where that is the free-tier type).</div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="An EC2 instance is built from an AMI (the operating system template, Ubuntu), an instance type (the size, t2.micro), a key pair (the login key), storage (EBS disk) and a security group (the firewall)">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="20" width="130" height="64" rx="12"/>
+        <rect class="box f-yellow" x="150" y="20" width="130" height="64" rx="12"/>
+        <rect class="box f-pink" x="290" y="20" width="130" height="64" rx="12"/>
+        <rect class="box f-grey" x="430" y="20" width="130" height="64" rx="12"/>
+        <rect class="box f-orange" x="570" y="20" width="140" height="64" rx="12"/>
+        <rect class="box f-green" x="230" y="140" width="260" height="64" rx="14"/>
+        <path class="ln" d="M75 88 C 120 120, 200 140, 226 160" marker-end="url(#ah)"/>
+        <path class="ln" d="M215 88 L 290 134" marker-end="url(#ah)"/>
+        <path class="ln" d="M355 88 L 360 134" marker-end="url(#ah)"/>
+        <path class="ln" d="M495 88 L 430 134" marker-end="url(#ah)"/>
+        <path class="ln" d="M640 88 C 600 120, 520 140, 494 160" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="75" y="50" text-anchor="middle">AMI</text><text class="ts" x="75" y="70" text-anchor="middle">Ubuntu</text>
+      <text class="t" x="215" y="50" text-anchor="middle">instance type</text><text class="ts" x="215" y="70" text-anchor="middle">t2.micro</text>
+      <text class="t" x="355" y="50" text-anchor="middle">key pair</text><text class="ts" x="355" y="70" text-anchor="middle">aws_key.pem</text>
+      <text class="t" x="495" y="50" text-anchor="middle">storage</text><text class="ts" x="495" y="70" text-anchor="middle">EBS disk</text>
+      <text class="t" x="640" y="50" text-anchor="middle">security group</text><text class="ts" x="640" y="70" text-anchor="middle">firewall</text>
+      <text class="th" x="360" y="180" text-anchor="middle">your instance</text>
+    </svg></div>
+    <figcaption>Five choices on one launch page make one running Linux server.</figcaption>
+  </figure>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="key-pair">
+  <h2>Create a key pair (your login key)</h2>
+  <p>To connect securely you need a <mark>key pair</mark> with two halves: a <b>public key</b> that AWS places on the instance, and a <b>private key</b> that you download and keep. When you log in, the server checks that your private key matches its public key. No password travels over the internet.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The private key aws_key.pem stays on your laptop. The public key is stored on the EC2 instance. SSH proves they match, and the door opens.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="40" width="250" height="130" rx="16"/>
+        <rect class="box f-green" x="450" y="40" width="250" height="130" rx="16"/>
+        <rect class="box f-yellow" x="50" y="100" width="190" height="48" rx="10"/>
+        <rect class="box f-pink" x="480" y="100" width="190" height="48" rx="10"/>
+        <path class="lr" d="M248 124 L 474 124" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="145" y="76" text-anchor="middle">your laptop</text>
+      <text class="tr" x="575" y="76" text-anchor="middle">EC2 instance</text>
+      <text class="tm" x="145" y="129" text-anchor="middle">aws_key.pem</text>
+      <text class="t" x="575" y="130" text-anchor="middle">public key</text>
+      <text class="t" x="360" y="110" text-anchor="middle">SSH: keys match?</text>
+      <text class="ts" x="360" y="150" text-anchor="middle">encrypted connection</text>
+      <text class="ts" x="145" y="196" text-anchor="middle">private key: keep secret</text>
+      <text class="ts" x="575" y="196" text-anchor="middle">stored by AWS on the server</text>
+    </svg></div>
+    <figcaption>Like a locker: the server has the lock, only you hold the key.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Choose or create</b>Select an existing key pair, or click <b>Create new key pair</b>.</div></li>
+    <li><span class="dot">2</span><div><b>Name it and pick the format</b>Give it a unique name, set the type to <b>RSA</b> and the private key file format to <b>.pem</b>.</div></li>
+    <li><span class="dot">3</span><div><b>Create key pair</b>The <code>.pem</code> file downloads immediately, usually into your <b>Downloads</b> folder.</div></li>
+  </ol>
+  <div class="sticky warn"><strong>You can download it only once</strong> AWS does not keep a copy of your private key. Lose the <code>.pem</code> file and you can’t log in with that key. Never share it or commit it to Git.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="configure">
+  <h2>Network, storage, firewall, then launch</h2>
+  <p>Next, adjust the remaining settings. All of them can be changed later, and the defaults are fine for learning.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Instance details</h4><p>How many instances to launch, the network and <b>VPC</b> (Virtual Private Cloud), an optional IAM role, and detailed monitoring if you want performance graphs.</p></div>
+    <div class="card t6 tilt-b"><h4>Storage</h4><p>AWS uses <b>EBS (Elastic Block Store)</b> for permanent disks. Choose size, performance type and whether to encrypt it.</p></div>
+    <div class="card t3 tilt-a"><h4>Security group</h4><p>Acts like a <b>firewall</b>: rules that decide which network traffic may reach your instance. SSH needs port <b>22</b> open.</p></div>
+  </div>
+  <p>On the right of the launch page, the <b>Summary</b> panel shows all your choices in one place so you can check them.</p>
+  <h3>Review and launch</h3>
+  <p>Double-check the instance type, storage, security group and any extra settings, then click <b>Launch instance</b>. A success message appears with your new <b>instance ID</b>, for example <code>i-03e9b83d4f0e3d0a9</code>. Click it to open the <b>Instances</b> page, which shows each instance’s state, type, public IP address and more. From there you can <b>start, stop, terminate</b> or modify instances.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On customer projects, the security group is often the first thing to check when “the server is unreachable”. Lock SSH (port 22) down to <b>your IP</b> rather than <code>0.0.0.0/0</code> (anyone), and open only the ports your app really needs, such as 443 for HTTPS.</div>
+  <div class="sticky info l"><strong>Stop vs terminate</strong> <b>Stop</b> switches the machine off; its disk is kept and you can start it again. <b>Terminate</b> deletes the instance for good.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="connect">
+  <h2>Connect to your instance with SSH</h2>
+  <p><mark>SSH (Secure Shell)</mark> lets you securely control a remote server from your own computer, just as if you were sitting at a local Linux machine.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Open the Instances page</b>AWS Console → <b>EC2 → Instances</b>. Find your instance by its ID and click it. You’ll see the instance state (<b>Running</b>), public IPv4 address, public DNS name, instance type and security settings.</div></li>
+    <li><span class="dot">2</span><div><b>Click “Connect”</b>At the top right. The <b>Connect to instance</b> window offers EC2 Instance Connect, Session Manager, <b>SSH client</b> and EC2 Serial Console. Choose the <b>SSH client</b> tab.</div></li>
+    <li><span class="dot">3</span><div><b>Copy the SSH command</b>AWS shows a ready-made example command. Copy it.</div></li>
+    <li><span class="dot">4</span><div><b>Go to the folder with your .pem file</b>Open Command Prompt (Windows) or Terminal (macOS/Linux) and <code>cd</code> to where the key is, e.g. <code>C:\Users\Deepak\Downloads</code>.</div></li>
+    <li><span class="dot">5</span><div><b>Paste the command and press Enter</b>On the first connection, type <code>yes</code> to trust the server.</div></li>
+    <li><span class="dot">6</span><div><b>You’re in</b>The prompt changes to the server’s prompt.</div></li>
+  </ol>
+  <h3>The SSH command, piece by piece</h3>
+  <div class="anatomy"><span class="a1">ssh</span> <span class="a2">-i "aws_key.pem"</span> <span class="a3">ubuntu</span>@<span class="a4">13.203.160.58</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>ssh</b>: the Secure Shell command.</p></div>
+    <div><span class="sw a2"></span><p><b>-i "aws_key.pem"</b>: the identity file, your private key.</p></div>
+    <div><span class="sw a3"></span><p><b>ubuntu</b>: the default username on Ubuntu instances.</p></div>
+    <div><span class="sw a4"></span><p><b>13.203.160.58</b>: your instance’s address. AWS’s example uses the public DNS name (<code>ec2-13-203-160-58.ap-south-1.compute.amazonaws.com</code>); the public IP works the same.</p></div>
+  </div>
+  <div class="cmd"><p class="what">On your laptop (Command Prompt)</p>
+  <pre><code class="language-bash">cd Downloads
+ssh -i "aws_key.pem" ubuntu@ec2-13-203-160-58.ap-south-1.compute.amazonaws.com</code></pre></div>
+  <pre class="out"><code>The authenticity of host 'ec2-13-203-160-58.ap-south-1.compute.amazonaws.com' can't be established.
+ED25519 key fingerprint is SHA256:...
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</code></pre>
+  <p>Once connected you’ll see a welcome banner and the server’s prompt:</p>
+  <pre class="out"><code>Welcome to Ubuntu 22.04 LTS
+...
+ubuntu@ip-172-31-XX-XXX:~$</code></pre>
+  <p>Your laptop is now securely connected to the EC2 instance. Every command you type from here runs <b>on the cloud server</b>.</p>
+  <div class="sticky warn l"><strong>“Permissions are too open”?</strong> SSH refuses a private key that other users can read. On macOS/Linux run <code>chmod 400 aws_key.pem</code> first. On Windows, make sure only your user account has access to the file.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="first-commands">
+  <h2>Your first commands on the server</h2>
+  <p>Now let’s talk to the machine. These basic commands help you look around and understand your environment.</p>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td><code>clear</code></td><td>Clears the screen, leaving just the prompt.</td></tr>
+    <tr><td><code>ls</code></td><td>Lists files and folders in the current directory.</td></tr>
+    <tr><td><code>whoami</code></td><td>Shows the username you are logged in as.</td></tr>
+    <tr><td><code>pwd</code></td><td>Prints your present working directory (where you are).</td></tr>
+    <tr><td><code>history</code></td><td>Lists the commands you ran before.</td></tr>
+  </table></div>
+  <h3><code>clear</code> · a clean workspace</h3>
+  <pre><code class="language-bash">clear</code></pre>
+  <pre class="out"><code>ubuntu@ip-172-31-XX-XXX:~$</code></pre>
+  <h3><code>ls</code> · list files and directories</h3>
+  <pre><code class="language-bash">ls</code></pre>
+  <pre class="out"><code>ubuntu@ip-172-31-XX-XXX:~$</code></pre>
+  <p>Nothing printed? On a brand-new instance your home directory is simply <b>empty</b>.</p>
+  <h3><code>whoami</code> · who am I logged in as?</h3>
+  <pre><code class="language-bash">whoami</code></pre>
+  <pre class="out"><code>ubuntu</code></pre>
+  <p>This confirms you are the default Ubuntu user.</p>
+  <h3><code>pwd</code> · where am I?</h3>
+  <pre><code class="language-bash">pwd</code></pre>
+  <pre class="out"><code>/home/ubuntu</code></pre>
+  <p>You are inside the <code>ubuntu</code> user’s <b>home directory</b>.</p>
+  <h3><code>history</code> · what did I run?</h3>
+  <pre><code class="language-bash">history</code></pre>
+  <pre class="out"><code>    1  clear
+    2  cal
+    3  ls
+    4  whoami
+    5  pwd
+    6  history</code></pre>
+  <p>Track and reuse earlier commands. (<code>cal</code> prints a small calendar; if it’s missing, install it with <code>sudo apt install ncal</code>.)</p>
+  <div class="sticky tip"><strong>Shortcut</strong> Press <kbd>↑</kbd> to bring back the previous command, or run <code>!3</code> to re-run command number 3 from the history list.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="big-picture">
+  <h2>What this means: the full picture</h2>
+  <p>Your local computer is now a <b>client</b>, and the EC2 instance is a <b>remote Linux server</b>. The architecture from the previous note now stretches across the internet:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Your local PC connects through the internet to an AWS EC2 instance. Inside it, the Linux OS has the shell, which talks to the kernel, which controls the cloud hardware.">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="80" width="120" height="64" rx="12"/>
+        <rect class="box f-grey" x="170" y="80" width="110" height="64" rx="32"/>
+        <rect class="box f-orange" x="320" y="14" width="390" height="200" rx="18"/>
+        <rect class="box f-green" x="345" y="80" width="100" height="64" rx="12"/>
+        <rect class="box f-purple" x="470" y="80" width="100" height="64" rx="12"/>
+        <rect class="box f-grey" x="595" y="80" width="100" height="64" rx="12"/>
+        <path class="lb" d="M134 112 L 164 112" marker-end="url(#ahb)"/>
+        <path class="lb" d="M284 112 L 339 112" marker-end="url(#ahb)"/>
+        <path class="ln" d="M449 112 L 464 112" marker-end="url(#ah)"/>
+        <path class="ln" d="M574 112 L 589 112" marker-end="url(#ah)"/>
+      </g>
+      <text class="t" x="70" y="108" text-anchor="middle">local PC</text><text class="ts" x="70" y="128" text-anchor="middle">client</text>
+      <text class="t" x="225" y="118" text-anchor="middle">internet</text>
+      <text class="tr" x="515" y="46" text-anchor="middle">AWS EC2 instance · Linux OS</text>
+      <text class="t" x="395" y="118" text-anchor="middle">shell</text>
+      <text class="t" x="520" y="118" text-anchor="middle">kernel</text>
+      <text class="t" x="645" y="108" text-anchor="middle">hardware</text><text class="ts" x="645" y="128" text-anchor="middle">(cloud)</text>
+      <text class="ts" x="515" y="186" text-anchor="middle">same layers as before, just far away</text>
+    </svg></div>
+    <figcaption>Local PC → Internet → EC2 instance → Linux OS → Shell → Kernel → Hardware (cloud).</figcaption>
+  </figure>
+  <p><mark>You are now working inside a real Linux environment hosted in the cloud</mark>, exactly how servers are run in industry.</p>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>AWS</dt><dd>Amazon Web Services, a cloud platform that rents out computing resources such as virtual machines, storage and networking over the internet.</dd></div>
+    <div><dt>EC2</dt><dd>Elastic Compute Cloud, the AWS service for creating and running virtual machines (instances).</dd></div>
+    <div><dt>Instance</dt><dd>A virtual computer in the cloud with its own CPU, RAM, storage and operating system.</dd></div>
+    <div><dt>AMI</dt><dd>Amazon Machine Image, a pre-configured template (operating system plus software) used to create an instance, e.g. Ubuntu.</dd></div>
+    <div><dt>Instance type</dt><dd>The size of an instance (CPU, memory, network), such as <code>t2.micro</code>; it decides performance and cost.</dd></div>
+    <div><dt>Key pair</dt><dd>A public key stored on the instance and a private key (<code>.pem</code>) kept by you; together they let you log in securely without a password.</dd></div>
+    <div><dt>SSH</dt><dd>Secure Shell, an encrypted protocol for logging in to and controlling a remote machine from a terminal.</dd></div>
+    <div><dt>Security group</dt><dd>A virtual firewall in AWS that controls which network traffic (ports and sources) can reach an instance.</dd></div>
+    <div><dt>EBS</dt><dd>Elastic Block Store, the persistent disk storage attached to EC2 instances.</dd></div>
+    <div><dt>VPC</dt><dd>Virtual Private Cloud, your own isolated network inside AWS where instances run.</dd></div>
+    <div><dt>Client and server</dt><dd>The client (your laptop) sends requests; the server (the EC2 instance) receives them and does the work.</dd></div>
+    <div><dt>Home directory</dt><dd>A user’s personal folder, such as <code>/home/ubuntu</code>, where you land after logging in.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>What is an EC2 instance?</p>
+      <ol><li>A file you download from AWS</li><li>A virtual computer running in the AWS cloud</li><li>A type of SSH key</li><li>A billing plan</li></ol>
+      <p class="why">EC2 instances are virtual machines with their own CPU, RAM, storage and OS, hosted on Amazon’s hardware.</p></div>
+    <div class="q" data-answer="3"><p>Which choice decides the operating system of your new instance?</p>
+      <ol><li>Instance type</li><li>Security group</li><li>AMI</li><li>Key pair</li></ol>
+      <p class="why">The AMI is the template that contains the OS (e.g. Ubuntu) and pre-installed software.</p></div>
+    <div class="q" data-answer="1"><p>In <code>ssh -i "aws_key.pem" ubuntu@ec2-…amazonaws.com</code>, what is <code>ubuntu</code>?</p>
+      <ol><li>The username to log in as</li><li>The key file name</li><li>The AWS region</li><li>The instance ID</li></ol>
+      <p class="why">The part before <code>@</code> is the user; <code>ubuntu</code> is the default user on Ubuntu AMIs.</p></div>
+    <div class="q" data-answer="4"><p>You lost your <code>.pem</code> file. What is true?</p>
+      <ol><li>Download it again from the EC2 console</li><li>AWS emails it to you</li><li>Any other .pem file will work</li><li>AWS doesn’t keep a copy, so that key can’t be recovered</li></ol>
+      <p class="why">The private key is downloaded once. Keep it safe, and never share or commit it.</p></div>
+    <div class="q" data-answer="2"><p>Your SSH connection times out. Which AWS setting should you check first?</p>
+      <ol><li>The AMI</li><li>The security group rules for port 22</li><li>The instance name</li><li>The support plan</li></ol>
+      <p class="why">The security group is the instance’s firewall. If port 22 isn’t open to your IP, SSH can’t reach the server.</p></div>
+    <div class="q" data-answer="3"><p>Right after logging in, <code>pwd</code> prints <code>/home/ubuntu</code>. What does that tell you?</p>
+      <ol><li>You are the root user</li><li>The disk is empty</li><li>You are in the ubuntu user’s home directory</li><li>SSH failed</li></ol>
+      <p class="why"><code>pwd</code> shows your current directory; after login you start in your home directory.</p></div>
+    <div class="q" data-answer="1"><p>Which is an advantage of the cloud setup over a local VirtualBox VM?</p>
+      <ol><li>You can reach it from anywhere and resize it by changing the instance type</li><li>It works with no internet at all</li><li>It uses your laptop’s RAM</li><li>It never costs anything, whatever you run</li></ol>
+      <p class="why">Cloud instances are accessible from anywhere and scale easily, but they need internet and can incur charges beyond the free tier.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">On <b>AWS EC2</b> you pick an <b>AMI</b>, an <b>instance type</b>, a <b>key pair</b> and a <b>security group</b>, launch the server, then use <b>SSH</b> with your private key to control a real cloud Linux machine from your own laptop.</p>
+  <p>Next up: <b>Linux Terminal and Shell</b>, where you learn what is really happening behind that <code>ubuntu@ip-…:~$</code> prompt.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

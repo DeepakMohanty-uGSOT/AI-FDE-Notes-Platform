@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Subnetting &amp; CIDR · Networking Basics | AIFDE Notes</title>
+<meta name="description" content="Split one network into many: subnet masks in binary, CIDR prefixes, borrowing bits, the block-size shortcut, network/broadcast/host-range calculations, design by requirement, VLSM, /31 and /32, IPv6 prefixes and troubleshooting.">
+<meta name="keywords" content="subnet mask, CIDR, borrowing bits, block size, network address, broadcast address, VLSM, troubleshooting">
+<meta name="date" content="2026-09-19">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="networking/subnetting-cidr">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Subnetting &amp; CIDR</h1>
+  <p class="byline">Carve one network into right-sized pieces, and for any address like 192.168.10.75/27 work out the network, broadcast and usable hosts in under a minute.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why subnetting?</h2>
+  <div class="story"><b class="lbl">One big plot, four flats</b>A builder gets one large plot. Selling it whole to one family wastes space, and four families can’t share one kitchen. So the builder divides it into separate flats, each with its own door number and its own entrance. <mark>Subnetting divides one network into smaller, separate networks, each sized for who lives there.</mark></div>
+  <h3>The problem left by classful addressing</h3>
+  <p>The previous note ended with a gap: classes came in only three sizes, Class A (huge), Class B (large) and Class C (254 usable). Anything in between either wasted thousands of addresses or didn’t fit.</p>
+  <p>Take a small company with <b>100 employees</b>, one device each. The smallest classful option is a Class C:</p>
+  <div class="flow"><span>2⁸ = 256 total</span><span>256 − 2 = 254 usable</span><span class="bad">254 − 100 = 154 unused</span></div>
+  <p>Now make it realistic: the company has <b>4 departments</b> (Sales, Engineering, HR, Finance) and, for security and organisation, each should get its <b>own</b> network. One Class C is one network, with no built-in way to split it. That is exactly the problem <b>subnetting</b> solves.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="One 192.168.1.0/24 network is divided into four subnets for Sales, Engineering, HR and Finance. Each subnet has a network address, a range of host addresses and a broadcast address.">
+      <g class="rough">
+        <rect class="box f-blue" x="15" y="65" width="175" height="120" rx="14"/>
+        <path class="lr" d="M195 125 L 265 125" marker-end="url(#ahr)"/>
+        <rect class="box f-grey" x="275" y="15" width="80" height="44" rx="6"/><rect class="box f-green" x="355" y="15" width="260" height="44" rx="6"/><rect class="box f-orange" x="615" y="15" width="90" height="44" rx="6"/>
+        <rect class="box f-grey" x="275" y="73" width="80" height="44" rx="6"/><rect class="box f-green" x="355" y="73" width="260" height="44" rx="6"/><rect class="box f-orange" x="615" y="73" width="90" height="44" rx="6"/>
+        <rect class="box f-grey" x="275" y="131" width="80" height="44" rx="6"/><rect class="box f-green" x="355" y="131" width="260" height="44" rx="6"/><rect class="box f-orange" x="615" y="131" width="90" height="44" rx="6"/>
+        <rect class="box f-grey" x="275" y="189" width="80" height="44" rx="6"/><rect class="box f-green" x="355" y="189" width="260" height="44" rx="6"/><rect class="box f-orange" x="615" y="189" width="90" height="44" rx="6"/>
+      </g>
+      <text class="th" x="102" y="108" text-anchor="middle">One /24</text>
+      <text class="tm" x="102" y="138" text-anchor="middle">192.168.1.0</text>
+      <text class="ts" x="102" y="164" text-anchor="middle">one flat network</text>
+      <text class="tr" x="230" y="110" text-anchor="middle">divide</text>
+      <text class="ts" x="315" y="42" text-anchor="middle">network</text><text class="t" x="485" y="43" text-anchor="middle">Sales hosts</text><text class="ts" x="660" y="42" text-anchor="middle">broadcast</text>
+      <text class="ts" x="315" y="100" text-anchor="middle">network</text><text class="t" x="485" y="101" text-anchor="middle">Engineering hosts</text><text class="ts" x="660" y="100" text-anchor="middle">broadcast</text>
+      <text class="ts" x="315" y="158" text-anchor="middle">network</text><text class="t" x="485" y="159" text-anchor="middle">HR hosts</text><text class="ts" x="660" y="158" text-anchor="middle">broadcast</text>
+      <text class="ts" x="315" y="216" text-anchor="middle">network</text><text class="t" x="485" y="217" text-anchor="middle">Finance hosts</text><text class="ts" x="660" y="216" text-anchor="middle">broadcast</text>
+    </svg></div>
+    <figcaption>Every subnet always has the same three parts: a network address, usable host addresses, and a broadcast address.</figcaption>
+  </figure>
+  <h3>What subnetting gives you</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Address efficiency</h4><p>Networks sized close to what is actually needed, so far fewer addresses go to waste.</p></div>
+    <div class="card t1 tilt-b"><h4>Organisation</h4><p>Each department, floor, team or purpose gets its own clearly separated subnet.</p></div>
+    <div class="card t3 tilt-a"><h4>Basic isolation</h4><p>Traffic inside one subnet (like broadcasts) stays there instead of reaching every device in the company.</p></div>
+  </div>
+  <p>Nearly everything in this note is about calculating those three parts (network address, host range, broadcast address) confidently for any subnet. First we need to be precise about <b>where the network/host boundary sits</b>.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="mask">
+  <h2>The subnet mask: drawing the boundary</h2>
+  <p>Every IPv4 address is 32 bits: a <b>network portion</b> followed by a <b>host portion</b>. Subnetting is just a precise, flexible way of deciding <i>where</i> that split happens.</p>
+  <p>The split is described by a second 32-bit value that travels with the address: the <b>subnet mask</b>. <mark>In a mask, 1 means “network bit” and 0 means “host bit”.</mark> The 1s always come first, all together, then the 0s.</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Network bits = 1</h4><p>The bits that identify the network. Written as 1s in the mask.</p></div>
+    <div class="card t2 tilt-b"><h4>Host bits = 0</h4><p>The bits that identify a device inside the network. Written as 0s in the mask.</p></div>
+  </div>
+  <h3>Worked example: reading the boundary</h3>
+  <p>You are given <code>IP 192.168.1.10</code> and <code>mask 255.255.255.0</code>. How many network bits and host bits?</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Write both in binary</b>So you can compare them bit by bit.</div></li>
+    <li><span class="dot">2</span><div><b>Look at the mask, not the IP</b>Reading across: 24 ones, then 8 zeros.</div></li>
+    <li><span class="dot">3</span><div><b>Count</b>24 network bits, 8 host bits. <span class="tag">→ the first three octets are network</span></div></li>
+  </ol>
+  <div class="tbl"><table>
+    <tr><th></th><th>Octet 1</th><th>Octet 2</th><th>Octet 3</th><th>Octet 4</th></tr>
+    <tr><td><b>IP</b> 192.168.1.10</td><td><code>11000000</code></td><td><code>10101000</code></td><td><code>00000001</code></td><td><code>00001010</code></td></tr>
+    <tr><td><b>Mask</b> 255.255.255.0</td><td><code>11111111</code></td><td><code>11111111</code></td><td><code>11111111</code></td><td><code>00000000</code></td></tr>
+    <tr><td><b>Meaning</b></td><td>network</td><td>network</td><td>network</td><td>host</td></tr>
+  </table></div>
+  <div class="anatomy"><span class="a4">11000000.10101000.00000001</span>.<span class="a2">00001010</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p><b>24 network bits</b> · <code>192.168.1</code> names the network</p></div>
+    <div><span class="sw a2"></span><p><b>8 host bits</b> · <code>10</code> names the device</p></div>
+  </div>
+  <h3>Common subnet masks</h3>
+  <p>Each prefix length has exactly one mask. Notice the last-octet pattern: 1s fill in from the left, one at a time.</p>
+  <div class="tbl"><table>
+    <tr><th>Prefix</th><th>Subnet mask</th><th>Interesting octet in binary</th><th>Adds up to</th></tr>
+    <tr><td>/8</td><td>255.0.0.0</td><td><code>11111111</code>.00000000…</td><td>255</td></tr>
+    <tr><td>/16</td><td>255.255.0.0</td><td>…<code>11111111</code>.00000000…</td><td>255</td></tr>
+    <tr><td>/24</td><td>255.255.255.0</td><td>…<code>11111111</code>.00000000</td><td>255</td></tr>
+    <tr><td>/25</td><td>255.255.255.<b>128</b></td><td><code>10000000</code></td><td>128</td></tr>
+    <tr><td>/26</td><td>255.255.255.<b>192</b></td><td><code>11000000</code></td><td>128+64</td></tr>
+    <tr><td>/27</td><td>255.255.255.<b>224</b></td><td><code>11100000</code></td><td>128+64+32</td></tr>
+    <tr><td>/28</td><td>255.255.255.<b>240</b></td><td><code>11110000</code></td><td>…+16</td></tr>
+    <tr><td>/29</td><td>255.255.255.<b>248</b></td><td><code>11111000</code></td><td>…+8</td></tr>
+    <tr><td>/30</td><td>255.255.255.<b>252</b></td><td><code>11111100</code></td><td>…+4</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Memory trick</strong> The mask values go 128, 192, 224, 240, 248, 252, 254, 255. Each one adds the next place value (64, 32, 16, 8, 4, 2, 1).</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="cidr">
+  <h2>CIDR: any prefix you need</h2>
+  <p>Classful addressing tied every network to one of three prefixes: Class A = /8, Class B = /16, Class C = /24. Nothing in between.</p>
+  <p><b>CIDR (Classless Inter-Domain Routing)</b> removes that restriction. <mark>A network can use any prefix length that fits its real size: /20, /25, /27, anything.</mark> This flexibility is what makes subnetting possible.</p>
+  <h3>CIDR notation</h3>
+  <p>Write the address, a slash, then the <b>prefix length</b>, the number of network bits:</p>
+  <div class="anatomy"><span class="a4">192.168.1.0</span><span class="a3">/24</span></div>
+  <div class="legend"><div><span class="sw a4"></span><p>The network’s address</p></div><div><span class="sw a3"></span><p>Prefix: first 24 bits are network, so 32 − 24 = 8 host bits</p></div></div>
+  <ul>
+    <li><b>/8</b> → 8 network bits, 24 host bits</li>
+    <li><b>/16</b> → 16 network bits, 16 host bits</li>
+    <li><b>/24</b> → 24 network bits, 8 host bits</li>
+    <li><b>/25, /26 …</b> → same idea: the number after the slash is network bits, and 32 minus it is host bits</li>
+  </ul>
+  <p><code>/24</code> and <code>255.255.255.0</code> say exactly the same thing. CIDR is just shorter: count the 1s in the mask and you have the prefix.</p>
+  <div class="tbl"><table>
+    <tr><th>Classful</th><th>CIDR</th></tr>
+    <tr><td>Fixed classes</td><td>Flexible prefixes</td></tr>
+    <tr><td>A/B/C boundaries only (/8, /16, /24)</td><td>Any appropriate prefix</td></tr>
+    <tr><td>Less efficient</td><td>More efficient</td></tr>
+    <tr><td>Historical</td><td>The modern approach</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Cloud consoles (AWS VPCs, Azure VNets, Kubernetes pod ranges) ask for CIDR blocks, never masks. Expect to read and pick values like <code>10.0.0.0/16</code> for a VPC and <code>10.0.1.0/24</code> per subnet on your first customer deployment.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="maths">
+  <h2>How many addresses does a subnet have?</h2>
+  <p>Network and host bits always add up to <b>32</b>. Everything follows from three formulas:</p>
+  <div class="notes"><div class="note"><b>32 − prefix</b>host bits</div><div class="note"><b>2<sup>host bits</sup></b>total addresses</div><div class="note"><b>total − 2</b>usable hosts</div></div>
+  <p>Why −2? Every subnet reserves two addresses that are never given to a device: the <b>network address</b> (all host bits 0, names the subnet) and the <b>broadcast address</b> (all host bits 1, reaches everyone on it).</p>
+  <div class="two">
+    <div>
+      <h3>Example: /24</h3>
+      <ol class="path">
+        <li><span class="dot">1</span><div><b>Host bits</b>32 − 24 = 8</div></li>
+        <li><span class="dot">2</span><div><b>Total</b>2⁸ = 256</div></li>
+        <li><span class="dot">3</span><div><b>Usable</b>256 − 2 = 254</div></li>
+      </ol>
+    </div>
+    <div>
+      <h3>Example: /26</h3>
+      <ol class="path">
+        <li><span class="dot">1</span><div><b>Host bits</b>32 − 26 = 6</div></li>
+        <li><span class="dot">2</span><div><b>Total</b>2⁶ = 64</div></li>
+        <li><span class="dot">3</span><div><b>Usable</b>64 − 2 = 62</div></li>
+      </ol>
+    </div>
+  </div>
+  <p><mark>A bigger prefix number means a smaller network</mark>: more bits go to the network, so fewer are left for hosts. /24 holds 254 devices; /26 only 62.</p>
+  <h3>Total addresses vs usable hosts</h3>
+  <p>Two different questions with two different answers. For a <b>/27</b>: host bits 32 − 27 = 5, so</p>
+  <div class="tbl"><table>
+    <tr><th>Question</th><th>/27 answer</th><th>Includes</th></tr>
+    <tr><td>Total addresses</td><td><b>2⁵ = 32</b></td><td>every address in the block, including network and broadcast</td></tr>
+    <tr><td>Usable hosts</td><td><b>32 − 2 = 30</b></td><td>only the addresses a real device can get</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong>Most common slip</strong> Mixing up “total” and “usable”. Always check which one the question (or the ticket) is asking for.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="borrowing">
+  <h2>Borrowing bits: how one network becomes many</h2>
+  <p>Back to the company: one <code>192.168.1.0/24</code>, and you want separate subnets. The trick: <mark>take some host bits and hand them to the network portion.</mark> This is <b>borrowing bits</b>. Each borrowed bit does two things at once:</p>
+  <div class="grid two">
+    <div class="card t2 tilt-a"><h4>More subnets</h4><p>The network portion now has more possible combinations, so you get more separate networks.</p></div>
+    <div class="card t3 tilt-b"><h4>Fewer hosts each</h4><p>Fewer host bits are left, so each subnet holds fewer devices.</p></div>
+  </div>
+  <p>You are not creating address space out of nowhere. The same 32 bits are reorganised: more for “which subnet”, fewer for “which device”.</p>
+
+  <h3>Borrow 1 bit: /24 → /25</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Write the current /24 mask</b><code>11111111.11111111.11111111.00000000</code>: 24 network bits, 8 host bits.</div></li>
+    <li><span class="dot">2</span><div><b>Borrow the leftmost host bit</b>The last octet changes from <code>00000000</code> to <code>10000000</code>. <span class="tag">→ /24 becomes /25</span></div></li>
+    <li><span class="dot">3</span><div><b>Recount</b>25 network bits + 7 host bits = still 32. New mask <code>11111111.11111111.11111111.10000000</code> = 255.255.255.128.</div></li>
+    <li><span class="dot">4</span><div><b>See what the borrowed bit does</b>It can be 0 or 1. Before, it helped pick a <i>device</i>; now it picks the <i>subnet</i>. Two values → two subnets.</div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Top row: the /24 mask, 24 network bits then eight host bits all zero. Bottom row: the /25 mask, the first host bit is borrowed and becomes a network bit, leaving seven host bits. Borrowed bit 0 gives subnet .0 and borrowed bit 1 gives subnet .128.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="42" width="250" height="44" rx="8"/>
+        <rect class="box f-green" x="290" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="342" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="394" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="446" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="498" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="550" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="602" y="42" width="46" height="44" rx="6"/><rect class="box f-green" x="654" y="42" width="46" height="44" rx="6"/>
+        <rect class="box f-blue" x="20" y="152" width="250" height="44" rx="8"/>
+        <rect class="box f-orange" x="290" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="342" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="394" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="446" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="498" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="550" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="602" y="152" width="46" height="44" rx="6"/><rect class="box f-green" x="654" y="152" width="46" height="44" rx="6"/>
+        <path class="lr" d="M313 90 L 313 146" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="20" y="32">/24 mask · last octet = 8 host bits</text>
+      <text class="ts" x="20" y="142">/25 mask · 1 bit borrowed, 7 host bits left</text>
+      <text class="t" x="145" y="70" text-anchor="middle">24 network bits</text>
+      <text class="t" x="145" y="180" text-anchor="middle">24 network bits</text>
+      <text class="tm" x="313" y="69" text-anchor="middle">0</text><text class="tm" x="365" y="69" text-anchor="middle">0</text><text class="tm" x="417" y="69" text-anchor="middle">0</text><text class="tm" x="469" y="69" text-anchor="middle">0</text><text class="tm" x="521" y="69" text-anchor="middle">0</text><text class="tm" x="573" y="69" text-anchor="middle">0</text><text class="tm" x="625" y="69" text-anchor="middle">0</text><text class="tm" x="677" y="69" text-anchor="middle">0</text>
+      <text class="tm" x="313" y="179" text-anchor="middle">1</text><text class="tm" x="365" y="179" text-anchor="middle">0</text><text class="tm" x="417" y="179" text-anchor="middle">0</text><text class="tm" x="469" y="179" text-anchor="middle">0</text><text class="tm" x="521" y="179" text-anchor="middle">0</text><text class="tm" x="573" y="179" text-anchor="middle">0</text><text class="tm" x="625" y="179" text-anchor="middle">0</text><text class="tm" x="677" y="179" text-anchor="middle">0</text>
+      <text class="tr" x="350" y="124">borrowed</text>
+      <text class="ts" x="360" y="232" text-anchor="middle">borrowed bit = 0 → subnet .0   ·   borrowed bit = 1 → subnet .128</text>
+    </svg></div>
+    <figcaption>One host bit changes sides. Its two possible values name two subnets.</figcaption>
+  </figure>
+
+  <h3>How many subnets?</h3>
+  <p>Each borrowed bit has 2 values, and every combination is a different subnet:</p>
+  <div class="notes"><div class="note"><b>2<sup>borrowed</sup></b>number of subnets</div></div>
+  <div class="tbl"><table>
+    <tr><th>Bits borrowed</th><th>Calculation</th><th>Subnets</th></tr>
+    <tr><td>1</td><td>2¹</td><td>2</td></tr>
+    <tr><td>2</td><td>2²</td><td>4</td></tr>
+    <tr><td>3</td><td>2³</td><td>8</td></tr>
+    <tr><td>4</td><td>2⁴</td><td>16</td></tr>
+  </table></div>
+  <p>We borrowed 1 bit, so 2¹ = <b>2 subnets</b>: our /24 is now two /25 networks.</p>
+
+  <h3>How many hosts per subnet?</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Host bits left</b>Before: 24 + 8 = 32. After: 25 + 7 = 32. Each /25 has <b>7</b> host bits.</div></li>
+    <li><span class="dot">2</span><div><b>Total addresses</b>2⁷ = 128, from “all host bits 0” to “all host bits 1”.</div></li>
+    <li><span class="dot">3</span><div><b>Usable</b>128 − 1 network − 1 broadcast = <b>126</b>.</div></li>
+  </ol>
+  <div class="flow"><span class="op">borrow 1 bit</span><span>2 subnets</span><span>7 host bits each</span><span>128 addresses each</span><span class="ok">126 usable each</span></div>
+  <div class="sticky info l"><strong>Where did 2 addresses go?</strong> 126 + 126 = 252, not 254. Each of the two new subnets needs its <i>own</i> network and broadcast address, so splitting costs one extra pair.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="slash24">
+  <h2>Subnetting a /24, step by step</h2>
+  <p>Starting network for every example: <code>192.168.1.0/24</code>. Watch the pattern as you borrow more bits.</p>
+  <div class="tbl"><table>
+    <tr><th>Borrow</th><th>New prefix</th><th>Subnets</th><th>Host bits</th><th>Addresses each</th><th>Usable each</th><th>Subnets start at</th></tr>
+    <tr><td>1 bit</td><td>/25</td><td>2¹ = 2</td><td>7</td><td>2⁷ = 128</td><td>126</td><td>.0, .128</td></tr>
+    <tr><td>2 bits</td><td>/26</td><td>2² = 4</td><td>6</td><td>2⁶ = 64</td><td>62</td><td>.0, .64, .128, .192</td></tr>
+    <tr><td>3 bits</td><td>/27</td><td>2³ = 8</td><td>5</td><td>2⁵ = 32</td><td>30</td><td>every 32: .0, .32 … .224</td></tr>
+    <tr><td>4 bits</td><td>/28</td><td>2⁴ = 16</td><td>4</td><td>2⁴ = 16</td><td>14</td><td>every 16: .0, .16 … .240</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="The last octet 0 to 255 drawn four times. As /25 it splits into two blocks of 128, as /26 into four blocks of 64, as /27 into eight blocks of 32, as /28 into sixteen blocks of 16.">
+      <g class="rough">
+        <rect class="box f-blue" x="80.0" y="18" width="307.2" height="40" rx="6"/>
+        <rect class="box f-card" x="387.2" y="18" width="307.2" height="40" rx="6"/>
+        <rect class="box f-green" x="80.0" y="74" width="153.6" height="40" rx="6"/>
+        <rect class="box f-card" x="233.6" y="74" width="153.6" height="40" rx="6"/>
+        <rect class="box f-green" x="387.2" y="74" width="153.6" height="40" rx="6"/>
+        <rect class="box f-card" x="540.8" y="74" width="153.6" height="40" rx="6"/>
+        <rect class="box f-orange" x="80.0" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-card" x="156.8" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-orange" x="233.6" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-card" x="310.4" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-orange" x="387.2" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-card" x="464.0" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-orange" x="540.8" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-card" x="617.6" y="130" width="76.8" height="40" rx="6"/>
+        <rect class="box f-purple" x="80.0" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="118.4" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="156.8" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="195.2" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="233.6" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="272.0" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="310.4" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="348.8" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="387.2" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="425.6" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="464.0" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="502.4" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="540.8" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="579.2" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-purple" x="617.6" y="186" width="38.4" height="40" rx="6"/>
+        <rect class="box f-card" x="656.0" y="186" width="38.4" height="40" rx="6"/>
+      </g>
+      <text class="tm" x="40" y="43" text-anchor="middle">/25</text>
+      <text class="ts" x="233.6" y="43" text-anchor="middle">.0 – .127</text>
+      <text class="ts" x="540.8" y="43" text-anchor="middle">.128 – .255</text>
+      <text class="tm" x="40" y="99" text-anchor="middle">/26</text>
+      <text class="ts" x="156.8" y="99" text-anchor="middle">.0 – .63</text>
+      <text class="ts" x="310.4" y="99" text-anchor="middle">.64 – .127</text>
+      <text class="ts" x="464.0" y="99" text-anchor="middle">.128 – .191</text>
+      <text class="ts" x="617.6" y="99" text-anchor="middle">.192 – .255</text>
+      <text class="tm" x="40" y="155" text-anchor="middle">/27</text>
+      <text class="ts" x="118.4" y="155" text-anchor="middle">0</text>
+      <text class="ts" x="195.2" y="155" text-anchor="middle">32</text>
+      <text class="ts" x="272.0" y="155" text-anchor="middle">64</text>
+      <text class="ts" x="348.8" y="155" text-anchor="middle">96</text>
+      <text class="ts" x="425.6" y="155" text-anchor="middle">128</text>
+      <text class="ts" x="502.4" y="155" text-anchor="middle">160</text>
+      <text class="ts" x="579.2" y="155" text-anchor="middle">192</text>
+      <text class="ts" x="656.0" y="155" text-anchor="middle">224</text>
+      <text class="tm" x="40" y="211" text-anchor="middle">/28</text>
+      <text class="ts" x="99.2" y="211" text-anchor="middle">0</text>
+      <text class="ts" x="137.6" y="211" text-anchor="middle">16</text>
+      <text class="ts" x="176.0" y="211" text-anchor="middle">32</text>
+      <text class="ts" x="214.4" y="211" text-anchor="middle">48</text>
+      <text class="ts" x="252.8" y="211" text-anchor="middle">64</text>
+      <text class="ts" x="291.2" y="211" text-anchor="middle">80</text>
+      <text class="ts" x="329.6" y="211" text-anchor="middle">96</text>
+      <text class="ts" x="368.0" y="211" text-anchor="middle">112</text>
+      <text class="ts" x="406.4" y="211" text-anchor="middle">128</text>
+      <text class="ts" x="444.8" y="211" text-anchor="middle">144</text>
+      <text class="ts" x="483.2" y="211" text-anchor="middle">160</text>
+      <text class="ts" x="521.6" y="211" text-anchor="middle">176</text>
+      <text class="ts" x="560.0" y="211" text-anchor="middle">192</text>
+      <text class="ts" x="598.4" y="211" text-anchor="middle">208</text>
+      <text class="ts" x="636.8" y="211" text-anchor="middle">224</text>
+      <text class="ts" x="675.2" y="211" text-anchor="middle">240</text>
+      <text class="tr" x="387" y="258" text-anchor="middle">each extra borrowed bit halves the blocks</text>
+    </svg></div>
+    <figcaption>The last octet (0–255) cut into blocks of 128, 64, 32 and 16. Every block starts at a multiple of its size.</figcaption>
+  </figure>
+
+  <h3>Why .64, .128, .192? Look at the borrowed bits (/26)</h3>
+  <p>With /26 you borrow the first <b>2</b> bits of the last octet. The 4 combinations name the 4 subnets; the remaining 6 bits are the hosts:</p>
+  <div class="tbl"><table>
+    <tr><th>Borrowed bits</th><th>Last octet, hosts all 0</th><th>Network</th><th>Last octet, hosts all 1</th><th>Broadcast</th></tr>
+    <tr><td><code>00</code></td><td><code>00</code>000000</td><td>.0</td><td><code>00</code>111111</td><td>.63</td></tr>
+    <tr><td><code>01</code></td><td><code>01</code>000000</td><td>.64</td><td><code>01</code>111111</td><td>.127</td></tr>
+    <tr><td><code>10</code></td><td><code>10</code>000000</td><td>.128</td><td><code>10</code>111111</td><td>.191</td></tr>
+    <tr><td><code>11</code></td><td><code>11</code>000000</td><td>.192</td><td><code>11</code>111111</td><td>.255</td></tr>
+  </table></div>
+  <div class="anatomy"><span class="a4">11000000.10101000.00000001</span>.<span class="a3">01</span><span class="a2">000000</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p>Original 24 network bits</p></div>
+    <div><span class="sw a3"></span><p>2 borrowed bits: pick the subnet (<code>01</code> = the .64 subnet)</p></div>
+    <div><span class="sw a2"></span><p>6 host bits: pick the device</p></div>
+  </div>
+
+  <h3>All 8 subnets of a /27</h3>
+  <div class="tbl"><table>
+    <tr><th>#</th><th>Network</th><th>First host</th><th>Last host</th><th>Broadcast</th></tr>
+    <tr><td>1</td><td>192.168.1.0</td><td>.1</td><td>.30</td><td>.31</td></tr>
+    <tr><td>2</td><td>192.168.1.32</td><td>.33</td><td>.62</td><td>.63</td></tr>
+    <tr><td>3</td><td>192.168.1.64</td><td>.65</td><td>.94</td><td>.95</td></tr>
+    <tr><td>4</td><td>192.168.1.96</td><td>.97</td><td>.126</td><td>.127</td></tr>
+    <tr><td>5</td><td>192.168.1.128</td><td>.129</td><td>.158</td><td>.159</td></tr>
+    <tr><td>6</td><td>192.168.1.160</td><td>.161</td><td>.190</td><td>.191</td></tr>
+    <tr><td>7</td><td>192.168.1.192</td><td>.193</td><td>.222</td><td>.223</td></tr>
+    <tr><td>8</td><td>192.168.1.224</td><td>.225</td><td>.254</td><td>.255</td></tr>
+  </table></div>
+  <p>And for /28, the 16 subnets start at: 0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="block-size">
+  <h2>The block-size shortcut</h2>
+  <p>In every example above, subnets were spaced by one fixed number: 128 for /25, 64 for /26, 32 for /27, 16 for /28. That spacing is the <b>block size</b>, the distance from one subnet’s start to the next. You can get it straight from the mask:</p>
+  <div class="notes"><div class="note"><b>256 − interesting octet</b>block size</div></div>
+  <p>The <b>interesting octet</b> is the mask octet that is neither 255 nor 0. That is where the boundary actually falls.</p>
+  <h3>Check it on /26</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Mask for /26</b><code>255.255.255.192</code></div></li>
+    <li><span class="dot">2</span><div><b>Interesting octet</b>192 (the only value that isn’t 255 or 0)</div></li>
+    <li><span class="dot">3</span><div><b>Block size</b>256 − 192 = <b>64</b></div></li>
+    <li><span class="dot">4</span><div><b>Count up from 0 in steps of 64</b>0, 64, 128, 192 <span class="tag">→ same as borrowing 2 bits the long way</span></div></li>
+  </ol>
+  <div class="tbl"><table>
+    <tr><th>Mask octet</th><th>128</th><th>192</th><th>224</th><th>240</th><th>248</th><th>252</th></tr>
+    <tr><td><b>Block size</b> (256 − octet)</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td></tr>
+    <tr><td>Prefix (in 4th octet)</td><td>/25</td><td>/26</td><td>/27</td><td>/28</td><td>/29</td><td>/30</td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>Shortcut inside the shortcut</strong> The block size is also 2<sup>host bits in that octet</sup>, which equals the total-addresses number when the boundary is in the last octet. /27 → 2⁵ = 32 → block size 32.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="network-address">
+  <h2>Finding the network address</h2>
+  <p>The <b>network address</b> names the subnet itself. It is always the <b>first</b> address of the block and is never given to a device. Two ways to find it:</p>
+
+  <h3>Method 1 · Binary AND</h3>
+  <p>Line up the IP and the mask in binary and compare each pair of bits. <mark>The result is 1 only when both bits are 1.</mark></p>
+  <div class="tbl"><table>
+    <tr><th>IP bit</th><th>Mask bit</th><th>Result</th></tr>
+    <tr><td>0</td><td>0</td><td>0</td></tr>
+    <tr><td>0</td><td>1</td><td>0</td></tr>
+    <tr><td>1</td><td>0</td><td>0</td></tr>
+    <tr><td>1</td><td>1</td><td><b>1</b></td></tr>
+  </table></div>
+  <p>Warm-up: <code>10101100</code> AND <code>11111111</code> = <code>10101100</code>. A mask of all 1s keeps every bit.</p>
+  <p><b>Real example:</b> <code>192.168.1.25</code> with <code>255.255.255.0</code>:</p>
+  <pre class="out"><code>IP      11000000.10101000.00000001.00011001   192.168.1.25
+Mask    11111111.11111111.11111111.00000000   255.255.255.0
+        ----------------------------------- AND
+Result  11000000.10101000.00000001.00000000   192.168.1.0</code></pre>
+  <p>Where the mask is 1, the IP bit survives (<code>1 AND x = x</code>). Where the mask is 0, the result is 0 (<code>x AND 0 = 0</code>). So <mark>AND keeps the network part and zeroes the host part</mark>. Network address: <b>192.168.1.0</b>.</p>
+  <p>Another one: <code>10.20.30.45</code> with <code>255.255.255.0</code>:</p>
+  <pre class="out"><code>IP      00001010.00010100.00011110.00101101   10.20.30.45
+Mask    11111111.11111111.11111111.00000000
+Result  00001010.00010100.00011110.00000000   10.20.30.0</code></pre>
+  <p>AND really shines when the boundary is <i>inside</i> an octet. <code>192.168.1.70/26</code>, last octet only:</p>
+  <pre class="out"><code>70      0100 0110
+192     1100 0000   (/26 mask octet)
+AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
+
+  <h3>Method 2 · Block size (faster by hand)</h3>
+  <p>Same address, <code>192.168.1.70/26</code>, no binary needed:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Block size</b>/26 → mask 255.255.255.192 → 256 − 192 = <b>64</b>. Each subnet is 64 addresses.</div></li>
+    <li><span class="dot">2</span><div><b>List the blocks</b>0–63, 64–127, 128–191, 192–255.</div></li>
+    <li><span class="dot">3</span><div><b>Find the block that holds 70</b>Bigger than 64, smaller than 128 → <b>64–127</b>. <span class="tag">→ like finding which street house no. 70 is on</span></div></li>
+    <li><span class="dot">4</span><div><b>The start of that block is the network</b><b>192.168.1.64</b></div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="The last octet split into four /26 blocks: 0 to 63, 64 to 127, 128 to 191, 192 to 255. An arrow marks 70 inside the 64 to 127 block, whose start 64 is the network and whose end 127 is the broadcast.">
+      <g class="rough">
+        <rect class="box f-card" x="40" y="66" width="160" height="46" rx="8"/>
+        <rect class="box f-yellow" x="200" y="66" width="160" height="46" rx="8"/>
+        <rect class="box f-card" x="360" y="66" width="160" height="46" rx="8"/>
+        <rect class="box f-card" x="520" y="66" width="160" height="46" rx="8"/>
+        <path class="lr" d="M215 30 L 215 62" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tr" x="225" y="32">.70 lives here</text>
+      <text class="t" x="120" y="95" text-anchor="middle">0 – 63</text>
+      <text class="t" x="280" y="95" text-anchor="middle">64 – 127</text>
+      <text class="t" x="440" y="95" text-anchor="middle">128 – 191</text>
+      <text class="t" x="600" y="95" text-anchor="middle">192 – 255</text>
+      <text class="ts" x="200" y="138" text-anchor="middle">.64 = network</text>
+      <text class="ts" x="360" y="138" text-anchor="middle">.127 = broadcast</text>
+      <text class="ts" x="280" y="162" text-anchor="middle">.65 – .126 usable</text>
+    </svg></div>
+    <figcaption>Find the block, and its first number is the network address.</figcaption>
+  </figure>
+  <h3>One more: 192.168.10.150/26</h3>
+  <div class="flow"><span class="op">/26 → 255.255.255.192</span><span>block 64</span><span>0 · 64 · 128 · 192</span><span class="hl">150 is in 128–191</span><span class="ok">network 192.168.10.128</span></div>
+  <p>Its subnet: network <b>192.168.10.128</b>, usable <b>.129 – .190</b>, broadcast <b>.191</b>.</p>
+  <p><mark>The IP tells you where the device is; the block size tells you which subnet it belongs to.</mark></p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="broadcast-range">
+  <h2>Broadcast address and usable host range</h2>
+  <h3>Broadcast: the last address</h3>
+  <p>The <b>broadcast address</b> reaches every device on the subnet. It is always the <b>last</b> address of the block and, like the network address, never goes to a device. The easy way: <mark>broadcast = next subnet’s network address − 1</mark>.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Find the next boundary</b>For 192.168.1.70/26 the network is .64; the next boundary after 64 is 128.</div></li>
+    <li><span class="dot">2</span><div><b>Subtract 1</b>128 − 1 = 127 → broadcast <b>192.168.1.127</b>.</div></li>
+  </ol>
+  <p>In binary it is the network with all host bits set to 1: <code>01|000000</code> → <code>01|111111</code> = 64 + 63 = 127.</p>
+  <h3>Usable host range: everything in between</h3>
+  <div class="notes"><div class="note"><b>network + 1</b>first usable host</div><div class="note"><b>broadcast − 1</b>last usable host</div></div>
+  <div class="tbl"><table>
+    <tr><th>Address</th><th>Role</th><th>Give to a device?</th></tr>
+    <tr><td>192.168.1.64</td><td>Network address</td><td>❌</td></tr>
+    <tr><td>192.168.1.65</td><td>First usable host</td><td>✅</td></tr>
+    <tr><td>192.168.1.66 … .125</td><td>Usable hosts</td><td>✅</td></tr>
+    <tr><td>192.168.1.126</td><td>Last usable host</td><td>✅</td></tr>
+    <tr><td>192.168.1.127</td><td>Broadcast address</td><td>❌</td></tr>
+  </table></div>
+  <p>64 addresses in the block, <b>62 usable</b> (.65 through .126): computers, servers, printers and so on.</p>
+  <h3>The three kinds of address, together</h3>
+  <div class="grid">
+    <div class="card t6 tilt-a"><h4>Network address</h4><p>Names the subnet itself, not any device. All host bits 0. <code>192.168.1.64</code></p></div>
+    <div class="card t2 tilt-b"><h4>Host address</h4><p>One individual device in the subnet. <code>192.168.1.65 – .126</code></p></div>
+    <div class="card t3 tilt-a"><h4>Broadcast address</h4><p>Every host on the subnet at once. All host bits 1. <code>192.168.1.127</code></p></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="four-answers">
+  <h2>The four-answer method</h2>
+  <p>Any subnetting question is fully answered by four things: <b>network address, first usable host, last usable host, broadcast address</b>. Here is the full routine on a fresh address.</p>
+  <h3>Worked example: 192.168.10.75/27</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Host bits</b>32 − 27 = 5</div></li>
+    <li><span class="dot">2</span><div><b>Total addresses</b>2⁵ = 32</div></li>
+    <li><span class="dot">3</span><div><b>Usable hosts</b>32 − 2 = 30</div></li>
+    <li><span class="dot">4</span><div><b>Block size</b>/27 → mask 255.255.255.224 → 256 − 224 = 32</div></li>
+    <li><span class="dot">5</span><div><b>Boundaries</b>0, 32, 64, 96, 128, …</div></li>
+    <li><span class="dot">6</span><div><b>Locate 75</b>Bigger than 64, smaller than 96 → block <b>64–95</b></div></li>
+  </ol>
+  <div class="anatomy"><span class="a4">11000000.10101000.00001010.010</span><span class="a2">01011</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p><b>27 network bits</b> · last octet starts <code>010</code> = 64</p></div>
+    <div><span class="sw a2"></span><p><b>5 host bits</b> · <code>01011</code> = 11, so .75 is 64 + 11</p></div>
+  </div>
+  <div class="notes"><div class="note"><b>.64</b>network</div><div class="note"><b>.65</b>first host</div><div class="note"><b>.94</b>last host</div><div class="note"><b>.95</b>broadcast</div></div>
+  <p>The device at .75 lives in the subnet <b>192.168.10.64/27</b>, which runs from .64 to .95. <b>.65 – .94</b> are available for devices.</p>
+
+  <h3>Reference: /24 to /30</h3>
+  <div class="tbl"><table>
+    <tr><th>CIDR</th><th>Mask</th><th>Host bits</th><th>Total</th><th>Usable</th><th>Block size</th></tr>
+    <tr><td>/24</td><td>255.255.255.0</td><td>8</td><td>256</td><td>254</td><td>256</td></tr>
+    <tr><td>/25</td><td>255.255.255.128</td><td>7</td><td>128</td><td>126</td><td>128</td></tr>
+    <tr><td>/26</td><td>255.255.255.192</td><td>6</td><td>64</td><td>62</td><td>64</td></tr>
+    <tr><td>/27</td><td>255.255.255.224</td><td>5</td><td>32</td><td>30</td><td>32</td></tr>
+    <tr><td>/28</td><td>255.255.255.240</td><td>4</td><td>16</td><td>14</td><td>16</td></tr>
+    <tr><td>/29</td><td>255.255.255.248</td><td>3</td><td>8</td><td>6</td><td>8</td></tr>
+    <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>4</td><td>2</td><td>4</td></tr>
+  </table></div>
+  <p>Nothing here needs memorising: <b>32 − prefix</b> → <b>2^that</b> → <b>−2</b> rebuilds any row in seconds.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="other-octets">
+  <h2>Subnetting in the third octet (/16 to /23)</h2>
+  <p>So far the boundary was always in the last octet. Prefixes /16 to /23 put it in the <b>third</b> octet. The formulas don’t change; only the octet you do the maths in does.</p>
+  <div class="tbl"><table>
+    <tr><th>CIDR</th><th>Mask</th><th>Host bits</th><th>Total</th><th>Usable</th><th>Block (3rd octet)</th></tr>
+    <tr><td>/16</td><td>255.255.0.0</td><td>16</td><td>65,536</td><td>65,534</td><td>n/a (boundary in 2nd octet)</td></tr>
+    <tr><td>/17</td><td>255.255.128.0</td><td>15</td><td>32,768</td><td>32,766</td><td>128</td></tr>
+    <tr><td>/18</td><td>255.255.192.0</td><td>14</td><td>16,384</td><td>16,382</td><td>64</td></tr>
+    <tr><td>/19</td><td>255.255.224.0</td><td>13</td><td>8,192</td><td>8,190</td><td>32</td></tr>
+    <tr><td>/20</td><td>255.255.240.0</td><td>12</td><td>4,096</td><td>4,094</td><td>16</td></tr>
+    <tr><td>/21</td><td>255.255.248.0</td><td>11</td><td>2,048</td><td>2,046</td><td>8</td></tr>
+    <tr><td>/22</td><td>255.255.252.0</td><td>10</td><td>1,024</td><td>1,022</td><td>4</td></tr>
+    <tr><td>/23</td><td>255.255.254.0</td><td>9</td><td>512</td><td>510</td><td>2</td></tr>
+  </table></div>
+  <p>Check /16: host bits 32 − 16 = 16, total 2¹⁶ = 65,536, usable 65,534. ✔</p>
+  <h3>The interesting octet</h3>
+  <p>Read the mask left to right; the <b>first octet that is neither 255 nor 0</b> is the interesting octet. Octets before it are all 255 (pure network, nothing changes); octets after it are all 0 (pure host). <mark>The interesting octet is the only place where subnet boundaries are decided.</mark></p>
+  <h3>Worked example: 172.16.35.100/20</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Mask for /20</b>The first two octets use 16 bits; 20 − 16 = <b>4</b> more network bits go into the third octet: <code>11110000</code> = 240. Mask <code>255.255.240.0</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Interesting octet</b>255, 255, <b>240</b> → the third octet.</div></li>
+    <li><span class="dot">3</span><div><b>Block size</b>256 − 240 = 16 (in the third octet)</div></li>
+    <li><span class="dot">4</span><div><b>Boundaries</b>0, 16, 32, 48, … in the third octet</div></li>
+    <li><span class="dot">5</span><div><b>Locate 35</b>Bigger than 32, smaller than 48 → <b>32–47</b></div></li>
+    <li><span class="dot">6</span><div><b>Answer</b>Network <b>172.16.32.0</b>; broadcast <b>172.16.47.255</b> (third octet 47, fourth octet all host bits 1 = 255)</div></li>
+  </ol>
+  <div class="anatomy"><span class="a4">10101100.00010000.0010</span><span class="a2">0011.01100100</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p><b>20 network bits</b> · third octet starts <code>0010</code> = 32</p></div>
+    <div><span class="sw a2"></span><p><b>12 host bits</b> · span the rest of octet 3 and all of octet 4</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Network</th><th>First host</th><th>Last host</th><th>Broadcast</th><th>Usable</th></tr>
+    <tr><td>172.16.32.0</td><td>172.16.32.1</td><td>172.16.47.254</td><td>172.16.47.255</td><td>4,094</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong>Gotcha</strong> In a third-octet subnet, addresses like <code>172.16.33.0</code> or <code>172.16.40.255</code> are <b>normal hosts</b>. Only the very first (<code>.32.0</code>) and very last (<code>.47.255</code>) are reserved.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="design">
+  <h2>Designing subnets from a requirement</h2>
+  <p>In real work the question is often reversed: nobody gives you the prefix. You are told what is <i>needed</i> and must choose it.</p>
+
+  <h3>A · By hosts: “a subnet for 50 employees”</h3>
+  <p>Find the <b>smallest</b> subnet with <b>at least</b> 50 usable addresses. Bigger would just waste addresses.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Set up the condition</b>2<sup>h</sup> − 2 ≥ 50, where h = host bits</div></li>
+    <li><span class="dot">2</span><div><b>Try h = 5</b>2⁵ − 2 = 30. 30 &lt; 50 → not enough ❌</div></li>
+    <li><span class="dot">3</span><div><b>Try h = 6</b>2⁶ − 2 = 62. 62 ≥ 50 → enough ✅</div></li>
+    <li><span class="dot">4</span><div><b>Convert to a prefix</b>32 − 6 = <b>/26</b> (mask 255.255.255.192)</div></li>
+  </ol>
+  <p>For example <code>192.168.10.0/26</code>: network .0, usable <b>.1 – .62</b>, broadcast .63. That leaves 62 − 50 = <b>12 spare</b> addresses for future printers, phones and access points.</p>
+  <div class="flow"><span>required hosts</span><span>find h with 2<sup>h</sup> − 2 ≥ hosts</span><span>32 − h</span><span class="ok">smallest prefix that fits</span></div>
+  <div class="tbl"><table>
+    <tr><th>Hosts needed (up to)</th><th>2</th><th>6</th><th>14</th><th>30</th><th>62</th><th>126</th><th>254</th><th>510</th></tr>
+    <tr><td><b>Prefix</b></td><td>/30</td><td>/29</td><td>/28</td><td>/27</td><td>/26</td><td>/25</td><td>/24</td><td>/23</td></tr>
+  </table></div>
+
+  <h3>B · By subnets: “8 subnets from our /24”</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Condition</b>2<sup>n</sup> ≥ 8, where n = bits to borrow</div></li>
+    <li><span class="dot">2</span><div><b>Smallest n</b>2³ = 8 → n = 3, no bits wasted</div></li>
+    <li><span class="dot">3</span><div><b>New prefix</b>24 + 3 = <b>/27</b></div></li>
+    <li><span class="dot">4</span><div><b>Check each subnet</b>32 − 27 = 5 host bits → 2⁵ = 32 addresses → <b>30 usable</b></div></li>
+  </ol>
+
+  <h3>C · Both: “4 subnets from 192.168.10.0/24, as many hosts each as possible”</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Bits for 4 subnets</b>2² = 4 → borrow 2</div></li>
+    <li><span class="dot">2</span><div><b>New prefix</b>24 + 2 = /26</div></li>
+    <li><span class="dot">3</span><div><b>Hosts each</b>32 − 26 = 6 → 2⁶ = 64 → 62 usable</div></li>
+  </ol>
+  <div class="flow"><span class="op">192.168.10.0/26</span><span class="op">192.168.10.64/26</span><span class="op">192.168.10.128/26</span><span class="op">192.168.10.192/26</span></div>
+  <p>Borrowing the <b>smallest</b> number of bits that gives 4 subnets keeps each subnet as <b>large</b> as possible.</p>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="vlsm">
+  <h2>VLSM: different sizes in one network</h2>
+  <p>Real departments are never the same size. Suppose:</p>
+  <div class="notes"><div class="note"><b>100</b>Dept A hosts</div><div class="note"><b>50</b>Dept B hosts</div><div class="note"><b>20</b>Dept C hosts</div><div class="note"><b>10</b>Dept D hosts</div></div>
+  <p>With equal subnets you would size everything for A: four /25s. Department D would sit on 126 usable addresses while needing 10. Worse, four /25s need 4 × 128 = 512 addresses, which is <b>two whole /24s</b>.</p>
+  <p><b>VLSM (Variable Length Subnet Masking)</b> fixes this: <mark>different subnet sizes coexist in the same address space</mark>, each sized with the “smallest prefix that fits” method.</p>
+  <div class="tbl"><table>
+    <tr><th>Dept</th><th>Needs</th><th>Prefix</th><th>Usable</th></tr>
+    <tr><td>A</td><td>100</td><td>/25</td><td>126</td></tr>
+    <tr><td>B</td><td>50</td><td>/26</td><td>62</td></tr>
+    <tr><td>C</td><td>20</td><td>/27</td><td>30</td></tr>
+    <tr><td>D</td><td>10</td><td>/28</td><td>14</td></tr>
+  </table></div>
+  <h3>The three VLSM rules</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Largest first</b>Place A’s /25 before anything else, while a big continuous block is still free.</div></li>
+    <li><span class="dot">2</span><div><b>Then progressively smaller</b>B, then C, then D.</div></li>
+    <li><span class="dot">3</span><div><b>Never overlap</b>Each subnet starts at the next valid boundary for its size, after the previous one ends. No address belongs to two subnets.</div></li>
+  </ol>
+  <h3>Full allocation from 192.168.1.0/24</h3>
+  <div class="tbl"><table>
+    <tr><th>Dept</th><th>Subnet</th><th>Range</th><th>Usable</th><th>Broadcast</th></tr>
+    <tr><td>A (100)</td><td>192.168.1.0/25</td><td>.0 – .127</td><td>.1 – .126</td><td>.127</td></tr>
+    <tr><td>B (50)</td><td>192.168.1.128/26</td><td>.128 – .191</td><td>.129 – .190</td><td>.191</td></tr>
+    <tr><td>C (20)</td><td>192.168.1.192/27</td><td>.192 – .223</td><td>.193 – .222</td><td>.223</td></tr>
+    <tr><td>D (10)</td><td>192.168.1.224/28</td><td>.224 – .239</td><td>.225 – .238</td><td>.239</td></tr>
+    <tr><td><i>free</i></td><td>192.168.1.240/28</td><td>.240 – .255</td><td colspan="2">spare for later</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="The 192.168.1.0/24 range from 0 to 255: A /25 from 0 to 127, B /26 from 128 to 191, C /27 from 192 to 223, D /28 from 224 to 239, and 240 to 255 still free. No overlaps.">
+      <g class="rough">
+        <rect class="box f-blue" x="40" y="66" width="320" height="56" rx="8"/>
+        <rect class="box f-green" x="360" y="66" width="160" height="56" rx="8"/>
+        <rect class="box f-orange" x="520" y="66" width="80" height="56" rx="8"/>
+        <rect class="box f-pink" x="600" y="66" width="40" height="56" rx="6"/>
+        <rect class="box f-none dash" x="640" y="66" width="40" height="56" rx="6"/>
+      </g>
+      <text class="ts" x="40" y="52" text-anchor="middle">0</text>
+      <text class="ts" x="360" y="52" text-anchor="middle">128</text>
+      <text class="ts" x="520" y="52" text-anchor="middle">192</text>
+      <text class="ts" x="600" y="52" text-anchor="middle">224</text>
+      <text class="ts" x="640" y="52" text-anchor="middle">240</text>
+      <text class="ts" x="680" y="52" text-anchor="middle">255</text>
+      <text class="th" x="200" y="104" text-anchor="middle">A · /25</text>
+      <text class="th" x="440" y="104" text-anchor="middle">B · /26</text>
+      <text class="t" x="560" y="100" text-anchor="middle">C /27</text>
+      <text class="t" x="620" y="100" text-anchor="middle">D</text>
+      <text class="ts" x="660" y="99" text-anchor="middle">free</text>
+      <text class="ts" x="200" y="148" text-anchor="middle">needs 100 · gets 126</text>
+      <text class="ts" x="440" y="148" text-anchor="middle">needs 50 · gets 62</text>
+      <text class="ts" x="560" y="148" text-anchor="middle">20 → 30</text>
+      <text class="ts" x="625" y="170" text-anchor="middle">10 → 14</text>
+      <text class="tr" x="200" y="185" text-anchor="middle">largest first, no overlaps</text>
+    </svg></div>
+    <figcaption>Four right-sized subnets fit in one /24 with a /28 to spare.</figcaption>
+  </figure>
+  <div class="flow v"><span>largest requirement</span><span>allocate largest subnet</span><span>next available boundary</span><span>allocate next largest</span><span class="ok">repeat until all are placed</span></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer networks are rarely greenfield. Before you propose a subnet for your app or VPN, ask for their IP plan and check your range <b>doesn’t overlap</b> theirs. Overlapping CIDRs are one of the most common reasons VPC peering and site-to-site VPNs refuse to work.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="special">
+  <h2>Supernetting, /31 and /32</h2>
+  <h3>Subnetting vs supernetting</h3>
+  <div class="two">
+    <div class="flow v"><span class="op">Subnetting</span><span>one large network</span><span class="ok">several smaller networks</span></div>
+    <div class="flow v"><span class="op">Supernetting</span><span>several smaller networks</span><span class="ok">one larger address block</span></div>
+  </div>
+  <p><b>Supernetting</b> is the opposite of subnetting. It exists mainly for <b>route aggregation</b>: instead of a router keeping dozens of entries for small networks, one combined CIDR entry covers them all. For example, <code>192.168.0.0/24</code> + <code>192.168.1.0/24</code> = <code>192.168.0.0/23</code>. Awareness only for now; the detail belongs to routing.</p>
+  <h3>/31: point-to-point links</h3>
+  <p>Host bits 32 − 31 = 1, total 2¹ = <b>2 addresses</b>. Reserving a network and a broadcast address would leave <b>zero</b> for devices. So /31 is treated specially: on a <b>point-to-point link</b> (two routers wired directly to each other), <mark>both addresses are used as hosts</mark>, one per router. The “−2” rule does not apply.</p>
+  <h3>/32: exactly one address</h3>
+  <p>Host bits 32 − 32 = 0, total 2⁰ = <b>1 address</b>. A /32 means one specific address and nothing else. It is used for <b>host-specific routes</b> and rules (e.g. “allow only <code>203.0.113.7/32</code>”).</p>
+  <div class="tbl"><table>
+    <tr><th>Prefix</th><th>Host bits</th><th>Total</th><th>Usable</th><th>Typical use</th></tr>
+    <tr><td>/30</td><td>2</td><td>4</td><td>2</td><td>Older point-to-point links</td></tr>
+    <tr><td>/31</td><td>1</td><td>2</td><td>2 (special case)</td><td>Point-to-point links</td></tr>
+    <tr><td>/32</td><td>0</td><td>1</td><td>1 (the address itself)</td><td>A single host: routes, firewall rules</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Security groups and firewall allow-lists use /32 constantly. “Whitelist our NAT IP” means adding <code>x.x.x.x/32</code>, not the whole /24.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="ipv6">
+  <h2>CIDR in IPv6: basic awareness</h2>
+  <p>IPv6 keeps the prefix-length idea but <b>never uses dotted-decimal masks</b>; it only uses prefix notation. Same logic, 128 bits instead of 32:</p>
+  <pre class="out"><code>2001:db8:abcd:0010::1/64</code></pre>
+  <div class="anatomy"><span class="a4">2001:0db8:abcd</span>:<span class="a3">0010</span>:<span class="a2">0000:0000:0000:0001</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p><b>Routing prefix</b> · commonly a /48 given to a site</p></div>
+    <div><span class="sw a3"></span><p><b>Subnet ID</b> · picks the subnet (here 16 bits)</p></div>
+    <div><span class="sw a2"></span><p><b>Interface ID</b> · 128 − 64 = 64 bits, identifies the device’s interface</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 150" role="img" aria-label="A 128-bit IPv6 address split in half by a /64 prefix: the first 64 bits are the network prefix including the subnet ID, the last 64 bits are the interface ID.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="34" width="250" height="54" rx="10"/>
+        <rect class="box f-orange" x="270" y="34" width="90" height="54" rx="8"/>
+        <rect class="box f-green" x="360" y="34" width="340" height="54" rx="10"/>
+      </g>
+      <text class="t" x="145" y="66" text-anchor="middle">routing prefix · 48</text>
+      <text class="t" x="315" y="66" text-anchor="middle">subnet 16</text>
+      <text class="t" x="530" y="66" text-anchor="middle">interface ID · 64 bits</text>
+      <text class="tr" x="190" y="122" text-anchor="middle">/64 = network part</text>
+      <text class="tb" x="530" y="122" text-anchor="middle">2⁶⁴ addresses per subnet</text>
+    </svg></div>
+    <figcaption>/64 is the standard IPv6 subnet: half the address is network, half is the device.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Prefix</b>: the network portion, same idea as IPv4.</li>
+    <li><b>Subnet ID</b>: the part that identifies a specific subnet.</li>
+    <li><b>Interface ID</b>: identifies one device’s interface, like IPv4’s host portion.</li>
+    <li><b>/64</b> is by far the most common IPv6 subnet size.</li>
+    <li>2⁶⁴ addresses per subnet means IPv6 design rarely squeezes out efficiency the way IPv4 must.</li>
+  </ul>
+  <p>Detailed IPv6 subnet design comes in a later note.</p>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="end-to-end">
+  <h2>A complete problem, end to end</h2>
+  <p><b>Given:</b> <code>192.168.50.130/26</code>. Describe its subnet fully.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Host bits</b>32 − 26 = 6</div></li>
+    <li><span class="dot">2</span><div><b>Total addresses</b>2⁶ = 64</div></li>
+    <li><span class="dot">3</span><div><b>Usable hosts</b>64 − 2 = 62</div></li>
+    <li><span class="dot">4</span><div><b>Mask</b>/26 = 255.255.255.192</div></li>
+    <li><span class="dot">5</span><div><b>Block size</b>256 − 192 = 64</div></li>
+    <li><span class="dot">6</span><div><b>Boundaries</b>0, 64, 128, 192</div></li>
+    <li><span class="dot">7</span><div><b>Locate 130</b>Bigger than 128, smaller than 192 → block <b>128–191</b></div></li>
+    <li><span class="dot">8</span><div><b>Answer</b>Network .128 · first .129 · last .190 · broadcast .191</div></li>
+  </ol>
+  <div class="anatomy"><span class="a4">11000000.10101000.00110010.10</span><span class="a2">000010</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p>26 network bits · last octet starts <code>10</code> = 128</p></div>
+    <div><span class="sw a2"></span><p>6 host bits · <code>000010</code> = 2, so .130 = 128 + 2</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Network</th><th>First host</th><th>Last host</th><th>Broadcast</th><th>Total</th><th>Usable</th></tr>
+    <tr><td>192.168.50.128</td><td>192.168.50.129</td><td>192.168.50.190</td><td>192.168.50.191</td><td>64</td><td>62</td></tr>
+  </table></div>
+  <details class="qa"><summary>Try it yourself: 10.0.0.37/29</summary><p>/29 → mask .248 → block 8 → boundaries 0, 8, 16, 24, 32, 40 … → 37 is in 32–39. Network <b>10.0.0.32</b>, hosts <b>.33 – .38</b>, broadcast <b>10.0.0.39</b>, 6 usable.</p></details>
+  <details class="qa"><summary>Try it yourself: 172.20.130.9/18</summary><p>/18 → mask 255.255.192.0 → interesting octet is the third → block 64 → 0, 64, 128, 192 → 130 is in 128–191. Network <b>172.20.128.0</b>, hosts <b>172.20.128.1 – 172.20.191.254</b>, broadcast <b>172.20.191.255</b>, 16,382 usable.</p></details>
+</section>
+
+<!-- 17 -->
+<section class="ch" id="troubleshooting">
+  <h2>Real configurations and troubleshooting</h2>
+  <h3>Configuration 1 · does the gateway fit?</h3>
+  <pre class="out"><code>IP address : 192.168.10.75
+Prefix     : /27
+Gateway    : 192.168.10.65</code></pre>
+  <p>From the four-answer method, this subnet is .64 – .95 with hosts <b>.65 – .94</b>. The gateway .65 is the first usable host. ✅ <b>Correct</b>: device and gateway are on the same subnet, 192.168.10.64/27.</p>
+  <h3>Configuration 2 · the trickier one</h3>
+  <pre class="out"><code>IP address : 192.168.10.75/27
+Gateway    : 192.168.10.100</code></pre>
+  <p>Same subnet, .64 – .95. But .100 is bigger than .95, so it sits in the <b>next</b> /27 (.96 – .127). ❌ <b>Broken</b>: the device can’t reach its gateway, so it can’t reach the Internet or any other network.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="Two neighbouring /27 subnets: .64 to .95 and .96 to .127. The device at .75 and the gateway at .65 are both in the first. The gateway at .100 is in the second subnet, so that configuration is broken.">
+      <g class="rough">
+        <rect class="box f-green" x="40" y="70" width="320" height="50" rx="10"/>
+        <rect class="box f-orange" x="360" y="70" width="320" height="50" rx="10"/>
+        <path class="lb" d="M150 38 L 150 66" marker-end="url(#ahb)"/>
+        <path class="lr" d="M400 38 L 400 66" marker-end="url(#ahr)"/>
+        <path class="lb" d="M50 150 L 50 124" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tb" x="150" y="30" text-anchor="middle">device .75</text>
+      <text class="tr" x="400" y="30" text-anchor="middle">gateway .100 ✗</text>
+      <text class="tb" x="62" y="166">gateway .65 ✓</text>
+      <text class="tm" x="200" y="100" text-anchor="middle">.64 – .95  /27</text>
+      <text class="tm" x="520" y="100" text-anchor="middle">.96 – .127  /27</text>
+    </svg></div>
+    <figcaption>The gateway must live in the device’s own subnet.</figcaption>
+  </figure>
+  <h3>Common problems</h3>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Wrong boundary</h4><p>Incorrect subnet mask or prefix; network address calculated wrongly.</p></div>
+    <div class="card t4 tilt-b"><h4>Bad host address</h4><p>An address outside the valid range, or the network or broadcast address used as if it were a normal host.</p></div>
+    <div class="card t5 tilt-a"><h4>Wrong neighbour</h4><p>A gateway that belongs to a different subnet (Configuration 2).</p></div>
+    <div class="card t6 tilt-b"><h4>Bad design</h4><p>Overlapping subnets, or an incorrect VLSM allocation.</p></div>
+  </div>
+  <h3>Troubleshooting flow</h3>
+  <p>Check in this order; it is the same sequence every worked example used:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>IP address</b>What exactly is configured?</div></li>
+    <li><span class="dot">2</span><div><b>Prefix / mask</b>Is it the intended one?</div></li>
+    <li><span class="dot">3</span><div><b>Network address</b>Block size → which block?</div></li>
+    <li><span class="dot">4</span><div><b>Broadcast address</b>Next block − 1.</div></li>
+    <li><span class="dot">5</span><div><b>Valid host range</b>Is the IP strictly between them?</div></li>
+    <li><span class="dot">6</span><div><b>Gateway</b>Is it in that same range?</div></li>
+    <li><span class="dot">7</span><div><b>Same or different network?</b>Compare any two devices that must talk directly.</div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On a Linux box, <code>ip -4 addr</code> shows the address with its prefix (e.g. <code>inet 192.168.10.75/27</code>) and <code>ip route</code> shows <code>default via …</code>, your gateway. Run the flow above on those two lines before blaming the app.</div>
+  <h3>Practise in levels</h3>
+  <div class="tbl"><table>
+    <tr><th>Level</th><th>Skill</th><th>Sections</th></tr>
+    <tr><td>1 · Identify</td><td>Prefix, mask, network bits and host bits from an address and mask</td><td>Mask, CIDR</td></tr>
+    <tr><td>2 · Calculate</td><td>Total addresses, usable hosts and block size for a prefix</td><td>Maths, block size</td></tr>
+    <tr><td>3 · Find</td><td>Network, broadcast, first and last host for an IP/prefix</td><td>Network address → four answers</td></tr>
+    <tr><td>4 · Design</td><td>Prefix from required hosts, subnets, or both</td><td>Design</td></tr>
+    <tr><td>5 · VLSM</td><td>Efficient layout for mixed-size departments</td><td>VLSM</td></tr>
+    <tr><td>6 · Troubleshoot</td><td>Spot wrong masks, invalid hosts, wrong networks, mismatched gateways</td><td>This section</td></tr>
+  </table></div>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Subnetting</dt><dd>Dividing one larger network into several smaller, independent networks (subnets), each with its own network address, host range and broadcast address.</dd></div>
+    <div><dt>Subnet mask</dt><dd>A 32-bit value with 1s for network bits and 0s for host bits, such as 255.255.255.192 for /26.</dd></div>
+    <div><dt>CIDR</dt><dd>Classless Inter-Domain Routing: allows any prefix length instead of the fixed /8, /16 and /24 of classful addressing, written like 192.168.1.0/24.</dd></div>
+    <div><dt>Prefix length</dt><dd>The number after the slash in CIDR notation; it counts the network bits, and 32 minus it gives the host bits.</dd></div>
+    <div><dt>Borrowing bits</dt><dd>Moving host bits into the network portion to create more subnets; each borrowed bit doubles the subnets and halves the addresses per subnet.</dd></div>
+    <div><dt>Block size</dt><dd>The spacing between consecutive subnet start addresses, calculated as 256 minus the interesting octet of the mask (e.g. 256 − 192 = 64).</dd></div>
+    <div><dt>Interesting octet</dt><dd>The first mask octet, reading left to right, that is neither 255 nor 0; it is where subnet boundaries are decided.</dd></div>
+    <div><dt>Network address</dt><dd>The first address of a subnet, with all host bits 0; it names the subnet and cannot be assigned to a device.</dd></div>
+    <div><dt>Broadcast address</dt><dd>The last address of a subnet, with all host bits 1; it reaches every host on the subnet and cannot be assigned to a device.</dd></div>
+    <div><dt>Usable host range</dt><dd>The addresses from network + 1 to broadcast − 1, the only ones that can be given to devices; there are 2<sup>host bits</sup> − 2 of them.</dd></div>
+    <div><dt>Binary AND</dt><dd>Bit-by-bit comparison of IP and mask where the result is 1 only if both bits are 1; IP AND mask gives the network address.</dd></div>
+    <div><dt>VLSM</dt><dd>Variable Length Subnet Masking: using different prefix lengths inside one address space so each subnet is sized to its real need, allocated largest first without overlaps.</dd></div>
+    <div><dt>Supernetting</dt><dd>Combining several smaller networks into one larger CIDR block, mainly so routers can use one aggregated route.</dd></div>
+    <div><dt>/31 and /32</dt><dd>Special prefixes: /31 gives 2 addresses both usable on point-to-point links; /32 identifies exactly one address for host-specific routes and rules.</dd></div>
+    <div><dt>Interface ID (IPv6)</dt><dd>The host part of an IPv6 address, usually the last 64 bits after a /64 prefix, identifying one device interface.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>How many <b>usable</b> hosts does a /27 subnet have?</p>
+      <ol><li>32</li><li>62</li><li>30</li><li>27</li></ol>
+      <p class="why">32 − 27 = 5 host bits → 2⁵ = 32 total → 32 − 2 = 30 usable.</p></div>
+    <div class="q" data-answer="1"><p>What is the block size for the mask <code>255.255.255.240</code>?</p>
+      <ol><li>16</li><li>240</li><li>8</li><li>14</li></ol>
+      <p class="why">256 − 240 = 16. 14 is the usable hosts of a /28, not the block size.</p></div>
+    <div class="q" data-answer="4"><p>What is the network address of <code>192.168.1.200/26</code>?</p>
+      <ol><li>192.168.1.128</li><li>192.168.1.0</li><li>192.168.1.200</li><li>192.168.1.192</li></ol>
+      <p class="why">Block 64 → 0, 64, 128, 192. 200 is in 192–255, so the network is .192.</p></div>
+    <div class="q" data-answer="2"><p>What is the broadcast address of <code>10.0.0.37/29</code>?</p>
+      <ol><li>10.0.0.40</li><li>10.0.0.39</li><li>10.0.0.255</li><li>10.0.0.38</li></ol>
+      <p class="why">/29 → block 8 → 37 is in 32–39. Broadcast = next boundary (40) − 1 = 39. .38 is the last usable host.</p></div>
+    <div class="q" data-answer="3"><p>A team needs <b>25</b> devices on one subnet. What is the smallest prefix that fits?</p>
+      <ol><li>/28</li><li>/26</li><li>/27</li><li>/29</li></ol>
+      <p class="why">/28 gives only 14 usable; /27 gives 2⁵ − 2 = 30 ≥ 25. /26 also works, but it’s bigger than needed.</p></div>
+    <div class="q" data-answer="1"><p>You subnet a /24 into /28s. How many subnets do you get?</p>
+      <ol><li>16</li><li>14</li><li>4</li><li>28</li></ol>
+      <p class="why">28 − 24 = 4 borrowed bits → 2⁴ = 16 subnets.</p></div>
+    <div class="q" data-answer="2"><p>What is the network address of <code>172.16.35.100/20</code>?</p>
+      <ol><li>172.16.35.0</li><li>172.16.32.0</li><li>172.16.0.0</li><li>172.16.48.0</li></ol>
+      <p class="why">/20 → 255.255.240.0 → block 16 in the third octet → 35 is in 32–47 → 172.16.32.0.</p></div>
+    <div class="q" data-answer="4"><p>A PC is <code>192.168.10.75/27</code>. Which gateway address would actually work?</p>
+      <ol><li>192.168.10.64</li><li>192.168.10.95</li><li>192.168.10.100</li><li>192.168.10.94</li></ol>
+      <p class="why">The subnet is .64–.95. .64 is the network and .95 the broadcast, and .100 is in the next subnet. .94 is a valid host.</p></div>
+    <div class="q" data-answer="3"><p>Why is VLSM more efficient than equal-sized subnets?</p>
+      <ol><li>It removes the network and broadcast addresses</li><li>It makes every subnet a /24</li><li>Each subnet gets a prefix sized to its own need, so small teams don’t waste big blocks</li><li>It only works with IPv6</li></ol>
+      <p class="why">VLSM lets /25, /26, /27 and /28 coexist in one space, allocated largest first, so addresses aren’t wasted.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A <b>prefix</b> (or <b>mask</b>) draws the line between network and host bits; <b>borrowing bits</b> trades hosts for subnets, the <b>block size</b> (256 − interesting octet) finds the boundaries, and every subnet then has a <b>network address, a usable host range and a broadcast address</b> that you can now calculate, design with <b>VLSM</b>, and troubleshoot.</p>
+  <p>Next up: that wraps up Networking Basics. Continue with the Git &amp; GitHub module, starting with <b>Version Control Systems</b>, to learn how teams keep track of every change to their code.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

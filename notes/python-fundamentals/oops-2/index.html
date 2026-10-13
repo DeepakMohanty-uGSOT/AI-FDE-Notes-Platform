@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intro to OOP · Part 2 · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="The constructor __init__ and why objects need automatic setup, decorators (custom, @classmethod, @staticmethod), instance, static and local variables, and the three kinds of methods.">
+<meta name="keywords" content="constructor, __init__, decorators, instance variables, static variables, local variables, class methods, static methods">
+<meta name="date" content="2026-09-30">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/oops-2">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Intro to OOP · Part 2</h1>
+  <p class="byline">Give every object its data automatically with a constructor, learn what decorators do, and know exactly which kind of variable and method to reach for.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="init-problem">
+  <h2>Putting data into a new object</h2>
+  <p>An object is useful only when it has its <b>own data</b>. So the first question is: <i>how do we put the starting data into an object?</i></p>
+  <h3>Idea 1: a normal method that sets the data</h3>
+  <pre><code class="language-python">class Student:
+    def set_details(self, name, roll_no):
+        self.name = name
+        self.roll_no = roll_no
+
+    def show_details(self):
+        print("Name:", self.name)
+        print("Roll No:", self.roll_no)
+
+s1 = Student()
+s1.set_details("Sunny", 101)    # called explicitly
+s1.show_details()</code></pre>
+  <pre class="out"><code>Name: Sunny
+Roll No: 101</code></pre>
+  <p><code>Student()</code> creates the object, but at that moment it has <b>no data</b>. Only after you explicitly call <code>set_details()</code> is it ready. This works, but it depends on the programmer <b>remembering</b> that call for every object.</p>
+  <h3>The problem: what if you forget?</h3>
+  <pre><code class="language-python">s2 = Student()
+s2.show_details()    # set_details() was never called</code></pre>
+  <pre class="out"><code>Traceback (most recent call last):
+  ...
+AttributeError: 'Student' object has no attribute 'name'</code></pre>
+  <p><code>s2</code> exists but has no name and no roll number, so reading <code>self.name</code> fails with an <code>AttributeError</code>.</p>
+  <div class="two">
+    <div class="flow v"><span class="op">s1 = Student()</span><span class="op">s1.set_details(…)</span><span class="ok">ready</span></div>
+    <div class="flow v"><span class="op">s2 = Student()</span><span class="skip">set_details forgotten</span><span class="bad">AttributeError</span></div>
+  </div>
+  <p>Two problems: making a ready object always takes <b>two steps</b> (create, then initialise), and forgetting the second step even once makes the program <b>fail at runtime</b>. <mark>Initialisation should not depend on memory; it should happen automatically, the moment the object is created.</mark></p>
+  <p>Python’s answer is a special method, <code>__init__()</code>, called the <b>constructor</b>. This note covers it, then decorators, the parts of an object, the three types of variables and the three types of methods.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="constructor">
+  <h2>The constructor: <code>__init__()</code></h2>
+  <div class="story"><b class="lbl">The new SIM card</b>When you buy a new phone connection, the shop activates the SIM, registers your name and number and loads the starter plan before handing it over. You don’t go home and do it later. <mark>The constructor is that setup counter: it prepares every object the moment it is created.</mark></div>
+  <p>A <b>constructor</b> is a special method that runs <b>automatically when an object is created</b> and sets its starting data (its instance variables). In Python it is always named <code>__init__()</code>, short for <b>initialisation</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Student with arguments Sunny and 101 creates an empty object, Python automatically calls init with self set to that object, and a ready object with name and roll number comes out">
+      <g class="rough">
+        <rect class="box f-blue" x="8" y="70" width="204" height="60" rx="12"/>
+        <rect class="box f-grey dash" x="255" y="70" width="130" height="60" rx="12"/>
+        <rect class="box f-yellow" x="445" y="20" width="250" height="60" rx="12"/>
+        <rect class="box f-green" x="445" y="130" width="250" height="64" rx="12"/>
+        <path class="ln" d="M216 100 L 249 100" marker-end="url(#ah)"/>
+        <path class="lr" d="M390 90 L 438 60" marker-end="url(#ahr)"/>
+        <path class="lb" d="M570 84 L 570 124" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="110" y="105" text-anchor="middle">Student("Sunny", 101)</text>
+      <text class="t" x="320" y="98" text-anchor="middle">empty</text>
+      <text class="t" x="320" y="118" text-anchor="middle">object</text>
+      <text class="tm" x="570" y="55" text-anchor="middle">__init__(self, "Sunny", 101)</text>
+      <text class="tr" x="335" y="52" text-anchor="middle">automatic</text>
+      <text class="tm" x="570" y="160" text-anchor="middle">name = "Sunny"</text>
+      <text class="tm" x="570" y="182" text-anchor="middle">roll_no = 101</text>
+    </svg></div>
+    <figcaption>One line creates <i>and</i> prepares the object. You never call <code>__init__</code> yourself.</figcaption>
+  </figure>
+  <h3>It runs automatically</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        print("Constructor is executed")
+
+s1 = Student()</code></pre>
+  <pre class="out"><code>Constructor is executed</code></pre>
+  <p>Nobody called <code>__init__()</code>; Python ran it while creating <code>s1</code>.</p>
+  <h3>It runs only once per object</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        print("Constructor executed")
+
+    def show(self):
+        print("Normal method executed")
+
+s1 = Student()
+s1.show()
+s1.show()</code></pre>
+  <pre class="out"><code>Constructor executed
+Normal method executed
+Normal method executed</code></pre>
+  <p>The constructor ran once, at creation. The normal method runs every time you call it.</p>
+  <h3>Its main purpose: create and fill instance variables</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no, marks):
+        self.name = name
+        self.roll_no = roll_no
+        self.marks = marks
+
+    def display(self):
+        print("Name:", self.name)
+        print("Roll Number:", self.roll_no)
+        print("Marks:", self.marks)
+
+s1 = Student("Sunny", 101, 90)
+s1.display()</code></pre>
+  <pre class="out"><code>Name: Sunny
+Roll Number: 101
+Marks: 90</code></pre>
+  <p>The constructor receives values at creation time, stores them with <code>self</code>, and later methods such as <code>display()</code> use the same data. Real-world version: opening a bank account must record the holder, account number and opening balance immediately.</p>
+  <pre><code class="language-python">class BankAccount:
+    def __init__(self, holder_name, account_no, balance):
+        self.holder_name = holder_name
+        self.account_no = account_no
+        self.balance = balance
+
+    def display(self):
+        print("Holder:", self.holder_name)
+        print("Account No:", self.account_no)
+        print("Balance:", self.balance)
+
+acc1 = BankAccount("Priya", "ACC1001", 5000)
+acc1.display()</code></pre>
+  <pre class="out"><code>Holder: Priya
+Account No: ACC1001
+Balance: 5000</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Clients for databases, LLM APIs and queues are classes whose constructor takes the URL, API key and timeouts. Because <code>__init__</code> runs once, a missing key fails <b>at startup</b> instead of at 2 a.m. on the first customer request.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="constructor-rules">
+  <h2>Constructor rules in Python</h2>
+  <h3>It needs at least one parameter: <code>self</code></h3>
+  <p>Python always passes the new object in, so the constructor must accept at least <code>self</code>. It can set fixed values with no other parameters:</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        self.name = "Durga"
+        self.roll_no = 101
+
+    def show(self):
+        print(self.name, self.roll_no)
+
+s1 = Student()
+s1.show()</code></pre>
+  <pre class="out"><code>Durga 101</code></pre>
+  <p>Leave <code>self</code> out (<code>def __init__():</code>) and creating an object fails with <code>TypeError: A.__init__() takes 0 positional arguments but 1 was given</code>.</p>
+  <h3>It is optional</h3>
+  <p>You don’t have to write a constructor. If a class has none, Python uses a default one (inherited from Python’s built-in <code>object</code> class) that takes no arguments and does nothing.</p>
+  <pre><code class="language-python">class Student:
+    def show(self):
+        print("No constructor defined")
+
+s1 = Student()
+s1.show()</code></pre>
+  <pre class="out"><code>No constructor defined</code></pre>
+  <h3>It can be called explicitly, but that creates no new object</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        print("Constructor executed")
+
+s1 = Student()
+s1.__init__()</code></pre>
+  <pre class="out"><code>Constructor executed
+Constructor executed</code></pre>
+  <p>The first line comes from object creation, the second from the manual call. Still only one object exists; the manual call just re-runs the setup code on it.</p>
+  <h3>Constructor overloading is not supported</h3>
+  <p>If you write two <code>__init__</code> methods, the second definition simply replaces the first. Only the <b>last one</b> counts.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        print("First constructor")
+
+    def __init__(self, name):
+        print("Second constructor:", name)
+
+s1 = Student("Sunny")</code></pre>
+  <pre class="out"><code>Second constructor: Sunny</code></pre>
+  <div class="sticky warn l"><strong>Gotcha</strong> Now <code>Student()</code> with no name fails: <code>TypeError: Student.__init__() missing 1 required positional argument: 'name'</code>. The first constructor is gone. To support “with or without a name”, use one constructor with a default: <code>def __init__(self, name="Unknown"):</code>.</div>
+  <h3>Constructor vs normal method</h3>
+  <div class="tbl"><table>
+    <tr><th></th><th>Constructor</th><th>Normal method</th></tr>
+    <tr><td>Name</td><td>Always <code>__init__</code></td><td>Any name you choose</td></tr>
+    <tr><td>When it runs</td><td>Automatically, when the object is created</td><td>Only when you call it</td></tr>
+    <tr><td>How often</td><td>Once per object</td><td>Any number of times</td></tr>
+    <tr><td>Purpose</td><td>Declare and initialise instance variables</td><td>Business logic: actions the object performs</td></tr>
+  </table></div>
+  <h3>Points to remember</h3>
+  <ul>
+    <li>Its name is always <code>__init__()</code>, and it runs automatically, once per object.</li>
+    <li>Its main job is initialising instance variables.</li>
+    <li>It is optional; explicit calls don’t create new objects; overloading isn’t supported.</li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="decorators">
+  <h2>Decorators</h2>
+  <div class="story"><b class="lbl">Gift wrapping</b>The shop wraps your gift in paper and a ribbon. The gift inside is unchanged, but how it is presented is different. <mark>A decorator wraps a function to change how it behaves or is treated, without touching the code inside.</mark></div>
+  <p>A <b>decorator</b> modifies the behaviour of a function or method <b>without changing its internal code</b>. It is written with the <code>@</code> symbol, on the line <b>immediately above</b> the definition:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">@decorator_name
+def function_name():
+    pass</code></pre></div>
+  <h3>Why we need them</h3>
+  <p>By default every method in a class is an <b>instance method</b> that works with one object’s data. Real programs also need:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Class-level methods</h4><p>Methods that work with data shared by the whole class.</p></div>
+    <div class="card t2 tilt-b"><h4>Independent methods</h4><p>Helpers that need neither object nor class data.</p></div>
+    <div class="card t3 tilt-a"><h4>Extra behaviour</h4><p>Logging, validation or access control added to many functions.</p></div>
+  </div>
+  <p>A decorator doesn’t rewrite the function’s code; it changes how Python <b>calls and treats</b> it.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="custom-decorator">
+  <h2>Writing your own decorator</h2>
+  <p>A decorator is just a <b>function that takes a function and returns a modified function</b>. You write one to add common behaviour to many functions, avoid repetition, and apply rules like validation, logging or authorisation automatically. Its structure is always:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>An outer function</b>that receives the function to be decorated (<code>func</code>).</div></li>
+    <li><span class="dot">2</span><div><b>An inner function</b>(the <code>wrapper</code>) that adds the extra behaviour and calls <code>func()</code>.</div></li>
+    <li><span class="dot">3</span><div><b>A return</b>that hands back the inner function.</div></li>
+  </ol>
+  <pre><code class="language-python">def simple_decorator(func):
+    def wrapper():
+        print("Before function execution")
+        func()
+        print("After function execution")
+    return wrapper
+
+@simple_decorator
+def greet():
+    print("Hello, welcome!")
+
+greet()</code></pre>
+  <pre class="out"><code>Before function execution
+Hello, welcome!
+After function execution</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Calling greet actually calls wrapper: wrapper prints Before, calls the original greet which prints Hello welcome, then prints After">
+      <g class="rough">
+        <rect class="box f-blue" x="15" y="85" width="130" height="56" rx="12"/>
+        <rect class="box f-yellow dash" x="205" y="20" width="500" height="190" rx="18"/>
+        <rect class="box f-card" x="230" y="90" width="140" height="50" rx="10"/>
+        <rect class="box f-green" x="400" y="80" width="150" height="70" rx="12"/>
+        <rect class="box f-card" x="580" y="90" width="110" height="50" rx="10"/>
+        <path class="lr" d="M150 113 L 198 113" marker-end="url(#ahr)"/>
+        <path class="ln" d="M372 115 L 394 115" marker-end="url(#ah)"/>
+        <path class="ln" d="M552 115 L 574 115" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="80" y="118" text-anchor="middle">greet()</text>
+      <text class="tr" x="455" y="54" text-anchor="middle">wrapper()</text>
+      <text class="ts" x="300" y="120" text-anchor="middle">print "Before…"</text>
+      <text class="tm" x="475" y="110" text-anchor="middle">func()</text>
+      <text class="ts" x="475" y="134" text-anchor="middle">original greet</text>
+      <text class="ts" x="635" y="120" text-anchor="middle">print "After…"</text>
+      <text class="ts" x="455" y="190" text-anchor="middle">@simple_decorator means  greet = simple_decorator(greet)</text>
+    </svg></div>
+    <figcaption>The name <code>greet</code> now points to <code>wrapper</code>, which runs extra code around the original.</figcaption>
+  </figure>
+  <p><code>simple_decorator</code> receives <code>greet</code>, <code>wrapper</code> adds behaviour before and after, and the original logic stays unchanged. Real-world version: a shopping app logs every important action without repeating the logging code.</p>
+  <pre><code class="language-python">def log_action(func):
+    def wrapper():
+        print("Action started")
+        func()
+        print("Action finished")
+    return wrapper
+
+@log_action
+def place_order():
+    print("Order placed successfully")
+
+@log_action
+def cancel_order():
+    print("Order cancelled")
+
+place_order()
+cancel_order()</code></pre>
+  <pre class="out"><code>Action started
+Order placed successfully
+Action finished
+Action started
+Order cancelled
+Action finished</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> You will use decorators constantly: FastAPI routes are <code>@app.get("/items")</code>, retries on flaky LLM calls are often a <code>@retry</code> decorator, and timing or auth checks wrap many endpoints at once.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="oop-decorators">
+  <h2>Decorators in OOP: <code>@classmethod</code> and <code>@staticmethod</code></h2>
+  <p>In OOP, decorators mainly decide the <b>type of a method</b>. Python has two built-in ones for this.</p>
+  <h3><code>@classmethod</code></h3>
+  <p>Declares a <b>class method</b>: it works with class-level data, belongs to the class rather than one object, and receives the class reference (<code>cls</code>) automatically.</p>
+  <pre><code class="language-python">class Student:
+    school_name = "Durga Soft"
+
+    @classmethod
+    def show_school(cls):
+        print("School Name:", cls.school_name)
+
+Student.show_school()</code></pre>
+  <pre class="out"><code>School Name: Durga Soft</code></pre>
+  <p>No object was needed to call it.</p>
+  <h3><code>@staticmethod</code></h3>
+  <p>Declares a <b>static method</b>: it uses neither object data nor class data and performs a general-purpose task. Python passes it <b>no</b> automatic reference.</p>
+  <pre><code class="language-python">class MathUtility:
+    @staticmethod
+    def add(a, b):
+        print("Sum:", a + b)
+
+MathUtility.add(10, 20)</code></pre>
+  <pre class="out"><code>Sum: 30</code></pre>
+  <div class="sticky tip l"><strong>Decorators in one breath</strong> They change behaviour without changing logic, use <code>@</code>, sit directly above the definition, help you avoid repeated code, and <code>@classmethod</code> / <code>@staticmethod</code> are essential in OOP.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="components">
+  <h2>The two parts of every object</h2>
+  <p>Every real-world thing we model in Python has <b>properties</b> and <b>behaviour</b>.</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Properties (data) → variables</h4><p>What the object <b>has</b>. A student: name, roll number, marks. A mobile phone: brand, colour, price.</p></div>
+    <div class="card t2 tilt-b"><h4>Behaviour (actions) → methods</h4><p>What the object <b>does</b>. A student: talks, reads, writes. A phone: calls, sends texts, plays music.</p></div>
+  </div>
+  <p>Variables come in three types, and so do methods:</p>
+  <div class="tbl"><table>
+    <tr><th>Variables</th><th>Belong to</th><th>Methods</th><th>Work with</th></tr>
+    <tr><td>Instance</td><td>one object</td><td>Instance</td><td>one object’s data (<code>self</code>)</td></tr>
+    <tr><td>Static (class)</td><td>the class, shared by all</td><td>Class</td><td>class data (<code>cls</code>)</td></tr>
+    <tr><td>Local</td><td>one method call</td><td>Static</td><td>neither, just the arguments</td></tr>
+  </table></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="instance-vars">
+  <h2>Instance variables (object level)</h2>
+  <p>Instance variables store data <b>unique to each object</b>, like a student’s name and roll number. Each object keeps its <b>own independent copy</b>, so changing one object never affects another.</p>
+  <ul>
+    <li><b>How to spot them:</b> usually created inside <code>__init__</code> with the pattern <code>self.variable_name</code>.</li>
+    <li><b>Memory:</b> allocated when the object is created; every object gets its own copy.</li>
+  </ul>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no):
+        # These are Instance Variables
+        self.name = name
+        self.roll_no = roll_no
+
+# Creating two different objects
+s1 = Student("Kumar Deepak", 101)  # s1's object stores its own name and roll_no
+s2 = Student("Ravi", 102)          # s2's object stores its own name and roll_no
+
+print(f"Student 1: {s1.name}")
+print(f"Student 2: {s2.name}")</code></pre>
+  <pre class="out"><code>Student 1: Kumar Deepak
+Student 2: Ravi</code></pre>
+  <div class="sticky info"><strong>Precise wording</strong> <code>s1</code> and <code>s2</code> are reference variables. The instance variables live inside the actual objects, <code>Student("Kumar Deepak", 101)</code> and <code>Student("Ravi", 102)</code>. Same variable names, separate copies.</div>
+  <p>Real-world version: each food-delivery customer has their own name and address.</p>
+  <pre><code class="language-python">class Customer:
+    def __init__(self, name, address):
+        self.name = name
+        self.address = address
+
+c1 = Customer("Arjun", "MG Road, Bengaluru")
+c2 = Customer("Meera", "Park Street, Kolkata")
+
+print(f"{c1.name} lives at {c1.address}")
+print(f"{c2.name} lives at {c2.address}")</code></pre>
+  <pre class="out"><code>Arjun lives at MG Road, Bengaluru
+Meera lives at Park Street, Kolkata</code></pre>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="static-vars">
+  <h2>Static variables (class level)</h2>
+  <div class="story"><b class="lbl">The college notice board</b>Every student has their own ID card (instance data), but there is one notice board in the corridor that everyone reads. Change the notice and every student sees the new one. <mark>A static variable is the notice board: one copy, owned by the class, shared by all objects.</mark></div>
+  <p>Static variables store data <b>common to all objects</b>. All students of one college share the same college name, while their names and roll numbers differ. They exist to store common data, avoid duplicating the same value in every object, and keep it consistent.</p>
+  <ul>
+    <li><b>One copy</b> in memory, owned by the class; all objects see the same value.</li>
+    <li><b>How to spot them:</b> defined inside the class but <b>outside all methods</b>; usually accessed with the class name, e.g. <code>Student.school_name</code>.</li>
+    <li><b>Memory:</b> allocated once, when the class is defined, not each time an object is created.</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The Student class holds one school_name. Two objects each hold their own name, and both read school_name from the class through dashed arrows">
+      <g class="rough">
+        <rect class="box f-yellow" x="230" y="20" width="260" height="80" rx="14"/>
+        <rect class="box f-green" x="40" y="160" width="240" height="70" rx="12"/>
+        <rect class="box f-green" x="440" y="160" width="240" height="70" rx="12"/>
+        <path class="lb dash" d="M160 155 L 260 104" marker-end="url(#ahb)"/>
+        <path class="lb dash" d="M560 155 L 460 104" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="360" y="52" text-anchor="middle">class Student</text>
+      <text class="tm" x="360" y="84" text-anchor="middle">school_name = "XYZ College"</text>
+      <text class="tm" x="160" y="190" text-anchor="middle">s1 object</text>
+      <text class="tm" x="160" y="214" text-anchor="middle">name = "Kumar Deepak"</text>
+      <text class="tm" x="560" y="190" text-anchor="middle">s2 object</text>
+      <text class="tm" x="560" y="214" text-anchor="middle">name = "Ravi"</text>
+      <text class="tb" x="360" y="140" text-anchor="middle">both read the same copy</text>
+    </svg></div>
+    <figcaption>Instance variables live in each object; a static variable lives once, in the class.</figcaption>
+  </figure>
+  <pre><code class="language-python">class Student:
+    # Static Variable
+    school_name = "XYZ College"
+
+    def __init__(self, name):
+        self.name = name
+
+# Creating objects
+s1 = Student("Kumar Deepak")
+s2 = Student("Ravi")
+
+print(Student.school_name)</code></pre>
+  <pre class="out"><code>XYZ College</code></pre>
+  <p>Real-world version: all employees share the company name, but each has their own name.</p>
+  <pre><code class="language-python">class Employee:
+    # Static Variable
+    company_name = "TechNova Pvt Ltd"
+
+    def __init__(self, name):
+        self.name = name
+
+e1 = Employee("Rahul")
+e2 = Employee("Sneha")
+
+print(e1.name, "works at", Employee.company_name)
+print(e2.name, "works at", Employee.company_name)</code></pre>
+  <pre class="out"><code>Rahul works at TechNova Pvt Ltd
+Sneha works at TechNova Pvt Ltd</code></pre>
+  <div class="sticky warn l"><strong>Change it through the class, not an object</strong> <code>Student.school_name = "New College"</code> changes it for everyone. But <code>s1.school_name = "ABC"</code> does <b>not</b> touch the shared value: it creates a new instance variable on <code>s1</code> only, hiding the class one. After that, <code>s1.school_name</code> is <code>ABC</code> while <code>s2.school_name</code> and <code>Student.school_name</code> are still <code>XYZ College</code>.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="local-vars">
+  <h2>Local variables (method level)</h2>
+  <p>Local variables are created <b>inside a method</b> and used only <b>within that method</b>, for temporary work like calculations or intermediate steps. They keep methods clean and avoid storing short-term data on the object.</p>
+  <ul>
+    <li><b>How to spot them:</b> defined inside a method, <b>not</b> prefixed with <code>self</code>.</li>
+    <li><b>Lifetime:</b> created when the method starts, destroyed when it finishes; can’t be accessed outside.</li>
+  </ul>
+  <pre><code class="language-python">class Calculator:
+    def add(self, a, b):
+        result = a + b  # Local Variable
+        print(result)
+
+c = Calculator()
+c.add(10, 20)
+print(result)       # outside the method</code></pre>
+  <pre class="out"><code>30
+Traceback (most recent call last):
+  ...
+NameError: name 'result' is not defined</code></pre>
+  <div class="flow"><span class="op">c.add(10, 20) starts</span><span class="ok">result = 30 created</span><span class="op">print(result)</span><span class="bad">method ends · result gone</span></div>
+  <p>Real-world version: a cart needs the discount amount only while calculating the final price.</p>
+  <pre><code class="language-python">class Cart:
+    def final_price(self, price, discount_percent):
+        discount = price * discount_percent / 100  # Local Variable
+        print("Final price:", price - discount)
+
+cart = Cart()
+cart.final_price(2000, 10)</code></pre>
+  <pre class="out"><code>Final price: 1800.0</code></pre>
+  <p>(It prints <code>1800.0</code>, a float, because <code>/</code> always returns a float in Python 3.)</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="instance-methods">
+  <h2>Instance methods</h2>
+  <p>Variables describe what an object <b>has</b>; methods describe what it can <b>do</b>. A <b>method</b> is a function defined inside a class. Python has three types: instance, class and static.</p>
+  <p><b>Instance methods</b> work with the data of one specific object. You can spot them because they are defined in the class, take <code>self</code> as the first parameter, and are usually called on an object.</p>
+  <pre><code class="language-python">class Student:
+    def __init__(self, name, roll_no):
+        self.name = name
+        self.roll_no = roll_no
+
+    def talk(self):
+        print("Name:", self.name)
+        print("Roll No:", self.roll_no)
+
+s1 = Student("Sunny", 101)
+s1.talk()</code></pre>
+  <pre class="out"><code>Name: Sunny
+Roll No: 101</code></pre>
+  <p><code>talk()</code> prints the data of <b>whichever object calls it</b>. Real-world version: a bank account that can take deposits and show its own balance.</p>
+  <pre><code class="language-python">class BankAccount:
+    def __init__(self, holder_name, balance):
+        self.holder_name = holder_name
+        self.balance = balance
+
+    def deposit(self, amount):
+        self.balance += amount
+        print(self.holder_name, "deposited", amount)
+
+    def show_balance(self):
+        print(self.holder_name, "has a balance of", self.balance)
+
+acc = BankAccount("Kavya", 3000)
+acc.deposit(1500)
+acc.show_balance()</code></pre>
+  <pre class="out"><code>Kavya deposited 1500
+Kavya has a balance of 4500</code></pre>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="class-methods">
+  <h2>Class methods</h2>
+  <p><b>Class methods</b> work with <b>class-level data</b> shared by all objects. The <code>@classmethod</code> decorator makes Python pass the <b>class itself</b> as the first argument, named <code>cls</code> by convention. They’re usually called with the class name, and need no object.</p>
+  <pre><code class="language-python">class Student:
+    school_name = "XYZ College"
+
+    @classmethod
+    def show_school_name(cls):
+        print("School:", cls.school_name)
+
+Student.show_school_name()</code></pre>
+  <pre class="out"><code>School: XYZ College</code></pre>
+  <p>Real-world version: a cinema chain changes the ticket price for all shows at once.</p>
+  <pre><code class="language-python">class MovieTicket:
+    ticket_price = 200
+
+    @classmethod
+    def update_price(cls, new_price):
+        cls.ticket_price = new_price
+        print("New ticket price for all shows:", cls.ticket_price)
+
+MovieTicket.update_price(250)</code></pre>
+  <pre class="out"><code>New ticket price for all shows: 250</code></pre>
+  <p>Because <code>cls.ticket_price</code> changes the class variable, every <code>MovieTicket</code> object, old or new, now sees <code>250</code>.</p>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="static-methods">
+  <h2>Static methods</h2>
+  <p><b>Static methods</b> use <b>neither object data nor class data</b>. They are helper functions kept inside a class for <b>logical grouping</b>. <code>@staticmethod</code> tells Python not to pass <code>self</code> or <code>cls</code>, so the method behaves like a normal function. You can call it with the class name or through an object.</p>
+  <pre><code class="language-python">class MathUtils:
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+print(MathUtils.add(10, 20))</code></pre>
+  <pre class="out"><code>30</code></pre>
+  <p>Real-world version: a rupees-to-dollars helper that needs no account or class data.</p>
+  <pre><code class="language-python">class CurrencyConverter:
+    @staticmethod
+    def rupees_to_dollars(rupees, rate):
+        return rupees / rate
+
+print(CurrencyConverter.rupees_to_dollars(8300, 83))</code></pre>
+  <pre class="out"><code>100.0</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Three lanes. Instance method: Python passes the object as self. Class method: Python passes the class as cls. Static method: Python passes nothing extra.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="680" height="62" rx="14"/>
+        <rect class="box f-yellow" x="20" y="96" width="680" height="62" rx="14"/>
+        <rect class="box f-grey" x="20" y="172" width="680" height="62" rx="14"/>
+        <path class="lr" d="M300 51 L 410 51" marker-end="url(#ahr)"/>
+        <path class="lr" d="M300 127 L 410 127" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M300 203 L 410 203" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="40" y="47">def talk(self)</text><text class="ts" x="40" y="68">instance method</text>
+      <text class="tm" x="40" y="123">@classmethod  def f(cls)</text><text class="ts" x="40" y="144">class method</text>
+      <text class="tm" x="40" y="199">@staticmethod def add(a, b)</text><text class="ts" x="40" y="220">static method</text>
+      <text class="t" x="430" y="57">self = the calling object</text>
+      <text class="t" x="430" y="133">cls = the class itself</text>
+      <text class="t" x="430" y="209">nothing extra is passed</text>
+    </svg></div>
+    <figcaption>The difference between the three is simply what Python passes in automatically as the first argument.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Type</th><th>Decorator</th><th>First parameter</th><th>Uses</th><th>Usually called on</th></tr>
+    <tr><td>Instance method</td><td>none</td><td><code>self</code></td><td>object data</td><td>an object</td></tr>
+    <tr><td>Class method</td><td><code>@classmethod</code></td><td><code>cls</code></td><td>class data</td><td>the class</td></tr>
+    <tr><td>Static method</td><td><code>@staticmethod</code></td><td>none</td><td>only its arguments</td><td>class or object</td></tr>
+  </table></div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Constructor (__init__)</dt><dd>A special method Python runs automatically, once, when an object is created; it sets the object’s starting instance variables.</dd></div>
+    <div><dt>Default constructor</dt><dd>The do-nothing constructor a class uses when you don’t write <code>__init__</code>; it is inherited from Python’s built-in <code>object</code>.</dd></div>
+    <div><dt>Constructor overloading</dt><dd>Having several constructors with different parameters. Python doesn’t support it: a later <code>__init__</code> replaces an earlier one.</dd></div>
+    <div><dt>Decorator</dt><dd>A function, applied with <code>@name</code> above a definition, that takes a function and returns a modified one, changing its behaviour without editing its code.</dd></div>
+    <div><dt>Wrapper function</dt><dd>The inner function a decorator returns; it adds extra behaviour and calls the original function.</dd></div>
+    <div><dt>Instance variable</dt><dd>A variable stored in one object, usually created with <code>self.name = value</code>; every object has its own copy.</dd></div>
+    <div><dt>Static (class) variable</dt><dd>A variable defined in the class body outside all methods; one copy is shared by every object of the class.</dd></div>
+    <div><dt>Local variable</dt><dd>A variable created inside a method without <code>self</code>; it exists only while that method runs.</dd></div>
+    <div><dt>Instance method</dt><dd>A method whose first parameter is <code>self</code>; it works with the data of the object that calls it.</dd></div>
+    <div><dt>Class method</dt><dd>A method marked <code>@classmethod</code> that receives the class as <code>cls</code> and works with class-level data.</dd></div>
+    <div><dt>Static method</dt><dd>A method marked <code>@staticmethod</code> that receives neither <code>self</code> nor <code>cls</code>; a helper grouped inside a class.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Why is <code>__init__</code> better than a <code>set_details()</code> method for initial data?</p>
+      <ol><li>It runs faster</li><li>It runs automatically at creation, so an object can’t be left without its data</li><li>It can be called many times</li><li>It makes variables private</li></ol>
+      <p class="why">With a normal method you must remember a second step; forgetting it causes an AttributeError later.</p></div>
+    <div class="q" data-answer="3"><p>A class has <code>__init__</code> that prints “hi”, and a method <code>show()</code>. You create one object and call <code>show()</code> three times. How many times is “hi” printed?</p>
+      <ol><li>0</li><li>3</li><li>1</li><li>4</li></ol>
+      <p class="why">The constructor runs once per object, at creation.</p></div>
+    <div class="q" data-answer="4"><p>A class defines <code>__init__(self)</code> and then <code>__init__(self, name)</code>. What does <code>Student()</code> do?</p>
+      <ol><li>Runs the first constructor</li><li>Runs both</li><li>Creates the object with name = None</li><li>Raises TypeError: missing 1 required positional argument: 'name'</li></ol>
+      <p class="why">The second definition replaces the first, and it needs a <code>name</code>.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>@simple_decorator</code> above <code>def greet():</code> mean?</p>
+      <ol><li><code>greet = simple_decorator(greet)</code></li><li><code>simple_decorator = greet()</code></li><li>greet runs once immediately</li><li>greet becomes a class method</li></ol>
+      <p class="why">The decorator receives the function and the name is rebound to whatever it returns (the wrapper).</p></div>
+    <div class="q" data-answer="3"><p>Where is a static (class) variable defined?</p>
+      <ol><li>Inside <code>__init__</code> with <code>self.</code></li><li>Inside any method without <code>self</code></li><li>In the class body, outside all methods</li><li>Outside the class</li></ol>
+      <p class="why">Variables in the class body belong to the class and are shared by all its objects.</p></div>
+    <div class="q" data-answer="2"><p><code>Student.school_name</code> is “XYZ”. You run <code>s1.school_name = "ABC"</code>. What is <code>s2.school_name</code>?</p>
+      <ol><li>ABC</li><li>XYZ</li><li>An error</li><li>None</li></ol>
+      <p class="why">Assigning through <code>s1</code> creates an instance variable on <code>s1</code> only. The shared class value is unchanged.</p></div>
+    <div class="q" data-answer="4"><p>A method needs no object data and no class data, it just converts units. Which type fits?</p>
+      <ol><li>Instance method</li><li>Class method</li><li>Constructor</li><li>Static method</li></ol>
+      <p class="why">Static methods get no automatic first argument; they’re helpers grouped in the class.</p></div>
+    <div class="q" data-answer="1"><p>What does Python pass as the first argument to a <code>@classmethod</code>?</p>
+      <ol><li>The class itself</li><li>The calling object</li><li>Nothing</li><li>The module</li></ol>
+      <p class="why">That’s why it can read and change class variables through <code>cls</code>.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">The <b>constructor</b> <code>__init__</code> sets up every object automatically; <b>decorators</b> wrap functions to change how they behave; data lives in <b>instance</b>, <b>static</b> or <b>local</b> variables, and behaviour in <b>instance</b>, <b>class</b> or <b>static</b> methods depending on whose data they need.</p>
+  <p>Next up: Inheritance, where one class reuses everything another class already has.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

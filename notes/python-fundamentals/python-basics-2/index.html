@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Basics · Part 2 · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Processing data in Python: arithmetic, assignment, comparison, logical, membership and identity operators, precedence, strings, indexing, slicing, f-strings, booleans, None, built-in functions and common errors.">
+<meta name="keywords" content="operators, precedence, strings, slicing, f-strings, truthy and falsy, None, common errors">
+<meta name="date" content="2026-09-28">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/python-basics-2">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Python Basics · Part 2</h1>
+  <p class="byline">Make your programs actually process data: calculate and compare with operators, slice and format text, reason with True, False and None, and read the error messages you will meet every day.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="recap">
+  <h2>Where Part 1 left off</h2>
+  <p>In Part 1 you learned how Python runs a program, its syntax and indentation rules, comments, variables and naming, the basic data types and literals, type conversion, and <code>input()</code>/<code>print()</code>. Every interactive program so far follows this flow:</p>
+  <div class="flow"><span>User types</span><span class="op">input()</span><span>string</span><span class="op">int() / float()</span><span class="hl">processing</span><span class="ok">print()</span></div>
+  <p>You have covered every step except one: <mark>processing</mark>. Look at this program:</p>
+  <pre><code class="language-python">unit_price = int(input("Enter unit price: "))
+quantity = int(input("Enter quantity: "))
+
+print(unit_price, quantity)</code></pre>
+  <pre class="out"><code>Enter unit price: 250
+Enter quantity: 4
+250 4</code></pre>
+  <p>Same story at a railway ticket counter that asks for adult and child tickets:</p>
+  <pre><code class="language-python">adult_tickets = int(input("Enter number of adult tickets: "))
+child_tickets = int(input("Enter number of child tickets: "))
+
+print(adult_tickets, child_tickets)</code></pre>
+  <pre class="out"><code>Enter number of adult tickets: 2
+Enter number of child tickets: 1
+2 1</code></pre>
+  <p>Both programs collect and convert the values correctly, but neither can work out a total, compare it to a limit or check a condition. All of that needs <b>operators</b>, which is where this part begins.</p>
+  <h3>The road through this note</h3>
+  <div class="flow"><span class="hl">Operators</span><span>Precedence</span><span>Separators</span><span>Strings · indexing · slicing · f-strings</span><span>Booleans · None</span><span>Built-ins</span><span class="ok">Common errors</span></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="arithmetic">
+  <h2>Operators that calculate</h2>
+  <div class="story"><b class="lbl">The kirana shop counter</b>The shopkeeper adds up your items, multiplies by quantity, gives back change. <mark>Operators are the symbols that tell Python to do that arithmetic for you.</mark></div>
+  <p>An <b>operator</b> is a symbol or keyword that tells Python to perform an operation on one or more values. The values it acts on are called <b>operands</b>.</p>
+  <div class="anatomy"><span class="a4">10</span> <span class="a3">+</span> <span class="a4">5</span></div>
+  <div class="legend">
+    <div><span class="sw a4"></span><p>operands: the values being worked on</p></div>
+    <div><span class="sw a3"></span><p>operator: the action to perform</p></div>
+  </div>
+  <pre><code class="language-python">pen_price = 20
+notebook_price = 45
+
+total_price = pen_price + notebook_price
+print(total_price)</code></pre>
+  <pre class="out"><code>65</code></pre>
+
+  <h3>Arithmetic operators</h3>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Meaning</th></tr>
+    <tr><td><code>+</code></td><td>Addition</td></tr>
+    <tr><td><code>-</code></td><td>Subtraction</td></tr>
+    <tr><td><code>*</code></td><td>Multiplication</td></tr>
+    <tr><td><code>/</code></td><td>Division (always gives a <code>float</code>)</td></tr>
+    <tr><td><code>//</code></td><td>Floor division (divide, then round <b>down</b> to a whole number)</td></tr>
+    <tr><td><code>%</code></td><td>Modulus (the <b>remainder</b> left after division)</td></tr>
+    <tr><td><code>**</code></td><td>Exponentiation (raise to a power)</td></tr>
+  </table></div>
+  <pre><code class="language-python">units_sold = 17
+units_per_box = 5
+
+print(units_sold + units_per_box)
+print(units_sold - units_per_box)
+print(units_sold * units_per_box)
+print(units_sold / units_per_box)
+print(units_sold // units_per_box)
+print(units_sold % units_per_box)
+print(units_per_box ** 2)</code></pre>
+  <pre class="out"><code>22
+12
+85
+3.4
+3
+2
+25</code></pre>
+  <p><code>/</code>, <code>//</code> and <code>%</code> confuse almost every beginner. Picture packing 17 units into boxes of 5:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="17 units packed into boxes of 5: three full boxes and two units left over. 17 / 5 is 3.4, 17 // 5 is 3, 17 % 5 is 2">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="40" width="150" height="66" rx="10"/>
+        <rect class="box f-blue" x="190" y="40" width="150" height="66" rx="10"/>
+        <rect class="box f-blue" x="360" y="40" width="150" height="66" rx="10"/>
+        <circle class="box f-orange" cx="44" cy="73" r="10"/><circle class="box f-orange" cx="69" cy="73" r="10"/><circle class="box f-orange" cx="94" cy="73" r="10"/><circle class="box f-orange" cx="119" cy="73" r="10"/><circle class="box f-orange" cx="144" cy="73" r="10"/>
+        <circle class="box f-orange" cx="214" cy="73" r="10"/><circle class="box f-orange" cx="239" cy="73" r="10"/><circle class="box f-orange" cx="264" cy="73" r="10"/><circle class="box f-orange" cx="289" cy="73" r="10"/><circle class="box f-orange" cx="314" cy="73" r="10"/>
+        <circle class="box f-orange" cx="384" cy="73" r="10"/><circle class="box f-orange" cx="409" cy="73" r="10"/><circle class="box f-orange" cx="434" cy="73" r="10"/><circle class="box f-orange" cx="459" cy="73" r="10"/><circle class="box f-orange" cx="484" cy="73" r="10"/>
+        <circle class="box f-orange" cx="580" cy="73" r="10"/><circle class="box f-orange" cx="608" cy="73" r="10"/>
+      </g>
+      <text class="ts" x="95" y="126" text-anchor="middle">box 1</text>
+      <text class="ts" x="265" y="126" text-anchor="middle">box 2</text>
+      <text class="ts" x="435" y="126" text-anchor="middle">box 3</text>
+      <text class="tr" x="594" y="126" text-anchor="middle">2 left over</text>
+      <text class="tm" x="110" y="180" text-anchor="middle">17 / 5  → 3.4</text>
+      <text class="ts" x="110" y="204" text-anchor="middle">exact answer, a float</text>
+      <text class="tm" x="360" y="180" text-anchor="middle">17 // 5 → 3</text>
+      <text class="ts" x="360" y="204" text-anchor="middle">full boxes only</text>
+      <text class="tm" x="600" y="180" text-anchor="middle">17 % 5  → 2</text>
+      <text class="ts" x="600" y="204" text-anchor="middle">units left over</text>
+    </svg></div>
+    <figcaption><code>/</code> is the exact answer, <code>//</code> counts the full boxes, <code>%</code> counts what doesn’t fit.</figcaption>
+  </figure>
+  <p>A warehouse has 53 items to pack into cartons of 12:</p>
+  <pre><code class="language-python">total_items = 53
+items_per_carton = 12
+
+print("Exact cartons needed:", total_items / items_per_carton)
+print("Full cartons:", total_items // items_per_carton)
+print("Items left over:", total_items % items_per_carton)</code></pre>
+  <pre class="out"><code>Exact cartons needed: 4.416666666666667
+Full cartons: 4
+Items left over: 5</code></pre>
+  <div class="sticky tip"><strong>A handy trick</strong> <code>n % 2 == 0</code> tells you whether <code>n</code> is even. You will use this in the next note.</div>
+
+  <h3>Assignment operators</h3>
+  <p>You already know <code>=</code>. <b>Compound assignment operators</b> combine a calculation with assignment, updating a variable from its own current value.</p>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Same as</th><th>Operator</th><th>Same as</th></tr>
+    <tr><td><code>x += v</code></td><td><code>x = x + v</code></td><td><code>x //= v</code></td><td><code>x = x // v</code></td></tr>
+    <tr><td><code>x -= v</code></td><td><code>x = x - v</code></td><td><code>x %= v</code></td><td><code>x = x % v</code></td></tr>
+    <tr><td><code>x *= v</code></td><td><code>x = x * v</code></td><td><code>x **= v</code></td><td><code>x = x ** v</code></td></tr>
+    <tr><td><code>x /= v</code></td><td><code>x = x / v</code></td><td></td><td></td></tr>
+  </table></div>
+  <pre><code class="language-python">x = 10
+
+x += 5
+print("x += 5 means x = x + 5, so x =", x)
+x -= 3
+print("x -= 3 means x = x - 3, so x =", x)
+x *= 2
+print("x *= 2 means x = x * 2, so x =", x)
+x /= 4
+print("x /= 4 means x = x / 4, so x =", x)
+x //= 2
+print("x //= 2 means x = x // 2, so x =", x)
+x %= 3
+print("x %= 3 means x = x % 3, so x =", x)
+x **= 2
+print("x **= 2 means x = x ** 2, so x =", x)</code></pre>
+  <pre class="out"><code>x += 5 means x = x + 5, so x = 15
+x -= 3 means x = x - 3, so x = 12
+x *= 2 means x = x * 2, so x = 24
+x /= 4 means x = x / 4, so x = 6.0
+x //= 2 means x = x // 2, so x = 3.0
+x %= 3 means x = x % 3, so x = 0.0
+x **= 2 means x = x ** 2, so x = 0.0</code></pre>
+  <div class="sticky info l"><strong>Why 6.0 and not 6?</strong> <code>/</code> always produces a <code>float</code>. Once <code>x</code> is a float, <code>//</code> and <code>%</code> keep it a float (<code>3.0</code>, <code>0.0</code>).</div>
+  <p>Tracking a wallet balance through the day:</p>
+  <pre><code class="language-python">wallet_balance = 5000
+
+wallet_balance += 2000   # refund received
+wallet_balance -= 1200   # electricity bill paid
+wallet_balance -= 350    # mobile recharge
+print("Wallet balance:", wallet_balance)</code></pre>
+  <pre class="out"><code>Wallet balance: 5450</code></pre>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="comparison-logical">
+  <h2>Operators that decide: comparison and logical</h2>
+  <h3>Comparison operators</h3>
+  <p>Comparison operators compare two values and <mark>always produce a Boolean: <code>True</code> or <code>False</code></mark>.</p>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Meaning</th><th>Operator</th><th>Meaning</th></tr>
+    <tr><td><code>==</code></td><td>Equal to</td><td><code>!=</code></td><td>Not equal to</td></tr>
+    <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>&lt;</code></td><td>Less than</td></tr>
+    <tr><td><code>&gt;=</code></td><td>Greater than or equal to</td><td><code>&lt;=</code></td><td>Less than or equal to</td></tr>
+  </table></div>
+  <pre><code class="language-python">cart_total = 1500
+free_shipping_threshold = 1000
+
+print("cart_total == threshold:", cart_total == free_shipping_threshold)
+print("cart_total != threshold:", cart_total != free_shipping_threshold)
+print("cart_total &gt; threshold:", cart_total &gt; free_shipping_threshold)
+print("cart_total &lt; threshold:", cart_total &lt; free_shipping_threshold)
+print("cart_total &gt;= threshold:", cart_total &gt;= free_shipping_threshold)
+print("cart_total &lt;= threshold:", cart_total &lt;= free_shipping_threshold)</code></pre>
+  <pre class="out"><code>cart_total == threshold: False
+cart_total != threshold: True
+cart_total &gt; threshold: True
+cart_total &lt; threshold: False
+cart_total &gt;= threshold: True
+cart_total &lt;= threshold: False</code></pre>
+  <p>Checking a student’s result:</p>
+  <pre><code class="language-python">student_marks = 72
+passing_marks = 40
+
+print("Passed:", student_marks &gt;= passing_marks)
+print("Scored full marks:", student_marks == 100)
+print("Below passing marks:", student_marks &lt; passing_marks)</code></pre>
+  <pre class="out"><code>Passed: True
+Scored full marks: False
+Below passing marks: False</code></pre>
+  <div class="sticky warn"><strong><code>=</code> vs <code>==</code></strong> <code>=</code> <b>stores</b> a value; <code>==</code> <b>compares</b> two values. Writing <code>if marks = 100:</code> is a <code>SyntaxError</code>.</div>
+
+  <h3>Logical operators</h3>
+  <p>Logical operators combine Booleans (or expressions that produce Booleans) into one Boolean.</p>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4><code>and</code></h4><p><code>True</code> only if <b>both</b> sides are <code>True</code>.</p></div>
+    <div class="card t1 tilt-b"><h4><code>or</code></h4><p><code>True</code> if <b>at least one</b> side is <code>True</code>.</p></div>
+    <div class="card t4 tilt-a"><h4><code>not</code></h4><p><b>Flips</b> a Boolean: <code>True</code> ↔ <code>False</code>.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th><code>A</code></th><th><code>B</code></th><th><code>A and B</code></th><th><code>A or B</code></th><th><code>not A</code></th></tr>
+    <tr><td>True</td><td>True</td><td>True</td><td>True</td><td>False</td></tr>
+    <tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td></tr>
+    <tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr>
+    <tr><td>False</td><td>False</td><td>False</td><td>False</td><td>True</td></tr>
+  </table></div>
+  <pre><code class="language-python">employee_age = 35
+is_active_employee = True
+
+print("Age is between 18 and 60:", employee_age &gt;= 18 and employee_age &lt;= 60)
+print("Employee is active or under 18:", is_active_employee or employee_age &lt; 18)
+print("Employee is not active:", not is_active_employee)</code></pre>
+  <pre class="out"><code>Age is between 18 and 60: True
+Employee is active or under 18: True
+Employee is not active: False</code></pre>
+  <p>A bank approves a loan only if the applicant is 21 to 60 years old <b>and</b> earns at least 25,000 a month:</p>
+  <pre><code class="language-python">applicant_age = 29
+monthly_income = 42000
+has_missed_payments = False
+
+print("Eligible for loan:", applicant_age &gt;= 21 and applicant_age &lt;= 60 and monthly_income &gt;= 25000)
+print("Needs manual review:", has_missed_payments or monthly_income &lt; 25000)
+print("Clean payment record:", not has_missed_payments)</code></pre>
+  <pre class="out"><code>Eligible for loan: True
+Needs manual review: False
+Clean payment record: True</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Business rules from a customer (“approve if X and Y, unless Z”) turn straight into <code>and</code>/<code>or</code>/<code>not</code> expressions. Write each rule as a named Boolean (<code>is_eligible = …</code>) so the customer can read and confirm the logic with you.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="membership-identity">
+  <h2>Membership and identity operators</h2>
+  <h3>Membership: <code>in</code> and <code>not in</code></h3>
+  <p>Membership operators check whether a value exists <b>inside</b> a sequence, such as a string, and return a Boolean.</p>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Meaning</th></tr>
+    <tr><td><code>in</code></td><td><code>True</code> if the value is found</td></tr>
+    <tr><td><code>not in</code></td><td><code>True</code> if the value is not found</td></tr>
+  </table></div>
+  <pre><code class="language-python">log_message = "Connection timeout while reaching database"
+print("timeout" in log_message)
+print("success" not in log_message)</code></pre>
+  <pre class="out"><code>True
+True</code></pre>
+  <p>A sign-up form checks that an email has an <code>@</code> and no spaces:</p>
+  <pre><code class="language-python">email = "priya.sharma@example.com"
+
+print("Contains @:", "@" in email)
+print("Has no spaces:", " " not in email)</code></pre>
+  <pre class="out"><code>Contains @: True
+Has no spaces: True</code></pre>
+  <h3>Identity: <code>is</code> and <code>is not</code></h3>
+  <p>Identity operators check whether two names refer to <mark>the exact same object in memory</mark>, not just equal-looking values. As a beginner, you will mostly use them to check for <code>None</code> (covered below).</p>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Meaning</th></tr>
+    <tr><td><code>is</code></td><td><code>True</code> if both refer to the same object</td></tr>
+    <tr><td><code>is not</code></td><td><code>True</code> if they refer to different objects</td></tr>
+  </table></div>
+  <pre><code class="language-python">last_error = None
+print(last_error is None)</code></pre>
+  <pre class="out"><code>True</code></pre>
+  <p>A delivery app checks whether a delivery partner has been assigned yet:</p>
+  <pre><code class="language-python">assigned_partner = None
+print("Waiting for partner:", assigned_partner is None)
+
+assigned_partner = "Ravi"
+print("Partner assigned:", assigned_partner is not None)</code></pre>
+  <pre class="out"><code>Waiting for partner: True
+Partner assigned: True</code></pre>
+  <div class="sticky warn l"><strong>Don’t use <code>is</code> to compare values</strong> Use <code>==</code> for numbers and strings. <code>is</code> asks “same object?”, which can give surprising answers for equal values. Keep <code>is</code> for <code>None</code>.</div>
+  <p>You will lean on logical, membership and identity operators constantly once you start writing <code>if</code> statements in the next note, because real decisions usually depend on more than one condition.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="precedence">
+  <h2>Operator precedence: what Python calculates first</h2>
+  <p>When an expression has more than one operator, the order matters:</p>
+  <pre><code class="language-python">result = 10 + 5 * 2</code></pre>
+  <p>Reading left to right suggests <code>(10 + 5) * 2 = 30</code>. But Python follows a fixed order of operations called <b>operator precedence</b>, like BODMAS/PEMDAS in school maths, so it calculates <code>10 + (5 * 2) = 20</code>. <mark>Python finds the highest-priority operator, calculates that part, and repeats until one value is left.</mark></p>
+  <div class="tbl"><table>
+    <tr><th>Priority</th><th>Operator(s)</th><th>Meaning</th></tr>
+    <tr><td>1 (highest)</td><td><code>( )</code></td><td>Parentheses: always first</td></tr>
+    <tr><td>2</td><td><code>**</code></td><td>Exponentiation</td></tr>
+    <tr><td>3</td><td><code>*</code> <code>/</code> <code>//</code> <code>%</code></td><td>Multiplication, division, floor division, modulus</td></tr>
+    <tr><td>4</td><td><code>+</code> <code>-</code></td><td>Addition, subtraction</td></tr>
+    <tr><td>5</td><td><code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> (and <code>in</code>, <code>is</code>)</td><td>Comparison, membership, identity</td></tr>
+    <tr><td>6</td><td><code>not</code></td><td>Logical NOT</td></tr>
+    <tr><td>7</td><td><code>and</code></td><td>Logical AND</td></tr>
+    <tr><td>8 (lowest)</td><td><code>or</code></td><td>Logical OR</td></tr>
+  </table></div>
+  <p>Operators with <b>equal</b> priority are evaluated <b>left to right</b>.</p>
+  <div class="sticky info l"><strong>Two exceptions worth knowing</strong> <code>**</code> groups <b>right to left</b>: <code>2 ** 3 ** 2</code> is <code>2 ** 9 = 512</code>. And <code>**</code> binds tighter than a leading minus: <code>-2 ** 2</code> is <code>-4</code>, not 4. When in doubt, add parentheses.</div>
+
+  <h3>Worked example 1: multiplication before addition</h3>
+  <pre><code class="language-python">print(10 + 5 * 2)</code></pre>
+  <pre class="out"><code>20</code></pre>
+  <p><code>*</code> outranks <code>+</code>, so <code>5 * 2 = 10</code> first, then <code>10 + 10 = 20</code>. A mobile bill with a fixed rental of 199 plus 2 GB of extra data at 25 per GB works the same way, and so does a food order of 3 plates at 180 plus a delivery charge of 50:</p>
+  <pre><code class="language-python">monthly_bill = 199 + 2 * 25
+print(monthly_bill)
+
+bill_amount = 50 + 3 * 180
+print(bill_amount)</code></pre>
+  <pre class="out"><code>249
+590</code></pre>
+
+  <h3>Worked example 2: several operators mixed</h3>
+  <pre><code class="language-python">print(2 + 3 * 4 - 6 / 2)</code></pre>
+  <pre class="out"><code>11.0</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 280" role="img" aria-label="2 + 3 * 4 - 6 / 2 reduces to 2 + 12 - 3.0, then 14 - 3.0, then 11.0">
+      <g class="rough">
+        <rect class="box f-yellow" x="40" y="14" width="300" height="50" rx="12"/>
+        <rect class="box f-card" x="40" y="88" width="300" height="50" rx="12"/>
+        <rect class="box f-card" x="40" y="162" width="300" height="50" rx="12"/>
+        <rect class="box f-green" x="120" y="226" width="140" height="46" rx="12"/>
+        <path class="ln" d="M190 66 L 190 84" marker-end="url(#ah)"/>
+        <path class="ln" d="M190 140 L 190 158" marker-end="url(#ah)"/>
+        <path class="ln" d="M190 214 L 190 222" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="190" y="48" text-anchor="middle">2 + 3 * 4 - 6 / 2</text>
+      <text class="th" x="190" y="122" text-anchor="middle">2 + 12 - 3.0</text>
+      <text class="th" x="190" y="196" text-anchor="middle">14 - 3.0</text>
+      <text class="th" x="190" y="258" text-anchor="middle">11.0</text>
+      <text class="tr" x="380" y="44">step 1: * and / first</text>
+      <text class="ts" x="380" y="64">3 * 4 = 12 and 6 / 2 = 3.0</text>
+      <text class="tr" x="380" y="118">step 2: + and -, left to right</text>
+      <text class="ts" x="380" y="138">2 + 12 = 14</text>
+      <text class="tr" x="380" y="192">step 3</text>
+      <text class="ts" x="380" y="212">14 - 3.0 = 11.0 (a float, because of /)</text>
+    </svg></div>
+    <figcaption>Python repeatedly picks the highest-priority operator until one value is left.</figcaption>
+  </figure>
+  <p>Monthly pay: basic salary 30,000, plus 10 overtime hours at 300, minus a yearly tax of 12,000 split over 12 months:</p>
+  <pre><code class="language-python">net_monthly_pay = 30000 + 10 * 300 - 12000 / 12
+print(net_monthly_pay)</code></pre>
+  <pre class="out"><code>32000.0</code></pre>
+
+  <h3>Parentheses override precedence</h3>
+  <pre><code class="language-python">print((10 + 5) * 2)</code></pre>
+  <pre class="out"><code>30</code></pre>
+  <p>The parentheses force <code>10 + 5 = 15</code> first, then <code>15 * 2 = 30</code>. Without them the answer is 20. Four friends each buying a movie ticket and a snack combo:</p>
+  <pre><code class="language-python">ticket_price = 220
+snack_price = 150
+number_of_friends = 4
+
+total_cost = (ticket_price + snack_price) * number_of_friends
+print(total_cost)</code></pre>
+  <pre class="out"><code>1480</code></pre>
+  <p>Even when they don’t change the result, parentheses make your intent obvious:</p>
+  <pre><code class="language-python">total_payable = (unit_price * quantity) + shipping_fee - discount</code></pre>
+  <p>An average needs them, otherwise only <code>english</code> would be divided by 3:</p>
+  <pre><code class="language-python">maths = 78
+science = 85
+english = 90
+
+average_marks = (maths + science + english) / 3
+print(average_marks)</code></pre>
+  <pre class="out"><code>84.33333333333333</code></pre>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="separators">
+  <h2>Separators and delimiters</h2>
+  <p>Several symbols give Python code its structure. Here are the common ones:</p>
+  <div class="tbl"><table>
+    <tr><th>Symbol</th><th>Purpose</th><th>Example</th></tr>
+    <tr><td><code>,</code> comma</td><td>Separates items</td><td><code>print("Hello", "Rohan")</code></td></tr>
+    <tr><td><code>:</code> colon</td><td>Starts a code block</td><td><code>if age &gt;= 18:</code></td></tr>
+    <tr><td><code>( )</code> parentheses</td><td>Calls a function or groups an expression</td><td><code>print("Hello")</code></td></tr>
+    <tr><td><code>[ ]</code> square brackets</td><td>Creates lists; accesses items by index</td><td><code>names[0]</code></td></tr>
+    <tr><td><code>{ }</code> curly braces</td><td>Creates sets and dictionaries</td><td><code>{"name": "Rohan"}</code></td></tr>
+    <tr><td><code>.</code> period</td><td>Accesses an attribute or method</td><td><code>student.name</code></td></tr>
+    <tr><td><code>;</code> semicolon</td><td>Separates statements on one line (rarely used)</td><td><code>x = 10; y = 20</code></td></tr>
+    <tr><td><code>#</code> hash</td><td>Starts a comment</td><td><code># This is a comment</code></td></tr>
+    <tr><td><code>'</code> <code>"</code> quotes</td><td>Create strings</td><td><code>"Hello"</code></td></tr>
+    <tr><td><code>\</code> backslash</td><td>Starts an escape sequence</td><td><code>"Hello\nWorld"</code></td></tr>
+  </table></div>
+  <pre><code class="language-python">age = 20
+
+print("Hello", "Rohan")          # comma
+
+if age &gt;= 18:                    # colon
+    print("Adult")
+
+names = ["Rohan", "Amit"]        # square brackets
+print(names[0])                  # square brackets
+
+student = {"name": "Rohan"}      # curly braces
+print(student["name"])
+
+x = 10; y = 20                   # semicolon
+
+# This is a comment              # hash
+
+message = "Hello\nWorld"         # backslash
+print(message)</code></pre>
+  <pre class="out"><code>Hello Rohan
+Adult
+Rohan
+Rohan
+Hello
+World</code></pre>
+  <p>Putting them together for a customer’s delivery label:</p>
+  <pre><code class="language-python">customer = {"name": "Anita", "city": "Pune"}    # curly braces
+items = ["Rice", "Oil", "Sugar"]               # square brackets
+
+print("Customer:", customer["name"])          # comma and parentheses
+print("First item:", items[0])                # square brackets
+
+order_id = 501; amount = 840                  # semicolon
+
+if amount &gt;= 500:                             # colon
+    print("Free delivery")
+
+label = "Deliver to:\tPune\nPay on delivery"   # backslash escapes
+print(label)</code></pre>
+  <pre class="out"><code>Customer: Anita
+First item: Rice
+Free delivery
+Deliver to:     Pune
+Pay on delivery</code></pre>
+  <p>Lists and dictionaries get a full note of their own (Data Structures); for now just recognise the brackets.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="strings">
+  <h2>Strings: working with text</h2>
+  <div class="story"><b class="lbl">Beads on a thread</b>A string is like a mala of beads: each character is one bead, in a fixed order. <mark>Because the beads are in order, you can count them, pick one out by its position, or cut out a stretch.</mark></div>
+  <p>A <b>string</b> (<code>str</code>) is Python’s type for text: a <b>sequence of characters</b>. Names, messages, file paths, responses from other systems: almost every real program handles strings.</p>
+  <h3>Creating strings</h3>
+  <p>Write text inside quotes:</p>
+  <pre><code class="language-python">employee_name = "Deepak"
+language = 'Python'
+
+passenger_name = "Arjun Mehta"        # details on a train ticket
+train_name = 'Shatabdi Express'
+coach = "C2"</code></pre>
+  <p>You can also build strings by <b>concatenation</b> (below) or by converting another type with <code>str()</code>:</p>
+  <pre><code class="language-python">employee_id = str(1042)
+print(employee_id, type(employee_id))
+
+pin_code = str(560001)                # a PIN code stored as part of an address
+print(pin_code, type(pin_code))</code></pre>
+  <pre class="out"><code>1042 &lt;class 'str'&gt;
+560001 &lt;class 'str'&gt;</code></pre>
+  <h3>Single vs double quotes</h3>
+  <p>There is <b>no difference</b> in behaviour. If the text contains an apostrophe, wrap it in double quotes so the apostrophe isn’t mistaken for the closing quote:</p>
+  <pre><code class="language-python">status_message = "It's ready for deployment"
+shop_notice = "We're closed on Sundays"
+review = "The chef's special was excellent"</code></pre>
+  <h3>Escape sequences</h3>
+  <p>An <b>escape sequence</b> is a backslash plus a character that stands for something hard to type directly.</p>
+  <div class="tbl"><table>
+    <tr><th>Escape</th><th>Meaning</th></tr>
+    <tr><td><code>\n</code></td><td>New line</td></tr>
+    <tr><td><code>\t</code></td><td>Tab space</td></tr>
+    <tr><td><code>\\</code></td><td>A single backslash</td></tr>
+    <tr><td><code>\'</code></td><td>A single quote inside a single-quoted string</td></tr>
+    <tr><td><code>\"</code></td><td>A double quote inside a double-quoted string</td></tr>
+  </table></div>
+  <pre><code class="language-python">print("Name:\tDeepak\nDepartment:\tEngineering")
+print("Item\tQty\tPrice\nTea\t2\t40\nSamosa\t3\t60")    # a small bill in columns</code></pre>
+  <pre class="out"><code>Name:   Deepak
+Department:     Engineering
+Item    Qty     Price
+Tea     2       40
+Samosa  3       60</code></pre>
+  <p>To treat backslashes as plain characters (handy for Windows paths), make a <b>raw string</b> by putting <code>r</code> before the opening quote:</p>
+  <pre><code class="language-python">file_path = r"C:\reports\2026\summary.csv"
+print(file_path)
+
+backup_folder = r"D:\backups\photos\2026"
+print(backup_folder)</code></pre>
+  <pre class="out"><code>C:\reports\2026\summary.csv
+D:\backups\photos\2026</code></pre>
+  <h3>Concatenation</h3>
+  <p><b>Concatenation</b> joins strings with <code>+</code>:</p>
+  <pre><code class="language-python">first_name = "Deepak"
+last_name = "Mohanty"
+
+full_name = first_name + " " + last_name
+print(full_name)</code></pre>
+  <pre class="out"><code>Deepak Mohanty</code></pre>
+  <p>Notice the <code>" "</code> in the middle; without it you get <code>DeepakMohanty</code>. An SMS telling a customer their order has shipped:</p>
+  <pre><code class="language-python">customer_name = "Kavya"
+order_number = "ORD-7781"
+
+sms_text = "Hi " + customer_name + ", your order " + order_number + " has been shipped."
+print(sms_text)</code></pre>
+  <pre class="out"><code>Hi Kavya, your order ORD-7781 has been shipped.</code></pre>
+  <div class="sticky warn"><strong>Only strings join with +</strong> <code>"Total: " + 500</code> is a <code>TypeError</code>. Convert the number first with <code>str(500)</code>, or use an f-string (below).</div>
+  <h3>Repetition</h3>
+  <p><code>*</code> between a string and a whole number repeats the string:</p>
+  <pre><code class="language-python">separator = "-" * 10
+print(separator)
+
+print("=" * 30)
+print("CITY MART RECEIPT")
+print("=" * 30)</code></pre>
+  <pre class="out"><code>----------
+==============================
+CITY MART RECEIPT
+==============================</code></pre>
+  <h3>Length</h3>
+  <p><code>len()</code> returns the number of characters, including spaces and punctuation:</p>
+  <pre><code class="language-python">order_id = "ORD-2026-0042"
+print(len(order_id))
+
+password = "Blue@2026"
+print("Password length:", len(password))
+print("Long enough:", len(password) &gt;= 8)</code></pre>
+  <pre class="out"><code>13
+Password length: 9
+Long enough: True</code></pre>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="string-methods">
+  <h2>String methods, membership and comparison</h2>
+  <p>A <b>method</b> is a function that belongs to a type, called with a dot after the value: <code>value.method()</code>. <mark>Strings are immutable</mark>, so every method returns a <b>new</b> string and the original stays unchanged.</p>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>Returns</th><th>Example</th><th>Result</th></tr>
+    <tr><td><code>.lower()</code></td><td>all letters lowercase</td><td><code>"SUCCESS".lower()</code></td><td><code>success</code></td></tr>
+    <tr><td><code>.upper()</code></td><td>all letters uppercase</td><td><code>"prod-01".upper()</code></td><td><code>PROD-01</code></td></tr>
+    <tr><td><code>.strip()</code></td><td>leading and trailing whitespace removed</td><td><code>"   Bengaluru   ".strip()</code></td><td><code>Bengaluru</code></td></tr>
+    <tr><td><code>.replace(old, new)</code></td><td>every <code>old</code> replaced by <code>new</code></td><td><code>"98450-12345".replace("-", "")</code></td><td><code>9845012345</code></td></tr>
+    <tr><td><code>.split(sep)</code></td><td>a list of pieces, cut at each <code>sep</code> (any whitespace if none given)</td><td><code>"a,b".split(",")</code></td><td><code>['a', 'b']</code></td></tr>
+  </table></div>
+  <pre><code class="language-python">status = "SUCCESS"
+print(status.lower())
+
+user_answer = "YES"                       # user typed in capitals
+print(user_answer.lower() == "yes")
+
+server_name = "prod-01"
+print(server_name.upper())
+
+vehicle_number = "ka01ab1234"             # store registration numbers in capitals
+print(vehicle_number.upper())
+
+city_name = "   Bengaluru   "
+print(city_name.strip())</code></pre>
+  <pre class="out"><code>success
+True
+PROD-01
+KA01AB1234
+Bengaluru</code></pre>
+  <p>Cleaning a username the user typed with extra spaces:</p>
+  <pre><code class="language-python">username = input("Enter username: ").strip()
+print("Logged in as", username)</code></pre>
+  <pre class="out"><code>Enter username:    priya_s
+Logged in as priya_s</code></pre>
+  <pre><code class="language-python">file_path = "C:/old_folder/report.csv"
+print(file_path.replace("old_folder", "new_folder"))
+
+phone_number = "98450-12345"
+print(phone_number.replace("-", ""))
+
+log_entry = "2026-09-21,ERROR,Disk full"
+fields = log_entry.split(",")
+print(fields)
+
+student_record = "Rahul,21,Computer Science"     # one line of data from a file
+details = student_record.split(",")
+print(details)</code></pre>
+  <pre class="out"><code>C:/new_folder/report.csv
+9845012345
+['2026-09-21', 'ERROR', 'Disk full']
+['Rahul', '21', 'Computer Science']</code></pre>
+  <div class="sticky info l"><strong>Methods don’t change the original</strong> After <code>status.lower()</code>, <code>status</code> is still <code>"SUCCESS"</code>. To keep the result, assign it: <code>status = status.lower()</code>.</div>
+  <h3>Membership in strings</h3>
+  <p><code>in</code> checks whether one string appears inside another:</p>
+  <pre><code class="language-python">log_message = "Connection timeout while reaching database"
+print("timeout" in log_message)
+
+review = "The package arrived Damaged and late"
+print("damaged" in review.lower())       # lower() first, so "Damaged" still matches</code></pre>
+  <pre class="out"><code>True
+True</code></pre>
+  <h3>Comparison is case-sensitive</h3>
+  <pre><code class="language-python">print("python" == "Python")</code></pre>
+  <pre class="out"><code>False</code></pre>
+  <p>Same spelling, different capitals, so not equal. When comparing what a user typed against a stored value, convert <b>both to the same case</b> first:</p>
+  <pre><code class="language-python">stored_coupon = "SAVE50"
+entered_coupon = "save50"
+
+print(entered_coupon == stored_coupon)
+print(entered_coupon.upper() == stored_coupon)</code></pre>
+  <pre class="out"><code>False
+True</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer data is messy: <code>" Pune"</code>, <code>"PUNE"</code>, <code>"pune "</code>. Normalising with <code>.strip().lower()</code> before comparing or grouping is one of the first things you do with any CSV or log file a customer hands you.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="indexing">
+  <h2>String indexing: one character at a time</h2>
+  <p>Because a string is a sequence, each character has a fixed position called its <b>index</b>. <mark>Python counts from 0, not 1</mark>, and this trips up almost every beginner at first.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="The word Python in six cells. Positive indexes 0 to 5 above, negative indexes -6 to -1 below">
+      <g class="rough">
+        <rect class="box f-yellow" x="120" y="70" width="80" height="64" rx="6"/>
+        <rect class="box f-yellow" x="200" y="70" width="80" height="64" rx="6"/>
+        <rect class="box f-yellow" x="280" y="70" width="80" height="64" rx="6"/>
+        <rect class="box f-yellow" x="360" y="70" width="80" height="64" rx="6"/>
+        <rect class="box f-yellow" x="440" y="70" width="80" height="64" rx="6"/>
+        <rect class="box f-yellow" x="520" y="70" width="80" height="64" rx="6"/>
+      </g>
+      <text class="ts" x="20" y="54">positive</text>
+      <text class="ts" x="20" y="172">negative</text>
+      <text class="tb" x="160" y="56" text-anchor="middle">0</text><text class="tb" x="240" y="56" text-anchor="middle">1</text><text class="tb" x="320" y="56" text-anchor="middle">2</text><text class="tb" x="400" y="56" text-anchor="middle">3</text><text class="tb" x="480" y="56" text-anchor="middle">4</text><text class="tb" x="560" y="56" text-anchor="middle">5</text>
+      <text class="th" x="160" y="112" text-anchor="middle">P</text><text class="th" x="240" y="112" text-anchor="middle">y</text><text class="th" x="320" y="112" text-anchor="middle">t</text><text class="th" x="400" y="112" text-anchor="middle">h</text><text class="th" x="480" y="112" text-anchor="middle">o</text><text class="th" x="560" y="112" text-anchor="middle">n</text>
+      <text class="tr" x="160" y="172" text-anchor="middle">-6</text><text class="tr" x="240" y="172" text-anchor="middle">-5</text><text class="tr" x="320" y="172" text-anchor="middle">-4</text><text class="tr" x="400" y="172" text-anchor="middle">-3</text><text class="tr" x="480" y="172" text-anchor="middle">-2</text><text class="tr" x="560" y="172" text-anchor="middle">-1</text>
+    </svg></div>
+    <figcaption>Count from the front starting at 0, or from the back starting at -1.</figcaption>
+  </figure>
+  <h3>Positive indexing</h3>
+  <p>Put the index in square brackets after the string or variable:</p>
+  <pre><code class="language-python">word = "Python"
+
+print(word[0])
+print(word[1])
+print(word[5])</code></pre>
+  <pre class="out"><code>P
+y
+n</code></pre>
+  <p>Initials for a profile avatar:</p>
+  <pre><code class="language-python">first_name = "Sneha"
+last_name = "Rao"
+
+initials = first_name[0] + last_name[0]
+print(initials)</code></pre>
+  <pre class="out"><code>SR</code></pre>
+  <h3>Negative indexing</h3>
+  <p>Negative indexes count backwards from the end, starting at <code>-1</code> for the last character:</p>
+  <pre><code class="language-python">word = "Python"
+print(word[-1])
+
+vehicle_number = "DL3CAF4527"            # last digit, for an odd-even traffic rule
+print("Last digit:", vehicle_number[-1])</code></pre>
+  <pre class="out"><code>n
+Last digit: 7</code></pre>
+  <h3>Index out of range</h3>
+  <p>Asking for a position that doesn’t exist is an error:</p>
+  <pre><code class="language-python">word = "Python"
+print(word[10])</code></pre>
+  <pre class="out"><code>IndexError: string index out of range</code></pre>
+  <p><code>"Python"</code> has 6 characters, so valid positive indexes are 0 to 5. The same thing happens reading a fifth digit from a 4-digit OTP:</p>
+  <pre><code class="language-python">otp = "4821"
+print(otp[4])   # IndexError: valid indexes are 0 to 3</code></pre>
+  <div class="sticky tip"><strong>Rule of thumb</strong> The last valid index is always <code>len(s) - 1</code>.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="slicing">
+  <h2>String slicing: cutting out a piece</h2>
+  <p>Indexing gives one character; <b>slicing</b> extracts a whole range in one step:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">string_value[start:stop]</code></pre></div>
+  <pre><code class="language-python">order_id = "ORD-2026-0042"
+print(order_id[0:3])</code></pre>
+  <pre class="out"><code>ORD</code></pre>
+  <h3>Why the stop index is excluded</h3>
+  <p>The slice <mark>stops just before the stop index</mark>. <code>order_id[0:3]</code> takes indexes 0, 1 and 2 (<code>O</code>, <code>R</code>, <code>D</code>) and stops before index 3 (<code>-</code>). This rule is the same everywhere slicing is used in Python.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="ORD-2026-0042 in 13 cells numbered 0 to 12. The slice 0 to 3 covers O R D and stops before index 3. The slice from 9 to the end covers 0042">
+      <g class="rough">
+        <rect class="box f-green" x="48" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-green" x="96" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-green" x="144" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="192" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="240" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="288" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="336" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="384" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-card" x="432" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-blue" x="480" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-blue" x="528" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-blue" x="576" y="50" width="48" height="54" rx="4"/>
+        <rect class="box f-blue" x="624" y="50" width="48" height="54" rx="4"/>
+        <path class="lb" d="M50 122 L 190 122"/>
+        <path class="lr dash" d="M192 30 L 192 128"/>
+        <path class="ln" d="M482 122 L 670 122"/>
+      </g>
+      <text class="ts" x="72" y="40" text-anchor="middle">0</text><text class="ts" x="120" y="40" text-anchor="middle">1</text><text class="ts" x="168" y="40" text-anchor="middle">2</text><text class="ts" x="216" y="40" text-anchor="middle">3</text><text class="ts" x="264" y="40" text-anchor="middle">4</text><text class="ts" x="312" y="40" text-anchor="middle">5</text><text class="ts" x="360" y="40" text-anchor="middle">6</text><text class="ts" x="408" y="40" text-anchor="middle">7</text><text class="ts" x="456" y="40" text-anchor="middle">8</text><text class="ts" x="504" y="40" text-anchor="middle">9</text><text class="ts" x="552" y="40" text-anchor="middle">10</text><text class="ts" x="600" y="40" text-anchor="middle">11</text><text class="ts" x="648" y="40" text-anchor="middle">12</text>
+      <text class="th" x="72" y="86" text-anchor="middle">O</text><text class="th" x="120" y="86" text-anchor="middle">R</text><text class="th" x="168" y="86" text-anchor="middle">D</text><text class="th" x="216" y="86" text-anchor="middle">-</text><text class="th" x="264" y="86" text-anchor="middle">2</text><text class="th" x="312" y="86" text-anchor="middle">0</text><text class="th" x="360" y="86" text-anchor="middle">2</text><text class="th" x="408" y="86" text-anchor="middle">6</text><text class="th" x="456" y="86" text-anchor="middle">-</text><text class="th" x="504" y="86" text-anchor="middle">0</text><text class="th" x="552" y="86" text-anchor="middle">0</text><text class="th" x="600" y="86" text-anchor="middle">4</text><text class="th" x="648" y="86" text-anchor="middle">2</text>
+      <text class="tm" x="120" y="152" text-anchor="middle">[0:3] → 'ORD'</text>
+      <text class="tm" x="576" y="152" text-anchor="middle">[9:] → '0042'</text>
+      <text class="tr" x="200" y="190">stop = 3: the slice ends just before it</text>
+    </svg></div>
+    <figcaption>start is included, stop is not. Leave either out to mean “from the beginning” or “to the end”.</figcaption>
+  </figure>
+  <p>Extracting the year from a date of birth stored as text:</p>
+  <pre><code class="language-python">date_of_birth = "1998-07-14"
+print(date_of_birth[0:4])</code></pre>
+  <pre class="out"><code>1998</code></pre>
+  <h3>Omitting start or stop</h3>
+  <p>Leave out <b>start</b> and Python begins at index 0; leave out <b>stop</b> and it goes to the end.</p>
+  <pre><code class="language-python">order_id = "ORD-2026-0042"
+
+print(order_id[:3])
+print(order_id[9:])
+
+contact = "+91-9876543210"      # country code and mobile number
+print(contact[:3])
+print(contact[4:])</code></pre>
+  <pre class="out"><code>ORD
+0042
++91
+9876543210</code></pre>
+  <h3>Using a step</h3>
+  <p>A third value, the <b>step</b>, says how many positions to jump each time:</p>
+  <div class="codebox"><span class="cap">full syntax</span><pre><code class="language-python">sequence[start:stop:step]</code></pre></div>
+  <pre><code class="language-python">order_id = "ORD-2026-0042"
+print(order_id[::2])
+
+batch_code = "A1B2C3D4"          # letters and digits alternate
+print(batch_code[::2])    # letters
+print(batch_code[1::2])   # digits</code></pre>
+  <pre class="out"><code>OD22-02
+ABCD
+1234</code></pre>
+  <h3>Reversing a string</h3>
+  <p>A step of <code>-1</code> with no start or stop walks backwards through the whole string:</p>
+  <pre><code class="language-python">order_id = "ORD-2026-0042"
+print(order_id[::-1])
+
+word = "madam"                   # a palindrome reads the same both ways
+print(word == word[::-1])</code></pre>
+  <pre class="out"><code>2400-6202-DRO
+True</code></pre>
+  <div class="sticky info"><strong>Slices are forgiving</strong> Unlike indexing, a slice that runs past the end does <b>not</b> raise an error: <code>"Python"[2:100]</code> is just <code>"thon"</code>.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="f-strings">
+  <h2>f-strings: building dynamic text</h2>
+  <h3>The problem with plain concatenation</h3>
+  <p>Once you mix several pieces of text with several variables, especially non-strings, <code>+</code> gets clumsy:</p>
+  <pre><code class="language-python">name = "Deepak"
+age = 30
+print("Employee " + name + " is " + str(age) + " years old")
+
+account_holder = "Meera"
+amount = 2500
+print("Dear " + account_holder + ", Rs. " + str(amount) + " has been credited to your account.")</code></pre>
+  <pre class="out"><code>Employee Deepak is 30 years old
+Dear Meera, Rs. 2500 has been credited to your account.</code></pre>
+  <h3>What is an f-string?</h3>
+  <p>An <b>f-string</b> (“formatted string literal”) has an <code>f</code> right before the opening quote. <mark>Anything inside <code>{ }</code> is evaluated and inserted into the text</mark>, converted to a string automatically.</p>
+  <pre><code class="language-python">name = "Deepak"
+age = 30
+print(f"Employee {name} is {age} years old")
+
+account_holder = "Meera"
+amount = 2500
+print(f"Dear {account_holder}, Rs. {amount} has been credited to your account.")</code></pre>
+  <pre class="out"><code>Employee Deepak is 30 years old
+Dear Meera, Rs. 2500 has been credited to your account.</code></pre>
+  <h3>Expressions inside the braces</h3>
+  <p>Any valid expression works, including calculations:</p>
+  <pre><code class="language-python">unit_price = 250
+quantity = 4
+print(f"Total amount: {unit_price * quantity}")
+
+units_consumed = 180
+rate_per_unit = 6.5
+print(f"Electricity bill: Rs. {units_consumed * rate_per_unit}")</code></pre>
+  <pre class="out"><code>Total amount: 1000
+Electricity bill: Rs. 1170.0</code></pre>
+  <h3>Formatting numbers</h3>
+  <p>After a colon inside the braces you can add a <b>format specification</b>:</p>
+  <div class="anatomy"><span class="a7">f"{</span><span class="a1">unit_price</span><span class="a3">:</span><span class="a2">.2f</span><span class="a7">}"</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>the value to show</p></div>
+    <div><span class="sw a3"></span><p>colon: “format it like this”</p></div>
+    <div><span class="sw a2"></span><p><code>.2f</code>: fixed-point, exactly 2 digits after the decimal point</p></div>
+  </div>
+  <pre><code class="language-python">unit_price = 99.4567
+print(f"{unit_price:.2f}")
+
+fuel_cost = 1873.4567
+print(f"Fuel cost: Rs. {fuel_cost:.2f}")</code></pre>
+  <pre class="out"><code>99.46
+Fuel cost: Rs. 1873.46</code></pre>
+  <p>Add <code>,</code> for thousands separators, and <code>%</code> to show a fraction as a percentage:</p>
+  <pre><code class="language-python">total_revenue = 1234567.891
+conversion_rate = 0.8267
+print(f"{total_revenue:,.2f}")
+print(f"{conversion_rate:.1%}")
+
+annual_profit = 45872310.5
+growth_rate = 0.1245
+print(f"Annual profit: Rs. {annual_profit:,.2f}")
+print(f"Growth this year: {growth_rate:.1%}")</code></pre>
+  <pre class="out"><code>1,234,567.89
+82.7%
+Annual profit: Rs. 45,872,310.50
+Growth this year: 12.4%</code></pre>
+  <div class="tbl"><table>
+    <tr><th>Spec</th><th>Means</th><th>Example → result</th></tr>
+    <tr><td><code>.2f</code></td><td>2 decimal places</td><td><code>99.4567</code> → <code>99.46</code></td></tr>
+    <tr><td><code>,.2f</code></td><td>thousands separators + 2 decimals</td><td><code>1234567.891</code> → <code>1,234,567.89</code></td></tr>
+    <tr><td><code>.1%</code></td><td>multiply by 100, 1 decimal, add %</td><td><code>0.8267</code> → <code>82.7%</code></td></tr>
+  </table></div>
+  <p><b>Why f-strings are preferred:</b> they are more readable than concatenation, need no manual <code>str()</code>, accept full expressions, and format numbers without extra function calls. They are the standard way to build text in modern Python.</p>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="booleans-none">
+  <h2>True, False and None</h2>
+  <h3>Boolean values</h3>
+  <p>A <b>Boolean</b> (<code>bool</code>) has exactly two possible values: <code>True</code> or <code>False</code>. <mark>Every decision a program makes comes down to one of these two.</mark> Every comparison produces one:</p>
+  <pre><code class="language-python">cpu_usage = 85
+alert_threshold = 80
+print(cpu_usage &gt; alert_threshold)
+
+battery_level = 15
+low_battery_limit = 20
+print(battery_level &lt; low_battery_limit)</code></pre>
+  <pre class="out"><code>True
+True</code></pre>
+  <p>Booleans are often stored in variables to track state:</p>
+  <pre><code class="language-python">is_server_online = True
+is_maintenance_mode = False
+
+is_door_locked = True        # a smart home
+is_light_on = False
+is_ac_running = True</code></pre>
+  <p>Combining Booleans with logical operators gives another Boolean:</p>
+  <pre><code class="language-python">print(True and True)
+print(True and False)
+print(True or False)
+print(not True)
+
+has_paid_fee = True          # can a student enter the exam hall?
+has_hall_ticket = False
+print(has_paid_fee and has_hall_ticket)
+print(has_paid_fee or has_hall_ticket)
+print(not has_hall_ticket)</code></pre>
+  <pre class="out"><code>True
+False
+True
+False
+False
+True
+True</code></pre>
+  <h3>Truthy and falsy values</h3>
+  <p>Whenever Python needs a yes/no answer, it can treat <b>any</b> value as “truthy” (acts like <code>True</code>) or “falsy” (acts like <code>False</code>). Values that mean “nothing” or “empty” are falsy: <code>0</code>, <code>0.0</code>, <code>""</code> and <code>None</code> (and, as you’ll see later, empty collections). Almost everything else is truthy.</p>
+  <pre><code class="language-python">print(bool(0))
+print(bool(""))
+print(bool("Python"))
+print(bool(10))</code></pre>
+  <pre class="out"><code>False
+False
+True
+True</code></pre>
+  <p>Did the user leave the feedback box empty? Here they just pressed <kbd>Enter</kbd>:</p>
+  <pre><code class="language-python">feedback_text = input("Enter your feedback: ")
+print("Feedback given:", bool(feedback_text))</code></pre>
+  <pre class="out"><code>Enter your feedback:
+Feedback given: False</code></pre>
+  <p>Booleans drive conditions, validation and loops; the next note (Control Flow) is built entirely on them.</p>
+
+  <h3>None: the absence of a value</h3>
+  <p><code>None</code> is a special value meaning <b>“deliberately no value”</b>. Its type is <code>NoneType</code>, and there is only ever <b>one</b> <code>None</code> object in a running program. It is used for a value not assigned yet, data that is genuinely missing, or the result of a function that doesn’t return anything (more in the Functions note).</p>
+  <pre><code class="language-python">last_error_message = None
+
+profile_photo = None        # a new user hasn't uploaded a photo
+middle_name = None          # ...or added a middle name</code></pre>
+  <h3>None is not 0, False or ""</h3>
+  <p>None is falsy, but it is <b>not equal</b> to 0, <code>False</code> or an empty string. Those are “zero” or “empty” values; <code>None</code> is the total absence of a value.</p>
+  <pre><code class="language-python">print(None == 0)
+print(None == False)
+print(None == "")</code></pre>
+  <pre class="out"><code>False
+False
+False</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Three shelves: None means not counted yet, 0 means counted and nothing left, empty string means a text with no characters">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="30" width="210" height="120" rx="14"/>
+        <rect class="box f-orange" x="255" y="30" width="210" height="120" rx="14"/>
+        <rect class="box f-blue" x="490" y="30" width="210" height="120" rx="14"/>
+      </g>
+      <text class="th" x="125" y="78" text-anchor="middle">None</text>
+      <text class="t" x="125" y="108" text-anchor="middle">no value at all</text>
+      <text class="ts" x="125" y="132" text-anchor="middle">stock not counted yet</text>
+      <text class="th" x="360" y="78" text-anchor="middle">0</text>
+      <text class="t" x="360" y="108" text-anchor="middle">a number: zero</text>
+      <text class="ts" x="360" y="132" text-anchor="middle">counted, nothing left</text>
+      <text class="th" x="595" y="78" text-anchor="middle">""</text>
+      <text class="t" x="595" y="108" text-anchor="middle">a string: empty</text>
+      <text class="ts" x="595" y="132" text-anchor="middle">feedback box left blank</text>
+      <text class="tr" x="360" y="190" text-anchor="middle">all three are falsy, but none of them are equal to each other</text>
+    </svg></div>
+    <figcaption>“Unknown” and “zero” are different facts. Keep them apart in your data.</figcaption>
+  </figure>
+  <pre><code class="language-python">stock_count = None     # not counted yet
+sold_out_count = 0     # counted, nothing left
+
+print(stock_count == sold_out_count)</code></pre>
+  <pre class="out"><code>False</code></pre>
+  <h3>Checking for None</h3>
+  <p>Because <code>None</code> is a single unique object, the recommended check is <code>is</code>, not <code>==</code>:</p>
+  <pre><code class="language-python">last_error_message = None
+print(last_error_message is None)
+
+delivery_date = None
+print("Delivery date pending:", delivery_date is None)</code></pre>
+  <pre class="out"><code>True
+Delivery date pending: True</code></pre>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="built-ins">
+  <h2>Built-in functions: Python’s ready-made tools</h2>
+  <p>A <b>built-in function</b> ships with Python and is always available, no <code>import</code> needed. You already know <code>print()</code>, <code>input()</code>, <code>type()</code>, <code>int()</code>, <code>float()</code>, <code>str()</code> and <code>bool()</code>. Here are five more.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4><code>len()</code></h4><p>Number of items in a sequence; for a string, the number of characters.</p></div>
+    <div class="card t2 tilt-b"><h4><code>abs()</code></h4><p>Absolute (non-negative) value of a number.</p></div>
+    <div class="card t3 tilt-a"><h4><code>round()</code></h4><p>Rounds to a number of decimal places, or to a whole number if none given.</p></div>
+    <div class="card t5 tilt-b"><h4><code>min()</code> / <code>max()</code></h4><p>Smallest / largest of a group of values.</p></div>
+    <div class="card t8 tilt-a"><h4><code>sum()</code></h4><p>Adds up a group of numbers.</p></div>
+  </div>
+  <pre><code class="language-python">print(len("Python"))
+
+sms_message = "Your OTP is 4821. Do not share it with anyone."
+print("Characters used:", len(sms_message))</code></pre>
+  <pre class="out"><code>6
+Characters used: 46</code></pre>
+  <pre><code class="language-python">print(abs(-10))
+
+expected_cash = 15000           # cash register mismatch, whichever way round
+actual_cash = 14650
+print("Cash mismatch:", abs(actual_cash - expected_cash))</code></pre>
+  <pre class="out"><code>10
+Cash mismatch: 350</code></pre>
+  <pre><code class="language-python">print(round(10.567, 2))
+print(round(2.5))
+
+average_rating = (4 + 5 + 3 + 5 + 4) / 5
+print(round(average_rating, 1))</code></pre>
+  <pre class="out"><code>10.57
+2
+4.2</code></pre>
+  <div class="sticky warn l"><strong>Why is <code>round(2.5)</code> 2, not 3?</strong> Python rounds exact halves to the nearest <b>even</b> number (“banker’s rounding”), so <code>round(2.5)</code> is 2 and <code>round(3.5)</code> is 4. This avoids always pushing totals upward.</div>
+  <p>The square brackets below make a <b>list</b>, a group of values (full details in Data Structures):</p>
+  <pre><code class="language-python">daily_temperatures = [28, 31, 26, 33, 29]
+print(min(daily_temperatures))
+print(max(daily_temperatures))
+
+flight_fares = [4520, 3899, 5210, 4105]
+print("Cheapest fare:", min(flight_fares))
+print("Costliest fare:", max(flight_fares))</code></pre>
+  <pre class="out"><code>26
+33
+Cheapest fare: 3899
+Costliest fare: 5210</code></pre>
+  <pre><code class="language-python">weekly_sales = [1200, 850, 430, 275]
+print(sum(weekly_sales))
+
+monthly_expenses = [12000, 3500, 2200, 1800, 950]
+print("Total spent this month:", sum(monthly_expenses))</code></pre>
+  <pre class="out"><code>2755
+Total spent this month: 20450</code></pre>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="errors">
+  <h2>Common beginner errors</h2>
+  <p>Every programmer meets errors constantly. What matters is <mark>reading the message and understanding what went wrong</mark>.</p>
+  <div class="tbl"><table>
+    <tr><th>Error</th><th>Cause</th></tr>
+    <tr><td><code>SyntaxError</code></td><td>A grammar rule is broken, such as a missing quote or parenthesis</td></tr>
+    <tr><td><code>NameError</code></td><td>Using a name Python has never seen (often a typo)</td></tr>
+    <tr><td><code>TypeError</code></td><td>Incompatible types combined in one operation</td></tr>
+    <tr><td><code>ValueError</code></td><td>A value of the right type but unusable, such as <code>int("hello")</code></td></tr>
+    <tr><td><code>IndentationError</code></td><td>Missing or inconsistent indentation</td></tr>
+    <tr><td><code>IndexError</code></td><td>Accessing a position that doesn’t exist</td></tr>
+  </table></div>
+
+  <h3>SyntaxError</h3>
+  <div class="two">
+    <pre><code class="language-python">print("Deployment started"</code></pre>
+    <pre><code class="language-python">bill_total = 1250
+print("Bill total:", bill_total</code></pre>
+  </div>
+  <pre class="out"><code>SyntaxError: '(' was never closed</code></pre>
+
+  <h3>NameError</h3>
+  <div class="two">
+    <pre><code class="language-python">print(employee_name)</code></pre>
+    <pre><code class="language-python">customer_name = "Rohit"
+print(customer_nme)      # misspelled</code></pre>
+  </div>
+  <pre class="out"><code>NameError: name 'employee_name' is not defined
+NameError: name 'customer_nme' is not defined. Did you mean: 'customer_name'?</code></pre>
+
+  <h3>TypeError</h3>
+  <div class="two">
+    <pre><code class="language-python">print("Total: " + 500)</code></pre>
+    <pre><code class="language-python">items_in_cart = 3
+print("Items in cart: " + items_in_cart)</code></pre>
+  </div>
+  <pre class="out"><code>TypeError: can only concatenate str (not "int") to str</code></pre>
+  <p>Fix it by converting the number to a string first:</p>
+  <pre><code class="language-python">print("Total: " + str(500))
+
+items_in_cart = 3
+print("Items in cart: " + str(items_in_cart))</code></pre>
+  <pre class="out"><code>Total: 500
+Items in cart: 3</code></pre>
+
+  <h3>ValueError</h3>
+  <div class="two">
+    <pre><code class="language-python">int("hello")</code></pre>
+    <pre><code class="language-python">age = int(input("Enter your age: "))
+# the user types: twenty</code></pre>
+  </div>
+  <pre class="out"><code>ValueError: invalid literal for int() with base 10: 'hello'
+ValueError: invalid literal for int() with base 10: 'twenty'</code></pre>
+
+  <h3>IndentationError</h3>
+  <div class="two">
+    <pre><code class="language-python">if True:
+print("This will fail")</code></pre>
+    <pre><code class="language-python">cart_total = 1200
+
+if cart_total &gt;= 1000:
+print("Free delivery applied")</code></pre>
+  </div>
+  <pre class="out"><code>IndentationError: expected an indented block after 'if' statement on line 1
+IndentationError: expected an indented block after 'if' statement on line 3</code></pre>
+
+  <h3>IndexError</h3>
+  <div class="two">
+    <pre><code class="language-python">server_name = "Python"
+print(server_name[10])</code></pre>
+    <pre><code class="language-python">pin_code = "560001"
+print(pin_code[6])     # valid indexes are 0 to 5</code></pre>
+  </div>
+  <pre class="out"><code>IndexError: string index out of range</code></pre>
+
+  <h3>A general approach to fixing errors</h3>
+  <p>Don’t guess randomly. Work through it:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Read the message carefully</b>The whole traceback, not just the red colour.</div></li>
+    <li><span class="dot">2</span><div><b>Identify the error type</b>It is on the <b>last line</b>: <code>TypeError</code>, <code>NameError</code>…</div></li>
+    <li><span class="dot">3</span><div><b>Find the line number</b>The traceback points at the line (and often the exact spot with <code>^</code>).</div></li>
+    <li><span class="dot">4</span><div><b>Connect it to the concept</b><code>TypeError</code> → data types; <code>IndexError</code> → indexing; and so on.</div></li>
+    <li><span class="dot">5</span><div><b>Fix the cause, not the symptom</b><span class="tag">→ e.g. convert input properly instead of deleting the line</span></div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer pastes you a stack trace from production, the same five steps apply. The last line tells you <i>what</i>, the line number tells you <i>where</i>; read both before touching any code.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Operator</dt><dd>A symbol or keyword, such as <code>+</code> or <code>and</code>, that tells Python to perform an operation on values called operands.</dd></div>
+    <div><dt>Floor division (//)</dt><dd>Divides and rounds the result down to a whole number: <code>17 // 5</code> is 3.</dd></div>
+    <div><dt>Modulus (%)</dt><dd>Gives the remainder left after division: <code>17 % 5</code> is 2.</dd></div>
+    <div><dt>Compound assignment</dt><dd>An operator like <code>+=</code> or <code>-=</code> that updates a variable from its own value: <code>x += 5</code> means <code>x = x + 5</code>.</dd></div>
+    <div><dt>Operator precedence</dt><dd>The fixed order in which Python evaluates operators in one expression: parentheses, then <code>**</code>, then <code>* / // %</code>, then <code>+ -</code>, then comparisons, then <code>not</code>, <code>and</code>, <code>or</code>.</dd></div>
+    <div><dt>Membership operator</dt><dd><code>in</code> / <code>not in</code>: checks whether a value is found inside a sequence such as a string.</dd></div>
+    <div><dt>Identity operator</dt><dd><code>is</code> / <code>is not</code>: checks whether two names refer to the same object; mainly used as <code>x is None</code>.</dd></div>
+    <div><dt>Escape sequence</dt><dd>A backslash combination inside a string that stands for a special character, such as <code>\n</code> (new line) or <code>\t</code> (tab).</dd></div>
+    <div><dt>Raw string</dt><dd>A string with <code>r</code> before the quote, in which backslashes are kept as plain characters: <code>r"C:\reports"</code>.</dd></div>
+    <div><dt>Immutable</dt><dd>Cannot be changed after creation; string methods therefore return new strings rather than modifying the original.</dd></div>
+    <div><dt>Index</dt><dd>A character’s position in a string, counted from 0 at the front or from -1 at the back.</dd></div>
+    <div><dt>Slicing</dt><dd>Extracting part of a sequence with <code>[start:stop:step]</code>; start is included, stop is excluded.</dd></div>
+    <div><dt>f-string</dt><dd>A string prefixed with <code>f</code> in which expressions inside <code>{ }</code> are evaluated and inserted, with optional formatting like <code>:.2f</code>.</dd></div>
+    <div><dt>Truthy / falsy</dt><dd>How any value behaves when Python needs a yes/no answer; 0, empty strings and None are falsy, most other values are truthy.</dd></div>
+    <div><dt>None</dt><dd>Python’s single special value meaning “no value”, of type <code>NoneType</code>; check for it with <code>is None</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What does <code>23 % 4</code> give?</p>
+      <ol><li>5.75</li><li>5</li><li>3</li><li>4</li></ol>
+      <p class="why">4 goes into 23 five times (20), leaving a remainder of 3. <code>%</code> returns that remainder.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>print(2 + 3 * 4)</code> show?</p>
+      <ol><li>14</li><li>20</li><li>24</li><li>9</li></ol>
+      <p class="why"><code>*</code> has higher precedence than <code>+</code>, so it is <code>2 + 12 = 14</code>.</p></div>
+    <div class="q" data-answer="4"><p><code>code = "ORD-2026"</code>. What is <code>code[4:]</code>?</p>
+      <ol><li><code>"ORD-"</code></li><li><code>"-2026"</code></li><li><code>"2"</code></li><li><code>"2026"</code></li></ol>
+      <p class="why">Start at index 4 (the <code>2</code>) and, with no stop, go to the end.</p></div>
+    <div class="q" data-answer="2"><p>What is <code>"Python"[-2]</code>?</p>
+      <ol><li><code>"n"</code></li><li><code>"o"</code></li><li><code>"y"</code></li><li>An <code>IndexError</code></li></ol>
+      <p class="why">-1 is the last character (<code>n</code>), so -2 is the one before it, <code>o</code>.</p></div>
+    <div class="q" data-answer="3"><p>Which line correctly prints <code>Total: 500</code>?</p>
+      <ol><li><code>print("Total: " + 500)</code></li><li><code>print("Total: {500}")</code></li><li><code>print(f"Total: {500}")</code></li><li><code>print("Total: " - 500)</code></li></ol>
+      <p class="why">Only the f-string evaluates <code>{500}</code>. Option 1 is a <code>TypeError</code>; option 2 lacks the <code>f</code> and prints the braces literally.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>print(None == 0)</code> show?</p>
+      <ol><li><code>False</code></li><li><code>True</code></li><li><code>None</code></li><li>An error</li></ol>
+      <p class="why">None means “no value”; 0 is a value (zero). Both are falsy, but they are not equal.</p></div>
+    <div class="q" data-answer="2"><p><code>name = "  Asha "</code>. After <code>name.strip()</code> on its own line, what is <code>name</code>?</p>
+      <ol><li><code>"Asha"</code></li><li><code>"  Asha "</code></li><li><code>None</code></li><li><code>" Asha"</code></li></ol>
+      <p class="why">Strings are immutable. <code>.strip()</code> returns a new string; unless you assign it back, <code>name</code> is unchanged.</p></div>
+    <div class="q" data-answer="4"><p>Which value is <b>truthy</b>?</p>
+      <ol><li><code>0</code></li><li><code>""</code></li><li><code>None</code></li><li><code>"False"</code></li></ol>
+      <p class="why"><code>"False"</code> is a non-empty string, so it is truthy. The other three are classic falsy values.</p></div>
+    <div class="q" data-answer="3"><p>The last line of an error says <code>NameError: name 'totl' is not defined</code>. The most likely cause?</p>
+      <ol><li>A missing parenthesis</li><li>Adding a string and a number</li><li>A misspelled variable name</li><li>Wrong indentation</li></ol>
+      <p class="why">A <code>NameError</code> means Python has never seen that name, which is usually a typo of a real one.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>Operators</b> do the processing (calculate, compare, combine), <b>precedence</b> decides their order, strings can be <b>indexed, sliced and formatted with f-strings</b>, every decision boils down to <b>True or False</b> with <b>None</b> meaning “no value”, and an error’s <b>last line and line number</b> tell you what to fix.</p>
+  <p>Next up: Control Flow, where those Booleans start steering your program with <code>if</code>, <code>elif</code>, <code>else</code> and loops.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inheritance · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="How classes work together: Has-A (composition) versus Is-A (inheritance), constructors and super() in inheritance, and the five types of inheritance in Python with examples.">
+<meta name="keywords" content="Has-A, Is-A, composition, inheritance, super(), constructors in inheritance, multiple inheritance, hybrid inheritance">
+<meta name="date" content="2026-10-01">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/inheritance">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Inheritance</h1>
+  <p class="byline">Connect classes the right way: let one class <i>use</i> another (Has-A) or <i>be a kind of</i> another (Is-A), get constructors right with <code>super()</code>, and pick the right inheritance shape.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why-connect">
+  <h2>Why one class needs another</h2>
+  <div class="story"><b class="lbl">The kirana shop</b>A shop on its own is just an empty room. It needs products on the shelves, a billing counter and a shopkeeper. Each is its own thing, but they only make sense together. <mark>Real programs are the same: classes are useful when they are connected, not written in isolation.</mark></div>
+  <p>A shop needs products, customers and staff. A bank account needs a customer to own it. So one class often needs the <b>data and methods of another class</b>. When classes are written alone, we hit these problems:</p>
+  <h3>1 · Programs represent real life</h3>
+  <pre><code class="language-python">class Product:
+    def show_product(self):
+        print("Product is available")
+
+class Shop:
+    def open_shop(self):
+        print("Shop is open")</code></pre>
+  <p><code>Shop</code> and <code>Product</code> both exist but know nothing about each other. A shop without products makes no sense.</p>
+  <h3>2 · Code reuse saves time</h3>
+  <pre><code class="language-python">class Billing:
+    def total_amount(self):
+        print(100 + 50)
+
+class Invoice:
+    def total_amount(self):
+        print(100 + 50)</code></pre>
+  <p>The same calculation is written twice. If it changes, both places must be updated. Useful logic should be <b>reused</b>, not rewritten.</p>
+  <h3>3 · Better code organisation</h3>
+  <pre><code class="language-python">class Student:
+    def __init__(self):
+        self.name = "Ravi"
+        self.school_name = "ABC School"
+        self.school_city = "Mumbai"</code></pre>
+  <p>Student data and school data are mixed in one class. Each class should have <b>one responsibility</b> and talk to other classes.</p>
+  <h3>4 · Avoiding duplicate code</h3>
+  <pre><code class="language-python">class AppOne:
+    def start(self):
+        print("Welcome to the system")
+
+class AppTwo:
+    def start(self):
+        print("Welcome to the system")</code></pre>
+  <p>The same message is repeated. Keep the logic in one class and reuse it, and a future change is made <b>only once</b>.</p>
+  <h3>5 · Showing real-world relationships</h3>
+  <pre><code class="language-python">class User:
+    def make_request(self):
+        print("User made a request")
+
+class Booking:
+    def confirm(self):
+        print("Booking confirmed")</code></pre>
+  <p>A booking should <b>belong to a user</b>, but here they are not connected at all.</p>
+  <h3>6 · Easy to improve and extend</h3>
+  <pre><code class="language-python">class Order:
+    def process_order(self):
+        print("Order processed")</code></pre>
+  <p>When payment, delivery and notifications are added later, everything gets pushed into this one class. Well-structured, connected classes can grow <b>without affecting the rest</b>.</p>
+  <h3>7 · OOP connects everything</h3>
+  <pre><code class="language-python">class Engine:
+    def start(self):
+        print("Engine started")
+
+class Car:
+    def drive(self):
+        print("Car is driving")</code></pre>
+  <p>The car works without an engine, which doesn’t match real life.</p>
+  <div class="sticky info l"><strong>Key point</strong> All seven problems exist because classes are written <b>in isolation</b>. OOP is not about separate classes; it is about <b>connected objects</b>.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="two-ways">
+  <h2>Two ways to connect classes: Has-A and Is-A</h2>
+  <p>Real-life objects relate in exactly two simple ways, so OOP has exactly two relationships:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Left: Has-A, a BillingSystem box containing a Calculator object it creates and uses. Right: Is-A, a Bicycle box with an arrow up to Vehicle labelled is a.">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="50" width="300" height="180" rx="16"/>
+        <rect class="box f-yellow" x="60" y="110" width="240" height="90" rx="12"/>
+        <path class="ln dash" d="M360 20 L 360 235"/>
+        <rect class="box f-green" x="440" y="55" width="200" height="56" rx="12"/>
+        <rect class="box f-orange" x="440" y="170" width="200" height="56" rx="12"/>
+        <path class="lr" d="M540 166 L 540 117" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="180" y="34" text-anchor="middle">Has-A</text>
+      <text class="th" x="540" y="34" text-anchor="middle">Is-A</text>
+      <text class="t" x="180" y="82" text-anchor="middle">BillingSystem</text>
+      <text class="tm" x="180" y="148" text-anchor="middle">Calculator()</text>
+      <text class="ts" x="180" y="174" text-anchor="middle">created and used inside</text>
+      <text class="t" x="540" y="89" text-anchor="middle">Vehicle</text>
+      <text class="t" x="540" y="204" text-anchor="middle">Bicycle</text>
+      <text class="tr" x="556" y="148">is a</text>
+    </svg></div>
+    <figcaption>Has-A: one object <i>contains and uses</i> another. Is-A: one class <i>is a specialised type</i> of another.</figcaption>
+  </figure>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Has-A (uses / contains)</h4><p>Two <b>different</b> classes cooperate. A house <b>has</b> rooms, but a house is not a room. Use it when objects work together, one needs another’s help, and functionality is shared <b>without changing identity</b>. Reuses code by <b>using objects</b>.</p></div>
+    <div class="card t3 tilt-b"><h4>Is-A (inheritance)</h4><p>The child is a <b>specialised form</b> of the parent: same type, extra features. A bicycle <b>is a</b> vehicle. Use it when one class is a type of another, common features are shared, and behaviour needs extending or modifying. Reuses code by <b>inheriting behaviour</b>.</p></div>
+  </div>
+  <div class="sticky warn"><strong>Both matter</strong> One can’t replace the other, and mixing them up is a classic beginner mistake. Quick test: say it out loud. “A car <i>has an</i> engine” (Has-A). “A car <i>is a</i> vehicle” (Is-A). We study Has-A first, then Is-A.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="has-a">
+  <h2>Has-A relationship</h2>
+  <p>A Has-A relationship exists when <b>one class uses another class by creating an object of it</b>. If class B creates an object of class A and uses it whenever needed, we say <mark>“B HAS an A”</mark>.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Laptop has a Battery</h4><p>…but a laptop is not a battery.</p></div>
+    <div class="card t2 tilt-b"><h4>House has a Room</h4><p>…but a house is not a room.</p></div>
+    <div class="card t7 tilt-a"><h4>Person has an Address</h4><p>…but a person is not an address.</p></div>
+  </div>
+  <p><code>BillingSystem</code> needs calculations to generate bills, so it <b>has a</b> <code>Calculator</code>:</p>
+  <pre><code class="language-python"># Class that contains calculation logic
+class Calculator:
+    def add(self, x, y):
+        return x + y
+
+    def multiply(self, x, y):
+        return x * y
+
+
+# Class that needs calculation functionality
+class BillingSystem:
+    def __init__(self):
+        self.calc = Calculator()   # Creating object → Has-A relationship
+
+    def generate_bill(self, price, quantity):
+        total = self.calc.multiply(price, quantity)
+        return total
+
+
+# Using the BillingSystem
+bill = BillingSystem()
+amount = bill.generate_bill(500, 3)
+print("Total Amount:", amount)</code></pre>
+  <pre class="out"><code>Total Amount: 1500</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Calculator</b>is a separate class holding all the calculation logic.</div></li>
+    <li><span class="dot">2</span><div><b>self.calc = Calculator()</b>creates a Calculator object inside BillingSystem. This line is what makes it Has-A.</div></li>
+    <li><span class="dot">3</span><div><b>self.calc.multiply(price, quantity)</b>calls the method <b>through that object</b>.</div></li>
+  </ol>
+  <p>Real-world version: a food order uses a separate payment gateway to collect the money.</p>
+  <pre><code class="language-python"># Class that handles payments
+class PaymentGateway:
+    def pay(self, amount):
+        print("Payment of", amount, "received")
+
+
+# Class that needs payment functionality
+class FoodOrder:
+    def __init__(self):
+        self.gateway = PaymentGateway()   # Has-A relationship
+
+    def place_order(self, item, price):
+        print("Order placed for", item)
+        self.gateway.pay(price)
+
+
+order = FoodOrder()
+order.place_order("Veg Biryani", 250)</code></pre>
+  <pre class="out"><code>Order placed for Veg Biryani
+Payment of 250 received</code></pre>
+  <h3>Characteristics</h3>
+  <ul>
+    <li>You <b>must create an object</b> of the class you want to use.</li>
+    <li>Access goes <b>through the object reference</b>, and methods are called explicitly.</li>
+    <li>The classes stay <b>independent (loosely connected)</b>, so changing one doesn’t break the other.</li>
+  </ul>
+  <h3>Advantages</h3>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Modularity</h4><p>Each class has one clear responsibility.</p></div>
+    <div class="card t1 tilt-b"><h4>Easy maintenance</h4><p>Classes can be updated independently.</p></div>
+    <div class="card t5 tilt-a"><h4>Safer changes</h4><p>A change in one class doesn’t directly affect others.</p></div>
+    <div class="card t8 tilt-b"><h4>Composition</h4><p>Combine several classes to build complex systems.</p></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Has-A is how real services are wired: an <code>OrderService</code> <i>has a</i> database client, a payment client and an LLM client. Because they are separate objects, you can swap the real payment client for a fake one in tests, or switch LLM providers for a customer, without touching the service.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="why-is-a">
+  <h2>Why Is-A when Has-A already exists?</h2>
+  <p>Sometimes a new class needs <b>all the features</b> of an existing class, plus some of its own. Has-A can do the job, but clumsily:</p>
+  <h3>1 · Extra object creation</h3>
+  <pre><code class="language-python">class Engine:
+    def start(self):
+        print("Engine started")
+
+class Car:
+    def __init__(self):
+        self.engine = Engine()   # object creation</code></pre>
+  <h3>2 · Manual method access</h3>
+  <p>Every call must go through the object name:</p>
+  <pre><code class="language-python">car = Car()
+car.engine.start()</code></pre>
+  <pre class="out"><code>Engine started</code></pre>
+  <h3>3 · No automatic access to features</h3>
+  <p><code>Car</code> can’t call <code>start()</code> directly; it must always go through the engine object.</p>
+  <pre><code class="language-python">class Car:
+    def show(self):
+        self.engine.start()</code></pre>
+  <h3>4 · Not suitable for “type-of” relationships</h3>
+  <p>An employee <b>is</b> a person. Has-A can’t express that properly:</p>
+  <pre><code class="language-python">class Person:
+    def speak(self):
+        print("Person can speak")
+
+class Employee:
+    pass</code></pre>
+  <h3>5 · The better approach: inheritance</h3>
+  <pre><code class="language-python">class Employee(Person):
+    def work(self):
+        print("Employee is working")
+
+e = Employee()
+e.speak()      # inherited from Person, no Person object needed
+e.work()</code></pre>
+  <pre class="out"><code>Person can speak
+Employee is working</code></pre>
+  <p><code>Employee(Person)</code> links the classes directly, and <code>Employee</code> automatically gets all of <code>Person</code>’s features without creating any object.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="inheritance">
+  <h2>Is-A: inheritance</h2>
+  <div class="story"><b class="lbl">Family recipes</b>Your mother’s dal recipe comes to you automatically. You don’t borrow her kitchen each time; it’s yours now. And you can add your own tadka on top. <mark>Inheritance gives the child class everything the parent has, automatically, and lets it add more.</mark></div>
+  <ul>
+    <li>The <b>parent class</b> holds common, general features.</li>
+    <li>The <b>child class</b> is a more specific form of the parent.</li>
+    <li>The child <b>automatically gets all variables and methods</b> of the parent; no parent object is needed.</li>
+    <li>The child can add its <b>own new features</b>.</li>
+  </ul>
+  <h3>The problem without inheritance</h3>
+  <pre><code class="language-python">class Parent:
+    def show_parent(self):
+        print("This is a method from the Parent class")
+
+
+# Child class (WITHOUT inheritance)
+class Child:
+    def show_child(self):
+        print("This is a method from the Child class")
+
+
+# Using the Child object
+c = Child()
+c.show_child()
+c.show_parent()   # ERROR</code></pre>
+  <pre class="out"><code>This is a method from the Child class
+Traceback (most recent call last):
+  ...
+AttributeError: 'Child' object has no attribute 'show_parent'</code></pre>
+  <p>The two classes are completely separate, so <code>Child</code> knows nothing about <code>Parent</code>. Without inheritance, code can’t be reused automatically.</p>
+  <h3>Solved with inheritance</h3>
+  <pre><code class="language-python">class Parent:
+    def show_parent(self):
+        print("This is a method from the Parent class")
+
+
+# Child class WITH inheritance
+class Child(Parent):
+    def show_child(self):
+        print("This is a method from the Child class")
+
+
+# Using the Child object
+c = Child()
+c.show_child()
+c.show_parent()</code></pre>
+  <pre class="out"><code>This is a method from the Child class
+This is a method from the Parent class</code></pre>
+  <p><code>class Child(Parent)</code> means <b>Child IS A Parent</b>. The child object can call its own method and the parent’s, and no separate Parent object is created.</p>
+  <p>Real-world version: a savings account is a bank account, and adds interest on top.</p>
+  <pre><code class="language-python">class BankAccount:
+    def show_balance(self):
+        print("Showing the account balance")
+
+
+# SavingsAccount IS A BankAccount
+class SavingsAccount(BankAccount):
+    def add_interest(self):
+        print("Adding monthly interest")
+
+
+acc = SavingsAccount()
+acc.add_interest()
+acc.show_balance()</code></pre>
+  <pre class="out"><code>Adding monthly interest
+Showing the account balance</code></pre>
+  <div class="sticky tip l"><strong>Key points</strong> Is-A is called <b>inheritance</b> and shows a type-of relationship. The child gets parent features automatically, with no parent object. Without inheritance, the child can’t reach parent functionality.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="constructors">
+  <h2>Constructors in inheritance</h2>
+  <p>A constructor runs automatically when an object is created. The rule: Python looks for <code>__init__</code> starting in the object’s own class, runs the <b>first one it finds</b>, and stops.</p>
+  <div class="tbl"><table>
+    <tr><th>Case</th><th>Parent has <code>__init__</code>?</th><th>Child has <code>__init__</code>?</th><th>What runs on <code>Child()</code></th></tr>
+    <tr><td>1</td><td>✅</td><td>❌</td><td>Parent’s constructor (inherited)</td></tr>
+    <tr><td>2</td><td>❌</td><td>✅</td><td>Child’s constructor</td></tr>
+    <tr><td>3</td><td>✅</td><td>✅</td><td><b>Only</b> the child’s constructor</td></tr>
+  </table></div>
+  <h3>Case 1: constructor only in the parent</h3>
+  <pre><code class="language-python">class Parent:
+    def __init__(self):
+        print("Parent constructor is called")
+
+class Child(Parent):
+    pass
+
+c = Child()</code></pre>
+  <pre class="out"><code>Parent constructor is called</code></pre>
+  <h3>Case 2: constructor only in the child</h3>
+  <pre><code class="language-python">class Parent:
+    pass
+
+class Child(Parent):
+    def __init__(self):
+        print("Child constructor is called")
+
+c = Child()</code></pre>
+  <pre class="out"><code>Child constructor is called</code></pre>
+  <h3>Case 3: constructor in both</h3>
+  <pre><code class="language-python">class Parent:
+    def __init__(self):
+        print("Parent constructor is called")
+
+class Child(Parent):
+    def __init__(self):
+        print("Child constructor is called")
+
+c = Child()</code></pre>
+  <pre class="out"><code>Child constructor is called</code></pre>
+  <div class="sticky warn"><strong>Important rule</strong> If the child defines its own constructor, the parent constructor does <b>not</b> run automatically. Python finds <code>__init__</code> in <code>Child</code>, stops searching, and ignores the parent’s unless you call it yourself. This is intentional: the child’s <code>__init__</code> <b>replaces</b> the parent’s. That replacing is called <b>method overriding</b> (next note).</div>
+  <h3>Why this is a problem</h3>
+  <p>If the parent constructor creates important data, that data is <b>never created</b>:</p>
+  <pre><code class="language-python">class Parent:
+    def __init__(self):
+        self.name = "Parent Name"
+
+class Child(Parent):
+    def __init__(self):
+        self.age = 10
+
+c = Child()
+print(c.name)   # ERROR</code></pre>
+  <pre class="out"><code>Traceback (most recent call last):
+  ...
+AttributeError: 'Child' object has no attribute 'name'</code></pre>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="super">
+  <h2>The fix: <code>super()</code></h2>
+  <p><code>super()</code> lets the <b>child class talk to its parent class</b>. <code>super()</code> means “go to the parent class”, and <mark><code>super().__init__()</code> means “run the parent’s constructor”.</mark></p>
+  <div class="two">
+    <div class="flow v"><span class="hl">Without super()</span><span class="bad">parent __init__ skipped</span><span class="bad">parent variables missing</span><span class="bad">child may break</span></div>
+    <div class="flow v"><span class="hl">With super()</span><span class="ok">parent __init__ runs first</span><span class="ok">parent variables created</span><span class="ok">child adds its own data</span></div>
+  </div>
+  <pre><code class="language-python">class Parent:
+    def __init__(self):
+        self.name = "Rahul"
+        print("Parent constructor executed")
+
+
+class Child(Parent):
+    def __init__(self):
+        super().__init__()
+        self.age = 10
+        print("Child constructor executed")
+
+
+c = Child()
+print(c.name)
+print(c.age)</code></pre>
+  <pre class="out"><code>Parent constructor executed
+Child constructor executed
+Rahul
+10</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Inside Child init, the first line super().__init__() jumps to Parent init, which sets self.name equals Rahul, then returns, and the child continues with self.age equals 10. One object throughout.">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="45" width="300" height="150" rx="14"/>
+        <rect class="box f-green" x="420" y="45" width="280" height="110" rx="14"/>
+        <path class="lr" d="M300 82 L 412 82" marker-end="url(#ahr)"/>
+        <path class="lb" d="M414 128 L 304 128" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="170" y="32" text-anchor="middle">Child.__init__(self)</text>
+      <text class="tm" x="560" y="32" text-anchor="middle">Parent.__init__(self)</text>
+      <text class="tm" x="40" y="87">super().__init__()</text>
+      <text class="tm" x="40" y="133">self.age = 10</text>
+      <text class="tm" x="40" y="175">print(...)</text>
+      <text class="tm" x="440" y="87">self.name = "Rahul"</text>
+      <text class="tm" x="440" y="133">print(...)</text>
+      <text class="tr" x="356" y="70" text-anchor="middle">1 · go</text>
+      <text class="tb" x="356" y="152" text-anchor="middle">2 · back</text>
+      <text class="ts" x="560" y="190" text-anchor="middle">same self: still one object</text>
+    </svg></div>
+    <figcaption><code>super()</code> doesn’t create a parent object. It runs the parent’s setup code on the <i>same</i> object, then returns.</figcaption>
+  </figure>
+  <h3>With parameters (the common case)</h3>
+  <pre><code class="language-python">class Person:
+    def __init__(self, name):
+        self.name = name
+
+
+class Student(Person):
+    def __init__(self, name, roll_no):
+        super().__init__(name)
+        self.roll_no = roll_no
+
+
+s = Student("Amit", 101)
+print(s.name)
+print(s.roll_no)</code></pre>
+  <pre class="out"><code>Amit
+101</code></pre>
+  <p>The parent needs <code>name</code>; the child needs <code>name</code> and <code>roll_no</code>. <code>super().__init__(name)</code> <b>sends</b> <code>name</code> up to the parent, which stores it, and the child stores <code>roll_no</code>. Real-world version: a manager is an employee with a team size.</p>
+  <pre><code class="language-python">class Employee:
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+
+
+class Manager(Employee):
+    def __init__(self, name, salary, team_size):
+        super().__init__(name, salary)
+        self.team_size = team_size
+
+
+m = Manager("Neha", 90000, 8)
+print(m.name)
+print(m.salary)
+print(m.team_size)</code></pre>
+  <pre class="out"><code>Neha
+90000
+8</code></pre>
+  <div class="sticky tip l"><strong>Rules for super()</strong> Use it inside the child constructor, whenever both parent and child have constructors. It guarantees the parent’s initialisation is never skipped. Put it on the <b>first line</b> so the child can safely rely on parent data.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="types">
+  <h2>Types of inheritance</h2>
+  <p>Real projects need different class structures:</p>
+  <ul>
+    <li><b>One parent, many children:</b> Developer, Tester and Manager all share basic employee details.</li>
+    <li><b>Chains of specialisation:</b> a Lead Developer builds on a Senior Developer, who builds on a Developer.</li>
+    <li><b>Features from independent sources:</b> a Project Manager needs employee features <i>and</i> team-coordination features.</li>
+    <li><b>Flexible design:</b> choosing the right structure keeps the design clear and scalable.</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Five small class diagrams: single A to B; multilevel chain A, B, C; hierarchical A with children B and C; multiple, child C with parents A and B; hybrid diamond with A on top, B and C in the middle and D at the bottom. Arrows point from child to parent.">
+      <g class="rough">
+        <rect class="box f-green" x="44" y="40" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="44" y="150" width="56" height="32" rx="8"/>
+        <path class="lr" d="M72 148 L 72 78" marker-end="url(#ahr)"/>
+        <rect class="box f-green" x="188" y="18" width="56" height="32" rx="8"/>
+        <rect class="box f-blue" x="188" y="94" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="188" y="170" width="56" height="32" rx="8"/>
+        <path class="lr" d="M216 168 L 216 131" marker-end="url(#ahr)"/>
+        <path class="lr" d="M216 92 L 216 55" marker-end="url(#ahr)"/>
+        <rect class="box f-green" x="332" y="40" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="296" y="150" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="368" y="150" width="56" height="32" rx="8"/>
+        <path class="lr" d="M324 148 L 350 78" marker-end="url(#ahr)"/>
+        <path class="lr" d="M396 148 L 370 78" marker-end="url(#ahr)"/>
+        <rect class="box f-green" x="440" y="40" width="56" height="32" rx="8"/>
+        <rect class="box f-green" x="512" y="40" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="476" y="150" width="56" height="32" rx="8"/>
+        <path class="lr" d="M494 148 L 470 78" marker-end="url(#ahr)"/>
+        <path class="lr" d="M514 148 L 538 78" marker-end="url(#ahr)"/>
+        <rect class="box f-green" x="620" y="14" width="56" height="32" rx="8"/>
+        <rect class="box f-blue" x="584" y="88" width="56" height="32" rx="8"/>
+        <rect class="box f-blue" x="656" y="88" width="56" height="32" rx="8"/>
+        <rect class="box f-orange" x="620" y="162" width="56" height="32" rx="8"/>
+        <path class="lr" d="M612 86 L 638 52" marker-end="url(#ahr)"/>
+        <path class="lr" d="M684 86 L 658 52" marker-end="url(#ahr)"/>
+        <path class="lr" d="M638 160 L 614 126" marker-end="url(#ahr)"/>
+        <path class="lr" d="M658 160 L 682 126" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M144 20 L 144 250"/>
+        <path class="ln dash" d="M288 20 L 288 250"/>
+        <path class="ln dash" d="M432 20 L 432 250"/>
+        <path class="ln dash" d="M576 20 L 576 250"/>
+      </g>
+      <text class="tm" x="72" y="61" text-anchor="middle">A</text><text class="tm" x="72" y="171" text-anchor="middle">B</text>
+      <text class="tm" x="216" y="39" text-anchor="middle">A</text><text class="tm" x="216" y="115" text-anchor="middle">B</text><text class="tm" x="216" y="191" text-anchor="middle">C</text>
+      <text class="tm" x="360" y="61" text-anchor="middle">A</text><text class="tm" x="324" y="171" text-anchor="middle">B</text><text class="tm" x="396" y="171" text-anchor="middle">C</text>
+      <text class="tm" x="468" y="61" text-anchor="middle">A</text><text class="tm" x="540" y="61" text-anchor="middle">B</text><text class="tm" x="504" y="171" text-anchor="middle">C</text>
+      <text class="tm" x="648" y="35" text-anchor="middle">A</text><text class="tm" x="612" y="109" text-anchor="middle">B</text><text class="tm" x="684" y="109" text-anchor="middle">C</text><text class="tm" x="648" y="183" text-anchor="middle">D</text>
+      <text class="t" x="72" y="230" text-anchor="middle">Single</text>
+      <text class="t" x="216" y="230" text-anchor="middle">Multilevel</text>
+      <text class="t" x="360" y="230" text-anchor="middle">Hierarchical</text>
+      <text class="t" x="504" y="230" text-anchor="middle">Multiple</text>
+      <text class="t" x="648" y="230" text-anchor="middle">Hybrid</text>
+      <text class="ts" x="72" y="252" text-anchor="middle">1 parent, 1 child</text>
+      <text class="ts" x="216" y="252" text-anchor="middle">a chain</text>
+      <text class="ts" x="360" y="252" text-anchor="middle">1 parent, 2+ kids</text>
+      <text class="ts" x="504" y="252" text-anchor="middle">2+ parents</text>
+      <text class="ts" x="648" y="252" text-anchor="middle">a mix of types</text>
+    </svg></div>
+    <figcaption>Arrows point from child to parent (“inherits from”). Green = top parent, orange = the most specific class.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Type</th><th>Shape</th><th>Example in this note</th></tr>
+    <tr><td><b>Single</b></td><td>one child, exactly one parent</td><td>Car → Vehicle</td></tr>
+    <tr><td><b>Multilevel</b></td><td>a chain: a class inherits from a child class</td><td>CollegeStudent → Student → Person</td></tr>
+    <tr><td><b>Hierarchical</b></td><td>many children, one parent</td><td>Email/SMSNotification → Notification</td></tr>
+    <tr><td><b>Multiple</b></td><td>one child, two or more parents</td><td>AllInOneMachine → Printer, Scanner</td></tr>
+    <tr><td><b>Hybrid</b></td><td>two or more types combined</td><td>TeachingAssistant → Student, Teacher → User</td></tr>
+  </table></div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="single">
+  <h2>Single inheritance</h2>
+  <p><b>One child class inherits from exactly one parent class</b> (“single parent, single child”), the simplest form. The child can use the parent’s variables and methods plus its own; the parent <b>cannot</b> use the child’s, because it knows nothing about the child. Access flows <b>from parent to child</b>.</p>
+  <p>A Car <b>is a</b> Vehicle:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Parent class</b><code>Vehicle.start()</code> is behaviour common to all vehicles.</div></li>
+    <li><span class="dot">2</span><div><b>Child class</b><code>class Car(Vehicle)</code> inherits from Vehicle and adds <code>drive()</code>.</div></li>
+    <li><span class="dot">3</span><div><b>Object</b>Create a <code>Car</code> and call both methods.</div></li>
+  </ol>
+  <pre><code class="language-python">class Vehicle:
+    def start(self):
+        print("The vehicle is starting")
+
+
+class Car(Vehicle):
+    def drive(self):
+        print("The car is being driven")
+
+
+car_obj = Car()
+car_obj.start()
+car_obj.drive()</code></pre>
+  <pre class="out"><code>The vehicle is starting
+The car is being driven</code></pre>
+  <p><code>start()</code> comes from the parent and <code>drive()</code> from the child, both called on the <b>same child object</b>. Real-world version: a smartphone is a phone that can also browse.</p>
+  <pre><code class="language-python">class Phone:
+    def call(self):
+        print("Making a phone call")
+
+
+class Smartphone(Phone):
+    def browse(self):
+        print("Browsing the internet")
+
+
+my_phone = Smartphone()
+my_phone.call()
+my_phone.browse()</code></pre>
+  <pre class="out"><code>Making a phone call
+Browsing the internet</code></pre>
+  <p><b>Observations:</b> one parent, one child; simple, and best when a class is a <b>direct extension</b> of another. The best starting point for beginners.</p>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="multilevel">
+  <h2>Multilevel inheritance</h2>
+  <p><b>A class inherits from another class, and a further class inherits from that child</b>, forming a chain. A class can use members of its parent <b>and of every class above it</b>, so the last class in the chain has the most features. Access still flows downward only.</p>
+  <p>A CollegeStudent <b>is a</b> Student, and a Student <b>is a</b> Person:</p>
+  <pre><code class="language-python">class Person:                      # base (grandparent)
+    def show_identity(self):
+        print("This is a person")
+
+
+class Student(Person):             # intermediate (parent)
+    def show_role(self):
+        print("This person is a student")
+
+
+class CollegeStudent(Student):     # final (child)
+    def show_level(self):
+        print("This student studies in a college")
+
+
+cs_obj = CollegeStudent()
+cs_obj.show_identity()
+cs_obj.show_role()
+cs_obj.show_level()</code></pre>
+  <pre class="out"><code>This is a person
+This person is a student
+This student studies in a college</code></pre>
+  <div class="flow"><span class="op">Person · show_identity()</span><span class="op">Student · + show_role()</span><span class="ok">CollegeStudent · + show_level()</span></div>
+  <p><code>Student</code> gets <code>show_identity()</code> automatically and adds <code>show_role()</code>. <code>CollegeStudent</code> inherits from <code>Student</code> directly and from <code>Person</code> <b>indirectly</b>. Real-world version: bank accounts that build on each other.</p>
+  <pre><code class="language-python">class Account:
+    def open_account(self):
+        print("Account opened")
+
+
+class SavingsAccount(Account):
+    def add_interest(self):
+        print("Interest added at 4%")
+
+
+class SeniorCitizenAccount(SavingsAccount):
+    def add_bonus_interest(self):
+        print("Extra 0.5% interest added for senior citizens")
+
+
+acc = SeniorCitizenAccount()
+acc.open_account()
+acc.add_interest()
+acc.add_bonus_interest()</code></pre>
+  <pre class="out"><code>Account opened
+Interest added at 4%
+Extra 0.5% interest added for senior citizens</code></pre>
+  <p><b>Observations:</b> each class builds on the previous one, so reuse grows level by level. Best when features grow from <b>general to specific</b>.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="hierarchical">
+  <h2>Hierarchical inheritance</h2>
+  <p><b>Several child classes inherit from one parent class</b> (“single parent, multiple children”). Common code goes in the parent; special code goes in each child. Each child can use the parent’s members and its own, but <b>not a sibling’s</b>, and the parent can’t use any child’s.</p>
+  <pre><code class="language-python">class Notification:
+    def send(self):
+        print("Sending a notification")
+
+
+class EmailNotification(Notification):
+    def send_email(self):
+        print("Sending an email notification")
+
+
+class SMSNotification(Notification):
+    def send_sms(self):
+        print("Sending an SMS notification")
+
+
+email_obj = EmailNotification()
+sms_obj = SMSNotification()
+
+email_obj.send()
+email_obj.send_email()
+
+sms_obj.send()
+sms_obj.send_sms()</code></pre>
+  <pre class="out"><code>Sending a notification
+Sending an email notification
+Sending a notification
+Sending an SMS notification</code></pre>
+  <p>“Sending a notification” appears twice because <b>both</b> children inherit <code>send()</code>. But siblings don’t share:</p>
+  <pre><code class="language-python">email_obj.send_sms()</code></pre>
+  <pre class="out"><code>AttributeError: 'EmailNotification' object has no attribute 'send_sms'</code></pre>
+  <p>Real-world version: UPI and card payments share the same verification step, each paying its own way.</p>
+  <pre><code class="language-python">class Payment:
+    def verify(self):
+        print("Verifying payment details")
+
+
+class UPIPayment(Payment):
+    def pay_by_upi(self):
+        print("Paying using UPI")
+
+
+class CardPayment(Payment):
+    def pay_by_card(self):
+        print("Paying using a debit card")
+
+
+upi = UPIPayment()
+card = CardPayment()
+
+upi.verify()
+upi.pay_by_upi()
+
+card.verify()
+card.pay_by_card()</code></pre>
+  <pre class="out"><code>Verifying payment details
+Paying using UPI
+Verifying payment details
+Paying using a debit card</code></pre>
+  <p><b>Observations:</b> common code is written <b>once</b> and reused by many classes. Best when classes share a base but behave differently.</p>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="multiple">
+  <h2>Multiple inheritance</h2>
+  <p><b>One child class inherits from two or more parent classes at the same time</b> (“multiple parents, single child”). It combines features from different sources, which is powerful, but needs care when parents have <b>methods with the same name</b>.</p>
+  <p>An all-in-one machine can print <i>and</i> scan, and both parents have a method called <code>action()</code>, a conflict:</p>
+  <pre><code class="language-python">class Printer:
+    def action(self):
+        print("Printing the document")
+
+
+class Scanner:
+    def action(self):
+        print("Scanning the document")
+
+
+class AllInOneMachine(Printer, Scanner):
+    pass
+
+
+machine = AllInOneMachine()
+machine.action()</code></pre>
+  <pre class="out"><code>Printing the document</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 230" role="img" aria-label="AllInOneMachine looks for action: first in itself, then in Printer, the first parent listed, where it is found, so Scanner is never checked">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="45" width="190" height="56" rx="12"/>
+        <rect class="box f-grey dash" x="310" y="45" width="190" height="56" rx="12"/>
+        <rect class="box f-orange" x="140" y="160" width="240" height="56" rx="12"/>
+        <path class="lr" d="M220 156 L 150 106" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M300 156 L 370 106" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="115" y="78" text-anchor="middle">Printer.action()</text>
+      <text class="tm" x="405" y="78" text-anchor="middle">Scanner.action()</text>
+      <text class="tm" x="260" y="193" text-anchor="middle">AllInOneMachine</text>
+      <text class="tr" x="115" y="32" text-anchor="middle">2 · found here, stop</text>
+      <text class="ts" x="405" y="32" text-anchor="middle">3 · never reached</text>
+      <text class="ts" x="260" y="140" text-anchor="middle">1 · not here</text>
+    </svg></div>
+    <figcaption>Python searches the child, then the parents <b>in the order you listed them</b>.</figcaption>
+  </figure>
+  <p>Python searches the child class first, then the <b>first parent listed</b>, then the next, and so on; if the method is nowhere, it raises an error. Swap the order and the output changes:</p>
+  <pre><code class="language-python">class AllInOneMachine(Scanner, Printer):
+    pass
+
+
+machine = AllInOneMachine()
+machine.action()</code></pre>
+  <pre class="out"><code>Scanning the document</code></pre>
+  <p><mark>Parent class order controls method selection.</mark> Real-world version: a smartwatch is a watch and a fitness tracker, and both have <code>show()</code>.</p>
+  <pre><code class="language-python">class Watch:
+    def show(self):
+        print("Showing the time")
+
+
+class FitnessTracker:
+    def show(self):
+        print("Showing today's step count")
+
+
+class SmartWatch(Watch, FitnessTracker):
+    pass
+
+
+my_watch = SmartWatch()
+my_watch.show()</code></pre>
+  <pre class="out"><code>Showing the time</code></pre>
+  <div class="sticky warn l"><strong>Use it sparingly</strong> Lookup follows a fixed, predictable order, so Python handles multiple inheritance safely, and name conflicts are settled by parent order. Still, use it <b>only when it is truly required</b>; Has-A is often simpler.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="hybrid">
+  <h2>Hybrid inheritance</h2>
+  <p><b>Two or more inheritance types combined</b> in one structure, e.g. hierarchical + multiple. Real systems are rarely simple, so this is common in large applications. Python looks in the current class first, then searches the parents in a fixed order called the <b>Method Resolution Order (MRO)</b>, and runs the <b>first match</b>.</p>
+  <p>On a learning platform, <code>Student</code> and <code>Teacher</code> both inherit from <code>User</code> (hierarchical), and <code>TeachingAssistant</code> inherits from both (multiple):</p>
+  <pre><code class="language-python">class User:
+    def access_portal(self):
+        print("User can access the learning portal")
+
+
+class Student(User):
+    def attend_class(self):
+        print("Student is attending the class")
+
+
+class Teacher(User):
+    def conduct_class(self):
+        print("Teacher is conducting the class")
+
+
+class TeachingAssistant(Student, Teacher):
+    def assist(self):
+        print("Teaching assistant is helping students")
+
+
+ta_obj = TeachingAssistant()
+ta_obj.access_portal()
+ta_obj.attend_class()
+ta_obj.conduct_class()
+ta_obj.assist()</code></pre>
+  <pre class="out"><code>User can access the learning portal
+Student is attending the class
+Teacher is conducting the class
+Teaching assistant is helping students</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Diamond: User on top, Student and Teacher in the middle, TeachingAssistant at the bottom. Search order numbers: 1 TeachingAssistant, 2 Student, 3 Teacher, 4 User.">
+      <g class="rough">
+        <rect class="box f-green" x="270" y="20" width="180" height="50" rx="12"/>
+        <rect class="box f-blue" x="80" y="105" width="180" height="50" rx="12"/>
+        <rect class="box f-blue" x="460" y="105" width="180" height="50" rx="12"/>
+        <rect class="box f-orange" x="235" y="195" width="250" height="50" rx="12"/>
+        <path class="lr" d="M300 192 L 210 160" marker-end="url(#ahr)"/>
+        <path class="lr" d="M420 192 L 510 160" marker-end="url(#ahr)"/>
+        <path class="lr" d="M210 102 L 300 74" marker-end="url(#ahr)"/>
+        <path class="lr" d="M510 102 L 420 74" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="360" y="50" text-anchor="middle">User</text>
+      <text class="tm" x="170" y="135" text-anchor="middle">Student</text>
+      <text class="tm" x="550" y="135" text-anchor="middle">Teacher</text>
+      <text class="tm" x="360" y="225" text-anchor="middle">TeachingAssistant</text>
+      <text class="th" x="210" y="230" text-anchor="middle">1</text>
+      <text class="th" x="60" y="140" text-anchor="middle">2</text>
+      <text class="th" x="660" y="140" text-anchor="middle">3</text>
+      <text class="th" x="470" y="54" text-anchor="middle">4</text>
+    </svg></div>
+    <figcaption>MRO: TeachingAssistant → Student → Teacher → User → object. The shared parent, User, is checked only after both its children.</figcaption>
+  </figure>
+  <p>You can ask Python for this order yourself:</p>
+  <pre><code class="language-python">print([cls.__name__ for cls in TeachingAssistant.mro()])</code></pre>
+  <pre class="out"><code>['TeachingAssistant', 'Student', 'Teacher', 'User', 'object']</code></pre>
+  <p>Real-world version: in a hospital, Doctor and Administrator are both Staff, and a Medical Director is both.</p>
+  <pre><code class="language-python">class Staff:
+    def mark_attendance(self):
+        print("Attendance marked")
+
+
+class Doctor(Staff):
+    def treat_patient(self):
+        print("Doctor is treating a patient")
+
+
+class Administrator(Staff):
+    def manage_budget(self):
+        print("Administrator is managing the budget")
+
+
+class MedicalDirector(Doctor, Administrator):
+    def lead_hospital(self):
+        print("Medical director is leading the hospital")
+
+
+md = MedicalDirector()
+md.mark_attendance()
+md.treat_patient()
+md.manage_budget()
+md.lead_hospital()</code></pre>
+  <pre class="out"><code>Attendance marked
+Doctor is treating a patient
+Administrator is managing the budget
+Medical director is leading the hospital</code></pre>
+  <p><b>Observations:</b> hybrid matches complex real systems and maximises reuse, but design it carefully so it stays readable, and use it only when simpler types aren’t enough. The next note works through MRO step by step.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Frameworks you’ll use lean on these shapes: Pydantic models inherit from <code>BaseModel</code>, custom exceptions inherit from <code>Exception</code>, and mixins (small extra parents) add logging or serialisation. When a customer’s codebase behaves oddly, <code>SomeClass.mro()</code> tells you exactly where a method is really coming from.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Has-A relationship (composition)</dt><dd>One class uses another by creating and holding an object of it, e.g. <code>self.calc = Calculator()</code>. The classes stay independent.</dd></div>
+    <div><dt>Is-A relationship (inheritance)</dt><dd>One class is a specialised type of another and automatically gets all its variables and methods, e.g. <code>class Car(Vehicle)</code>.</dd></div>
+    <div><dt>Parent class (base class)</dt><dd>The general class whose features are inherited by other classes.</dd></div>
+    <div><dt>Child class (derived class)</dt><dd>A more specific class that inherits from a parent and can add its own features.</dd></div>
+    <div><dt>super()</dt><dd>A built-in that gives a child access to its parent class; <code>super().__init__()</code> runs the parent’s constructor on the same object.</dd></div>
+    <div><dt>Single inheritance</dt><dd>One child class inherits from exactly one parent class.</dd></div>
+    <div><dt>Multilevel inheritance</dt><dd>A chain of inheritance where a class inherits from a class that is itself a child, e.g. CollegeStudent → Student → Person.</dd></div>
+    <div><dt>Hierarchical inheritance</dt><dd>Several child classes inherit from the same single parent class.</dd></div>
+    <div><dt>Multiple inheritance</dt><dd>One child class inherits from two or more parents; same-named methods are resolved by the order the parents are listed.</dd></div>
+    <div><dt>Hybrid inheritance</dt><dd>A structure that combines two or more types of inheritance, such as hierarchical plus multiple.</dd></div>
+    <div><dt>Method Resolution Order (MRO)</dt><dd>The fixed order in which Python searches a class and its ancestors for a method or attribute; see it with <code>ClassName.mro()</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Which pair is a Has-A relationship?</p>
+      <ol><li>Dog and Animal</li><li>Laptop and Battery</li><li>Savings account and Bank account</li><li>Smartphone and Phone</li></ol>
+      <p class="why">A laptop <i>has</i> a battery but is not a battery. The others are “is a” relationships.</p></div>
+    <div class="q" data-answer="3"><p>What does <code>class Child(Parent):</code> give a <code>Child</code> object?</p>
+      <ol><li>A separate Parent object stored inside it</li><li>Only the parent’s variables</li><li>All the parent’s variables and methods, automatically</li><li>Nothing until you call super()</li></ol>
+      <p class="why">Inheritance hands every parent member to the child with no parent object needed.</p></div>
+    <div class="q" data-answer="1"><p>Parent and Child both define <code>__init__</code>. What runs on <code>Child()</code>?</p>
+      <ol><li>Only the child’s constructor</li><li>Parent’s, then child’s</li><li>Child’s, then parent’s</li><li>Only the parent’s</li></ol>
+      <p class="why">Python finds <code>__init__</code> in Child and stops. The parent’s runs only if you call <code>super().__init__()</code>.</p></div>
+    <div class="q" data-answer="4"><p>The parent constructor sets <code>self.name</code>, the child constructor sets only <code>self.age</code> with no <code>super()</code>. What does <code>print(child.name)</code> do?</p>
+      <ol><li>Prints the parent’s name</li><li>Prints None</li><li>Prints an empty string</li><li>Raises AttributeError</li></ol>
+      <p class="why">The parent constructor never ran, so <code>name</code> was never created.</p></div>
+    <div class="q" data-answer="2"><p>What does <code>super().__init__(name)</code> do inside <code>Student.__init__</code>?</p>
+      <ol><li>Creates a new Person object</li><li>Runs Person’s constructor on the same Student object, passing name</li><li>Deletes the parent’s constructor</li><li>Makes Student a static class</li></ol>
+      <p class="why">super() reaches the parent’s method; there is still only one object.</p></div>
+    <div class="q" data-answer="3"><p><code>class AllInOne(Scanner, Printer)</code>, and both parents define <code>action()</code>. Which runs?</p>
+      <ol><li>Printer’s</li><li>Both, in order</li><li>Scanner’s</li><li>An error is raised</li></ol>
+      <p class="why">Python checks parents in the order they’re listed, and Scanner is first.</p></div>
+    <div class="q" data-answer="4"><p>EmailNotification and SMSNotification both inherit from Notification. Can an EmailNotification object call <code>send_sms()</code>?</p>
+      <ol><li>Yes, siblings share methods</li><li>Yes, through the parent</li><li>Only with super()</li><li>No, it raises AttributeError</li></ol>
+      <p class="why">In hierarchical inheritance each child sees the parent and itself, never its siblings.</p></div>
+    <div class="q" data-answer="1"><p>CollegeStudent → Student → Person. Which kind of inheritance is this?</p>
+      <ol><li>Multilevel</li><li>Hierarchical</li><li>Multiple</li><li>Single</li></ol>
+      <p class="why">It’s a chain: each class inherits from the one above, so the last class gets features from every level.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Classes connect either by <b>Has-A</b> (one object holds and uses another) or <b>Is-A</b> (<b>inheritance</b>: the child gets everything the parent has); when both define a constructor, call <b>super().__init__()</b> so the parent’s setup isn’t skipped, and choose among <b>single, multilevel, hierarchical, multiple and hybrid</b> shapes to fit the problem.</p>
+  <p>Next up: Method Overriding, where a child replaces or extends a parent’s method, and you’ll work out the MRO step by step.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>
