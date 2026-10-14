@@ -257,8 +257,7 @@ def main():
                     h = f.read()
                 h2 = re.sub(r'(assets/(?:style\.css|site\.js))(\?v=\w+)?"', lambda m: m.group(1) + '?v=' + ver + '"', h)
                 if h2 != h:
-                    with open(fp, 'w', encoding='utf-8', newline='
-') as f:
+                    with open(fp, 'w', encoding='utf-8', newline='\n') as f:
                         f.write(h2)
 
     pub = [m for m in modules if m['status'] == 'published' and m['kind'] == 'module']

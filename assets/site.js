@@ -215,6 +215,54 @@
       }).join('');
 
     }
+    // the FDE bot: walks along the road, faster when you scroll faster
+    if (el) {
+      var bot = h('<div class="road-bot" aria-hidden="true"><div class="bot-inner">' +
+        '<span class="trail"><i></i><i></i><i></i></span>' +
+        '<svg viewBox="0 0 48 68" width="44" height="62">' +
+          '<line x1="24" y1="9" x2="24" y2="3.5" class="ink-line"/><circle cx="24" cy="3.5" r="3" class="bulb"/>' +
+          '<g class="arm arm-l"><rect x="5" y="33" width="5.5" height="14" rx="2.75" class="limb"/></g>' +
+          '<g class="arm arm-r"><rect x="37.5" y="33" width="5.5" height="14" rx="2.75" class="limb"/></g>' +
+          '<g class="leg leg-l"><rect x="16" y="49" width="6.5" height="12" rx="3" class="limb"/><ellipse cx="18.5" cy="62" rx="5" ry="3" class="foot"/></g>' +
+          '<g class="leg leg-r"><rect x="25.5" y="49" width="6.5" height="12" rx="3" class="limb"/><ellipse cx="29.5" cy="62" rx="5" ry="3" class="foot"/></g>' +
+          '<rect x="12" y="31" width="24" height="20" rx="6" class="torso"/>' +
+          '<text x="24" y="44.5" text-anchor="middle" class="badge">FDE</text>' +
+          '<rect x="8" y="9" width="32" height="23" rx="9" class="head"/>' +
+          '<g class="face"><rect x="12" y="14" width="24" height="13" rx="5.5" class="visor"/>' +
+            '<g class="eyes"><circle cx="19" cy="20.5" r="2.4" class="eye"/><circle cx="29" cy="20.5" r="2.4" class="eye"/></g></g>' +
+          '<g class="back"><rect x="15" y="15" width="18" height="11" rx="4" class="panel"/><line x1="18" y1="18.5" x2="30" y2="18.5" class="ink-line thin"/><line x1="18" y1="22.5" x2="30" y2="22.5" class="ink-line thin"/></g>' +
+        '</svg></div></div>');
+      el.appendChild(bot);
+      var lastY = scrollY, lastT = performance.now(), v = 0, idleTimer = null, raf = 0;
+      function place() {
+        var r = el.getBoundingClientRect(), max = Math.max(0, r.height - 70);
+        var y = Math.min(max, Math.max(0, innerHeight * 0.45 - r.top - 31));
+        bot.style.transform = 'translate(-50%,' + y.toFixed(1) + 'px)';
+      }
+      function step() {
+        raf = 0;
+        var now = performance.now(), dt = Math.max(1, now - lastT), dy = scrollY - lastY;
+        lastT = now; lastY = scrollY;
+        var inst = Math.abs(dy) / dt;                 // px per ms
+        v = v * 0.7 + inst * 0.3;                     // smooth it
+        place();
+        if (Math.abs(dy) > 0.5) {
+          bot.classList.toggle('up', dy < 0);
+          bot.classList.add('moving');
+          bot.classList.toggle('running', v > 1.4);
+          var cyc = Math.max(0.14, Math.min(0.62, 0.42 / (0.25 + v)));
+          bot.style.setProperty('--cyc', cyc.toFixed(3) + 's');
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(function () { v = 0; bot.classList.remove('moving', 'running'); }, 160);
+        }
+      }
+      function queue() { if (!raf) raf = requestAnimationFrame(step); }
+      addEventListener('scroll', queue, { passive: true });
+      addEventListener('resize', function () { place(); });
+      el.addEventListener('toggle', function () { place(); }, true);
+      place();
+    }
+
     var bar = $('#road-progress');
     if (bar) {
       var c = 0, t = 0;

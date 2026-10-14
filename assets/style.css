@@ -541,3 +541,52 @@ ol.road .pn{font-size:19px;letter-spacing:-.02em}
 
 
 
+
+/* ---------- the FDE bot on the roadmap ---------- */
+.road-bot{position:absolute;left:50%;top:0;z-index:4;width:44px;height:62px;pointer-events:none;will-change:transform;transform:translate(-50%,0);--cyc:.5s}
+.road-bot .bot-inner{position:relative;width:100%;height:100%;filter:drop-shadow(3px 4px 0 var(--shadow))}
+.road-bot svg{display:block;overflow:visible}
+.road-bot .head{fill:var(--card);stroke:var(--ink);stroke-width:2.2}
+.road-bot .visor{fill:#1E2340;stroke:var(--ink);stroke-width:1.6}
+.road-bot .eye{fill:#6FE3F0}
+.road-bot .torso{fill:var(--hl-purple);stroke:var(--ink);stroke-width:2.2}
+.road-bot .badge{font:700 7.5px 'Nunito','Segoe UI',sans-serif;fill:var(--ink);letter-spacing:.04em}
+.road-bot .limb{fill:var(--card);stroke:var(--ink);stroke-width:2}
+.road-bot .foot{fill:var(--ink)}
+.road-bot .bulb{fill:var(--pen);stroke:var(--ink);stroke-width:1.4}
+.road-bot .ink-line{stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.road-bot .ink-line.thin{stroke-width:1.4}
+.road-bot .panel{fill:var(--hl-grey);stroke:var(--ink);stroke-width:1.6}
+.road-bot .back{display:none}
+.road-bot.up .back{display:inline}
+.road-bot.up .face{display:none}
+.road-bot .arm,.road-bot .leg{transform-box:fill-box;transform-origin:50% 8%}
+.road-bot .trail{position:absolute;left:50%;top:-16px;width:30px;height:16px;transform:translateX(-50%);display:flex;justify-content:space-between;opacity:0;transition:opacity .15s}
+.road-bot.up .trail{top:auto;bottom:-14px}
+.road-bot .trail i{display:block;width:2.5px;border-radius:2px;background:var(--ink-faint)}
+.road-bot .trail i:nth-child(1),.road-bot .trail i:nth-child(3){height:9px;margin-top:5px}
+.road-bot .trail i:nth-child(2){height:14px}
+.road-bot.running .trail{opacity:.9}
+@media (prefers-reduced-motion:no-preference){
+  .road-bot .eyes{transform-box:fill-box;transform-origin:center;animation:bot-blink 4.2s infinite}
+  .road-bot .bulb{animation:bot-bulb 2.4s ease-in-out infinite}
+  .road-bot.moving .arm-l,.road-bot.moving .leg-r{animation:bot-swing-a var(--cyc) ease-in-out infinite alternate}
+  .road-bot.moving .arm-r,.road-bot.moving .leg-l{animation:bot-swing-b var(--cyc) ease-in-out infinite alternate}
+  .road-bot.moving svg{animation:bot-bob calc(var(--cyc) / 1) ease-in-out infinite alternate}
+  .road-bot.running .arm-l,.road-bot.running .leg-r{animation-name:bot-run-a}
+  .road-bot.running .arm-r,.road-bot.running .leg-l{animation-name:bot-run-b}
+  .road-bot.running svg{animation-name:bot-bob-run}
+  .road-bot.running .trail i{animation:bot-trail .25s linear infinite}
+}
+@keyframes bot-swing-a{from{transform:rotate(22deg)}to{transform:rotate(-22deg)}}
+@keyframes bot-swing-b{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes bot-run-a{from{transform:rotate(40deg)}to{transform:rotate(-40deg)}}
+@keyframes bot-run-b{from{transform:rotate(-40deg)}to{transform:rotate(40deg)}}
+@keyframes bot-bob{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@keyframes bot-bob-run{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-4px) rotate(3deg)}}
+@keyframes bot-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes bot-bulb{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes bot-trail{from{transform:translateY(0);opacity:1}to{transform:translateY(-5px);opacity:.2}}
+@media (max-width:760px){.road-bot{left:25px;width:34px;height:48px}.road-bot svg{width:34px;height:48px}}
+@media print{.road-bot{display:none}}
+ol.road li.stage{z-index:6}
