@@ -1,0 +1,23 @@
+# Raw course docs (private .docx downloads from Google Drive)
+_source/
+
+# Generated from _source/ by tools/extract_images.py: full doc text dumps + image manifests
+tools/images/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and scratch
+*.log
+*.tmp

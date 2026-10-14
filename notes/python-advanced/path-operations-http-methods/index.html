@@ -61,11 +61,13 @@
     </svg></div>
     <figcaption>FastAPI picks the function using <b>both</b> the method and the path.</figcaption>
   </figure>
+  <figure class="shot"><img src="img/01.webp" alt="Diagram: Path (WHERE: /books) plus Method (WHAT to do: GET) plus Function (WHO does it: get_books()) make one path operation, GET /books → get_books(). Tip: @app.get(&quot;/books&quot;) gives the method and the path, and the def below it is the function." width="1400" height="597"><figcaption>Three parts that always go together. In FastAPI you write all three in two lines: the decorator and the <code>def</code> below it.</figcaption></figure>
 </section>
 
 <!-- 2 -->
 <section class="ch" id="methods">
   <h2>HTTP methods and CRUD</h2>
+  <p>This section is short. The goal is only to understand what each method does <b>before</b> we write any code.</p>
   <p>Every request a client sends carries a <b>method</b>. The method is a <b>verb</b>: it tells the server what the client wants to <b>do</b>. Typing a URL into the browser always sends <code>GET</code>, which is why we have only used GET so far.</p>
   <div class="tbl"><table>
     <tr><th>Method</th><th>In one line</th></tr>
@@ -75,53 +77,27 @@
     <tr><td><b>PATCH</b></td><td>Updates only the specified fields of an existing resource.</td></tr>
     <tr><td><b>DELETE</b></td><td>Removes an existing resource from the server.</td></tr>
   </table></div>
-  <div class="sticky info l"><strong>Resource?</strong> A <b>resource</b> is simply “a thing your API manages”: a book, a student, an order. For more on the methods themselves, see the earlier note on API Basics.</div>
+  <figure class="shot"><img src="img/02.webp" alt="Six cards: GET reads data and changes nothing; POST creates something new by sending its data; PUT replaces an existing item completely; PATCH changes only some fields of an item; DELETE removes an existing item; Learn more: covered in detail in the earlier notes on HTTP methods." width="1400" height="646"><figcaption>The five HTTP methods: each one tells the server what you want to <b>do</b>.</figcaption></figure>
+  <!-- img 03: decorative lightbulb icon of the source's callout box; the callout text is the sticky note below -->
+  <div class="sticky info l"><strong>Resource?</strong> A <b>resource</b> simply means “a thing your API manages”: a book, a student, an order. To know more about HTTP methods, refer to the previous notes on HTTP methods.</div>
   <h3>Why can the same URL do different things?</h3>
   <p>Because the URL and the method have different jobs:</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>The URL is the noun</h4><p>It says <b>which thing</b>: <code>/books</code>, <code>/books/1</code>.</p></div>
-    <div class="card t3 tilt-b"><h4>The method is the verb</h4><p>It says <b>what to do</b> with it: read, add, change, remove.</p></div>
+    <div class="card t3 tilt-b"><h4>The method is the verb</h4><p>It says <b>what to do</b> with it: read it, add to it, change it, remove it.</p></div>
   </div>
   <p>So <code>GET /books</code> (show all books) and <code>POST /books</code> (add a book) use the <b>same URL</b> but are <b>two different requests</b>, handled by <b>two different functions</b>.</p>
+  <figure class="shot"><img src="img/04.webp" alt="Diagram: /books with GET means show me all the books, with POST means here is a new book, please add it. /books/1 with GET means show me book 1, PUT replace book 1 with this, PATCH change one detail of book 1, DELETE remove book 1. Tip: like a library counter, what happens depends on what you ask for." width="1400" height="667"><figcaption>The URL names the <b>thing</b>; the method names the <b>action</b>. Like a library counter: same counter, different requests.</figcaption></figure>
   <h3>The four things every app does with data: CRUD</h3>
-  <p><b>CRUD</b> stands for <b>C</b>reate, <b>R</b>ead, <b>U</b>pdate, <b>D</b>elete. Each has a matching HTTP method:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="CRUD mapped to HTTP methods: Create to POST, Read to GET, Update to PUT or PATCH, Delete to DELETE">
-      <g class="rough">
-        <rect class="box f-green" x="80" y="15" width="200" height="50" rx="12"/>
-        <rect class="box f-blue" x="80" y="78" width="200" height="50" rx="12"/>
-        <rect class="box f-orange" x="80" y="141" width="200" height="50" rx="12"/>
-        <rect class="box f-pink" x="80" y="204" width="200" height="50" rx="12"/>
-        <rect class="box f-card" x="440" y="15" width="200" height="50" rx="12"/>
-        <rect class="box f-card" x="440" y="78" width="200" height="50" rx="12"/>
-        <rect class="box f-card" x="440" y="141" width="200" height="50" rx="12"/>
-        <rect class="box f-card" x="440" y="204" width="200" height="50" rx="12"/>
-        <path class="lr" d="M286 40 L 434 40" marker-end="url(#ahr)"/>
-        <path class="lr" d="M286 103 L 434 103" marker-end="url(#ahr)"/>
-        <path class="lr" d="M286 166 L 434 166" marker-end="url(#ahr)"/>
-        <path class="lr" d="M286 229 L 434 229" marker-end="url(#ahr)"/>
-      </g>
-      <text class="th" x="180" y="49" text-anchor="middle">Create</text>
-      <text class="th" x="180" y="112" text-anchor="middle">Read</text>
-      <text class="th" x="180" y="175" text-anchor="middle">Update</text>
-      <text class="th" x="180" y="238" text-anchor="middle">Delete</text>
-      <text class="tm" x="540" y="45" text-anchor="middle">POST</text>
-      <text class="tm" x="540" y="108" text-anchor="middle">GET</text>
-      <text class="tm" x="540" y="171" text-anchor="middle">PUT / PATCH</text>
-      <text class="tm" x="540" y="234" text-anchor="middle">DELETE</text>
-      <text class="ts" x="360" y="32" text-anchor="middle">add</text>
-      <text class="ts" x="360" y="95" text-anchor="middle">look</text>
-      <text class="ts" x="360" y="158" text-anchor="middle">change</text>
-      <text class="ts" x="360" y="221" text-anchor="middle">remove</text>
-    </svg></div>
-    <figcaption>Update has two methods: PUT replaces the whole thing, PATCH changes part of it.</figcaption>
-  </figure>
+  <p><b>CRUD</b> stands for <b>C</b>reate, <b>R</b>ead, <b>U</b>pdate, <b>D</b>elete. These are the four basic things any app does with data, and each has a matching HTTP method:</p>
+  <div class="flow"><span>Create → <b>POST</b></span><span>Read → <b>GET</b></span><span>Update → <b>PUT / PATCH</b></span><span>Delete → <b>DELETE</b></span></div>
+  <figure class="shot"><img src="img/05.webp" alt="Table using the Contacts app on your phone: C Create, save a new contact, POST; R Read, open your contact list, GET; U Update, edit a contact's number, PUT or PATCH; D Delete, remove a contact, DELETE. Tip: almost every app (Instagram, Amazon, a college portal) is just CRUD on different data." width="1400" height="620"><figcaption>CRUD with the Contacts app on your phone. Update has two methods: PUT replaces the whole thing, PATCH changes part of it.</figcaption></figure>
 </section>
 
 <!-- 3 -->
 <section class="ch" id="setup">
   <h2>Setting up the project</h2>
-  <p>We start a fresh project, using the same steps you learned in FastAPI Fundamentals:</p>
+  <p>We start a fresh project for this note, using the same steps you learned in FastAPI Fundamentals:</p>
   <pre><code class="language-bash">mkdir fastapi-crud
 cd fastapi-crud
 python -m venv venv</code></pre>
@@ -132,9 +108,8 @@ python -m venv venv</code></pre>
   </div>
   <p>Install the packages:</p>
   <pre><code class="language-bash">pip install fastapi uvicorn</code></pre>
-  <pre class="out"><code>...
-Successfully installed annotated-types-… anyio-… fastapi-… pydantic-… starlette-… uvicorn-… (versions will differ)</code></pre>
-  <p>Notice <code>pydantic</code> in that list: FastAPI is built on it. Now create the <code>app</code> folder with an empty <code>__init__.py</code> and a <code>main.py</code>:</p>
+  <figure class="shot"><img src="img/06.webp" alt="VS Code terminal: mkdir fastapi-crud, cd fastapi-crud, python -m venv venv, venv\Scripts\activate, pip install fastapi uvicorn, ending with Successfully installed ... fastapi-0.142.4 ... pydantic-2.13.5 ... starlette-1.7.0 ... uvicorn-0.54.0. The Explorer shows app with __init__.py and main.py, and venv." width="1400" height="487"><figcaption>Output: the install ends with “Successfully installed …”. Notice <code>pydantic</code> and <code>starlette</code> in the list: FastAPI is built on them. (Your version numbers may differ.)</figcaption></figure>
+  <p>Now create the <code>app</code> folder with an empty <code>__init__.py</code> and a <code>main.py</code>:</p>
   <pre class="out"><code>fastapi-crud/
 │
 ├── app/
@@ -147,7 +122,8 @@ Successfully installed annotated-types-… anyio-… fastapi-… pydantic-… st
 <!-- 4 -->
 <section class="ch" id="get">
   <h2>GET: read items</h2>
-  <p><b>GET</b> retrieves data <b>without changing it</b>. Before we can add, change or remove books, we need some. We keep them in a Python <b>list of dictionaries</b>, then add two GET routes: one returns <b>all</b> books, the other returns <b>one</b> book by its id (a <b>path parameter</b>, which the next note covers in depth).</p>
+  <p><b>Definition:</b> GET retrieves data from the server <b>without changing it</b>. To know more, refer to the previous notes on API Basics.</p>
+  <p>Before we can add, change or remove books, we need some books. We keep them in a Python <b>list of dictionaries</b>, exactly like the student list in the previous note. Then we add two GET routes: one returns <b>all</b> books, the other returns <b>one</b> book by its id (a <b>path parameter</b>, which the next note covers in depth).</p>
   <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">from fastapi import FastAPI
 
 app = FastAPI()
@@ -169,25 +145,13 @@ def get_book(book_id: int):
     return {"message": "Book not found"}</code></pre></div>
   <p>Run the server from the <code>fastapi-crud</code> folder:</p>
   <pre><code class="language-bash">uvicorn app.main:app --reload</code></pre>
-  <pre class="out"><code>INFO:     Will watch for changes in these directories: ['C:\\projects\\fastapi-crud']
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [12804] using WatchFiles
-INFO:     Started server process [9316]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="VS Code: app/main.py with the books list and the two GET routes; the terminal runs uvicorn app.main:app --reload and shows Uvicorn running on http://127.0.0.1:8000, Started reloader process using StatReload, Application startup complete, then GET /books 200 OK and GET /books/1 200 OK." width="1400" height="983"><figcaption>Output: the server starts on <code>http://127.0.0.1:8000</code>, and each browser visit is logged (<code>GET /books</code> and <code>GET /books/1</code>, both <b>200 OK</b>).</figcaption></figure>
   <p>Open these two URLs in the browser:</p>
-  <div class="two">
-    <div>
-      <p><code>http://127.0.0.1:8000/books</code></p>
-      <pre class="out"><code>[
-  {"id": 1, "title": "Python Basics", "author": "Ravi"},
-  {"id": 2, "title": "Learning FastAPI", "author": "Anita"}
-]</code></pre>
-    </div>
-    <div>
-      <p><code>http://127.0.0.1:8000/books/1</code></p>
-      <pre class="out"><code>{"id": 1, "title": "Python Basics", "author": "Ravi"}</code></pre>
-    </div>
+  <pre><code class="language-plaintext">http://127.0.0.1:8000/books
+http://127.0.0.1:8000/books/1</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/08.webp" alt="Browser at 127.0.0.1:8000/books showing a JSON list of two books: id 1 Python Basics by Ravi, id 2 Learning FastAPI by Anita." width="1172" height="772"><figcaption><code>/books</code> returns the whole list.</figcaption></figure>
+    <figure class="shot"><img src="img/09.webp" alt="Browser at 127.0.0.1:8000/books/1 showing one book: id 1, title Python Basics, author Ravi." width="1172" height="520"><figcaption><code>/books/1</code> returns just book 1.</figcaption></figure>
   </div>
   <p>These two GET routes are our starting point. Every other method in this note will <b>change</b> this <code>books</code> list.</p>
 </section>
@@ -195,84 +159,63 @@ INFO:     Application startup complete.</code></pre>
 <!-- 5 -->
 <section class="ch" id="swagger">
   <h2>Testing APIs with Swagger UI (<code>/docs</code>)</h2>
-  <p>The browser’s address bar can only send <b>GET</b> requests. There is no box to choose POST or DELETE, and no place to type the data for a new book. We need a better tester.</p>
-  <p><b>Swagger UI</b> is an interactive web page that lists <b>every route</b> in your API and lets you <b>send any request</b> with a few clicks: choose the method, fill in path values, type a request body, and see the response. <mark>FastAPI builds this page for you automatically by reading your code.</mark> You install and write nothing; it is always at <code>/docs</code> while the server runs.</p>
+  <h3>The problem</h3>
+  <p>So far we tested everything by typing a URL into the browser. But the browser’s address bar can only send <b>GET</b> requests. There is no box to choose POST or DELETE, and no place to type the data for a new book.</p>
+  <figure class="shot"><img src="img/10.webp" alt="Left: typing a URL in the browser, GET works but POST, PUT, PATCH and DELETE are impossible; there is no way to choose the method or attach a request body. Right: Swagger UI at /docs lets you pick any route and method, fill in path values and the request body, click Execute, and see the status code and response. Built automatically by FastAPI, nothing to install." width="1400" height="793"><figcaption>The address bar can only send GET. Swagger UI can send anything.</figcaption></figure>
+  <h3>What is Swagger UI?</h3>
+  <p><b>Swagger UI</b> is an interactive web page that lists <b>every route</b> in your API and lets you <b>send any request</b> with a few clicks: choose the method, fill in path values, type a request body, and see the response.</p>
+  <p>The best part: <mark>FastAPI creates this page for you automatically by reading your code.</mark> You do not install or write anything. It is always available at <code>/docs</code> while your server is running.</p>
+  <!-- img 11: decorative check-mark icon of the source's callout box; the callout text is the sticky note below -->
+  <div class="sticky tip"><strong>Built from your code</strong> Every time you add a route and save the file, it appears on this page after a refresh. From now on, we test every method here.</div>
+  <h3>Open Swagger UI</h3>
+  <p>With the server running, open:</p>
   <pre><code class="language-plaintext">http://127.0.0.1:8000/docs</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 330" role="img" aria-label="Sketch of the Swagger UI page: a list of coloured bars, one per path operation. GET is blue, POST green, PUT orange, PATCH teal and DELETE red.">
-      <g class="rough">
-        <rect class="box f-card" x="15" y="10" width="690" height="310" rx="16"/>
-        <rect class="box f-blue" x="35" y="62" width="650" height="36" rx="8"/>
-        <rect class="box f-blue" x="35" y="104" width="650" height="36" rx="8"/>
-        <rect class="box f-green" x="35" y="146" width="650" height="36" rx="8"/>
-        <rect class="box f-orange" x="35" y="188" width="650" height="36" rx="8"/>
-        <rect class="box f-teal" x="35" y="230" width="650" height="36" rx="8"/>
-        <rect class="box f-pink" x="35" y="272" width="650" height="36" rx="8"/>
-        <rect class="box f-none" x="45" y="68" width="86" height="24" rx="5"/>
-        <rect class="box f-none" x="45" y="110" width="86" height="24" rx="5"/>
-        <rect class="box f-none" x="45" y="152" width="86" height="24" rx="5"/>
-        <rect class="box f-none" x="45" y="194" width="86" height="24" rx="5"/>
-        <rect class="box f-none" x="45" y="236" width="86" height="24" rx="5"/>
-        <rect class="box f-none" x="45" y="278" width="86" height="24" rx="5"/>
-      </g>
-      <text class="th" x="35" y="46">FastAPI · /docs</text>
-      <text class="ts" x="685" y="44" text-anchor="end">built from your code</text>
-      <text class="tm" x="88" y="85" text-anchor="middle">GET</text><text class="tm" x="150" y="85">/books</text><text class="ts" x="670" y="85" text-anchor="end">Get Books</text>
-      <text class="tm" x="88" y="127" text-anchor="middle">GET</text><text class="tm" x="150" y="127">/books/{book_id}</text><text class="ts" x="670" y="127" text-anchor="end">Get Book</text>
-      <text class="tm" x="88" y="169" text-anchor="middle">POST</text><text class="tm" x="150" y="169">/books</text><text class="ts" x="670" y="169" text-anchor="end">Add Book</text>
-      <text class="tm" x="88" y="211" text-anchor="middle">PUT</text><text class="tm" x="150" y="211">/books/{book_id}</text><text class="ts" x="670" y="211" text-anchor="end">Update Book</text>
-      <text class="tm" x="88" y="253" text-anchor="middle">PATCH</text><text class="tm" x="150" y="253">/books/{book_id}</text><text class="ts" x="670" y="253" text-anchor="end">Patch Book</text>
-      <text class="tm" x="88" y="295" text-anchor="middle">DELETE</text><text class="tm" x="150" y="295">/books/{book_id}</text><text class="ts" x="670" y="295" text-anchor="end">Delete Book</text>
-    </svg></div>
-    <figcaption>Each bar is one path operation; the colour shows the method. The grey title on the right comes from your function name.</figcaption>
-  </figure>
-  <p>Right now you will see only the two blue <b>GET</b> bars. As you add routes, <b>POST</b> appears in green, <b>PUT</b> in orange, <b>PATCH</b> in teal and <b>DELETE</b> in red. Save the file, refresh the page, and new routes show up.</p>
-  <h3>Every test follows the same five steps</h3>
-  <ol class="path">
-    <li><span class="dot">1</span><div><b>Open the bar</b>Click, for example, <code>GET /books</code> to expand it.</div></li>
-    <li><span class="dot">2</span><div><b>Try it out</b>Click the <b>Try it out</b> button so the fields become editable.</div></li>
-    <li><span class="dot">3</span><div><b>Fill in</b>Type any path values (like <code>book_id</code>) and, for POST/PUT/PATCH, the JSON request body. <span class="tag">→ GET /books needs nothing</span></div></li>
-    <li><span class="dot">4</span><div><b>Execute</b>Click <b>Execute</b> to send the real request to your running server.</div></li>
-    <li><span class="dot">5</span><div><b>Read the result</b>Swagger shows the equivalent <code>curl</code> command, the <b>Request URL</b>, the <b>response body</b> and the <b>status code</b>.</div></li>
-  </ol>
-  <p>For <code>GET /books</code> the response body shows the same two books you saw in the browser, with status code <b>200</b> (success). For <code>GET /books/{book_id}</code>, type <code>2</code> in the <code>book_id</code> box and click Execute:</p>
-  <pre class="out"><code>Request URL
-http://127.0.0.1:8000/books/2
-
-Code   Response body
-200    {"id": 2, "title": "Learning FastAPI", "author": "Anita"}</code></pre>
-  <p>Swagger UI built the URL <code>/books/2</code> for you. From now on, we test <b>every</b> method here.</p>
+  <figure class="shot"><img src="img/12.webp" alt="Swagger UI page titled FastAPI 0.1.0 OAS 3.1 with /openapi.json link; under default, two blue bars: GET /books Get Books and GET /books/{book_id} Get Book; below, Schemas HTTPValidationError and ValidationError. Callouts: 1 title of your API, 2 every route you wrote, one bar per route, 3 colour-coded HTTP method label, 4 the path of the route." width="1400" height="1000"><figcaption>Your API’s testing page: the title, one bar per route, a colour-coded method label and the path.</figcaption></figure>
+  <p>Each coloured bar is one path operation. The colour shows the method: <b>GET</b> is blue, and soon you will see <b>POST</b> in green, <b>PUT</b> in orange, <b>PATCH</b> in teal and <b>DELETE</b> in red. The grey title next to the path (“Get Books”) comes from your function name.</p>
+  <h3>Test <code>GET /books</code></h3>
+  <p>Every test in Swagger UI follows the same five steps:</p>
+  <figure class="shot"><img src="img/13.webp" alt="Five steps: Open /docs, Click the route (it expands), Try it out (unlocks inputs), Execute (sends request), Read response (code and body)." width="1400" height="310"><figcaption>Open <code>/docs</code> → click the route → <b>Try it out</b> → <b>Execute</b> → read the response.</figcaption></figure>
+  <div class="shots">
+    <figure class="shot"><img src="img/14.webp" alt="Swagger UI: GET /books expanded, showing No parameters and the Try it out button highlighted; Responses lists code 200 Successful Response." width="1400" height="907"><figcaption>Step 1: click <code>GET /books</code> to open it, then <b>Try it out</b> unlocks the form.</figcaption></figure>
+    <figure class="shot"><img src="img/15.webp" alt="Swagger UI after Execute: the curl command, Request URL http://127.0.0.1:8000/books, code 200, and the response body with the two books." width="1400" height="1240"><figcaption>Step 2: <b>Execute</b>. You get the curl command, the exact Request URL, the status code and the response body.</figcaption></figure>
+  </div>
+  <p>The response body shows the same two books we saw in the browser, with status code <b>200</b> (success).</p>
+  <h3>Test <code>GET /books/{book_id}</code></h3>
+  <p>Open <code>GET /books/{book_id}</code>, click <b>Try it out</b>, type <code>2</code> in the <code>book_id</code> box and click <b>Execute</b>:</p>
+  <figure class="shot"><img src="img/16.webp" alt="Swagger UI: GET /books/{book_id} with book_id 2 typed in the input box; Request URL http://127.0.0.1:8000/books/2; code 200; response body id 2, title Learning FastAPI, author Anita." width="1400" height="1197"><figcaption>The <code>book_id</code> box is the path parameter; book number 2 comes back.</figcaption></figure>
+  <p>Swagger UI built the URL <code>http://127.0.0.1:8000/books/2</code> for us and showed the response.</p>
   <div class="sticky fde"><strong>In the field (FDE)</strong> <code>/docs</code> is often the first thing you show a customer: a live, clickable contract of your API. Their developers can try every endpoint before writing a line of integration code.</div>
 </section>
 
 <!-- 6 -->
 <section class="ch" id="post">
   <h2>POST: add an item</h2>
-  <p><b>POST</b> sends new data to the server to create a resource.</p>
+  <p><b>Definition:</b> POST sends new data to the server to create a resource. To know more, refer to the previous notes on API Basics.</p>
   <h3>New idea: the request body</h3>
-  <p>With GET, everything the server needs fits in the URL (<code>/books/2</code>). To <b>add</b> a book we must send the whole book: id, title and author. That is too much (and too important) to squeeze into the URL, so it travels in a separate part of the request: the <b>request body</b>.</p>
+  <p>With GET, everything the server needs fits in the URL (<code>/books/2</code>). But to <b>add</b> a book, we must send the whole book: its id, title and author. That data is too big and too important to squeeze into the URL, so it travels in a separate part of the request called the <b>request body</b>.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="An HTTP request as an envelope: on the outside the method and URL, POST /books; inside, the body with the JSON for the new book">
       <g class="rough">
         <rect class="box f-yellow" x="110" y="20" width="500" height="170" rx="14"/>
-        <path class="ln" d="M110 22 L 360 100 L 610 22"/>
+        <path class="ln dash" d="M126 82 L 594 82"/>
         <rect class="box f-card" x="210" y="112" width="300" height="64" rx="10"/>
       </g>
-      <text class="tm" x="150" y="54">POST /books</text>
-      <text class="ts" x="570" y="54" text-anchor="end">method + URL</text>
+      <text class="tm" x="140" y="58">POST /books</text>
+      <text class="ts" x="590" y="58" text-anchor="end">outside: method + URL</text>
       <text class="tm" x="360" y="140" text-anchor="middle">{"id": 3, "title": "Web APIs",</text>
       <text class="tm" x="360" y="162" text-anchor="middle"> "author": "Kiran"}</text>
-      <text class="ts" x="35" y="150">body (JSON)</text>
+      <text class="ts" x="18" y="150">body (JSON)</text>
       <text class="tr" x="625" y="140">inside,</text>
       <text class="tr" x="625" y="166">not in URL</text>
     </svg></div>
     <figcaption>The URL is the address on the envelope; the body is the letter inside.</figcaption>
   </figure>
   <ul>
-    <li>The <b>request body</b> is data sent <b>inside</b> the request, not in the URL.</li>
-    <li>In APIs the body is almost always <b>JSON</b>, the same format our responses use.</li>
+    <li>The <b>request body</b> is the data sent <b>inside</b> the request, not in the URL.</li>
+    <li>In APIs the body is almost always written in <b>JSON</b>, the same format our responses use.</li>
     <li>GET requests normally have <b>no</b> body. POST, PUT and PATCH usually <b>do</b>.</li>
   </ul>
+  <figure class="shot"><img src="img/17.webp" alt="Left: GET asking for data, everything needed is in the URL, GET /books/2 with a path parameter and no body. Right: POST sending new data, the URL POST /books says where, and the request body carries the JSON id 3, title Web APIs, author Kiran. Tip: think of a parcel, the URL is the address written on the outside, the request body is what is packed inside." width="1400" height="766"><figcaption>Where does the data travel? GET asks through the URL; POST carries data inside the request body.</figcaption></figure>
   <h3>Write the POST route</h3>
   <div class="codebox"><span class="cap">app/main.py · add below the GET routes</span><pre><code class="language-python">@app.post("/books")
 def add_book(book: dict):
@@ -281,51 +224,53 @@ def add_book(book: dict):
   <div class="tbl"><table>
     <tr><th>Code</th><th>What it means</th></tr>
     <tr><td><code>@app.post("/books")</code></td><td>Runs when a <b>POST</b> request comes to <code>/books</code>. (<code>GET /books</code> still goes to <code>get_books()</code>.)</td></tr>
-    <tr><td><code>book: dict</code></td><td>FastAPI reads the JSON body and hands it to us as a Python <b>dictionary</b>.</td></tr>
+    <tr><td><code>book: dict</code></td><td>FastAPI reads the JSON body and gives it to us as a Python <b>dictionary</b>.</td></tr>
     <tr><td><code>books.append(book)</code></td><td>Adds the new book to the end of the list.</td></tr>
     <tr><td><code>return {...}</code></td><td>Confirms what was added.</td></tr>
   </table></div>
   <h3>Test POST in Swagger UI</h3>
-  <p>Save and refresh <code>/docs</code>. A green <b>POST /books</b> bar appears. Open it, click <b>Try it out</b>, replace the example body with this, and click <b>Execute</b>:</p>
+  <p>Save the file and refresh <code>/docs</code>. A green <b>POST /books</b> bar appears. Open it, click <b>Try it out</b>, replace the example body with this, and click <b>Execute</b>:</p>
   <pre><code class="language-json">{
     "id": 3,
     "title": "Web APIs",
     "author": "Kiran"
 }</code></pre>
-  <pre class="out"><code>200  {"message": "Book added", "book": {"id": 3, "title": "Web APIs", "author": "Kiran"}}</code></pre>
-  <p>Now run <b>GET /books</b> again. There are three books:</p>
-  <pre class="out"><code>[
-  {"id": 1, "title": "Python Basics", "author": "Ravi"},
-  {"id": 2, "title": "Learning FastAPI", "author": "Anita"},
-  {"id": 3, "title": "Web APIs", "author": "Kiran"}
-]</code></pre>
-  <div class="flow"><span class="op">POST /books + JSON body</span><span>FastAPI → dict</span><span class="op">add_book(book)</span><span>books.append()</span><span class="ok">list now has 3</span></div>
+  <p>Then run <b>GET /books</b> again. There are three books:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/18.webp" alt="Swagger UI: POST /books Add Book with the request body id 3, title Web APIs, author Kiran; the curl command with -d and the JSON; Request URL http://127.0.0.1:8000/books; code 200; response body message Book added and the book." width="1400" height="1714"><figcaption>Request body: the new book as JSON. Response: <code>"Book added"</code> plus the book.</figcaption></figure>
+    <figure class="shot"><img src="img/19.webp" alt="Swagger UI: GET /books executed, code 200, response body lists three books: Python Basics by Ravi, Learning FastAPI by Anita, Web APIs by Kiran." width="1400" height="1126"><figcaption><code>GET /books</code> now lists three books.</figcaption></figure>
+  </div>
+  <h3>How it works</h3>
+  <figure class="shot"><img src="img/20.webp" alt="Flow: the client sends POST /books with a JSON body; FastAPI reads the JSON body and turns it into a Python dictionary; add_book(book), your function, receives the dictionary; books.append(book), the list now has one more book; JSON response message Book added." width="1400" height="901"><figcaption>What happens when you POST a new book: JSON body → dictionary → <code>add_book()</code> → <code>append</code> → JSON response.</figcaption></figure>
   <h3>Experiment: restart the server</h3>
-  <p>Just <b>save</b> <code>main.py</code> again (no changes needed). With <code>--reload</code>, the server restarts:</p>
-  <pre class="out"><code>WARNING:  WatchFiles detected changes in 'app\main.py'. Reloading...
-INFO:     Shutting down
-INFO:     Application shutdown complete.
-INFO:     Started server process [14220]
-INFO:     Application startup complete.</code></pre>
-  <p>Run <b>GET /books</b>: book 3 is <b>gone</b>! Our books live in a Python list in the server’s <b>memory</b>. On restart the list is created again from the code, with only the two starting books.</p>
-  <div class="sticky warn l"><strong>In-memory data is temporary</strong> Anything you add disappears on every restart. That is fine for learning; real apps store data in a database, which comes later in the course.</div>
+  <p>Now just <b>save</b> <code>main.py</code> again (no changes needed). With <code>--reload</code>, the server restarts:</p>
+  <figure class="shot"><img src="img/21.webp" alt="VS Code terminal: POST /books 200 OK, GET /books 200 OK, then WARNING: StatReload detected changes in app\main.py. Reloading..., Shutting down, Application shutdown complete, Finished server process [9632], Started server process [11876], Application startup complete, GET /books 200 OK." width="1400" height="436"><figcaption>StatReload spots the saved file, shuts the old server process down and starts a new one.</figcaption></figure>
+  <p>Run <b>GET /books</b> again:</p>
+  <figure class="shot"><img src="img/22.webp" alt="Swagger UI: GET /books after the restart returns only two books, Python Basics by Ravi and Learning FastAPI by Anita." width="1400" height="1033"><figcaption>Only two books again.</figcaption></figure>
+  <p>Book 3 is <b>gone</b>! Our books live in a Python list in the server’s <b>memory</b>. When the server restarts, the list is created again from the code, with only the two starting books.</p>
+  <figure class="shot"><img src="img/23.webp" alt="Flow: server starts with list = 2 books from the code; POST book 3 makes list = 3 books in memory; save file or restart clears memory; server starts again with list = 2 books. Tip: this is fine for learning; real apps store data in a database so it survives restarts, which we do in a later module." width="1400" height="436"><figcaption>Why did book 3 disappear? The list lives in RAM and is rebuilt from the code on every restart.</figcaption></figure>
   <div class="sticky tip"><strong>Good to know</strong> FastAPI answers POST with <b>200</b> by default. Many APIs use <b>201 Created</b> for a successful create; you can ask for it with <code>@app.post("/books", status_code=201)</code>.</div>
 </section>
 
 <!-- 7 -->
 <section class="ch" id="put">
   <h2>PUT: replace an item</h2>
-  <p><b>PUT</b> replaces an existing resource <b>completely</b> with the data sent. To do that the server needs two things, which come from two places:</p>
+  <p><b>Definition:</b> PUT replaces an existing resource <b>completely</b> with the data sent. To know more, refer to the previous notes on API Basics.</p>
+  <h3>How PUT works</h3>
+  <p>To replace a book, the server needs two things: <b>which</b> book to replace, and <b>what</b> to replace it with. So a PUT route takes values from two places:</p>
   <div class="tbl"><table>
     <tr><th>Value</th><th>Comes from</th><th>Example</th></tr>
     <tr><td><code>book_id</code></td><td>the <b>URL</b> (path parameter)</td><td><code>/books/1</code></td></tr>
-    <tr><td><code>updated_book</code></td><td>the <b>request body</b> (JSON)</td><td>the new, full record</td></tr>
+    <tr><td><code>updated_book</code></td><td>the <b>request body</b> (JSON)</td><td>the new full record</td></tr>
   </table></div>
+  <figure class="shot"><img src="img/24.webp" alt="/books/1: book_id = 1 comes from the URL (path parameter), which book; updated_book = {...} comes from the request body, the new full record; def update_book(book_id: int, updated_book: dict), FastAPI fills both parameters. Tip: a name inside { } comes from the URL, a dict parameter comes from the body." width="1400" height="575"><figcaption>FastAPI decides automatically: a name inside <code>{ }</code> comes from the URL, a <code>dict</code> parameter comes from the body.</figcaption></figure>
   <p>To replace an item in a list we need its <b>position</b> (index). Python’s <code>enumerate()</code> gives us the position and the item <b>together</b> in the loop:</p>
   <pre><code class="language-python">for index, book in enumerate(books):
     print(index, book["title"])
 # 0 Python Basics
 # 1 Learning FastAPI</code></pre>
+  <figure class="shot"><img src="img/25.webp" alt="Table: index 0 is the book with id 1, Python Basics; index 1 is the book with id 2, Learning FastAPI. book_id = 1 found at index 0, so books[0] = updated_book: the old record is thrown away and the new one takes its place. Tip: replacing an item in a list means writing books[index] = new_item." width="1400" height="577"><figcaption><code>enumerate()</code> gives the position and the item together; <code>books[index] = new_item</code> replaces it.</figcaption></figure>
+  <h3>Write the PUT route</h3>
   <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">@app.put("/books/{book_id}")
 def update_book(book_id: int, updated_book: dict):
     for index, book in enumerate(books):
@@ -334,37 +279,47 @@ def update_book(book_id: int, updated_book: dict):
             return {"message": "Book updated", "book": updated_book}
     return {"message": "Book not found"}</code></pre></div>
   <h3>Test PUT with the full record</h3>
-  <p>Open <b>PUT /books/{book_id}</b>, enter <code>1</code> as <code>book_id</code>, and send the <b>complete</b> record:</p>
+  <p>In Swagger UI, open <b>PUT /books/{book_id}</b>, enter <code>1</code> as <code>book_id</code>, and send the <b>complete</b> record:</p>
   <pre><code class="language-json">{
     "id": 1,
     "title": "Python Advanced",
     "author": "Ravi"
 }</code></pre>
-  <p>Check with <b>GET /books/1</b>. The title has changed:</p>
-  <pre class="out"><code>{"id": 1, "title": "Python Advanced", "author": "Ravi"}</code></pre>
+  <p>Then check with <b>GET /books/1</b>. The title has changed:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/26.webp" alt="Swagger UI: PUT /books/{book_id} Update Book with book_id 1 and the body id 1, title Python Advanced, author Ravi; Request URL http://127.0.0.1:8000/books/1; code 200; response message Book updated with the new book." width="1400" height="1892"><figcaption><code>book_id</code> comes from the URL, <code>updated_book</code> from the body; the whole record was replaced.</figcaption></figure>
+    <figure class="shot"><img src="img/27.webp" alt="Swagger UI: GET /books/{book_id} with book_id 1 returns id 1, title Python Advanced, author Ravi, code 200." width="1400" height="1041"><figcaption><code>GET /books/1</code>: the title is now “Python Advanced”.</figcaption></figure>
+  </div>
   <h3>Experiment: PUT with only one field</h3>
-  <p>Restart (save the file), then send PUT to <code>/books/1</code> with <b>only</b> a new title:</p>
+  <p>Now send PUT to <code>/books/1</code> with <b>only</b> a new title:</p>
   <pre><code class="language-json">{
     "title": "Python Masterclass"
 }</code></pre>
-  <p>Run <b>GET /books</b> and look at the first book:</p>
-  <pre class="out"><code>[
-  {"title": "Python Masterclass"},
-  {"id": 2, "title": "Learning FastAPI", "author": "Anita"}
-]</code></pre>
-  <p>The <code>id</code> and <code>author</code> are <b>gone</b>. PUT did exactly what it promises: it <b>replaced the whole record</b> with what we sent. It gets worse. Try <b>GET /books/1</b>:</p>
-  <pre class="out"><code>500 Internal Server Error</code></pre>
-  <p>The loop in <code>get_book()</code> reads <code>book["id"]</code> on the first book, which no longer has an <code>"id"</code> key. Python raises a <code>KeyError</code>, the server crashes on that request and answers 500. Because the broken record is first in the list, even <b>GET /books/2</b> now fails the same way.</p>
-  <div class="sticky warn l"><strong>With PUT, always send the complete record.</strong> Save <code>main.py</code> to restart and get the original two books back. If you only want to change one field, use <b>PATCH</b>.</div>
+  <p>Then run <b>GET /books</b> and look at the first book:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/28.webp" alt="Swagger UI: PUT /books/{book_id} with book_id 1 and body title Python Masterclass only; code 200; response message Book updated, book contains only title Python Masterclass." width="1400" height="1663"><figcaption>The response already shows it: the “updated” book has only a title.</figcaption></figure>
+    <figure class="shot"><img src="img/29.webp" alt="Swagger UI: GET /books returns code 200 with the first item only title Python Masterclass, and the second item id 2, Learning FastAPI, Anita." width="1400" height="996"><figcaption><code>GET /books</code>: the first book has lost its <code>id</code> and <code>author</code>.</figcaption></figure>
+  </div>
+  <p>The first book is now just <code>{"title": "Python Masterclass"}</code>. The <code>id</code> and <code>author</code> are <b>gone</b>. PUT did exactly what it promises: it <b>replaced the whole record</b> with what we sent.</p>
+  <p>It gets worse. Try <b>GET /books/1</b> now:</p>
+  <figure class="shot"><img src="img/30.webp" alt="VS Code terminal: PUT /books/1 200 OK, GET /books 200 OK, GET /books/1 500 Internal Server Error, ERROR: Exception in ASGI application, Traceback pointing to app\main.py line 17 in get_book, if book[&quot;id&quot;] == book_id:, KeyError: 'id'." width="1400" height="411"><figcaption>The server log: <b>500 Internal Server Error</b> caused by <code>KeyError: 'id'</code> on line 17 of <code>get_book()</code>.</figcaption></figure>
+  <figure class="shot"><img src="img/31.webp" alt="Before: id 1, Python Basics, Ravi. After PUT: only title Python Masterclass. Three cards: id and author are gone, PUT replaced the whole record with exactly what we sent; search by id now crashes, the loop reads book[&quot;id&quot;] but this record has no id, Python raises KeyError and the client gets 500 Internal Server Error; reset the data, save main.py or restart the server and the list goes back to the 2 starting books." width="1400" height="581"><figcaption>What went wrong with the partial PUT, and how to reset.</figcaption></figure>
+  <p>The loop in <code>get_book()</code> reads <code>book["id"]</code> on the first book, which no longer has an <code>"id"</code> key. Python raises a <code>KeyError</code>, and the client gets <b>500 Internal Server Error</b>. Because the broken record is first in the list, even <b>GET /books/2</b> now fails the same way.</p>
+  <!-- img 32: decorative warning icon of the source's callout box; the callout text is the sticky note below -->
+  <div class="sticky warn l"><strong>With PUT, always send the complete record.</strong> Save <code>main.py</code> to restart the server and get the original two books back. If you only want to change one field, use <b>PATCH</b>, which is the next section.</div>
 </section>
 
 <!-- 8 -->
 <section class="ch" id="patch">
   <h2>PATCH: change part of an item</h2>
-  <p><b>PATCH</b> updates only the fields you send. Instead of throwing the old record away, it <b>keeps</b> it and overwrites just the keys in the body. Python dictionaries already have a method that does exactly this: <code>dict.update()</code>.</p>
+  <p><b>Definition:</b> PATCH updates only the specified fields of an existing resource. To know more, refer to the previous notes on API Basics.</p>
+  <h3>How PATCH works</h3>
+  <p>Instead of throwing the old record away, PATCH <b>keeps</b> it and only overwrites the keys you send. Python dictionaries already have a method that does exactly this: <code>dict.update()</code>.</p>
   <pre><code class="language-python">book = {"id": 2, "title": "Learning FastAPI", "author": "Anita"}
 book.update({"author": "Anita Sharma"})
 print(book)   # {'id': 2, 'title': 'Learning FastAPI', 'author': 'Anita Sharma'}</code></pre>
+  <figure class="shot"><img src="img/33.webp" alt="Table: key id, before 2, not sent, after 2 kept; title, before Learning FastAPI, not sent, after Learning FastAPI kept; author, before Anita, sent Anita Sharma, after Anita Sharma changed. Tip: dict.update() copies each key from changes into book and leaves every other key alone." width="1400" height="533"><figcaption>How <code>book.update(changes)</code> works: only the keys that were sent are changed.</figcaption></figure>
+  <h3>Write the PATCH route</h3>
   <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">@app.patch("/books/{book_id}")
 def patch_book(book_id: int, changes: dict):
     for book in books:
@@ -372,55 +327,24 @@ def patch_book(book_id: int, changes: dict):
             book.update(changes)
             return {"message": "Book partially updated", "book": book}
     return {"message": "Book not found"}</code></pre></div>
-  <p>No <code>enumerate()</code> here: we change the existing dictionary <b>in place</b> instead of replacing it in the list.</p>
+  <p>We do not need <code>enumerate()</code> here, because we change the existing dictionary <b>in place</b> instead of replacing it.</p>
   <h3>Test PATCH</h3>
-  <p>Saving restarted the server, so the data is fresh. Send PATCH to <code>/books/2</code> with:</p>
+  <p>Saving the file restarted the server, so the data is back to the original two books. Send PATCH to <code>/books/2</code> with:</p>
   <pre><code class="language-json">{
     "author": "Anita Sharma"
 }</code></pre>
-  <pre class="out"><code>{"message": "Book partially updated", "book": {"id": 2, "title": "Learning FastAPI", "author": "Anita Sharma"}}</code></pre>
+  <figure class="shot"><img src="img/34.webp" alt="Swagger UI: PATCH /books/{book_id} Patch Book with book_id 2 and body author Anita Sharma; Request URL http://127.0.0.1:8000/books/2; code 200; response message Book partially updated with id 2, title Learning FastAPI, author Anita Sharma." width="1400" height="1807"><figcaption>Only the field that changed was sent; <code>id</code> and <code>title</code> are kept, <code>author</code> is updated.</figcaption></figure>
   <p>Only <code>author</code> changed. <code>id</code> and <code>title</code> are still there.</p>
 </section>
 
 <!-- 9 -->
 <section class="ch" id="put-vs-patch">
   <h2>PUT vs PATCH</h2>
-  <p>This is the most important comparison in this note. Send the <b>same body</b> to the <b>same book</b> (book 2) with both methods, starting from fresh data each time:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 280" role="img" aria-label="Same body sent to book 2. With PUT the result is only the author field, id and title are lost. With PATCH the result keeps id and title and updates the author.">
-      <g class="rough">
-        <rect class="box f-orange" x="20" y="130" width="320" height="130" rx="14"/>
-        <rect class="box f-green" x="380" y="130" width="320" height="130" rx="14"/>
-        <path class="lr" d="M180 98 L 180 124" marker-end="url(#ahr)"/>
-        <path class="lb" d="M540 98 L 540 124" marker-end="url(#ahb)"/>
-      </g>
-      <text class="th" x="180" y="36" text-anchor="middle">PUT /books/2</text>
-      <text class="th" x="540" y="36" text-anchor="middle">PATCH /books/2</text>
-      <text class="ts" x="180" y="64" text-anchor="middle">send</text>
-      <text class="ts" x="540" y="64" text-anchor="middle">send</text>
-      <text class="tm" x="180" y="88" text-anchor="middle">{"author": "Anita Sharma"}</text>
-      <text class="tm" x="540" y="88" text-anchor="middle">{"author": "Anita Sharma"}</text>
-      <text class="ts" x="40" y="156">book 2 becomes</text>
-      <text class="tm" x="40" y="184">id      (lost)</text>
-      <text class="tm" x="40" y="208">title   (lost)</text>
-      <text class="tm" x="40" y="232">author: "Anita Sharma"</text>
-      <text class="ts" x="400" y="156">book 2 becomes</text>
-      <text class="tm" x="400" y="184">id: 2</text>
-      <text class="tm" x="400" y="208">title: "Learning FastAPI"</text>
-      <text class="tm" x="400" y="232">author: "Anita Sharma"</text>
-    </svg></div>
-    <figcaption>PUT replaces the whole record; PATCH merges your changes into it.</figcaption>
-  </figure>
-  <div class="two">
-    <div class="codebox"><span class="cap">GET /books after PUT</span><pre class="out"><code>[
-  {"id": 1, "title": "Python Basics", "author": "Ravi"},
-  {"author": "Anita Sharma"}
-]</code></pre></div>
-    <div class="codebox"><span class="cap">GET /books after PATCH</span><pre class="out"><code>[
-  {"id": 1, "title": "Python Basics", "author": "Ravi"},
-  {"id": 2, "title": "Learning FastAPI",
-   "author": "Anita Sharma"}
-]</code></pre></div>
+  <p>This is the most important comparison in this note. Let’s send the <b>same body</b> to the <b>same book</b> (book 2) with both methods, starting from fresh data each time.</p>
+  <figure class="shot"><img src="img/35.webp" alt="Original book 2: id 2, title Learning FastAPI, author Anita. We send the body author Anita Sharma. PUT replaces everything: the result is only author Anita Sharma, id and title are lost; send the complete record. PATCH changes only what you send: id 2, title Learning FastAPI, author Anita Sharma, everything else is kept. Real-world form: PUT is filling in the whole form again, PATCH is correcting one field." width="1400" height="875"><figcaption>Same request body, very different result.</figcaption></figure>
+  <div class="shots">
+    <figure class="shot"><img src="img/36.webp" alt="Real result with PUT: PUT /books/{book_id} with book_id 2 and body author Anita Sharma; code 200; response message Book updated, book contains only author Anita Sharma." width="1400" height="1663"><figcaption>Real result with <b>PUT</b>: the book is now only <code>{"author": "Anita Sharma"}</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/37.webp" alt="Real result with PATCH: PATCH /books/{book_id} with book_id 2 and body author Anita Sharma; code 200; response message Book partially updated, book id 2, title Learning FastAPI, author Anita Sharma." width="1400" height="1701"><figcaption>Real result with <b>PATCH</b>: <code>id</code> and <code>title</code> survive.</figcaption></figure>
   </div>
   <div class="tbl"><table>
     <tr><th></th><th>PUT</th><th>PATCH</th></tr>
@@ -434,7 +358,9 @@ def patch_book(book_id: int, changes: dict):
 <!-- 10 -->
 <section class="ch" id="delete">
   <h2>DELETE: remove an item</h2>
-  <p><b>DELETE</b> removes an existing resource. The server only needs to know <b>which</b> book, and the id in the URL is enough, so DELETE needs <b>no request body</b>.</p>
+  <p><b>Definition:</b> DELETE removes an existing resource from the server. To know more, refer to the previous notes on HTTP methods.</p>
+  <p>To delete a book, the server only needs to know <b>which</b> book. The id in the URL is enough, so DELETE needs <b>no request body</b>.</p>
+  <figure class="shot"><img src="img/38.webp" alt="Flow: DELETE /books/2 with no request body, find book 2 by looping through the list, books.remove(book), Book deleted. Second row: DELETE /books/2 again, not in the list anymore, Book not found, nothing to delete." width="1400" height="411"><figcaption>DELETE needs only the id. A second DELETE finds nothing.</figcaption></figure>
   <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">@app.delete("/books/{book_id}")
 def delete_book(book_id: int):
     for book in books:
@@ -443,21 +369,24 @@ def delete_book(book_id: int):
             return {"message": "Book deleted"}
     return {"message": "Book not found"}</code></pre></div>
   <p><code>books.remove(book)</code> is a normal Python list method: it removes that item from the list. (Removing while looping is safe here only because we <code>return</code> straight away.)</p>
-  <div class="two">
-    <div><p><b>DELETE /books/2</b>, then <b>GET /books</b>:</p>
-    <pre class="out"><code>{"message": "Book deleted"}
-
-[{"id": 1, "title": "Python Basics", "author": "Ravi"}]</code></pre></div>
-    <div><p><b>DELETE /books/2</b> again:</p>
-    <pre class="out"><code>{"message": "Book not found"}</code></pre>
-    <p>Book 2 no longer exists, so the loop finds nothing. There is nothing left to delete.</p></div>
+  <h3>Test <code>DELETE /books/2</code></h3>
+  <p>Delete book 2, then run <b>GET /books</b>. Only book 1 is left:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/39.webp" alt="Swagger UI: DELETE /books/{book_id} Delete Book with book_id 2, no request body; Request URL http://127.0.0.1:8000/books/2; code 200; response message Book deleted." width="1400" height="1185"><figcaption>Only the id is needed, no request body. Book 2 was removed.</figcaption></figure>
+    <figure class="shot"><img src="img/40.webp" alt="Swagger UI: GET /books returns code 200 with only one book: id 1, Python Basics, Ravi." width="1400" height="939"><figcaption><code>GET /books</code>: only book 1 is left.</figcaption></figure>
   </div>
+  <h3>Experiment: delete the same book again</h3>
+  <figure class="shot"><img src="img/41.webp" alt="Swagger UI: DELETE /books/{book_id} with book_id 2 again; code 200; response message Book not found." width="1400" height="1027"><figcaption>Second DELETE of book 2: <code>"Book not found"</code>.</figcaption></figure>
+  <p>Book 2 no longer exists, so the loop finds nothing and the function returns <code>"Book not found"</code>. There is nothing left to delete.</p>
 </section>
 
 <!-- 11 -->
 <section class="ch" id="same-path">
   <h2>Same path, different methods: 404 vs 405</h2>
-  <p>All five methods are written. We have only <b>two paths</b> (<code>/books</code> and <code>/books/{book_id}</code>) but <b>six</b> path operations. FastAPI chooses the function using <b>both</b> path and method:</p>
+  <p>All five methods are written. Look at the complete picture in Swagger UI:</p>
+  <figure class="shot"><img src="img/42.webp" alt="Swagger UI with all six path operations: GET /books Get Books, POST /books Add Book, GET /books/{book_id} Get Book, PUT /books/{book_id} Update Book, PATCH /books/{book_id} Patch Book, DELETE /books/{book_id} Delete Book." width="1400" height="1308"><figcaption>All six path operations: two paths, six methods. POST <code>/books</code> shares its path with GET <code>/books</code>.</figcaption></figure>
+  <p>We have only <b>two paths</b> (<code>/books</code> and <code>/books/{book_id}</code>) but <b>six</b> path operations. FastAPI chooses the function using <b>both</b> the path and the method:</p>
+  <figure class="shot"><img src="img/43.webp" alt="Tree: app = FastAPI() has two paths. /books: GET goes to get_books(), POST to add_book(). /books/{book_id}: GET to get_book(), PUT to update_book(), PATCH to patch_book(), DELETE to delete_book()." width="1400" height="571"><figcaption>Same path, different methods: FastAPI picks the function using BOTH.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Request</th><th>Function that runs</th></tr>
     <tr><td><code>GET /books/1</code></td><td><code>get_book()</code></td></tr>
@@ -467,18 +396,17 @@ def delete_book(book_id: int):
   </table></div>
   <p>Same URL, four different actions.</p>
   <h3>Experiment: a method that does not exist</h3>
-  <p>What if we send DELETE to <code>/books</code>? We never wrote <code>@app.delete("/books")</code>, and Swagger UI only shows routes that exist, so we use <b>curl</b>, a command-line tool that sends any HTTP request. Open a <b>second terminal</b> (keep the server running in the first):</p>
+  <p>What if we send DELETE to <code>/books</code>? We never wrote <code>@app.delete("/books")</code>. Swagger UI only shows routes that exist, so we use <b>curl</b>, a command-line tool that sends any HTTP request. Open a <b>second terminal</b> (keep the server running in the first) and run:</p>
   <pre><code class="language-bash">curl.exe -X DELETE http://127.0.0.1:8000/books
 curl.exe http://127.0.0.1:8000/authors</code></pre>
   <ul>
     <li><code>-X DELETE</code> chooses the method. Without <code>-X</code>, curl sends GET.</li>
-    <li>On Windows PowerShell type <code>curl.exe</code>: plain <code>curl</code> there is a shortcut for a different command. On Linux/macOS just type <code>curl</code>.</li>
+    <li>On Windows PowerShell, type <code>curl.exe</code>. Plain <code>curl</code> is a PowerShell shortcut for a different command. On Linux/macOS just type <code>curl</code>.</li>
   </ul>
-  <pre class="out"><code>{"detail":"Method Not Allowed"}
-{"detail":"Not Found"}</code></pre>
+  <figure class="shot"><img src="img/44.webp" alt="VS Code terminal: curl.exe -X DELETE http://127.0.0.1:8000/books prints {&quot;detail&quot;:&quot;Method Not Allowed&quot;}; curl.exe http://127.0.0.1:8000/authors prints {&quot;detail&quot;:&quot;Not Found&quot;}." width="1400" height="353"><figcaption>Output: <code>Method Not Allowed</code> for DELETE <code>/books</code>, <code>Not Found</code> for <code>/authors</code>.</figcaption></figure>
   <p>And in the server terminal:</p>
-  <pre class="out"><code>INFO:     127.0.0.1:52144 - "DELETE /books HTTP/1.1" 405 Method Not Allowed
-INFO:     127.0.0.1:52145 - "GET /authors HTTP/1.1" 404 Not Found</code></pre>
+  <figure class="shot"><img src="img/45.webp" alt="Server terminal: DELETE /books HTTP/1.1 405 Method Not Allowed; GET /authors HTTP/1.1 404 Not Found." width="1400" height="353"><figcaption>The server log shows the status codes: <b>405</b> and <b>404</b>.</figcaption></figure>
+  <figure class="shot"><img src="img/46.webp" alt="404 Not Found: the path does not exist at all, GET /authors, no route has the path /authors, like going to a shop counter that does not exist. 405 Method Not Allowed: the path exists but not with this method, DELETE /books, /books exists but only for GET and POST; the counter exists, but it does not do what you asked." width="1400" height="470"><figcaption>404 Not Found vs 405 Method Not Allowed.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="How FastAPI answers: does the path exist? If no, 404 Not Found. If yes, is this method allowed on it? If no, 405 Method Not Allowed. If yes, run the function.">
       <g class="rough">
@@ -500,8 +428,8 @@ INFO:     127.0.0.1:52145 - "GET /authors HTTP/1.1" 404 Not Found</code></pre>
       <text class="t" x="485" y="80" text-anchor="middle">method ok?</text>
       <text class="t" x="655" y="70" text-anchor="middle">run the</text>
       <text class="t" x="655" y="92" text-anchor="middle">function</text>
-      <text class="tb" x="374" y="64" text-anchor="middle">yes</text>
-      <text class="tb" x="582" y="64" text-anchor="middle">yes</text>
+      <text class="tb" x="374" y="56" text-anchor="middle">yes</text>
+      <text class="tb" x="582" y="50" text-anchor="middle">yes</text>
       <text class="tr" x="290" y="150">no</text>
       <text class="tr" x="510" y="150">no</text>
       <text class="th" x="265" y="203" text-anchor="middle">404</text>
@@ -522,6 +450,8 @@ INFO:     127.0.0.1:52145 - "GET /authors HTTP/1.1" 404 Not Found</code></pre>
 <section class="ch" id="decorators">
   <h2>Mapping HTTP methods to FastAPI decorators</h2>
   <p>Look at all our decorators together. The pattern is simple: <mark>the decorator name is the HTTP method in lowercase</mark>.</p>
+  <figure class="shot"><img src="img/47.webp" alt="GET to @app.get(), Read; POST to @app.post(), Create; PUT to @app.put(), Replace; PATCH to @app.patch(), Partly update; DELETE to @app.delete(), Delete." width="1400" height="575"><figcaption>HTTP method → FastAPI decorator: always the method in lowercase.</figcaption></figure>
+  <p>Complete code of <code>app/main.py</code>:</p>
   <div class="codebox"><span class="cap">app/main.py · complete</span><pre><code class="language-python">from fastapi import FastAPI
 
 app = FastAPI()
@@ -570,15 +500,7 @@ def delete_book(book_id: int):
             books.remove(book)
             return {"message": "Book deleted"}
     return {"message": "Book not found"}</code></pre></div>
-  <div class="tbl"><table>
-    <tr><th>Method</th><th>Decorator</th><th>CRUD</th><th>Needs a body?</th><th>Example</th></tr>
-    <tr><td>GET</td><td><code>@app.get()</code></td><td>Read</td><td>No</td><td><code>GET /books/1</code></td></tr>
-    <tr><td>POST</td><td><code>@app.post()</code></td><td>Create</td><td>Yes (new record)</td><td><code>POST /books</code></td></tr>
-    <tr><td>PUT</td><td><code>@app.put()</code></td><td>Update (replace)</td><td>Yes (full record)</td><td><code>PUT /books/1</code></td></tr>
-    <tr><td>PATCH</td><td><code>@app.patch()</code></td><td>Update (partial)</td><td>Yes (changed fields)</td><td><code>PATCH /books/1</code></td></tr>
-    <tr><td>DELETE</td><td><code>@app.delete()</code></td><td>Delete</td><td>No</td><td><code>DELETE /books/1</code></td></tr>
-  </table></div>
-  <div class="sticky tip"><strong>Every new route, same recipe</strong> Pick the method, write <code>@app.&lt;method&gt;("/path")</code>, write the function below it.</div>
+  <div class="sticky tip"><strong>Every new route, same recipe</strong> Once this pattern is clear, every new route is easy: pick the method, write <code>@app.&lt;method&gt;("/path")</code>, and write the function below it.</div>
   <div class="sticky info l"><strong>Where Pydantic comes in</strong> <code>book: dict</code> accepts <b>any</b> JSON object, even <code>{"colour": "blue"}</code>. Replace <code>dict</code> with a Pydantic model (like the ones from the previous note) and FastAPI validates every body for you, answering bad data with a 422 error. That is the natural next step for this API.</div>
 </section>
 
@@ -600,6 +522,7 @@ def delete_book(book_id: int):
     {"id": 1, "name": "Rahul", "course": "BCA", "age": 21},
     {"id": 2, "name": "Priya", "course": "BSc", "age": 20}
 ]</code></pre>
+  <p>Routes to create:</p>
   <div class="tbl"><table>
     <tr><th>Method</th><th>Path</th><th>Job</th></tr>
     <tr><td>GET</td><td><code>/students</code></td><td>All students</td></tr>
@@ -610,14 +533,7 @@ def delete_book(book_id: int):
     <tr><td>DELETE</td><td><code>/students/{student_id}</code></td><td>Remove a student</td></tr>
   </table></div>
   <h3>Follow these steps</h3>
-  <ol class="path">
-    <li><span class="dot">1</span><div><b>Create the folder and venv</b><code>mkdir student-crud-api</code>, <code>cd</code> into it, <code>python -m venv venv</code>, then activate it.</div></li>
-    <li><span class="dot">2</span><div><b>Install</b><code>pip install fastapi uvicorn</code></div></li>
-    <li><span class="dot">3</span><div><b>Create the app</b><code>app/__init__.py</code> (empty) and <code>app/main.py</code> (code below).</div></li>
-    <li><span class="dot">4</span><div><b>Run</b><code>uvicorn app.main:app --reload</code></div></li>
-    <li><span class="dot">5</span><div><b>Test</b>Every route at <code>http://127.0.0.1:8000/docs</code>.</div></li>
-    <li><span class="dot">6</span><div><b>Save dependencies</b><code>pip freeze &gt; requirements.txt</code></div></li>
-  </ol>
+  <figure class="shot"><img src="img/48.webp" alt="Student CRUD API build steps: 1 create in-memory student list, 2 GET all students, 3 open /docs, 4 POST a new student, 5 PUT a full update, 6 PATCH one field, 7 DELETE a student, 8 verify every change with GET, 9 test a wrong method (405)." width="1400" height="665"><figcaption>Your nine build steps, from the in-memory list to testing a wrong method.</figcaption></figure>
   <details class="qa"><summary>Show the code: app/main.py</summary>
   <pre><code class="language-python">from fastapi import FastAPI
 
@@ -674,17 +590,46 @@ def delete_student(student_id: int):
             return {"message": "Student deleted"}
     return {"message": "Student not found"}</code></pre>
   </details>
+  <h3>Run it</h3>
+  <pre><code class="language-bash">uvicorn app.main:app --reload</code></pre>
+  <figure class="shot"><img src="img/49.webp" alt="VS Code: student-crud-api project with app/__init__.py, app/main.py, venv and requirements.txt; main.py lines 24 to 54 show the POST, PUT, PATCH and DELETE student routes; the terminal runs uvicorn app.main:app --reload and logs GET /docs, GET /openapi.json, POST /students, PUT /students/2, PATCH /students/1, DELETE /students/3 and GET /students, all 200 OK." width="1400" height="1426"><figcaption>Output: the server log records every test you run below, all <b>200 OK</b>.</figcaption></figure>
   <h3>Test every route in Swagger UI</h3>
-  <div class="tbl"><table>
-    <tr><th style="width:34%">Request (body)</th><th>Response</th></tr>
-    <tr><td><b>POST</b> <code>/students</code><br><code>{"id": 3, "name": "Ananya", "course": "BBA", "age": 19}</code></td><td><code>{"message": "Student added", "student": {"id": 3, "name": "Ananya", "course": "BBA", "age": 19}}</code></td></tr>
-    <tr><td><b>PUT</b> <code>/students/2</code><br><code>{"id": 2, "name": "Priya", "course": "BTech", "age": 21}</code></td><td><code>{"message": "Student updated", "student": {"id": 2, "name": "Priya", "course": "BTech", "age": 21}}</code></td></tr>
-    <tr><td><b>PATCH</b> <code>/students/1</code><br><code>{"course": "MCA"}</code></td><td><code>{"message": "Student partially updated", "student": {"id": 1, "name": "Rahul", "course": "MCA", "age": 21}}</code></td></tr>
-    <tr><td><b>DELETE</b> <code>/students/3</code></td><td><code>{"message": "Student deleted"}</code></td></tr>
-    <tr><td><b>GET</b> <code>/students</code> (verify)</td><td><code>[{"id": 1, "name": "Rahul", "course": "MCA", "age": 21}, {"id": 2, "name": "Priya", "course": "BTech", "age": 21}]</code></td></tr>
-    <tr><td><b>GET</b> <code>/students/3</code></td><td><code>{"message": "Student not found"}</code></td></tr>
-    <tr><td><b>DELETE</b> <code>/students</code> (curl)</td><td><b>405</b> <code>{"detail": "Method Not Allowed"}</code></td></tr>
-  </table></div>
+  <figure class="shot"><img src="img/50.webp" alt="Swagger UI for the student API: GET /students Get Students, POST /students Add Student, GET /students/{student_id} Get Student, PUT Update Student, PATCH Patch Student, DELETE Delete Student." width="1400" height="1005"><figcaption>All six student routes in <code>/docs</code>.</figcaption></figure>
+  <p>POST a new student, Ananya:</p>
+  <pre><code class="language-json">{
+    "id": 3,
+    "name": "Ananya",
+    "course": "BCom",
+    "age": 19
+}</code></pre>
+  <figure class="shot"><img src="img/51.webp" alt="Swagger UI: POST /students with body id 3, name Ananya, course BCom, age 19; code 200; response message Student added with the same student." width="1400" height="1637"><figcaption><code>"Student added"</code>: Ananya is student 3.</figcaption></figure>
+  <p>PUT the full record of student 2, then PATCH only the course of student 1:</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">PUT /students/2</span><pre><code class="language-json">{
+    "id": 2,
+    "name": "Priya",
+    "course": "MSc",
+    "age": 22
+}</code></pre></div>
+    <div class="codebox"><span class="cap">PATCH /students/1</span><pre><code class="language-json">{
+    "course": "MCA"
+}</code></pre></div>
+  </div>
+  <div class="shots">
+    <figure class="shot"><img src="img/52.webp" alt="Swagger UI: PUT /students/{student_id} with student_id 2 and body id 2, name Priya, course MSc, age 22; code 200; response message Student updated with that record." width="1400" height="1776"><figcaption>PUT sends the <b>full</b> record: <code>"Student updated"</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/53.webp" alt="Swagger UI: PATCH /students/{student_id} with student_id 1 and body course MCA; code 200; response message Student partially updated, student id 1, Rahul, course MCA, age 21." width="1400" height="1719"><figcaption>PATCH sends one field; Rahul keeps his name and age.</figcaption></figure>
+  </div>
+  <p>DELETE student 3, then verify with <b>GET /students</b>:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/54.webp" alt="Swagger UI: DELETE /students/{student_id} with student_id 3; code 200; response message Student deleted." width="1400" height="1027"><figcaption><code>"Student deleted"</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/55.webp" alt="Swagger UI: GET /students returns two students: id 1 Rahul, course MCA, age 21; id 2 Priya, course MSc, age 22." width="1400" height="1070"><figcaption>Every change shows up: Rahul is on MCA, Priya on MSc, Ananya is gone.</figcaption></figure>
+  </div>
+  <p>Fetching the deleted student by id:</p>
+  <figure class="shot"><img src="img/56.webp" alt="Swagger UI: GET /students/{student_id} with student_id 3; code 200; response message Student not found." width="1400" height="1027"><figcaption><code>GET /students/3</code> → <code>"Student not found"</code>.</figcaption></figure>
+  <p>Finally, test a wrong method (405) and save the dependencies:</p>
+  <pre><code class="language-bash">curl.exe -X DELETE http://127.0.0.1:8000/students
+pip freeze &gt; requirements.txt</code></pre>
+  <figure class="shot"><img src="img/57.webp" alt="VS Code terminal in student-crud-api: curl.exe -X DELETE http://127.0.0.1:8000/students prints {&quot;detail&quot;:&quot;Method Not Allowed&quot;}; then pip freeze &gt; requirements.txt; requirements.txt appears in the Explorer." width="1400" height="353"><figcaption>405 for DELETE <code>/students</code>, and <code>requirements.txt</code> now appears in the Explorer.</figcaption></figure>
   <h3>Try it yourself</h3>
   <ul>
     <li>Add a student with your own details.</li>
@@ -701,8 +646,8 @@ def delete_student(student_id: int):
   <div class="tbl"><table>
     <tr><th>What you see</th><th>Why it happens</th><th>Fix</th></tr>
     <tr><td>Fields disappear after an update</td><td>Used PUT with only some fields</td><td>Send the full record, or use PATCH</td></tr>
-    <tr><td>500 Internal Server Error after PUT</td><td>A record lost its <code>id</code>, so <code>book["id"]</code> raises KeyError</td><td>Send complete records with PUT; restart to reset the data</td></tr>
-    <tr><td>Added data is gone</td><td>The server restarted, so the in-memory list was reset</td><td>Expected for now; databases come later</td></tr>
+    <tr><td>500 Internal Server Error after PUT</td><td>A record lost its <code>id</code>, so <code>book["id"]</code> fails (KeyError)</td><td>Send complete records with PUT. Restart to reset the data</td></tr>
+    <tr><td>Added data is gone</td><td>The server restarted, so the in-memory list was reset</td><td>Expected for now. Databases come later</td></tr>
     <tr><td>405 Method Not Allowed</td><td>The path exists, but not with that method</td><td>Check the decorator, e.g. <code>@app.delete</code> on that path</td></tr>
     <tr><td>422 with <code>"JSON decode error"</code></td><td>The request body is not valid JSON</td><td>Use double quotes and commas correctly</td></tr>
     <tr><td><code>curl -X</code> error in PowerShell</td><td><code>curl</code> is a PowerShell alias</td><td>Type <code>curl.exe</code></td></tr>
@@ -713,7 +658,24 @@ def delete_student(student_id: int):
              "input": {}, "ctx": {"error": "Expecting property name enclosed in double quotes"}}]}</code></pre>
 </section>
 
-<!-- 15 -->
+<!-- 16 -->
+<section class="ch" id="revision">
+  <h2>Quick revision</h2>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>Decorator</th><th>CRUD</th><th>Needs a body?</th><th>Example</th></tr>
+    <tr><td>GET</td><td><code>@app.get()</code></td><td>Read</td><td>No</td><td><code>GET /books/1</code></td></tr>
+    <tr><td>POST</td><td><code>@app.post()</code></td><td>Create</td><td>Yes (new record)</td><td><code>POST /books</code></td></tr>
+    <tr><td>PUT</td><td><code>@app.put()</code></td><td>Update (replace)</td><td>Yes (full record)</td><td><code>PUT /books/1</code></td></tr>
+    <tr><td>PATCH</td><td><code>@app.patch()</code></td><td>Update (partial)</td><td>Yes (changed fields)</td><td><code>PATCH /books/1</code></td></tr>
+    <tr><td>DELETE</td><td><code>@app.delete()</code></td><td>Delete</td><td>No</td><td><code>DELETE /books/1</code></td></tr>
+  </table></div>
+  <h3>Final outcome</h3>
+  <figure class="shot"><img src="img/58.webp" alt="What you can do now: explain what a path operation is; map HTTP methods to CRUD operations; test all methods using Swagger UI; send data in a request body; implement GET, POST, PUT, PATCH and DELETE; explain the difference between PUT and PATCH; use the same path with different methods; explain the difference between 404 and 405; map each method to its FastAPI decorator; build a complete CRUD API." width="1400" height="544"><figcaption>What you can do now.</figcaption></figure>
+  <div class="sticky tip"><strong>Remember</strong> The path says <b>which thing</b>, the method says <b>what to do</b> with it. Together with the function, they make one path operation.</div>
+</section>
+
+
+<!-- 16 -->
 <section class="ch" id="terms">
   <h2>Key terms</h2>
   <dl class="terms">

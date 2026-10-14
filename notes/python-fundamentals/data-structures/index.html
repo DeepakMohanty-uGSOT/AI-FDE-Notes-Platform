@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Structures · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Store many values together: lists, tuples, dictionaries and sets, how they differ, nesting them, slicing, and building new collections with list and dictionary comprehensions.">
+<meta name="keywords" content="list, tuple, dictionary, set, nested data, slicing, list comprehension, dict comprehension">
+<meta name="date" content="2026-09-23">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/data-structures">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Data Structures</h1>
+  <p class="byline">Stop juggling dozens of separate variables: keep related values together in lists, tuples, dictionaries and sets, nest them to model real records, and build new collections in one line with comprehensions.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why one variable per value stops working</h2>
+  <p>So far you have worked with <b>individual values</b>: <code>name = "Rahul"</code>, <code>age = 21</code>, <code>marks = 85</code>. Now a teacher wants to store the marks of five students: 85, 72, 91, 68 and 79. One way:</p>
+  <pre><code class="language-python">marks1 = 85
+marks2 = 72
+marks3 = 91
+marks4 = 68
+marks5 = 79
+
+print(marks1)
+print(marks2)
+print(marks3)
+print(marks4)
+print(marks5)</code></pre>
+  <pre class="out"><code>85
+72
+91
+68
+79</code></pre>
+  <p>It works. But with 100 students you’d need <code>marks1</code> … <code>marks100</code>, which is clearly not practical. And how would the teacher add a student’s marks, remove one, check whether a mark exists, get the third student’s marks, or count how many are stored? <mark>We need a way to store multiple related values together.</mark></p>
+  <div class="story"><b class="lbl">The teacher’s marks register</b>Instead of five loose chits of paper, the teacher writes all five marks in one row of her register. One register, one row, five marks in order. <mark>That row is exactly what a Python list is.</mark></div>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="The name marks points to one list with five cells: 85, 72, 91, 68, 79, at indexes 0 to 4">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="74" width="100" height="48" rx="10"/>
+        <path class="lr" d="M122 98 L 144 98" marker-end="url(#ahr)"/>
+        <rect class="box f-blue" x="150" y="68" width="90" height="60" rx="4"/>
+        <rect class="box f-blue" x="240" y="68" width="90" height="60" rx="4"/>
+        <rect class="box f-blue" x="330" y="68" width="90" height="60" rx="4"/>
+        <rect class="box f-blue" x="420" y="68" width="90" height="60" rx="4"/>
+        <rect class="box f-blue" x="510" y="68" width="90" height="60" rx="4"/>
+      </g>
+      <text class="tm" x="70" y="103" text-anchor="middle">marks</text>
+      <text class="tr" x="375" y="44" text-anchor="middle">one variable, five values, in order</text>
+      <text class="th" x="195" y="107" text-anchor="middle">85</text><text class="th" x="285" y="107" text-anchor="middle">72</text><text class="th" x="375" y="107" text-anchor="middle">91</text><text class="th" x="465" y="107" text-anchor="middle">68</text><text class="th" x="555" y="107" text-anchor="middle">79</text>
+      <text class="ts" x="195" y="152" text-anchor="middle">index 0</text><text class="ts" x="285" y="152" text-anchor="middle">index 1</text><text class="ts" x="375" y="152" text-anchor="middle">index 2</text><text class="ts" x="465" y="152" text-anchor="middle">index 3</text><text class="ts" x="555" y="152" text-anchor="middle">index 4</text>
+    </svg></div>
+    <figcaption>A list: a single, ordered collection instead of five disconnected variables.</figcaption>
+  </figure>
+  <p>Python has four built-in <b>data structures</b> (collections) for this, each solving a slightly different problem:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>List <code>[ ]</code></h4><p>An ordered collection you can change.</p></div>
+    <div class="card t3 tilt-b"><h4>Tuple <code>( )</code></h4><p>An ordered collection that can’t change.</p></div>
+    <div class="card t2 tilt-a"><h4>Dictionary <code>{k: v}</code></h4><p>Values looked up by a meaningful key.</p></div>
+    <div class="card t5 tilt-b"><h4>Set <code>{ }</code></h4><p>Unique values only, no duplicates.</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="lists">
+  <h2>Lists: creating and reading them</h2>
+  <p>A <b>list</b> stores multiple values together in a single variable. Use one whenever several values belong together and are handled as a group:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]                        # student marks
+shopping_items = ["Milk", "Bread", "Eggs", "Rice"]  # shopping items
+fruits = ["Apple", "Banana", "Mango", "Orange"]     # fruits
+employees = ["Rahul", "Priya", "Amit", "Sneha"]     # employee names</code></pre>
+  <div class="flow"><span>Multiple related values</span><span>One collection</span><span class="ok">List</span></div>
+  <h3>Creating a list</h3>
+  <p>Put comma-separated values inside square brackets <code>[ ]</code>:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">list_name = [value1, value2, value3]</code></pre></div>
+  <pre><code class="language-python">shopping_items = ["Milk", "Bread", "Eggs", "Rice"]
+print(shopping_items)</code></pre>
+  <pre class="out"><code>['Milk', 'Bread', 'Eggs', 'Rice']</code></pre>
+  <h3>A list can mix data types</h3>
+  <pre><code class="language-python">student = ["Rahul", 21, 85.5, True]
+print(student)</code></pre>
+  <pre class="out"><code>['Rahul', 21, 85.5, True]</code></pre>
+  <p><code>"Rahul"</code> is a string, <code>21</code> an integer, <code>85.5</code> a float and <code>True</code> a Boolean, all happily in one list. In practice, though, a list usually holds values of the <b>same kind</b>, like <code>marks = [85, 72, 91, 68, 79]</code>.</p>
+  <h3>Accessing elements by index</h3>
+  <p>To get just 91 out of <code>marks</code>, you need its position. Lists use an <b>index</b>, and like strings, <mark>indexing starts at 0, not 1</mark>: 85 is index 0, 72 is index 1, 91 is index 2, 68 is index 3, 79 is index 4.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">list_name[index]</code></pre></div>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+print(marks[0])     # first student
+print(marks[2])     # third student</code></pre>
+  <pre class="out"><code>85
+91</code></pre>
+  <h3>Negative indexing</h3>
+  <p><code>-1</code> is the last item, <code>-2</code> the second-last, and so on. A banking app showing the most recent transaction:</p>
+  <pre><code class="language-python">transactions = [500, -200, 1500, -750]
+
+print("Latest transaction:", transactions[-1])</code></pre>
+  <pre class="out"><code>Latest transaction: -750</code></pre>
+  <div class="sticky warn l"><strong>Off the end</strong> <code>marks[5]</code> on a 5-item list raises <code>IndexError: list index out of range</code>. The last index is always <code>len(list) - 1</code>.</div>
+  <h3>Modifying an element</h3>
+  <p>The second student’s 72 should have been 75. You don’t need a new list; just assign to that index:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+marks[1] = 75
+print(marks)</code></pre>
+  <pre class="out"><code>[85, 75, 91, 68, 79]</code></pre>
+  <p>This shows an important idea: <mark>lists are mutable</mark>, which means their elements can be changed after the list is created. (Strings, remember, are immutable.)</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="list-methods">
+  <h2>Growing, shrinking and searching a list</h2>
+  <div class="tbl"><table>
+    <tr><th>Operation</th><th>What it does</th></tr>
+    <tr><td><code>lst.append(x)</code></td><td>Adds <code>x</code> to the <b>end</b></td></tr>
+    <tr><td><code>lst.insert(i, x)</code></td><td>Inserts <code>x</code> at index <code>i</code>; later items shift right</td></tr>
+    <tr><td><code>lst.remove(x)</code></td><td>Removes the first item equal to <code>x</code></td></tr>
+    <tr><td><code>lst.pop(i)</code></td><td>Removes <b>and returns</b> the item at index <code>i</code> (the last item if no index)</td></tr>
+    <tr><td><code>x in lst</code></td><td><code>True</code> if <code>x</code> is in the list</td></tr>
+    <tr><td><code>lst.index(x)</code></td><td>Position of the first <code>x</code></td></tr>
+    <tr><td><code>len(lst)</code></td><td>Number of items</td></tr>
+  </table></div>
+  <h3>Adding at the end: <code>append()</code></h3>
+  <p>A new student joins and scores 88:</p>
+  <pre><code class="language-python">marks = [85, 75, 91, 68, 79]
+
+marks.append(88)
+print(marks)</code></pre>
+  <pre class="out"><code>[85, 75, 91, 68, 79, 88]</code></pre>
+  <h3>Adding at a position: <code>insert()</code></h3>
+  <p>Put “Banana” between “Apple” and “Mango”:</p>
+  <pre><code class="language-python">fruits = ["Apple", "Mango", "Orange"]
+
+fruits.insert(1, "Banana")
+print(fruits)</code></pre>
+  <pre class="out"><code>['Apple', 'Banana', 'Mango', 'Orange']</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 225" role="img" aria-label="Before: Apple, Mango, Orange. After insert(1, Banana): Apple, Banana, Mango, Orange. Mango and Orange shift one place right">
+      <g class="rough">
+        <rect class="box f-card" x="70" y="20" width="110" height="50" rx="4"/>
+        <rect class="box f-card" x="180" y="20" width="110" height="50" rx="4"/>
+        <rect class="box f-card" x="290" y="20" width="110" height="50" rx="4"/>
+        <rect class="box f-card" x="70" y="140" width="110" height="50" rx="4"/>
+        <rect class="box f-green" x="180" y="140" width="110" height="50" rx="4"/>
+        <rect class="box f-card" x="290" y="140" width="110" height="50" rx="4"/>
+        <rect class="box f-card" x="400" y="140" width="110" height="50" rx="4"/>
+        <path class="lr dash" d="M235 74 L 340 134" marker-end="url(#ahr)"/>
+        <path class="lr dash" d="M345 74 L 450 134" marker-end="url(#ahr)"/>
+        <path class="ln" d="M125 74 L 125 134" marker-end="url(#ah)"/>
+      </g>
+      <text class="ts" x="10" y="50">before</text>
+      <text class="ts" x="10" y="170">after</text>
+      <text class="t" x="125" y="50" text-anchor="middle">Apple</text><text class="t" x="235" y="50" text-anchor="middle">Mango</text><text class="t" x="345" y="50" text-anchor="middle">Orange</text>
+      <text class="t" x="125" y="170" text-anchor="middle">Apple</text><text class="t" x="235" y="170" text-anchor="middle">Banana</text><text class="t" x="345" y="170" text-anchor="middle">Mango</text><text class="t" x="455" y="170" text-anchor="middle">Orange</text>
+      <text class="ts" x="125" y="210" text-anchor="middle">0</text><text class="ts" x="235" y="210" text-anchor="middle">1</text><text class="ts" x="345" y="210" text-anchor="middle">2</text><text class="ts" x="455" y="210" text-anchor="middle">3</text>
+      <text class="tm" x="530" y="110">insert(1, "Banana")</text>
+      <text class="ts" x="530" y="132">later items shift right</text>
+    </svg></div>
+    <figcaption><code>insert()</code> doesn’t overwrite anything: it makes room.</figcaption>
+  </figure>
+  <h3>Removing by value: <code>remove()</code></h3>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
+
+fruits.remove("Banana")
+print(fruits)</code></pre>
+  <pre class="out"><code>['Apple', 'Mango', 'Orange']</code></pre>
+  <h3>Removing by position: <code>pop()</code></h3>
+  <p>When you know the <b>position</b> rather than the value, use <code>pop()</code>. It also hands back the removed item:</p>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
+print(fruits.pop(2))
+print(fruits)
+
+numbers = [10, 20, 30, 40]
+removed = numbers.pop()        # no index: removes the last item
+print(removed)
+print(numbers)</code></pre>
+  <pre class="out"><code>Mango
+['Apple', 'Banana', 'Orange']
+40
+[10, 20, 30]</code></pre>
+  <h3>Is it there? <code>in</code> · Where is it? <code>index()</code> · How many? <code>len()</code></h3>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
+print("Mango" in fruits)
+print("Grapes" in fruits)
+print(fruits.index("Mango"))
+
+students = ["Rahul", "Priya", "Amit", "Sneha"]
+print(len(students))</code></pre>
+  <pre class="out"><code>True
+False
+2
+4</code></pre>
+  <div class="sticky info l"><strong><code>len()</code> is not the last index</strong> <code>len()</code> counts items (4 here); the last index is 3. Also note: <code>remove()</code> and <code>index()</code> raise <code>ValueError</code> if the value isn’t in the list, so check with <code>in</code> first when unsure.</div>
+  <h3>Real-world practice</h3>
+  <p><b>Online shopping cart:</b> add “Webcam”, remove “Mouse”, print the cart.</p>
+  <pre><code class="language-python">cart = ["Laptop", "Mouse", "Keyboard", "Headphones"]
+
+cart.append("Webcam")
+cart.remove("Mouse")
+
+print(cart)</code></pre>
+  <pre class="out"><code>['Laptop', 'Keyboard', 'Headphones', 'Webcam']</code></pre>
+  <p><b>Food delivery orders:</b> add an order of 450, remove the 320 one, count the orders.</p>
+  <pre><code class="language-python">orders = [250, 480, 320, 150, 600]
+
+orders.append(450)
+orders.remove(320)
+
+print(len(orders))</code></pre>
+  <pre class="out"><code>5</code></pre>
+  <p><b>Movie watchlist:</b> is “Avatar” there, where is “Interstellar”, and add “The Dark Knight”.</p>
+  <pre><code class="language-python">watchlist = ["Inception", "Avatar", "Interstellar", "Titanic"]
+
+print("Avatar" in watchlist)
+print(watchlist.index("Interstellar"))
+
+watchlist.append("The Dark Knight")
+
+print(watchlist)</code></pre>
+  <pre class="out"><code>True
+2
+['Inception', 'Avatar', 'Interstellar', 'Titanic', 'The Dark Knight']</code></pre>
+  <p><b>Bank transactions:</b> show the latest, remove it, show the rest.</p>
+  <pre><code class="language-python">transactions = [5000, -1200, 2500, -800, 3000]
+
+print("Latest transaction:", transactions[-1])
+
+transactions.pop()
+
+print(transactions)</code></pre>
+  <pre class="out"><code>Latest transaction: 3000
+[5000, -1200, 2500, -800]</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="tuples">
+  <h2>Tuples: collections that can’t be changed</h2>
+  <p>A student profile holds a name, age and roll number. A list works: <code>student = ["Rahul", 21, 101]</code>. But then <code>student[1] = 25</code> silently changes the age. Some data <b>should not change by accident</b>: coordinates of a location, RGB colour values, days of the week, a database record. For that, Python has the <b>tuple</b>.</p>
+  <p>A <b>tuple</b> stores multiple values together, like a list, with one key difference: <mark>a tuple cannot be modified after it is created</mark>.</p>
+  <h3>Creating a tuple</h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">tuple_name = (value1, value2, value3)</code></pre></div>
+  <pre><code class="language-python">weekend = ("Saturday", "Sunday")
+print(weekend)
+
+student = (101, "Rahul", 85.5)          # roll number, name, percentage
+print(student)
+
+student = ("Rahul", 21, 85.5, True)     # mixed types are fine
+print(student)</code></pre>
+  <pre class="out"><code>('Saturday', 'Sunday')
+(101, 'Rahul', 85.5)
+('Rahul', 21, 85.5, True)</code></pre>
+  <h3>The single-element trap</h3>
+  <p>Parentheses alone don’t make a tuple; <b>the comma does</b>:</p>
+  <pre><code class="language-python">a = (5)
+b = (5,)
+
+print(type(a))
+print(type(b))</code></pre>
+  <pre class="out"><code>&lt;class 'int'&gt;
+&lt;class 'tuple'&gt;</code></pre>
+  <p><code>(5)</code> is just the number 5 in brackets, like <code>(2 + 3)</code>. <code>(5,)</code> is a one-item tuple.</p>
+  <h3>Accessing elements</h3>
+  <p>Tuples use indexing exactly like lists, including negative indexes:</p>
+  <pre><code class="language-python">point = (10, 20)            # x and y of a point on a graph
+print(point[0])
+print(point[1])
+
+weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri")
+print(weekdays[-1])
+
+fruits = ("Apple", "Banana", "Mango", "Orange")
+print(fruits[2])
+print(fruits[-1])</code></pre>
+  <pre class="out"><code>10
+20
+Fri
+Mango
+Orange</code></pre>
+  <p>A point is a natural tuple: x and y only mean something as a fixed pair, and nothing should add a third value or swap one out.</p>
+  <h3>Immutability: the important difference</h3>
+  <div class="two">
+    <div><pre><code class="language-python">fruits = ("Apple", "Banana", "Mango")
+fruits[1] = "Orange"</code></pre>
+    <pre class="out"><code>TypeError: 'tuple' object does not support item assignment</code></pre></div>
+    <div><pre><code class="language-python">numbers = (10, 20, 30)
+numbers.append(40)</code></pre>
+    <pre class="out"><code>AttributeError: 'tuple' object has no attribute 'append'</code></pre></div>
+  </div>
+  <p>Tuples have no <code>append()</code>, <code>insert()</code>, <code>remove()</code> or <code>pop()</code>. Whatever values a tuple is built with, it keeps for its whole lifetime. If you need different values, <b>create a new tuple</b>:</p>
+  <pre><code class="language-python"># WRONG - tuples cannot be changed
+# numbers[1] = 25      -&gt; TypeError
+# numbers.append(40)   -&gt; AttributeError
+
+# CORRECT - create a new tuple instead
+numbers = (10, 25, 30)
+print(numbers)</code></pre>
+  <pre class="out"><code>(10, 25, 30)</code></pre>
+  <h3>Packing and unpacking</h3>
+  <p><b>Packing</b> means putting several values into one tuple. The parentheses are optional:</p>
+  <pre><code class="language-python">student = "Rahul", 21, 101
+print(student)
+print(type(student))</code></pre>
+  <pre class="out"><code>('Rahul', 21, 101)
+&lt;class 'tuple'&gt;</code></pre>
+  <p><b>Unpacking</b> takes the values back out into separate variables in one line:</p>
+  <pre><code class="language-python">student = ("Rahul", 21, 101)
+
+name, age, roll_number = student
+print(name)
+print(age)
+print(roll_number)</code></pre>
+  <pre class="out"><code>Rahul
+21
+101</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The tuple student holding Rahul, 21, 101 is unpacked: Rahul goes to name, 21 to age, 101 to roll_number">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="34" width="140" height="44" rx="10"/>
+        <path class="lr" d="M162 56 L 192 56" marker-end="url(#ahr)"/>
+        <rect class="box f-orange" x="200" y="28" width="130" height="56" rx="4"/>
+        <rect class="box f-orange" x="330" y="28" width="130" height="56" rx="4"/>
+        <rect class="box f-orange" x="460" y="28" width="130" height="56" rx="4"/>
+        <rect class="box f-blue" x="200" y="146" width="130" height="44" rx="10"/>
+        <rect class="box f-blue" x="330" y="146" width="130" height="44" rx="10"/>
+        <rect class="box f-blue" x="460" y="146" width="130" height="44" rx="10"/>
+        <path class="lb" d="M265 88 L 265 140" marker-end="url(#ahb)"/>
+        <path class="lb" d="M395 88 L 395 140" marker-end="url(#ahb)"/>
+        <path class="lb" d="M525 88 L 525 140" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="90" y="61" text-anchor="middle">student</text>
+      <text class="tm" x="265" y="61" text-anchor="middle">"Rahul"</text>
+      <text class="tm" x="395" y="61" text-anchor="middle">21</text>
+      <text class="tm" x="525" y="61" text-anchor="middle">101</text>
+      <text class="tm" x="265" y="173" text-anchor="middle">name</text>
+      <text class="tm" x="395" y="173" text-anchor="middle">age</text>
+      <text class="tm" x="525" y="173" text-anchor="middle">roll_number</text>
+      <text class="tb" x="606" y="122">unpacking</text>
+    </svg></div>
+    <figcaption><code>name, age, roll_number = student</code>: values are matched by position.</figcaption>
+  </figure>
+  <div class="sticky warn l"><strong>Counts must match</strong> <code>a, b = (1, 2, 3)</code> fails with <code>ValueError: too many values to unpack (expected 2, got 3)</code>. You already used unpacking in Part 1: <code>name, age = "Rahul", 21</code> is packing and unpacking in one line.</div>
+  <h3>What you <i>can</i> do with a tuple</h3>
+  <pre><code class="language-python">numbers = (10, 20, 30, 40)
+
+print(numbers[2])          # access
+print(20 in numbers)       # membership
+print(numbers.index(20))   # position of 20
+print(numbers.index(30))   # position of 30
+print(len(numbers))        # length</code></pre>
+  <pre class="out"><code>30
+True
+1
+2
+4</code></pre>
+  <h3>Real-world practice</h3>
+  <pre><code class="language-python">location = (20.2961, 85.8245)            # GPS latitude, longitude
+print("Latitude:", location[0])
+print("Longitude:", location[1])
+
+product = (101, "Laptop", 55000)        # product ID, name, price
+print("Product Name:", product[1])
+print("Price:", product[2])
+
+product_id, name, price = product
+print(product_id)
+print(name)
+print(price)</code></pre>
+  <pre class="out"><code>Latitude: 20.2961
+Longitude: 85.8245
+Product Name: Laptop
+Price: 55000
+101
+Laptop
+55000</code></pre>
+  <pre><code class="language-python">student = (101, "Rahul", 21, 85.5)     # roll number, name, age, percentage
+print(101 in student)
+print("Percentage:", student[3])
+
+transaction = (1001, "Credit", 5000)   # transaction ID, type, amount
+print("Amount:", transaction[2])
+
+transaction_id, transaction_type, amount = transaction
+print("Transaction ID:", transaction_id)
+print("Type:", transaction_type)
+print("Amount:", amount)</code></pre>
+  <pre class="out"><code>True
+Percentage: 85.5
+Amount: 5000
+Transaction ID: 1001
+Type: Credit
+Amount: 5000</code></pre>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="dictionaries">
+  <h2>Dictionaries: look things up by name</h2>
+  <p>A student has a name (Rahul), age (21), roll number (101) and course (Python). Separate variables explode with 100 students (<code>student1_name</code>, <code>student1_age</code>, …). A list keeps them together:</p>
+  <pre><code class="language-python">student = ["Rahul", 21, 101, "Python"]
+print(student[1])</code></pre>
+  <pre class="out"><code>21</code></pre>
+  <p>But what does <code>student[1]</code> <i>mean</i>? Everyone reading the code has to remember that 0 is name, 1 is age, 2 is roll number, 3 is course. With seven fields (city, marks, grade…) you’d be memorising seven position numbers. It would be far better to ask for a value <b>by a meaningful name</b>.</p>
+  <div class="story"><b class="lbl">An English dictionary</b>You don’t look up a word by page 0, 1, 2. You look it up by the <b>word</b> itself, and it gives you the <b>meaning</b>. <mark>A Python dictionary works the same way: you give it a key, it gives you the value.</mark></div>
+  <p>A <b>dictionary</b> stores data as <b>key-value pairs</b>: <code>key → value</code>. Instead of <code>student[1]</code> you write <code>student["age"]</code>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The student dictionary: key name maps to Rahul, age to 21, roll_number to 101, course to Python">
+      <g class="rough">
+        <rect class="box f-yellow" x="120" y="36" width="170" height="40" rx="10"/>
+        <rect class="box f-yellow" x="120" y="88" width="170" height="40" rx="10"/>
+        <rect class="box f-yellow" x="120" y="140" width="170" height="40" rx="10"/>
+        <rect class="box f-yellow" x="120" y="192" width="170" height="40" rx="10"/>
+        <rect class="box f-blue" x="380" y="36" width="170" height="40" rx="10"/>
+        <rect class="box f-blue" x="380" y="88" width="170" height="40" rx="10"/>
+        <rect class="box f-blue" x="380" y="140" width="170" height="40" rx="10"/>
+        <rect class="box f-blue" x="380" y="192" width="170" height="40" rx="10"/>
+        <path class="lr" d="M292 56 L 374 56" marker-end="url(#ahr)"/>
+        <path class="lr" d="M292 108 L 374 108" marker-end="url(#ahr)"/>
+        <path class="lr" d="M292 160 L 374 160" marker-end="url(#ahr)"/>
+        <path class="lr" d="M292 212 L 374 212" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="12" y="142">student</text>
+      <text class="tr" x="205" y="24" text-anchor="middle">key</text>
+      <text class="tb" x="465" y="24" text-anchor="middle">value</text>
+      <text class="tm" x="205" y="61" text-anchor="middle">"name"</text>
+      <text class="tm" x="205" y="113" text-anchor="middle">"age"</text>
+      <text class="tm" x="205" y="165" text-anchor="middle">"roll_number"</text>
+      <text class="tm" x="205" y="217" text-anchor="middle">"course"</text>
+      <text class="tm" x="465" y="61" text-anchor="middle">"Rahul"</text>
+      <text class="tm" x="465" y="113" text-anchor="middle">21</text>
+      <text class="tm" x="465" y="165" text-anchor="middle">101</text>
+      <text class="tm" x="465" y="217" text-anchor="middle">"Python"</text>
+      <text class="ts" x="566" y="113">student["age"] → 21</text>
+    </svg></div>
+    <figcaption>Ask with a key, get the value back. No position numbers to remember.</figcaption>
+  </figure>
+  <h3>Creating a dictionary</h3>
+  <p>Curly braces <code>{ }</code>, with <code>key: value</code> pairs separated by commas:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">dictionary_name = {
+    key1: value1,
+    key2: value2,
+    key3: value3
+}</code></pre></div>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "roll_number": 101,
+    "course": "Python"
+}
+
+print(student)</code></pre>
+  <pre class="out"><code>{'name': 'Rahul', 'age': 21, 'roll_number': 101, 'course': 'Python'}</code></pre>
+  <p>Far more descriptive than <code>["Rahul", 21, 101, "Python"]</code>.</p>
+  <h3>Accessing values by key</h3>
+  <p>A list uses an index, <code>student[0]</code>; a dictionary uses the key, <code>student["name"]</code>:</p>
+  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
+
+print(student["name"])
+print(student["course"])</code></pre>
+  <pre class="out"><code>Rahul
+Python</code></pre>
+  <div class="sticky warn l"><strong>Missing keys raise KeyError</strong> <code>student["city"]</code> on a dictionary without that key fails with <code>KeyError: 'city'</code>. Check with <code>in</code> first, or use <code>student.get("city")</code>, which returns <code>None</code> (or a default you pass, like <code>student.get("city", "Unknown")</code>) instead of crashing.</div>
+  <h3>Adding and updating</h3>
+  <p>Assigning to a key <b>adds</b> it if it’s new, and <b>updates</b> it if it already exists:</p>
+  <div class="two">
+    <div><pre><code class="language-python">student = {"name": "Rahul", "age": 21, "roll_number": 101}
+
+student["city"] = "Bhubaneswar"     # new key: added
+print(student)</code></pre>
+    <pre class="out"><code>{'name': 'Rahul', 'age': 21, 'roll_number': 101, 'city': 'Bhubaneswar'}</code></pre></div>
+    <div><pre><code class="language-python">student = {"name": "Rahul", "age": 21}
+
+student["age"] = 22                 # existing key: updated
+print(student)</code></pre>
+    <pre class="out"><code>{'name': 'Rahul', 'age': 22}</code></pre></div>
+  </div>
+  <h3>Removing with <code>pop()</code></h3>
+  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "city": "Bhubaneswar"}
+
+student.pop("city")
+print(student)</code></pre>
+  <pre class="out"><code>{'name': 'Rahul', 'age': 21}</code></pre>
+  <p>Like a list’s <code>pop()</code>, it also returns the removed value (<code>"Bhubaneswar"</code> here).</p>
+  <h3>Does a key exist?</h3>
+  <p><code>in</code> checks the <b>keys</b> (not the values):</p>
+  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
+
+print("course" in student)
+print("Rahul" in student)       # a value, not a key</code></pre>
+  <pre class="out"><code>True
+False</code></pre>
+  <p>Combined with <code>if</code>, from the Control Flow note:</p>
+  <pre><code class="language-python">student = {"name": "Rahul", "marks": 85}
+
+if "marks" in student:
+    print("Marks are available")
+else:
+    print("Marks are not available")</code></pre>
+  <pre class="out"><code>Marks are available</code></pre>
+  <h3><code>keys()</code>, <code>values()</code> and <code>items()</code></h3>
+  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
+
+for key in student.keys():
+    print(key)
+
+for value in student.values():
+    print(value)
+
+for key, value in student.items():
+    print(key, ":", value)</code></pre>
+  <pre class="out"><code>name
+age
+course
+Rahul
+21
+Python
+name : Rahul
+age : 21
+course : Python</code></pre>
+  <p><code>items()</code> hands out <code>(key, value)</code> pairs, which the loop unpacks into two variables, just like <code>enumerate()</code>.</p>
+  <h3>Real-world practice</h3>
+  <p><b>Hospital appointment:</b> change the time, confirm the doctor, show everything.</p>
+  <pre><code class="language-python">appointment = {
+    "patient": "Amit",
+    "doctor": "Dr. Sharma",
+    "date": "15 October",
+    "time": "10:00 AM"
+}
+
+appointment["time"] = "11:30 AM"
+
+if "doctor" in appointment:
+    print("Doctor:", appointment["doctor"])
+
+for key, value in appointment.items():
+    print(key, ":", value)</code></pre>
+  <pre class="out"><code>Doctor: Dr. Sharma
+patient : Amit
+doctor : Dr. Sharma
+date : 15 October
+time : 11:30 AM</code></pre>
+  <p><b>Flight booking:</b> add a seat, update the status.</p>
+  <pre><code class="language-python">flight = {
+    "passenger": "Priya",
+    "flight_number": "AI202",
+    "destination": "Delhi",
+    "status": "Scheduled"
+}
+
+flight["seat"] = "12A"
+flight["status"] = "Boarding"
+
+for key, value in flight.items():
+    print(key, ":", value)</code></pre>
+  <pre class="out"><code>passenger : Priya
+flight_number : AI202
+destination : Delhi
+status : Boarding
+seat : 12A</code></pre>
+  <p>Notice <code>status</code> kept its original position when updated, and the new <code>seat</code> key went to the end: dictionaries remember insertion order.</p>
+  <p><b>Smart home</b> and <b>weather station</b>:</p>
+  <pre><code class="language-python">home = {
+    "light": "Off",
+    "fan": "On",
+    "temperature": 24
+}
+
+home["light"] = "On"
+home["temperature"] = 26
+
+if "fan" in home:
+    print("Fan status:", home["fan"])
+
+print(home)
+
+weather = {
+    "city": "Bengaluru",
+    "temperature": 28,
+    "humidity": 65,
+    "condition": "Cloudy"
+}
+
+weather["temperature"] = 30
+
+if "humidity" in weather:
+    print("Humidity:", weather["humidity"])
+
+for key, value in weather.items():
+    print(key, ":", value)</code></pre>
+  <pre class="out"><code>Fan status: On
+{'light': 'On', 'fan': 'On', 'temperature': 26}
+Humidity: 65
+city : Bengaluru
+temperature : 30
+humidity : 65
+condition : Cloudy</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Almost every API you integrate with returns JSON, and JSON objects arrive in Python as dictionaries. <code>response["status"]</code>, <code>"error" in response</code> and <code>for k, v in response.items()</code> will be in nearly every integration script you write.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="sets">
+  <h2>Sets: unique values only</h2>
+  <p>You ask students which fruits they like and record every answer:</p>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Apple", "Mango", "Banana", "Apple", "Orange"]</code></pre>
+  <p>Which fruits were mentioned, without repeats? The list keeps “Apple” three times and “Banana” twice; you’d need extra logic to strip duplicates. A <b>set</b> <mark>automatically keeps only unique values</mark>.</p>
+  <pre><code class="language-python">fruits = {"Apple", "Banana", "Apple", "Mango", "Banana", "Apple", "Orange"}
+print(fruits)</code></pre>
+  <pre class="out"><code>{'Mango', 'Banana', 'Orange', 'Apple'}</code></pre>
+  <p>Notice the order doesn’t match what you typed. For sets of strings it can even <b>change from one run to the next</b>, so the set outputs on this page are one possible order; yours may differ. <b>Sets are unordered</b>: items have no fixed position and <b>no index</b>, so <code>fruits[0]</code> is a <code>TypeError: 'set' object is not subscriptable</code>.</p>
+  <h3>Creating sets</h3>
+  <p>Curly braces, like a dictionary, but plain values instead of <code>key: value</code> pairs:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">set_name = {value1, value2, value3}</code></pre></div>
+  <pre><code class="language-python">colors = {"Red", "Green", "Blue"}
+print(colors)</code></pre>
+  <pre class="out"><code>{'Blue', 'Red', 'Green'}</code></pre>
+  <div class="sticky warn"><strong>The empty-braces trap</strong> <code>{}</code> creates an empty <b>dictionary</b>, not a set. For an empty set write <code>set()</code>: <code>type({})</code> is <code>&lt;class 'dict'&gt;</code>, <code>type(set())</code> is <code>&lt;class 'set'&gt;</code>.</div>
+  <h3>Duplicates disappear</h3>
+  <pre><code class="language-python">numbers = {10, 20, 20, 30, 30, 30}
+print(numbers)
+
+numbers = {1, 2, 3, 2, 1}
+print(numbers)</code></pre>
+  <pre class="out"><code>{10, 20, 30}
+{1, 2, 3}</code></pre>
+  <h3>Adding and removing</h3>
+  <p><code>add()</code> inserts one value; adding one that’s already there changes nothing.</p>
+  <pre><code class="language-python">colors = {"Red", "Green"}
+
+colors.add("Yellow")
+print(colors)</code></pre>
+  <pre class="out"><code>{'Red', 'Yellow', 'Green'}</code></pre>
+  <div class="two">
+    <div class="card t4 tilt-a"><h4><code>remove(value)</code></h4><p>Removes it. <b>Error</b> (<code>KeyError</code>) if it’s missing.</p></div>
+    <div class="card t2 tilt-b"><h4><code>discard(value)</code></h4><p>Removes it. Quietly does <b>nothing</b> if it’s missing: the safer choice when unsure.</p></div>
+  </div>
+  <pre><code class="language-python">colors = {"Red", "Green", "Blue"}
+
+colors.remove("Green")
+colors.discard("Pink")      # not there: no error
+print(colors)</code></pre>
+  <pre class="out"><code>{'Red', 'Blue'}</code></pre>
+  <h3>Membership testing</h3>
+  <pre><code class="language-python">colors = {"Red", "Green", "Blue"}
+
+print("Red" in colors)
+print("Yellow" in colors)</code></pre>
+  <pre class="out"><code>True
+False</code></pre>
+  <h3>Union, intersection and difference</h3>
+  <p>Sets come from mathematics, so you can combine them like a Venn diagram:</p>
+  <pre><code class="language-python">set_a = {1, 2, 3, 4}
+set_b = {3, 4, 5, 6}
+
+print(set_a | set_b)     # union: everything from both
+print(set_a &amp; set_b)     # intersection: only what's in both
+print(set_a - set_b)     # difference: in a but not in b</code></pre>
+  <pre class="out"><code>{1, 2, 3, 4, 5, 6}
+{3, 4}
+{1, 2}</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="Venn diagram: set_a holds 1 2 3 4, set_b holds 3 4 5 6; 3 and 4 are in the overlap. Union is 1 to 6, intersection is 3 and 4, difference a minus b is 1 and 2">
+      <g class="rough">
+        <circle class="f-blue" cx="290" cy="130" r="100"/>
+        <circle class="f-green" cx="430" cy="130" r="100"/>
+        <path class="f-yellow" d="M360 58.6 A100 100 0 0 1 360 201.4 A100 100 0 0 1 360 58.6 Z"/>
+        <circle class="box f-none" cx="290" cy="130" r="100"/>
+        <circle class="box f-none" cx="430" cy="130" r="100"/>
+      </g>
+      <text class="tm" x="200" y="22" text-anchor="middle">set_a</text>
+      <text class="tm" x="520" y="22" text-anchor="middle">set_b</text>
+      <text class="th" x="245" y="140" text-anchor="middle">1, 2</text>
+      <text class="th" x="360" y="140" text-anchor="middle">3, 4</text>
+      <text class="th" x="475" y="140" text-anchor="middle">5, 6</text>
+      <text class="tm" x="120" y="264" text-anchor="middle">a | b</text>
+      <text class="ts" x="120" y="286" text-anchor="middle">{1, 2, 3, 4, 5, 6}</text>
+      <text class="ts" x="120" y="306" text-anchor="middle">union: everything</text>
+      <text class="tm" x="360" y="264" text-anchor="middle">a &amp; b</text>
+      <text class="ts" x="360" y="286" text-anchor="middle">{3, 4}</text>
+      <text class="ts" x="360" y="306" text-anchor="middle">intersection: the overlap</text>
+      <text class="tm" x="600" y="264" text-anchor="middle">a - b</text>
+      <text class="ts" x="600" y="286" text-anchor="middle">{1, 2}</text>
+      <text class="ts" x="600" y="306" text-anchor="middle">difference: a only</text>
+    </svg></div>
+    <figcaption>Difference is one-sided: <code>set_b - set_a</code> would be <code>{5, 6}</code>.</figcaption>
+  </figure>
+  <h3>Real-world practice</h3>
+  <pre><code class="language-python">hashtags = {"Python", "AI", "Python", "Coding", "AI", "DevOps"}   # repeated tags
+print(hashtags)
+
+access_levels = {"Entry", "Parking", "Cafeteria"}                 # building security
+access_levels.add("Server Room")
+access_levels.remove("Parking")
+access_levels.discard("Gym")
+print(access_levels)</code></pre>
+  <pre class="out"><code>{'DevOps', 'Coding', 'Python', 'AI'}
+{'Cafeteria', 'Entry', 'Server Room'}</code></pre>
+  <pre><code class="language-python">workshop_a = {101, 102, 103, 104}      # registration IDs
+workshop_b = {103, 104, 105, 106}
+
+print("All participants:", workshop_a | workshop_b)
+print("Both workshops:", workshop_a &amp; workshop_b)
+print("Only Workshop A:", workshop_a - workshop_b)
+
+categories = {"Science", "Technology", "Mathematics", "Literature"}   # a digital library
+print("Science" in categories)
+print("History" in categories)</code></pre>
+  <pre class="out"><code>All participants: {101, 102, 103, 104, 105, 106}
+Both workshops: {104, 103}
+Only Workshop A: {101, 102}
+True
+False</code></pre>
+  <p>(Yes, <code>{104, 103}</code> really prints in that order: sets don’t sort.)</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="compare">
+  <h2>List vs tuple vs set vs dictionary</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Four cards. List: ordered, changeable, duplicates allowed, indexed. Tuple: ordered, fixed, duplicates allowed, indexed. Set: unordered, changeable, unique only, no index. Dictionary: insertion order, changeable, unique keys, accessed by key">
+      <g class="rough">
+        <rect class="box f-blue" x="10" y="14" width="164" height="212" rx="14"/>
+        <rect class="box f-orange" x="189" y="14" width="164" height="212" rx="14"/>
+        <rect class="box f-purple" x="368" y="14" width="164" height="212" rx="14"/>
+        <rect class="box f-green" x="547" y="14" width="164" height="212" rx="14"/>
+      </g>
+      <text class="th" x="92" y="50" text-anchor="middle">List</text>
+      <text class="th" x="271" y="50" text-anchor="middle">Tuple</text>
+      <text class="th" x="450" y="50" text-anchor="middle">Set</text>
+      <text class="th" x="629" y="50" text-anchor="middle">Dictionary</text>
+      <text class="tm" x="92" y="82" text-anchor="middle">[1, 2, 3]</text>
+      <text class="tm" x="271" y="82" text-anchor="middle">(1, 2, 3)</text>
+      <text class="tm" x="450" y="82" text-anchor="middle">{1, 2, 3}</text>
+      <text class="tm" x="629" y="82" text-anchor="middle">{"a": 1}</text>
+      <text class="t" x="92" y="120" text-anchor="middle">ordered</text>
+      <text class="t" x="92" y="146" text-anchor="middle">changeable</text>
+      <text class="t" x="92" y="172" text-anchor="middle">duplicates OK</text>
+      <text class="t" x="92" y="198" text-anchor="middle">by index [0]</text>
+      <text class="t" x="271" y="120" text-anchor="middle">ordered</text>
+      <text class="t" x="271" y="146" text-anchor="middle">fixed</text>
+      <text class="t" x="271" y="172" text-anchor="middle">duplicates OK</text>
+      <text class="t" x="271" y="198" text-anchor="middle">by index [0]</text>
+      <text class="t" x="450" y="120" text-anchor="middle">unordered</text>
+      <text class="t" x="450" y="146" text-anchor="middle">changeable</text>
+      <text class="t" x="450" y="172" text-anchor="middle">unique only</text>
+      <text class="t" x="450" y="198" text-anchor="middle">no index</text>
+      <text class="t" x="629" y="120" text-anchor="middle">insertion order</text>
+      <text class="t" x="629" y="146" text-anchor="middle">changeable</text>
+      <text class="t" x="629" y="172" text-anchor="middle">unique keys</text>
+      <text class="t" x="629" y="198" text-anchor="middle">by key ["a"]</text>
+    </svg></div>
+    <figcaption>Pick the structure by asking: does order matter, should it change, are duplicates allowed, how will I look things up?</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th></th><th>List</th><th>Tuple</th><th>Set</th><th>Dictionary</th></tr>
+    <tr><td>Brackets</td><td><code>[ ]</code></td><td><code>( )</code></td><td><code>{ }</code> (empty: <code>set()</code>)</td><td><code>{key: value}</code> (empty: <code>{}</code>)</td></tr>
+    <tr><td>Ordered?</td><td>Yes</td><td>Yes</td><td>No</td><td>Keeps insertion order</td></tr>
+    <tr><td>Changeable?</td><td>Yes (mutable)</td><td>No (immutable)</td><td>Yes: add/remove items</td><td>Yes</td></tr>
+    <tr><td>Duplicates?</td><td>Allowed</td><td>Allowed</td><td>Removed automatically</td><td>Keys unique; values may repeat</td></tr>
+    <tr><td>Access</td><td><code>lst[0]</code></td><td><code>tpl[0]</code></td><td>only <code>in</code> / loop</td><td><code>d["key"]</code></td></tr>
+    <tr><td>Use it for</td><td>a group of similar items that changes</td><td>fixed records: coordinates, RGB</td><td>uniqueness, set maths</td><td>labelled fields, lookups</td></tr>
+  </table></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="nested">
+  <h2>Nested data structures</h2>
+  <p>Real data is rarely flat. Each of the four structures can hold other structures inside it, and the rule for reaching deep inside is simple: <mark>work from the outside in, one <code>[ ]</code> per level</mark>.</p>
+  <h3>Lists inside lists</h3>
+  <p>A grid (seating plan, tic-tac-toe board) is a list of rows:</p>
+  <pre><code class="language-python">matrix = [
+    [1, 2, 3],     # row 0
+    [4, 5, 6],     # row 1
+    [7, 8, 9]      # row 2
+]
+
+print(matrix[1])         # the whole second row
+print(matrix[1][2])      # second row, third column</code></pre>
+  <pre class="out"><code>[4, 5, 6]
+6</code></pre>
+  <h3>Dictionaries inside dictionaries</h3>
+  <p>Many students, each identified by roll number, with their details grouped underneath:</p>
+  <pre><code class="language-python">students = {
+    101: {"name": "Rahul", "age": 21},
+    102: {"name": "Priya", "age": 20}
+}
+
+print(students[102]["name"])</code></pre>
+  <pre class="out"><code>Priya</code></pre>
+  <h3>Lists inside dictionaries</h3>
+  <p>One key holding several values, like a student’s marks across subjects:</p>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "marks": [85, 90, 78]
+}
+
+print(student["marks"])
+print(student["marks"][1])</code></pre>
+  <pre class="out"><code>[85, 90, 78]
+90</code></pre>
+  <h3>Dictionaries inside lists</h3>
+  <p>One of the most common real-world patterns: <b>a list of records</b>, each record a dictionary. It finally solves the opening problem of storing many students:</p>
+  <pre><code class="language-python">students = [
+    {"name": "Rahul", "age": 21},
+    {"name": "Priya", "age": 22},
+    {"name": "Amit", "age": 23}
+]
+
+print(students[0])
+print(students[0]["name"])</code></pre>
+  <pre class="out"><code>{'name': 'Rahul', 'age': 21}
+Rahul</code></pre>
+  <h3>Reaching deep inside</h3>
+  <pre><code class="language-python">students = [
+    {"name": "Rahul", "marks": [85, 90, 78]},
+    {"name": "Priya", "marks": [88, 76, 95]}
+]
+
+print(students[1]["marks"][2])</code></pre>
+  <pre class="out"><code>95</code></pre>
+  <div class="anatomy"><span class="a7">students</span><span class="a1">[1]</span><span class="a2">["marks"]</span><span class="a3">[2]</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>[1]</code>: list index, picks Priya’s record (a dictionary)</p></div>
+    <div><span class="sw a2"></span><p><code>["marks"]</code>: dictionary key, picks her marks list <code>[88, 76, 95]</code></p></div>
+    <div><span class="sw a3"></span><p><code>[2]</code>: list index, picks the third mark, <code>95</code></p></div>
+  </div>
+  <h3>Real-world practice</h3>
+  <p><b>Cinema booking:</b> book row 1, seat 2, then count the free seats with a nested loop.</p>
+  <pre><code class="language-python">seats = [
+    ["Available", "Available", "Booked"],
+    ["Booked", "Available", "Available"],
+    ["Available", "Booked", "Available"]
+]
+
+seats[0][1] = "Booked"
+
+available = 0
+
+for row in seats:
+    for seat in row:
+        if seat == "Available":
+            available += 1
+
+print(seats)
+print("Available seats:", available)</code></pre>
+  <pre class="out"><code>[['Available', 'Booked', 'Booked'], ['Booked', 'Available', 'Available'], ['Available', 'Booked', 'Available']]
+Available seats: 5</code></pre>
+  <p><b>Employee records:</b> change employee 102’s department and add a new field.</p>
+  <pre><code class="language-python">employees = {
+    101: {"name": "Rahul", "department": "IT"},
+    102: {"name": "Priya", "department": "HR"},
+    103: {"name": "Amit", "department": "Finance"}
+}
+
+employees[102]["department"] = "Marketing"
+employees[102]["experience"] = 3
+
+print(employees)</code></pre>
+  <pre class="out"><code>{101: {'name': 'Rahul', 'department': 'IT'}, 102: {'name': 'Priya', 'department': 'Marketing', 'experience': 3}, 103: {'name': 'Amit', 'department': 'Finance'}}</code></pre>
+  <p><b>Fitness app:</b> add today’s steps and total them.</p>
+  <pre><code class="language-python">user = {
+    "name": "Rahul",
+    "steps": [6500, 8200, 9100, 7500]
+}
+
+user["steps"].append(8800)
+
+total_steps = sum(user["steps"])
+
+print("Steps:", user["steps"])
+print("Total steps:", total_steps)</code></pre>
+  <pre class="out"><code>Steps: [6500, 8200, 9100, 7500, 8800]
+Total steps: 40100</code></pre>
+  <p><b>Hotel guests:</b> move the second guest to room 220 and mark them checked in.</p>
+  <pre><code class="language-python">guests = [
+    {"name": "Rahul", "room": 101},
+    {"name": "Priya", "room": 205},
+    {"name": "Amit", "room": 310}
+]
+
+guests[1]["room"] = 220
+guests[1]["checked_in"] = True
+
+print(guests)</code></pre>
+  <pre class="out"><code>[{'name': 'Rahul', 'room': 101}, {'name': 'Priya', 'room': 220, 'checked_in': True}, {'name': 'Amit', 'room': 310}]</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> A list of dictionaries is the shape of almost every API response and every CSV you load (“list of rows, each row a dict”). Being fluent with <code>data[i]["field"]</code> and nested loops is day-one FDE work.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="slicing">
+  <h2>Slicing lists</h2>
+  <p>Indexing gives one value; slicing gives a <b>range</b> of values. It works on lists (and tuples) exactly as you learned for strings: <code>sequence[start:stop:step]</code>, with <mark>start included and stop excluded</mark>, the same rule as <code>range()</code>.</p>
+  <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
+
+print(numbers[1:4])
+print(numbers[1:3])</code></pre>
+  <pre class="out"><code>[20, 30, 40]
+[20, 30]</code></pre>
+  <h3>Leaving start or stop empty</h3>
+  <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
+
+print(numbers[:3])     # start defaults to the beginning
+print(numbers[2:])     # stop defaults to the end
+print(numbers[:])      # a full copy of the list</code></pre>
+  <pre class="out"><code>[10, 20, 30]
+[30, 40, 50]
+[10, 20, 30, 40, 50]</code></pre>
+  <h3>Steps, and reversing</h3>
+  <pre><code class="language-python">numbers = [10, 20, 30, 40, 50, 60]
+print(numbers[0:6:2])        # every second element
+
+numbers = [10, 20, 30, 40, 50]
+word = "Python"
+print(numbers[::-1])         # the standard way to reverse
+print(word[::-1])</code></pre>
+  <pre class="out"><code>[10, 30, 50]
+[50, 40, 30, 20, 10]
+nohtyP</code></pre>
+  <h3>Splitting data into chunks</h3>
+  <pre><code class="language-python">scores = [55, 62, 71, 85, 90, 45, 30]
+
+top_half = scores[:4]
+bottom_half = scores[4:]
+
+print(top_half)
+print(bottom_half)</code></pre>
+  <pre class="out"><code>[55, 62, 71, 85]
+[90, 45, 30]</code></pre>
+  <h3>Slicing creates a new list</h3>
+  <pre><code class="language-python">original = [1, 2, 3, 4, 5]
+
+copy = original[1:4]
+copy[0] = 99
+print(original)
+print(copy)</code></pre>
+  <pre class="out"><code>[1, 2, 3, 4, 5]
+[99, 3, 4]</code></pre>
+  <p>Changing <code>copy</code> left <code>original</code> untouched, because the slice built a brand-new list.</p>
+  <div class="sticky warn"><strong><code>b = a</code> is not a copy</strong> Plain assignment only adds a second name tag to the <b>same</b> list (remember Part 1). After <code>a = [1, 2, 3]</code>, <code>b = a</code>, <code>b[0] = 99</code>, printing <code>a</code> gives <code>[99, 2, 3]</code>. Use <code>a[:]</code> when you want an independent copy.</div>
+  <h3>Real-world practice</h3>
+  <pre><code class="language-python">config = ["Production", "Asia", 8080, True]      # back up a config before editing
+backup = config[:]
+backup[2] = 9090
+print("Original:", config)
+print("Backup:", backup)
+
+temperatures = [24, 25, 26, 28, 29, 30, 31, 29, 27, 26]   # hourly readings
+selected = temperatures[0::2]                              # every 2 hours
+average = sum(selected) / len(selected)
+print("Selected readings:", selected)
+print("Average:", average)</code></pre>
+  <pre class="out"><code>Original: ['Production', 'Asia', 8080, True]
+Backup: ['Production', 'Asia', 9090, True]
+Selected readings: [24, 26, 29, 31, 27]
+Average: 27.4</code></pre>
+  <pre><code class="language-python">sales = [12000, 15000, 18000, 14000, 21000, 19000,
+         22000, 25000, 23000, 27000, 30000, 28000]       # 12 months
+first_half = sales[:6]
+total = sum(first_half)
+print("First half sales:", first_half)
+print("Total:", total)
+
+employees = ["Rahul", "Priya", "Amit", "Sneha", "Ravi", "Neha"]
+morning_shift = employees[:3]                             # first three
+morning_shift.append("Kiran")
+print("All employees:", employees)
+print("Morning shift:", morning_shift)</code></pre>
+  <pre class="out"><code>First half sales: [12000, 15000, 18000, 14000, 21000, 19000]
+Total: 99000
+All employees: ['Rahul', 'Priya', 'Amit', 'Sneha', 'Ravi', 'Neha']
+Morning shift: ['Rahul', 'Priya', 'Amit', 'Kiran']</code></pre>
+  <p>Adding Kiran to <code>morning_shift</code> didn’t touch <code>employees</code>: the slice is its own list.</p>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="list-comprehensions">
+  <h2>List comprehensions</h2>
+  <p>A situation that comes up constantly: you <b>have a collection and want to build a new one from it</b>: add grace marks to every mark, keep only passing marks, capitalise every name, map each student to a result. Python has a short, clean way to do this: <b>comprehensions</b>.</p>
+  <h3>Why: the loop-and-append pattern</h3>
+  <p>The teacher adds 5 grace marks to everyone. With what you know:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+new_marks = []
+for mark in marks:
+    new_marks.append(mark + 5)
+
+print(new_marks)</code></pre>
+  <pre class="out"><code>[90, 77, 96, 73, 84]</code></pre>
+  <div class="flow"><span>create an empty list</span><span>loop through the original</span><span>append() each new value</span></div>
+  <p>Three steps for a simple idea. A <b>list comprehension</b> writes the same thing in one line:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+new_marks = [mark + 5 for mark in marks]
+print(new_marks)</code></pre>
+  <pre class="out"><code>[90, 77, 96, 73, 84]</code></pre>
+  <h3>Syntax</h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[expression for item in iterable]</code></pre></div>
+  <div class="anatomy"><span class="a7">[</span><span class="a1">mark + 5</span> <span class="a2">for mark</span> <span class="a3">in marks</span><span class="a7">]</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p>expression: what goes into the new list</p></div>
+    <div><span class="sw a2"></span><p>each item, one at a time</p></div>
+    <div><span class="sw a3"></span><p>the original collection being looped through</p></div>
+  </div>
+  <p>Read it like English: <i>“give me <code>mark + 5</code>, for every <code>mark</code> in <code>marks</code>.”</i> The square brackets tell you the result is a list. <mark>A comprehension never changes the original</mark>; it always creates a new list:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+new_marks = [mark + 5 for mark in marks]
+print(marks)
+print(new_marks)</code></pre>
+  <pre class="out"><code>[85, 72, 91, 68, 79]
+[90, 77, 96, 73, 84]</code></pre>
+  <div class="tbl"><table>
+    <tr><th>mark</th><th>expression</th><th>goes into new list</th></tr>
+    <tr><td>85</td><td>85 + 5</td><td>90</td></tr>
+    <tr><td>72</td><td>72 + 5</td><td>77</td></tr>
+    <tr><td>91</td><td>91 + 5</td><td>96</td></tr>
+    <tr><td>68</td><td>68 + 5</td><td>73</td></tr>
+    <tr><td>79</td><td>79 + 5</td><td>84</td></tr>
+  </table></div>
+  <p>Same number of items, same order, each one transformed.</p>
+  <h3>More expressions</h3>
+  <pre><code class="language-python">squares = [n * n for n in range(1, 6)]
+print(squares)
+
+students = ["rahul", "priya", "amit"]
+upper_names = [name.upper() for name in students]
+print(upper_names)
+
+students = ["Rahul", "Priya", "Amit"]
+name_lengths = [len(name) for name in students]     # find something about each item
+print(name_lengths)</code></pre>
+  <pre class="out"><code>[1, 4, 9, 16, 25]
+['RAHUL', 'PRIYA', 'AMIT']
+[5, 5, 4]</code></pre>
+  <p>Whatever you write <b>before</b> <code>for</code> is what goes into the new list.</p>
+  <h3>Adding a condition: filtering</h3>
+  <p>Now the teacher only wants marks of 75 or more. With a loop you need an <code>if</code> inside:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+high_marks = []
+for mark in marks:
+    if mark &gt;= 75:
+        high_marks.append(mark)
+
+print(high_marks)</code></pre>
+  <pre class="out"><code>[85, 91, 79]</code></pre>
+  <p>In a comprehension, put the <code>if</code> at the end:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[expression for item in iterable if condition]</code></pre></div>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+high_marks = [mark for mark in marks if mark &gt;= 75]
+print(high_marks)</code></pre>
+  <pre class="out"><code>[85, 91, 79]</code></pre>
+  <div class="flow"><span class="ok">85 ✓</span><span class="skip">72</span><span class="ok">91 ✓</span><span class="skip">68</span><span class="ok">79 ✓</span><span class="hl">[85, 91, 79]</span></div>
+  <p>The new list is shorter: 72 and 68 were skipped because the condition was False for them.</p>
+  <pre><code class="language-python">evens = [n for n in range(1, 11) if n % 2 == 0]
+print(evens)
+
+students = ["Rahul", "Priya", "Amit", "Sneha", "Ravi"]
+long_names = [name for name in students if len(name) &gt; 4]
+print(long_names)
+
+marks = [85, 72, 91, 68, 79]                       # filter AND change:
+low_marks_with_grace = [mark + 5 for mark in marks if mark &lt; 75]
+print(low_marks_with_grace)</code></pre>
+  <pre class="out"><code>[2, 4, 6, 8, 10]
+['Rahul', 'Priya', 'Sneha']
+[77, 73]</code></pre>
+  <h3>if-else inside a comprehension</h3>
+  <p>Sometimes you don’t skip anything; you choose <b>one value or another</b> for every item. “Pass” for 75 or more, otherwise “Fail”:</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[value_if_true if condition else value_if_false for item in iterable]</code></pre></div>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
+
+results = ["Pass" if mark &gt;= 75 else "Fail" for mark in marks]
+print(results)</code></pre>
+  <pre class="out"><code>['Pass', 'Fail', 'Pass', 'Fail', 'Pass']</code></pre>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4><code>if</code> AFTER <code>for</code> → filter</h4><p><code>[mark for mark in marks if mark &gt;= 75]</code><br>Decides <b>whether</b> an item goes in. Some items are skipped; the list can be shorter.</p></div>
+    <div class="card t3 tilt-b"><h4><code>if-else</code> BEFORE <code>for</code> → choose</h4><p><code>["Pass" if mark &gt;= 75 else "Fail" for mark in marks]</code><br>Decides <b>which value</b> goes in. Nothing is skipped; same length.</p></div>
+  </div>
+  <div class="sticky warn l"><strong>The part that confuses most beginners</strong> <code>[x for x in xs if c else y]</code> is a <code>SyntaxError</code>: an <code>else</code> only works in the <i>before-for</i> position.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="dict-comprehensions">
+  <h2>Dictionary comprehensions, and when to use comprehensions</h2>
+  <p>The same one-line idea builds a <b>dictionary</b>. Two differences: curly braces <code>{ }</code>, and each item produces a <code>key: value</code> pair.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">{key: value for item in iterable}</code></pre></div>
+  <h3>From a list</h3>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+
+name_lengths = {name: len(name) for name in students}
+print(name_lengths)
+
+squares = {n: n * n for n in range(1, 6)}
+print(squares)
+print(squares[4])</code></pre>
+  <pre class="out"><code>{'Rahul': 5, 'Priya': 5, 'Amit': 4}
+{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+16</code></pre>
+  <p>For each name, the key is <code>name</code> and the value is <code>len(name)</code>. Now <code>squares[4]</code> looks up the square of 4 directly.</p>
+  <h3>Combining two lists into a dictionary</h3>
+  <p>Names and marks sit in two lists, in the same order. Loop through the positions with <code>range(len(students))</code>:</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+marks = [85, 72, 91]
+
+report = {students[i]: marks[i] for i in range(len(students))}
+print(report)</code></pre>
+  <pre class="out"><code>{'Rahul': 85, 'Priya': 72, 'Amit': 91}</code></pre>
+  <div class="tbl"><table>
+    <tr><th>i</th><th>key</th><th>value</th><th>pair</th></tr>
+    <tr><td>0</td><td><code>students[0]</code></td><td><code>marks[0]</code></td><td><code>"Rahul": 85</code></td></tr>
+    <tr><td>1</td><td><code>students[1]</code></td><td><code>marks[1]</code></td><td><code>"Priya": 72</code></td></tr>
+    <tr><td>2</td><td><code>students[2]</code></td><td><code>marks[2]</code></td><td><code>"Amit": 91</code></td></tr>
+  </table></div>
+  <div class="sticky tip"><strong>A shortcut you’ll meet later</strong> <code>dict(zip(students, marks))</code> builds the same dictionary by pairing the two lists directly.</div>
+  <h3>From an existing dictionary, using <code>items()</code></h3>
+  <pre><code class="language-python">marks = {"Rahul": 85, "Priya": 72, "Amit": 91, "Sneha": 68}
+
+new_marks = {name: mark + 5 for name, mark in marks.items()}           # change every value
+print(new_marks)
+
+toppers = {name: mark for name, mark in marks.items() if mark &gt;= 75}   # filter
+print(toppers)
+
+results = {name: "Pass" if mark &gt;= 75 else "Fail" for name, mark in marks.items()}
+print(results)
+print(results["Priya"])</code></pre>
+  <pre class="out"><code>{'Rahul': 90, 'Priya': 77, 'Amit': 96, 'Sneha': 73}
+{'Rahul': 85, 'Amit': 91}
+{'Rahul': 'Pass', 'Priya': 'Fail', 'Amit': 'Pass', 'Sneha': 'Fail'}
+Fail</code></pre>
+  <p>The keys stay the same; only the values change (or get filtered). And <code>results["Priya"]</code> is exactly the kind of lookup dictionaries are made for.</p>
+  <h3>When should you use a comprehension?</h3>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Use a comprehension when…</h4><p>you’re building a new list or dictionary from an existing collection; each item needs a simple change or a simple condition; the whole idea fits comfortably on one line.</p></div>
+    <div class="card t4 tilt-b"><h4>Use a normal loop when…</h4><p>each item needs several steps; you want to print or do something other than build a collection; the comprehension is getting hard to read.</p></div>
+  </div>
+  <p>This works, but is hard to understand at a glance:</p>
+  <pre><code class="language-python">grades = ["A" if m &gt;= 90 else "B" if m &gt;= 75 else "C" if m &gt;= 60 else "D" for m in marks]</code></pre>
+  <p>A normal loop with <code>if</code>/<code>elif</code>/<code>else</code> would be much clearer. <mark>The goal is always readable code, not the shortest code.</mark></p>
+  <div class="tbl"><table>
+    <tr><th>Pattern</th><th>Builds</th></tr>
+    <tr><td><code>[expression for item in iterable]</code></td><td>a new list</td></tr>
+    <tr><td><code>[expression for item in iterable if condition]</code></td><td>a new list, filtered</td></tr>
+    <tr><td><code>[a if condition else b for item in iterable]</code></td><td>a new list, a or b for each item</td></tr>
+    <tr><td><code>{key: value for item in iterable}</code></td><td>a new dictionary</td></tr>
+    <tr><td><code>{k: v for k, v in dictionary.items() if cond}</code></td><td>a new dictionary, filtered</td></tr>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Data structure</dt><dd>A way of storing several values together in one variable; Python’s built-in ones are list, tuple, dictionary and set.</dd></div>
+    <div><dt>List</dt><dd>An ordered, changeable collection written with square brackets, like <code>[85, 72, 91]</code>; items are accessed by index.</dd></div>
+    <div><dt>Mutable</dt><dd>Can be changed after creation; lists, dictionaries and sets are mutable.</dd></div>
+    <div><dt>append() / insert()</dt><dd>List methods that add an item at the end, or at a given index while shifting later items right.</dd></div>
+    <div><dt>pop()</dt><dd>Removes and returns an item: from a list by index (the last one by default), from a dictionary by key.</dd></div>
+    <div><dt>Tuple</dt><dd>An ordered, immutable collection written with parentheses, like <code>(10, 20)</code>; a one-item tuple needs a trailing comma.</dd></div>
+    <div><dt>Tuple unpacking</dt><dd>Assigning a tuple’s values to several variables in one line, matched by position: <code>name, age = ("Rahul", 21)</code>.</dd></div>
+    <div><dt>Dictionary</dt><dd>A collection of key-value pairs written as <code>{"name": "Rahul"}</code>; values are looked up by key, and keys are unique.</dd></div>
+    <div><dt>KeyError</dt><dd>The error raised when you read a dictionary key that doesn’t exist (or <code>remove()</code> a missing set item); avoid it with <code>in</code> or <code>.get()</code>.</dd></div>
+    <div><dt>items()</dt><dd>A dictionary method giving (key, value) pairs, typically unpacked in <code>for key, value in d.items()</code>.</dd></div>
+    <div><dt>Set</dt><dd>An unordered collection of unique values written with braces, like <code>{1, 2, 3}</code>; an empty set is <code>set()</code>, not <code>{}</code>.</dd></div>
+    <div><dt>Union / intersection / difference</dt><dd>Set operations <code>|</code>, <code>&amp;</code>, <code>-</code>: everything in either set, only what’s in both, and what’s in the first but not the second.</dd></div>
+    <div><dt>Nested data structure</dt><dd>A collection inside another, like a list of dictionaries, accessed from the outside in with one <code>[ ]</code> per level.</dd></div>
+    <div><dt>List comprehension</dt><dd>A one-line way to build a new list from an iterable: <code>[expr for item in iterable if condition]</code>.</dd></div>
+    <div><dt>Dictionary comprehension</dt><dd>A one-line way to build a new dictionary: <code>{key: value for item in iterable}</code>.</dd></div>
+  </dl>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p><code>marks = [85, 72, 91, 68, 79]</code>. What is <code>marks[-2]</code>?</p>
+      <ol><li>72</li><li>79</li><li>68</li><li>An IndexError</li></ol>
+      <p class="why">-1 is the last item (79), so -2 is the one before it, 68.</p></div>
+    <div class="q" data-answer="1"><p>Which line creates a <b>tuple</b> containing just the number 5?</p>
+      <ol><li><code>t = (5,)</code></li><li><code>t = (5)</code></li><li><code>t = [5]</code></li><li><code>t = {5}</code></li></ol>
+      <p class="why">The comma makes the tuple. <code>(5)</code> is just the integer 5; <code>[5]</code> is a list and <code>{5}</code> a set.</p></div>
+    <div class="q" data-answer="4"><p>What does <code>type({})</code> return?</p>
+      <ol><li><code>&lt;class 'set'&gt;</code></li><li><code>&lt;class 'tuple'&gt;</code></li><li><code>&lt;class 'list'&gt;</code></li><li><code>&lt;class 'dict'&gt;</code></li></ol>
+      <p class="why">Empty braces make an empty dictionary. An empty set must be written <code>set()</code>.</p></div>
+    <div class="q" data-answer="2"><p>You need to store GPS coordinates that must never change by accident. Best choice?</p>
+      <ol><li>List</li><li>Tuple</li><li>Set</li><li>Dictionary</li></ol>
+      <p class="why">A tuple is ordered and immutable, perfect for a fixed pair like (latitude, longitude).</p></div>
+    <div class="q" data-answer="3"><p><code>d = {"name": "Asha"}</code>. What does <code>d["age"]</code> do?</p>
+      <ol><li>Returns <code>None</code></li><li>Returns 0</li><li>Raises <code>KeyError</code></li><li>Adds the key "age"</li></ol>
+      <p class="why">Reading a missing key raises <code>KeyError</code>. <code>d.get("age")</code> would return <code>None</code> instead; <i>assigning</i> <code>d["age"] = …</code> would add it.</p></div>
+    <div class="q" data-answer="1"><p>What is <code>{1, 2, 3} &amp; {2, 3, 4}</code>?</p>
+      <ol><li><code>{2, 3}</code></li><li><code>{1, 2, 3, 4}</code></li><li><code>{1}</code></li><li><code>{4}</code></li></ol>
+      <p class="why"><code>&amp;</code> is intersection: only the values in both sets.</p></div>
+    <div class="q" data-answer="4"><p><code>data = [{"name": "Ravi", "marks": [70, 80]}]</code>. How do you get 80?</p>
+      <ol><li><code>data["marks"][1]</code></li><li><code>data[0][1]</code></li><li><code>data[1]["marks"]</code></li><li><code>data[0]["marks"][1]</code></li></ol>
+      <p class="why">Outside in: <code>[0]</code> picks the dict from the list, <code>["marks"]</code> the list from the dict, <code>[1]</code> the second mark.</p></div>
+    <div class="q" data-answer="2"><p>What does <code>[n for n in [3, 8, 5, 10] if n &gt; 4]</code> produce?</p>
+      <ol><li><code>[True, True, True]</code></li><li><code>[8, 5, 10]</code></li><li><code>[3]</code></li><li><code>[8, 10]</code></li></ol>
+      <p class="why">The trailing <code>if</code> filters: only items where n &gt; 4 are kept, in their original order.</p></div>
+    <div class="q" data-answer="3"><p><code>a = [1, 2, 3]</code>; <code>b = a[:]</code>; <code>b[0] = 99</code>. What is <code>a</code>?</p>
+      <ol><li><code>[99, 2, 3]</code></li><li><code>[99]</code></li><li><code>[1, 2, 3]</code></li><li>An error</li></ol>
+      <p class="why"><code>a[:]</code> makes a new list, so changing <code>b</code> leaves <code>a</code> alone. (With <code>b = a</code> it would have changed.)</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Use a <b>list</b> for an ordered group you’ll change, a <b>tuple</b> for fixed records, a <b>dictionary</b> to look values up by meaningful keys, and a <b>set</b> for unique values and Venn-style maths; <b>nest</b> them to model real records, <b>slice</b> to take portions, and use <b>comprehensions</b> to build new collections in one readable line.</p>
+  <p>Next up: Functions, where you’ll package logic like this into named, reusable blocks that take inputs and return results.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

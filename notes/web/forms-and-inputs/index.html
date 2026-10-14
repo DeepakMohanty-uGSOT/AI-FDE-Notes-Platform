@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forms and Inputs · Web &amp; HTML | AIFDE Notes</title>
+<meta name="description" content="How HTML forms collect information: the form tag with action, target and enctype, text and choice controls, id, name and value, buttons, labels, fieldsets, and built-in validation rules.">
+<meta name="keywords" content="form tag, input types, name and value, radio and checkbox, select dropdown, label for id, fieldset legend, form validation">
+<meta name="date" content="2026-09-21">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="web/forms-and-inputs">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Forms and Inputs</h1>
+  <p class="byline">Build forms that collect information from users: text boxes, choices and buttons, wired up with name and value, organised with labels and fieldsets, and guarded by built-in validation.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="real-forms">
+  <h2>Forms you already use every day</h2>
+  <p>Almost every website that needs an account has a <b>Login</b> or <b>Registration</b> form. Open any cloud provider’s sign-up page (AWS, for example) and you will see something like this:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="A sign-up card with the text Email address above an empty input box, Account name above another input box, and a Continue button. Notes on the right point out the label text, the input field and the button.">
+      <g class="rough">
+        <rect class="box f-card" x="140" y="16" width="300" height="268" rx="14"/>
+        <rect class="box f-card" x="164" y="102" width="252" height="34" rx="6"/>
+        <rect class="box f-card" x="164" y="174" width="252" height="34" rx="6"/>
+        <rect class="box f-orange" x="164" y="226" width="252" height="38" rx="8"/>
+        <path class="lr" d="M464 87 L 284 87" marker-end="url(#ahr)"/>
+        <path class="lr" d="M464 119 L 424 119" marker-end="url(#ahr)"/>
+        <path class="lr" d="M464 245 L 424 245" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="290" y="54" text-anchor="middle">Sign up</text>
+      <text class="t" x="164" y="92">Email address</text>
+      <text class="t" x="164" y="164">Account name</text>
+      <text class="t" x="290" y="251" text-anchor="middle">Continue</text>
+      <text class="tr" x="472" y="93">text: what to enter</text>
+      <text class="tr" x="472" y="125">input: where to type</text>
+      <text class="tr" x="472" y="251">button: send it</text>
+    </svg></div>
+    <figcaption>The exact fields change over time, but every form has the same three parts.</figcaption>
+  </figure>
+  <p>Even a big, advanced application boils down to a simple idea:</p>
+  <div class="flow"><span>User</span><span>sees a form</span><span>enters information</span><span>clicks a button</span><span class="ok">information is submitted</span></div>
+  <h3>Connecting it to HTML</h3>
+  <p>Each of those parts is a plain HTML element:</p>
+  <div class="tbl"><table>
+    <tr><th>On the page</th><th>HTML</th></tr>
+    <tr><td>“Email address” + box</td><td><code>&lt;label&gt;Email address&lt;/label&gt;</code><br><code>&lt;input type="email"&gt;</code></td></tr>
+    <tr><td>“Account name” + box</td><td><code>&lt;label&gt;Account name&lt;/label&gt;</code><br><code>&lt;input type="text"&gt;</code></td></tr>
+    <tr><td>[ Continue ]</td><td><code>&lt;button type="submit"&gt;Continue&lt;/button&gt;</code></td></tr>
+  </table></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="submission">
+  <h2>How form submission works</h2>
+  <p>What actually happens when someone fills a form and clicks <b>Submit</b> (or Continue)?</p>
+  <div class="flow"><span>User fills in the form</span><span>clicks Submit</span><span class="hl">browser collects the data</span><span>browser sends it</span><span class="ok">server receives it</span><span class="ok">server processes it</span><span class="ok">server sends a response</span><span class="hl">browser displays the result</span></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="The browser sends the form data across to the server; the server processes it and sends a response back, which the browser displays">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="60" width="200" height="120" rx="14"/>
+        <rect class="box f-green" x="500" y="60" width="200" height="120" rx="14"/>
+        <path class="lr" d="M228 92 L 492 92" marker-end="url(#ahr)"/>
+        <path class="lb" d="M492 152 L 228 152" marker-end="url(#ahb)"/>
+      </g>
+      <text class="ts" x="120" y="40" text-anchor="middle">user fills form, clicks Submit</text>
+      <text class="th" x="120" y="100" text-anchor="middle">Browser</text>
+      <text class="ts" x="120" y="132" text-anchor="middle">collects the data</text>
+      <text class="ts" x="120" y="156" text-anchor="middle">shows the result</text>
+      <text class="th" x="600" y="100" text-anchor="middle">Server</text>
+      <text class="ts" x="600" y="132" text-anchor="middle">receives + processes</text>
+      <text class="ts" x="600" y="156" text-anchor="middle">builds a response</text>
+      <text class="tr" x="360" y="80" text-anchor="middle">form data</text>
+      <text class="tb" x="360" y="180" text-anchor="middle">response</text>
+    </svg></div>
+    <figcaption>A form is a round trip: data goes out, a response comes back.</figcaption>
+  </figure>
+  <h3>Where forms are used</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Login / Signup</h4><p>Username, email and password.</p></div>
+    <div class="card t2 tilt-b"><h4>Search box</h4><p>Find something on a website.</p></div>
+    <div class="card t3 tilt-a"><h4>Contact form</h4><p>Send messages or feedback.</p></div>
+    <div class="card t4 tilt-b"><h4>Order form</h4><p>Order food or products online.</p></div>
+    <div class="card t5 tilt-a"><h4>Survey / feedback</h4><p>Collect opinions from users.</p></div>
+    <div class="card t8 tilt-b"><h4>Booking form</h4><p>Book train tickets, hotels and more.</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="form-tag">
+  <h2>The <code>&lt;form&gt;</code> tag: the master envelope</h2>
+  <div class="story"><b class="lbl">The India Post envelope</b>You put several sheets of paper into one envelope, write the <b>To:</b> address on it, and choose how to send it. <mark>The &lt;form&gt; tag is the envelope that wraps all the fields and tells the browser where and how to send them.</mark></div>
+  <p>By itself <code>&lt;form&gt;</code> is <b>invisible</b>. It is a management tool: it wraps the fields (<code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> and so on) and tells the browser two critical things:</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4><code>action</code> · WHERE</h4><p>The address the data is sent to: the “To:” on the envelope.</p></div>
+    <div class="card t2 tilt-b"><h4><code>method</code> · HOW</h4><p>How the data is sent (<code>GET</code> or <code>POST</code>). Covered in detail in an upcoming module.</p></div>
+  </div>
+  <div class="anatomy"><span class="a1">&lt;form</span> <span class="a2">action</span>=<span class="a3">"/submit-contact-form"</span><span class="a1">&gt;</span> <span class="a4">…fields and a submit button…</span> <span class="a5">&lt;/form&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p><code>action</code> · the attribute name</p></div>
+    <div><span class="sw a3"></span><p>the server address that receives the data</p></div>
+    <div><span class="sw a4"></span><p>the controls the user fills in</p></div>
+  </div>
+  <pre><code class="language-html">&lt;form action="/submit-contact-form"&gt;
+  &lt;input type="submit" /&gt;
+&lt;/form&gt;</code></pre>
+  <p>This shows just a <b>Submit</b> button. It means: “When the user clicks Submit, send all the form data to <code>/submit-contact-form</code> on the server.”</p>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="form-attributes">
+  <h2>More form attributes: <code>target</code> and <code>enctype</code></h2>
+  <h3><code>target</code>: where does the reply open?</h3>
+  <p>When you post a letter (submit the form), the server writes back. <code>target</code> decides <b>where that reply opens</b>.</p>
+  <div class="two">
+    <div class="card t6 tilt-a"><h4><code>target="_self"</code> (default)</h4><p>Open the result in the <b>same tab</b>. The current page is replaced, e.g. a welcome page after login.</p></div>
+    <div class="card t2 tilt-b"><h4><code>target="_blank"</code></h4><p>Open the result in a <b>new tab or window</b>. The form page stays open, e.g. a “Thank you” page in a new tab.</p></div>
+  </div>
+  <div class="two">
+    <pre><code class="language-html">&lt;form action="/login" method="POST" target="_self"&gt;
+  ...
+&lt;/form&gt;</code></pre>
+    <pre><code class="language-html">&lt;form action="/subscribe-thanks" method="POST" target="_blank"&gt;
+  ...
+&lt;/form&gt;</code></pre>
+  </div>
+
+  <h3><code>enctype</code>: how is the data packed?</h3>
+  <p><code>enctype</code> (encoding type) tells the browser <b>how to pack the form data</b> before sending it, like choosing how to wrap a parcel. Paper documents go in a simple envelope; a photo or a gift needs a bigger box and a different label.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Left: the default encoding turns all fields into one long string like user_name=Asha and city=Pune, and cannot carry files. Right: multipart form data splits the form into separate parts, one for text and one for the file my-photo.jpg.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="50" width="320" height="130" rx="14"/>
+        <rect class="box f-card" x="44" y="96" width="272" height="40" rx="6"/>
+        <rect class="box f-green" x="380" y="50" width="320" height="130" rx="14"/>
+        <rect class="box f-card" x="404" y="68" width="272" height="40" rx="6"/>
+        <rect class="box f-yellow" x="404" y="122" width="272" height="40" rx="6"/>
+      </g>
+      <text class="tm" x="180" y="36" text-anchor="middle">application/x-www-form-urlencoded</text>
+      <text class="tm" x="540" y="36" text-anchor="middle">multipart/form-data</text>
+      <text class="tm" x="180" y="121" text-anchor="middle">user_name=Asha&amp;city=Pune</text>
+      <text class="tm" x="540" y="93" text-anchor="middle">part 1: user_name=Asha</text>
+      <text class="tm" x="540" y="147" text-anchor="middle">part 2: my-photo.jpg</text>
+      <text class="ts" x="180" y="206" text-anchor="middle">default: one long string of text</text>
+      <text class="tr" x="180" y="234" text-anchor="middle">can’t carry files</text>
+      <text class="ts" x="540" y="206" text-anchor="middle">separate parts for text and files</text>
+      <text class="tb" x="540" y="234" text-anchor="middle">use for file uploads</text>
+    </svg></div>
+    <figcaption>Simple envelope for text, a box with compartments for files.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Value</th><th>Meaning</th><th>Use when</th></tr>
+    <tr><td><code>application/x-www-form-urlencoded</code> (default)</td><td>Normal wrapping: all fields become one long text string.</td><td>Text, passwords, simple data. Cannot send files.</td></tr>
+    <tr><td><code>multipart/form-data</code></td><td>Special packaging: the form is split into separate parts, one per field, including files.</td><td>Only when the form has <code>&lt;input type="file"&gt;</code> (and <code>method="POST"</code>).</td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">profile picture upload</span><pre><code class="language-html">&lt;form action="/upload-profile-pic" method="POST" enctype="multipart/form-data"&gt;
+  &lt;label for="username"&gt;Username:&lt;/label&gt;
+  &lt;input type="text" id="username" name="user_name"&gt;
+
+  &lt;label for="profile-pic"&gt;Picture:&lt;/label&gt;
+  &lt;input type="file" id="profile-pic" name="user_pic"&gt;
+
+  &lt;button type="submit"&gt;Upload&lt;/button&gt;
+&lt;/form&gt;</code></pre></div>
+  <div class="sticky tip l"><strong>See it in DevTools</strong> Submit the form, open the browser’s DevTools → <b>Network</b> tab, click the request, and look at <b>Request Headers</b>. The <code>enctype</code> shows up as the <code>Content-Type</code> header.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="text-controls">
+  <h2>Text takers: the “fill in the blank” crew</h2>
+  <p>If <code>&lt;form&gt;</code> is the envelope, the <b>controls</b> are the fields you fill in and the button you press. The most powerful is <code>&lt;input&gt;</code>, a chameleon whose <code>type</code> attribute changes what it becomes.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Four controls as the browser draws them: a text box with Asha Rao, a password box showing dots, an email box with asha@example.com, and a large resizable textarea">
+      <g class="rough">
+        <rect class="box f-card" x="230" y="38" width="300" height="34" rx="4"/>
+        <rect class="box f-card" x="230" y="88" width="300" height="34" rx="4"/>
+        <rect class="box f-card" x="230" y="138" width="300" height="34" rx="4"/>
+        <rect class="box f-card" x="230" y="188" width="300" height="96" rx="4"/>
+        <path class="ln" d="M512 278 L 524 266 M518 278 L 524 272"/>
+      </g>
+      <text class="tm" x="40" y="60">type="text"</text>
+      <text class="tm" x="40" y="110">type="password"</text>
+      <text class="tm" x="40" y="160">type="email"</text>
+      <text class="tm" x="40" y="210">&lt;textarea&gt;</text>
+      <text class="t" x="242" y="61">Asha Rao</text>
+      <text class="t" x="242" y="111">••••••••</text>
+      <text class="t" x="242" y="161">asha@example.com</text>
+      <text class="ts" x="242" y="212">Write your message…</text>
+      <text class="ts" x="548" y="60">single line</text>
+      <text class="ts" x="548" y="110">hides characters</text>
+      <text class="ts" x="548" y="160">checks the format</text>
+      <text class="ts" x="548" y="210">many lines, resizable</text>
+    </svg></div>
+    <figcaption>How the browser draws each text control (exact styling varies by browser).</figcaption>
+  </figure>
+
+  <h3>1 · <code>&lt;input type="text"&gt;</code></h3>
+  <p>The default, most basic <b>single-line</b> text box: a simple rectangle to type in.</p>
+  <pre><code class="language-html">&lt;input type="text"&gt;</code></pre>
+
+  <h3>2 · <code>&lt;input type="password"&gt;</code></h3>
+  <p>A single-line box that <b>hides what you type</b>, showing dots (••••••••) instead of the characters.</p>
+  <pre><code class="language-html">&lt;input type="password"&gt;</code></pre>
+  <div class="sticky warn"><strong>Hidden is not secure</strong> <code>type="password"</code> only hides the text <b>on screen</b> from people looking over your shoulder. The value is still sent as normal text, so real security needs <b>HTTPS</b> and careful handling on the server. We’ll cover that in upcoming modules.</div>
+
+  <h3>3 · <code>&lt;input type="email"&gt;</code></h3>
+  <p>Looks like a normal text box but is smarter: on submit the browser checks that the text <b>looks like an email address</b> (something, then <code>@</code>, then a domain). On mobile, the keyboard shows the <kbd>@</kbd> key.</p>
+  <pre><code class="language-html">&lt;input type="email" required&gt;</code></pre>
+  <p>The <code>required</code> attribute stops the form from being submitted while the box is empty (more in the validation section).</p>
+
+  <h3>4 · <code>&lt;textarea&gt;</code></h3>
+  <p>For <b>long text</b> (paragraphs, messages, feedback): a large, resizable box. Unlike <code>&lt;input&gt;</code>, it has a closing tag.</p>
+  <pre><code class="language-html">&lt;textarea rows="5" cols="30"&gt;&lt;/textarea&gt;</code></pre>
+  <ul>
+    <li><code>rows="5"</code> sets the height: how many lines tall.</li>
+    <li><code>cols="30"</code> sets the width: how many characters wide.</li>
+  </ul>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="id-value-name">
+  <h2>The three key attributes: <code>id</code>, <code>value</code>, <code>name</code></h2>
+  <h3>1 · <code>id</code>: the unique identifier</h3>
+  <p>A <b>unique, one-of-a-kind nickname</b> for one element on the page, like a student ID number: no two students share one. We use it to <b>connect a <code>&lt;label&gt;</code> to an input</b>, and to find or style that element with CSS or JavaScript.</p>
+  <pre><code class="language-html">&lt;label for="userEmail"&gt;Email:&lt;/label&gt;
+&lt;input type="email" id="userEmail"&gt;</code></pre>
+  <p>The label’s <code>for="userEmail"</code> matches the input’s <code>id="userEmail"</code>, so clicking the text “Email:” puts the cursor in the email box.</p>
+
+  <h3>2 · <code>value</code>: the answer</h3>
+  <p><code>value</code> is the <b>actual data</b> in the field: what you write on the blank line of an order slip. It is <b>for the server</b>. It works in two ways:</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Fields you type in</h4><p>For text inputs, <code>value</code> is <b>pre-filled default text</b>. The user can keep it or type something new. Whatever is in the box on submit is sent.</p></div>
+    <div class="card t3 tilt-b"><h4>Fields you click</h4><p>For radio buttons and checkboxes the user can’t type, so <b>you must set</b> <code>value</code>. It is the hidden answer sent if that option is chosen.</p></div>
+  </div>
+  <div class="two">
+    <div class="codebox"><span class="cap">pre-filled text</span><pre><code class="language-html">&lt;input type="text" id="city" name="city" value="New York"&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">hidden answer</span><pre><code class="language-html">&lt;label for="size-lrg"&gt;Large&lt;/label&gt;
+&lt;input type="radio" id="size-lrg" name="size" value="L"&gt;</code></pre></div>
+  </div>
+  <p>In the radio example the user <i>sees</i> “Large” (from the label), but the server receives <code>L</code>.</p>
+
+  <h3>3 · <code>name</code>: the label on the data</h3>
+  <div class="story"><b class="lbl">The kitchen order slip</b>The input is the <b>blank box</b> on the slip, the value is <b>what you write</b> (“Cheeseburger”), and the name is the <b>title printed above the box</b> (“MainCourse”). <mark>The kitchen doesn’t just receive “Cheeseburger”; it receives MainCourse=Cheeseburger.</mark></div>
+  <div class="codebox"><span class="cap">one field has a name, one doesn’t</span><pre><code class="language-html">&lt;form action="/kitchen-order" method="POST"&gt;
+  &lt;label for="food"&gt;Main Course:&lt;/label&gt;
+  &lt;input type="text" id="food" name="MainCourse" value="Cheeseburger"&gt;
+
+  &lt;label for="drink"&gt;Drink:&lt;/label&gt;
+  &lt;input type="text" id="drink" value="Lemonade"&gt;
+
+  &lt;input type="submit" value="Send to Kitchen"&gt;
+&lt;/form&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="A form with Main Course Cheeseburger and Drink Lemonade. Clicking Send to Kitchen sends MainCourse=Cheeseburger to the kitchen server. Lemonade has no name, so it is dropped and never arrives.">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="16" width="300" height="220" rx="14"/>
+        <rect class="box f-card" x="40" y="62" width="260" height="32" rx="4"/>
+        <rect class="box f-card" x="40" y="134" width="260" height="32" rx="4"/>
+        <rect class="box f-grey" x="40" y="184" width="170" height="34" rx="6"/>
+        <rect class="box f-green" x="470" y="40" width="230" height="110" rx="14"/>
+        <path class="lr" d="M306 78 C 380 78, 420 90, 464 96" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M306 150 C 360 160, 390 180, 410 206"/>
+      </g>
+      <text class="t" x="40" y="52">Main Course:</text>
+      <text class="t" x="52" y="84">Cheeseburger</text>
+      <text class="t" x="40" y="124">Drink:</text>
+      <text class="t" x="52" y="156">Lemonade</text>
+      <text class="t" x="125" y="206" text-anchor="middle">Send to Kitchen</text>
+      <text class="ts" x="340" y="66">has a name ✓</text>
+      <text class="th" x="585" y="80" text-anchor="middle">Kitchen</text>
+      <text class="tm" x="585" y="120" text-anchor="middle">MainCourse=Cheeseburger</text>
+      <text class="tr" x="420" y="222">no name: thrown away ✗</text>
+    </svg></div>
+    <figcaption>The browser (the waiter) only carries fields that have a <code>name</code>.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>First field</b>The browser sees <code>name="MainCourse"</code> and <code>value="Cheeseburger"</code>, and writes <code>MainCourse=Cheeseburger</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Second field</b>It sees <code>value="Lemonade"</code> but <b>no name</b>. The kitchen wouldn’t know what this is for, so the browser <b>throws it away</b>.</div></li>
+    <li><span class="dot">3</span><div><b>What the server receives</b>Only <code>MainCourse=Cheeseburger</code>. The server never finds out about the Lemonade. <span class="tag">→ no name = no data</span></div></li>
+  </ol>
+  <div class="sticky warn l"><strong>Most common form bug</strong> A field without a <code>name</code> looks perfectly fine on screen but sends <b>nothing</b>. If the server says a value is missing, check the <code>name</code> first.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="choice-controls">
+  <h2>Choice makers: radio, checkbox, select</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 255" role="img" aria-label="Three choice controls. Radio buttons Small, Medium and Large with Medium selected. Checkboxes Pepperoni, Olives and Extra Cheese with the last two ticked. A dropdown showing United Kingdom, opened to list Please select, United States, Canada and United Kingdom.">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="44" width="210" height="180" rx="12"/>
+        <rect class="box f-card" x="255" y="44" width="210" height="180" rx="12"/>
+        <rect class="box f-card" x="490" y="44" width="210" height="180" rx="12"/>
+        <circle class="box f-card" cx="50" cy="80" r="9"/>
+        <circle class="box f-card" cx="50" cy="118" r="9"/>
+        <circle class="box f-purple" cx="50" cy="118" r="4"/>
+        <circle class="box f-card" cx="50" cy="156" r="9"/>
+        <rect class="box f-card" x="276" y="71" width="18" height="18" rx="3"/>
+        <rect class="box f-card" x="276" y="109" width="18" height="18" rx="3"/>
+        <rect class="box f-card" x="276" y="147" width="18" height="18" rx="3"/>
+        <path class="ln" d="M279 118 L 284 124 L 292 112 M279 156 L 284 162 L 292 150"/>
+        <rect class="box f-card" x="506" y="56" width="180" height="32" rx="4"/>
+        <rect class="box f-card" x="506" y="94" width="180" height="120" rx="4"/>
+        <rect class="box f-blue" x="508" y="184" width="176" height="28"/>
+      </g>
+      <text class="tm" x="125" y="32" text-anchor="middle">type="radio"</text>
+      <text class="tm" x="360" y="32" text-anchor="middle">type="checkbox"</text>
+      <text class="tm" x="595" y="32" text-anchor="middle">&lt;select&gt;</text>
+      <text class="t" x="68" y="86">Small</text>
+      <text class="t" x="68" y="124">Medium</text>
+      <text class="t" x="68" y="162">Large</text>
+      <text class="t" x="304" y="86">Pepperoni</text>
+      <text class="t" x="304" y="124">Olives</text>
+      <text class="t" x="304" y="162">Extra Cheese</text>
+      <text class="t" x="516" y="78">United Kingdom</text>
+      <text class="t" x="670" y="78">▾</text>
+      <text class="ts" x="516" y="116">--Please select--</text>
+      <text class="t" x="516" y="146">United States</text>
+      <text class="t" x="516" y="174">Canada</text>
+      <text class="t" x="516" y="204">United Kingdom</text>
+      <text class="ts" x="125" y="246" text-anchor="middle">pick exactly one</text>
+      <text class="ts" x="360" y="246" text-anchor="middle">pick any number</text>
+      <text class="ts" x="595" y="246" text-anchor="middle">pick one from a long list</text>
+    </svg></div>
+    <figcaption>Round buttons for one choice, square boxes for many, a dropdown to save space.</figcaption>
+  </figure>
+
+  <h3>1 · <code>&lt;input type="radio"&gt;</code>: pick only one</h3>
+  <p>Round buttons used in a group when the user must pick <b>exactly one</b>, like the preset buttons on an old car radio: press one and the other pops out.</p>
+  <div class="tbl"><table>
+    <tr><th>Attribute</th><th>Job</th></tr>
+    <tr><td><code>type="radio"</code></td><td>Draw a round button.</td></tr>
+    <tr><td><code>name="size"</code></td><td>The magic part: all radios with the <b>same name</b> form one group, so only one can be chosen.</td></tr>
+    <tr><td><code>value="lrg"</code></td><td>The answer sent to the server. The user sees the label (“Large”); the server gets the value.</td></tr>
+    <tr><td><code>id="size-l"</code></td><td>Unique nickname, used to link a <code>&lt;label&gt;</code>.</td></tr>
+    <tr><td><code>checked</code></td><td>Makes this option the default choice when the page loads.</td></tr>
+  </table></div>
+  <div class="codebox"><span class="cap">name="size" links all three</span><pre><code class="language-html">&lt;p&gt;Choose your size:&lt;/p&gt;
+
+&lt;label for="size-s"&gt;Small&lt;/label&gt;
+&lt;input type="radio" id="size-s" name="size" value="sml"&gt;
+
+&lt;label for="size-m"&gt;Medium&lt;/label&gt;
+&lt;input type="radio" id="size-m" name="size" value="med" checked&gt;
+
+&lt;label for="size-l"&gt;Large&lt;/label&gt;
+&lt;input type="radio" id="size-l" name="size" value="lrg"&gt;</code></pre></div>
+  <p>If the user picks “Large” and submits, the server receives <code>size=lrg</code>.</p>
+
+  <h3>2 · <code>&lt;input type="checkbox"&gt;</code>: pick any</h3>
+  <p>Square boxes for picking <b>as many options as you like</b> (or none), like ticking items off a shopping list. The attributes are the same as radio, but <code>name</code> now means a <b>category</b>: three ticked boxes named <code>topping</code> send three answers for “topping”. <code>value</code> is sent <i>only if that box is ticked</i>.</p>
+  <div class="codebox"><span class="cap">name="topping" groups them as one question</span><pre><code class="language-html">&lt;p&gt;Choose your toppings (select any):&lt;/p&gt;
+
+&lt;label for="top-pep"&gt;Pepperoni&lt;/label&gt;
+&lt;input type="checkbox" id="top-pep" name="topping" value="pep"&gt;
+
+&lt;label for="top-olives"&gt;Olives&lt;/label&gt;
+&lt;input type="checkbox" id="top-olives" name="topping" value="olv" checked&gt;
+
+&lt;label for="top-cheese"&gt;Extra Cheese&lt;/label&gt;
+&lt;input type="checkbox" id="top-cheese" name="topping" value="x-chz" checked&gt;</code></pre></div>
+  <p>Submitted as-is (Olives and Extra Cheese ticked), the server receives <code>topping=olv</code> <b>and</b> <code>topping=x-chz</code>.</p>
+
+  <h3>3 · <code>&lt;select&gt;</code> and <code>&lt;option&gt;</code>: the dropdown</h3>
+  <p>A dropdown menu for a <b>long list</b> of options that would take too much space as radios. It works like a rolled-up scroll: click the <code>&lt;select&gt;</code> to unroll it, see all the <code>&lt;option&gt;</code>s, pick one, and it rolls back up showing only your choice.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>On <code>&lt;select&gt;</code> (the box)</h4><p><code>name</code> · the question sent to the server, e.g. <code>user_country</code>.<br><code>id</code> · links to a <code>&lt;label&gt;</code>.</p></div>
+    <div class="card t2 tilt-b"><h4>On <code>&lt;option&gt;</code> (the choices)</h4><p><code>value</code> · <b>most important</b>: the answer sent. Users see the text between the tags (“United States”); the server gets the value (“USA”).<br><code>selected</code> · the default choice.</p></div>
+  </div>
+  <div class="codebox"><span class="cap">country dropdown</span><pre><code class="language-html">&lt;label for="country-select"&gt;Choose your country:&lt;/label&gt;
+&lt;select id="country-select" name="user_country"&gt;
+  &lt;option value=""&gt;--Please select--&lt;/option&gt;
+  &lt;option value="USA"&gt;United States&lt;/option&gt;
+  &lt;option value="CAN"&gt;Canada&lt;/option&gt;
+  &lt;option value="UK" selected&gt;United Kingdom&lt;/option&gt;
+&lt;/select&gt;</code></pre></div>
+  <p>Left on the default, the server receives <code>user_country=UK</code>; changed to Canada, it receives <code>user_country=CAN</code>.</p>
+  <div class="sticky info"><strong>Where <code>name</code> lives</strong> On radios and checkboxes, <code>name</code> goes on <b>every</b> input in the group. On a dropdown, <code>name</code> goes once on the <code>&lt;select&gt;</code>, and <code>value</code> goes on each <code>&lt;option&gt;</code>.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="buttons">
+  <h2>The “do something” buttons</h2>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Three buttons: a submit button labelled Sign Me Up, a reset button labelled Clear Form, and a button element with a cart icon and bold text Place Your Order">
+      <g class="rough">
+        <rect class="box f-orange" x="40" y="58" width="180" height="42" rx="8"/>
+        <rect class="box f-grey" x="270" y="58" width="180" height="42" rx="8"/>
+        <rect class="box f-blue" x="490" y="58" width="200" height="42" rx="8"/>
+        <rect class="box f-yellow" x="504" y="68" width="22" height="22" rx="4"/>
+      </g>
+      <text class="tm" x="130" y="40" text-anchor="middle">type="submit"</text>
+      <text class="tm" x="360" y="40" text-anchor="middle">type="reset"</text>
+      <text class="tm" x="590" y="40" text-anchor="middle">&lt;button&gt;</text>
+      <text class="t" x="130" y="85" text-anchor="middle">Sign Me Up!</text>
+      <text class="t" x="360" y="85" text-anchor="middle">Clear Form</text>
+      <text class="t" x="536" y="85" style="font-weight:700">Place Your Order</text>
+      <text class="ts" x="130" y="132" text-anchor="middle">gathers and sends the form</text>
+      <text class="ts" x="360" y="132" text-anchor="middle">wipes every field</text>
+      <text class="ts" x="590" y="132" text-anchor="middle">can hold HTML: icons, bold</text>
+    </svg></div>
+  </figure>
+
+  <h3>1 · <code>&lt;input type="submit"&gt;</code>: the Send button</h3>
+  <p>The most important button: it <b>gathers all the form data and sends it</b> to the server, like the “Place Order” button on the order slip. Its <code>value</code> is the <b>text on the button</b>: <code>value="Log In"</code> makes a button that says “Log In”.</p>
+  <pre><code class="language-html">&lt;form action="/login" method="POST"&gt;
+  &lt;label for="user"&gt;Username:&lt;/label&gt;
+  &lt;input type="text" id="user" name="username"&gt;
+  &lt;input type="submit" value="Sign Me Up!"&gt;
+&lt;/form&gt;</code></pre>
+
+  <h3>2 · <code>&lt;input type="reset"&gt;</code>: the Clear button</h3>
+  <p>Instantly <b>erases everything</b> typed into the form and returns every field to its <b>default</b> state (usually blank), like shaking an Etch A Sketch clean. It sends nothing. Its <code>value</code> is the button text, e.g. “Start Over”.</p>
+  <pre><code class="language-html">&lt;form action="/signup" method="POST"&gt;
+  &lt;label for="user"&gt;Username:&lt;/label&gt;
+  &lt;input type="text" id="user" name="username"&gt;
+  &lt;br&gt;
+  &lt;label for="pass"&gt;Password:&lt;/label&gt;
+  &lt;input type="password" id="pass" name="password"&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;input type="submit" value="Sign Up"&gt;
+  &lt;input type="reset" value="Clear Form"&gt;
+&lt;/form&gt;</code></pre>
+  <p>Clicking <b>Clear Form</b> empties both boxes at once.</p>
+
+  <h3>3 · <code>&lt;button&gt;</code>: the modern button</h3>
+  <p><code>&lt;input type="submit"&gt;</code> is a <b>ready-made</b> button: you can only change its text. <code>&lt;button&gt;</code> is a <b>custom</b> button: you can put HTML inside it (text, icons, images, bold words).</p>
+  <div class="two">
+    <div class="codebox"><span class="cap">the old way: just text</span><pre><code class="language-html">&lt;input type="submit" value="Submit Your Order"&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">the modern way: anything inside</span><pre><code class="language-html">&lt;form action="/order" method="POST"&gt;
+  ...
+  &lt;button type="submit"&gt;
+    &lt;img src="cart-icon.png" alt="" width="16"&gt;
+    &lt;b&gt;Place Your Order&lt;/b&gt;
+  &lt;/button&gt;
+&lt;/form&gt;</code></pre></div>
+  </div>
+  <div class="sticky tip l"><strong>Always write <code>type</code> on <code>&lt;button&gt;</code></strong> Inside a form, a <code>&lt;button&gt;</code> without a type acts as <b>submit</b>. Use <code>type="submit"</code>, <code>type="reset"</code> or <code>type="button"</code> (does nothing by itself) so your intent is clear.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="labels">
+  <h2>The <code>&lt;label&gt;</code> tag: the leash</h2>
+  <p><code>&lt;label&gt;</code> is the <b>official way to describe a form field</b>. It isn’t just plain text: it is <b>linked</b> to its field. If the input is a dog, the label is its <b>leash</b>.</p>
+  <p>The link is made by two attributes that <b>must match</b>: <code>for</code> on the label and <code>id</code> on the input.</p>
+  <div class="anatomy"><span class="a1">&lt;label</span> <span class="a2">for</span>=<span class="a3">"user_email"</span><span class="a1">&gt;</span><span class="a4">Your Email:</span><span class="a5">&lt;/label&gt;</span></div>
+  <div class="anatomy"><span class="a1">&lt;input</span> <span class="a2">type</span>=<span class="a3">"email"</span> <span class="a6">id="user_email"</span> <span class="a2">name</span>=<span class="a3">"email_address"</span><span class="a1">&gt;</span></div>
+  <div class="legend">
+    <div><span class="sw a3"></span><p><code>for="user_email"</code> on the label…</p></div>
+    <div><span class="sw a6"></span><p>…matches <code>id="user_email"</code> on the input</p></div>
+    <div><span class="sw a4"></span><p>the visible description</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 170" role="img" aria-label="Left: a label linked to an input with matching for and id; clicking the text puts the cursor in the box. Right: plain paragraph text next to an input; clicking it does nothing.">
+      <g class="rough">
+        <rect class="box f-card" x="150" y="52" width="190" height="34" rx="4"/>
+        <path class="lr" d="M80 50 C 110 22, 210 22, 236 46" marker-end="url(#ahr)"/>
+        <path class="ln" d="M162 60 L 162 78"/>
+        <path class="ln dash" d="M380 16 L 380 160"/>
+        <rect class="box f-card" x="530" y="52" width="170" height="34" rx="4"/>
+      </g>
+      <text class="t" x="40" y="75">Your Email:</text>
+      <text class="tb" x="90" y="20">click → focus</text>
+      <text class="tm" x="40" y="124">for="user_email"</text>
+      <text class="tm" x="200" y="148">id="user_email"</text>
+      <text class="t" x="420" y="75">Your Email:</text>
+      <text class="tr" x="420" y="124">plain &lt;p&gt; text</text>
+      <text class="ts" x="420" y="148">clicking it does nothing</text>
+    </svg></div>
+    <figcaption>Matching <code>for</code> and <code>id</code> tie the text to the box.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="codebox"><span class="cap">✅ right way</span><pre><code class="language-html">&lt;form&gt;
+  &lt;label for="user_email"&gt;Your Email:&lt;/label&gt;
+  &lt;input type="email" id="user_email" name="email_address"&gt;
+&lt;/form&gt;</code></pre></div>
+    <div class="codebox"><span class="cap">❌ wrong way (never do this)</span><pre><code class="language-html">&lt;form&gt;
+  &lt;p&gt;Your Email:&lt;/p&gt;
+  &lt;input type="email"&gt;
+&lt;/form&gt;</code></pre></div>
+  </div>
+  <p>The wrong way looks the same, but it is just plain text with <b>zero</b> benefits.</p>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Usability</h4><p>Clicking the label text moves the cursor into the box. A big help for tiny checkboxes and radio buttons.</p></div>
+    <div class="card t5 tilt-b"><h4>Accessibility</h4><p>Screen readers announce “Email, input box” instead of just “input box”.</p></div>
+  </div>
+  <div class="sticky info l"><strong>Golden rule</strong> Every input gets a <code>&lt;label&gt;</code>, connected with <code>for</code> and <code>id</code>. (You can also wrap the input inside the label, <code>&lt;label&gt;&lt;input …&gt; Small&lt;/label&gt;</code>, which links them without for/id.)</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="fieldset">
+  <h2>Grouping with <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></h2>
+  <p>If a form is a long sheet of paper, a <code>&lt;fieldset&gt;</code> draws a <b>border around one section</b> (like “Contact Info”), and the <code>&lt;legend&gt;</code> is the <b>title</b> written at the top of it.</p>
+  <ul>
+    <li><b><code>&lt;fieldset&gt;</code></b> wraps a group of related labels and inputs. Most browsers draw a thin border around it.</li>
+    <li><b><code>&lt;legend&gt;</code></b> must be the <b>first thing inside</b> the fieldset. Browsers place it on top of the border line.</li>
+  </ul>
+  <div class="codebox"><span class="cap">two sections</span><pre><code class="language-html">&lt;form&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Contact Information&lt;/legend&gt;
+    &lt;label for="name"&gt;Name:&lt;/label&gt;
+    &lt;input type="text" id="name" name="name"&gt;
+    &lt;br&gt;
+    &lt;label for="phone"&gt;Phone:&lt;/label&gt;
+    &lt;input type="tel" id="phone" name="phone"&gt;
+  &lt;/fieldset&gt;
+
+  &lt;fieldset&gt;
+    &lt;legend&gt;Order Details&lt;/legend&gt;
+    &lt;label&gt;&lt;input type="radio" name="size" value="small"&gt; Small&lt;/label&gt;
+    &lt;br&gt;
+    &lt;label&gt;&lt;input type="radio" name="size" value="large"&gt; Large&lt;/label&gt;
+  &lt;/fieldset&gt;
+&lt;/form&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Two bordered groups. The first has the title Contact Information on its top border with Name and Phone boxes inside. The second has the title Order Details with Small and Large radio buttons.">
+      <g class="rough">
+        <rect class="box f-none" x="20" y="40" width="330" height="170" rx="6"/>
+        <rect class="box f-none" x="370" y="40" width="330" height="170" rx="6"/>
+        <rect class="box f-card" x="110" y="80" width="220" height="30" rx="4"/>
+        <rect class="box f-card" x="110" y="140" width="220" height="30" rx="4"/>
+        <circle class="box f-card" cx="402" cy="94" r="8"/>
+        <circle class="box f-card" cx="402" cy="134" r="8"/>
+      </g>
+      <rect class="f-card" x="34" y="28" width="178" height="24"/>
+      <rect class="f-card" x="384" y="28" width="124" height="24"/>
+      <text class="t" x="42" y="46">Contact Information</text>
+      <text class="t" x="392" y="46">Order Details</text>
+      <text class="t" x="40" y="101">Name:</text>
+      <text class="t" x="40" y="161">Phone:</text>
+      <text class="t" x="418" y="100">Small</text>
+      <text class="t" x="418" y="140">Large</text>
+      <text class="ts" x="392" y="188">announced: “Order Details” group</text>
+    </svg></div>
+    <figcaption>The legend sits on the fieldset’s border, naming the group.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Visual win</h4><p>A scary 20-field form becomes small chunks: “1: Contact”, “2: Order Details”, “3: Payment”. Much less intimidating.</p></div>
+    <div class="card t5 tilt-b"><h4>Accessibility win (the superpower)</h4><p>Without it: “First Name, text field.” With it: “Entering ‘Shipping Address’ group. First Name, text field.” Now users know <i>which</i> First Name it is.</p></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="validation-why">
+  <h2>Form validation: the bouncer</h2>
+  <div class="story"><b class="lbl">The club bouncer</b>A bouncer checks you at the door <i>before</i> you get in: “No entry without an ID.” <mark>Form validation checks the data a user enters before the browser sends it to the server.</mark></div>
+  <p>Its job is to stop the user and say “hold on, this isn’t right”:</p>
+  <ul>
+    <li>“You left the Name field blank.”</li>
+    <li>“You’re ordering 500 pizzas, but the maximum is 10.”</li>
+    <li>“This doesn’t look like an email address. You forgot the @.”</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Form data goes to a check: are the rules OK? If yes, it goes on to the server. If no, it comes back to the user with a message.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="70" width="150" height="60" rx="12"/>
+        <path class="box f-yellow" d="M330 40 L 420 100 L 330 160 L 240 100 Z"/>
+        <rect class="box f-green" x="540" y="70" width="160" height="60" rx="12"/>
+        <path class="ln" d="M174 100 L 234 100" marker-end="url(#ah)"/>
+        <path class="lb" d="M424 100 L 534 100" marker-end="url(#ahb)"/>
+        <path class="lr" d="M318 156 C 260 196, 140 196, 98 138" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="95" y="106" text-anchor="middle">Form data</text>
+      <text class="t" x="330" y="106" text-anchor="middle">rules OK?</text>
+      <text class="t" x="620" y="106" text-anchor="middle">Server</text>
+      <text class="tb" x="478" y="88" text-anchor="middle">yes</text>
+      <text class="tr" x="300" y="212" text-anchor="middle">no: “Please fill out this field.”</text>
+    </svg></div>
+    <figcaption>Bad data is turned back at the door with a helpful message.</figcaption>
+  </figure>
+  <h3>Why validate? Data, Experience, Security</h3>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · Data</h4><p>Without checks, people type “none” as a phone number, “asdf” as an email, or leave the name blank. Validation keeps the information <b>correct and complete</b>.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Experience</h4><p>Without it: fill 20 boxes, click Submit, see “Error occurred”, no idea why. With it: “Please enter a valid email” right away, so mistakes are easy to fix.</p></div>
+    <div class="card t3 tilt-a"><h4>3 · Security</h4><p>Attackers type dangerous code into form fields to damage a database or website. Checking input is part of the defence.</p></div>
+  </div>
+  <p>Checks done in the browser like this are called <b>client-side validation</b>: fast, easy, and instant feedback. They are just attributes on your inputs.</p>
+  <div class="sticky warn"><strong>Client-side checks don’t protect the server</strong> Anyone can switch off HTML validation in DevTools or send data straight to the server without your form. Browser validation is for <b>data quality and user experience</b>; real security needs the <b>server to validate everything again</b>.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="validation-rules">
+  <h2>Validation attributes</h2>
+  <div class="tbl"><table>
+    <tr><th>Attribute</th><th>Rule</th><th>Example</th></tr>
+    <tr><td><code>required</code></td><td>Must fill: the box can’t be empty.</td><td><code>&lt;input type="text" name="user" required&gt;</code></td></tr>
+    <tr><td><code>maxlength</code> / <code>minlength</code></td><td>Character limits. With <code>maxlength</code> the browser simply stops accepting keystrokes.</td><td><code>maxlength="2"</code> for a state code like “KA”</td></tr>
+    <tr><td><code>min</code> / <code>max</code></td><td>Number range; works on <code>type="number"</code>, <code>type="date"</code> and similar.</td><td><code>min="1" max="10"</code></td></tr>
+    <tr><td><code>pattern</code></td><td>Custom rule: the value must match a regular expression (regex).</td><td><code>pattern="[0-9]{5}"</code> = exactly 5 digits</td></tr>
+    <tr><td><code>readonly</code></td><td>Visible but uneditable. <b>Still sent</b> to the server.</td><td><code>value="bobjones" readonly</code></td></tr>
+    <tr><td><code>disabled</code></td><td>Completely off: greyed out, unusable and <b>not sent</b>.</td><td><code>value="1" disabled</code></td></tr>
+  </table></div>
+
+  <h3><code>required</code>: the must-fill rule</h3>
+  <pre><code class="language-html">&lt;label for="username"&gt;Username:&lt;/label&gt;
+&lt;input type="text" id="username" name="user" required&gt;</code></pre>
+  <p>Submit it empty and the browser shows a message like “Please fill out this field.”</p>
+
+  <h3><code>maxlength</code>: the character limit</h3>
+  <p>Like a tiny box on a paper form that physically can’t fit more letters.</p>
+  <pre><code class="language-html">&lt;label for="state"&gt;State code:&lt;/label&gt;
+&lt;input type="text" id="state" name="state" maxlength="2"&gt;</code></pre>
+  <p>The user can type only 2 letters, like “KA” or “MH”.</p>
+
+  <h3><code>min</code> and <code>max</code>: the number range</h3>
+  <pre><code class="language-html">&lt;label for="qty"&gt;Quantity (1-10 only):&lt;/label&gt;
+&lt;input type="number" id="qty" name="quantity" min="1" max="10"&gt;</code></pre>
+
+  <h3><code>pattern</code>: the custom rule</h3>
+  <p>The bouncer says: “Your ID must be a 5-digit number, no letters.” Patterns use a mini-language called <b>regex</b> (regular expressions).</p>
+  <pre><code class="language-html">&lt;label for="zip"&gt;Zip (5 digits):&lt;/label&gt;
+&lt;input type="text" id="zip" name="zipcode" pattern="[0-9]{5}"&gt;</code></pre>
+  <div class="anatomy"><span class="a2">[0-9]</span><span class="a3">{5}</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p><code>[0-9]</code> · any one digit from 0 to 9</p></div>
+    <div><span class="sw a3"></span><p><code>{5}</code> · exactly 5 of them: <code>12345</code> passes, <code>1234A</code> fails</p></div>
+  </div>
+
+  <h3><code>readonly</code> vs <code>disabled</code></h3>
+  <div class="two">
+    <pre><code class="language-html">&lt;label for="user"&gt;Username:&lt;/label&gt;
+&lt;input type="text" id="user" name="username" value="bobjones" readonly&gt;</code></pre>
+    <pre><code class="language-html">&lt;label for="qty2"&gt;Quantity:&lt;/label&gt;
+&lt;input type="number" id="qty2" name="quantity" value="1" disabled&gt;</code></pre>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Left: a readonly box shows bobjones; it can't be edited but is sent to the server. Right: a disabled box is greyed out showing 1; it can't be used and is not sent.">
+      <g class="rough">
+        <rect class="box f-card" x="40" y="56" width="280" height="38" rx="4"/>
+        <rect class="box f-grey dash" x="400" y="56" width="280" height="38" rx="4"/>
+      </g>
+      <text class="tm" x="180" y="36" text-anchor="middle">readonly</text>
+      <text class="tm" x="540" y="36" text-anchor="middle">disabled</text>
+      <text class="t" x="54" y="81">bobjones</text>
+      <text class="ts" x="414" y="80">1</text>
+      <text class="ts" x="180" y="126" text-anchor="middle">visible, can’t be edited</text>
+      <text class="tb" x="180" y="162" text-anchor="middle">✓ sent to the server</text>
+      <text class="ts" x="540" y="126" text-anchor="middle">greyed out, can’t be used</text>
+      <text class="tr" x="540" y="162" text-anchor="middle">✗ not sent</text>
+    </svg></div>
+    <figcaption>Both stop editing. Only <code>readonly</code> still sends its value.</figcaption>
+  </figure>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="full-example">
+  <h2>Putting it together: a strict form</h2>
+  <p>Save this as a file, open it, and try to submit it with bad data. The browser will stop you.</p>
+  <div class="codebox"><span class="cap">validation-demo.html</span><pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Form Validation Rules&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Strict Form (Validation Demo)&lt;/h1&gt;
+    &lt;p&gt;Try to submit this form with invalid data. The browser will stop you.&lt;/p&gt;
+
+    &lt;form action="/demo-submit" method="POST"&gt;
+        &lt;div&gt;
+            &lt;label for="name"&gt;1. Name (Required):&lt;/label&gt;
+            &lt;input type="text" id="name" name="user_name" required&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="email"&gt;2. Email (Must be an email):&lt;/label&gt;
+            &lt;input type="email" id="email" name="user_email" required&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="pass"&gt;3. Password (8-20 chars):&lt;/label&gt;
+            &lt;input type="password" id="pass" name="user_pass"
+                   required minlength="8" maxlength="20"&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="qty"&gt;4. Quantity (Must be 1-5):&lt;/label&gt;
+            &lt;input type="number" id="qty" name="quantity" min="1" max="5"&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="zip"&gt;5. Zip Code (5 digits only):&lt;/label&gt;
+            &lt;input type="text" id="zip" name="zip_code"
+                   pattern="[0-9]{5}"
+                   placeholder="e.g., 90210"&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div&gt;
+            &lt;label for="terms"&gt;
+                &lt;input type="checkbox" id="terms" name="terms" value="agreed" required&gt;
+                6. You MUST agree to the terms
+            &lt;/label&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;input type="submit" value="Try to Submit"&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="The strict form in the browser after clicking Try to Submit with everything empty: the Name box is highlighted and a tooltip says Please fill out this field.">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="10" width="680" height="300" rx="14"/>
+        <rect class="box f-card" x="250" y="78" width="240" height="30" rx="4"/>
+        <rect class="lr" x="246" y="74" width="248" height="38" rx="6"/>
+        <rect class="box f-yellow" x="258" y="122" width="280" height="34" rx="6"/>
+        <path class="box f-yellow" d="M276 122 L 286 112 L 296 122 Z"/>
+        <rect class="box f-card" x="250" y="172" width="240" height="30" rx="4"/>
+        <rect class="box f-card" x="250" y="216" width="240" height="30" rx="4"/>
+        <rect class="box f-grey" x="40" y="260" width="150" height="34" rx="6"/>
+      </g>
+      <text class="t" x="40" y="54" style="font-size:24px;font-weight:700">Strict Form (Validation Demo)</text>
+      <text class="t" x="40" y="99">1. Name (Required):</text>
+      <text class="t" x="272" y="145">! Please fill out this field.</text>
+      <text class="t" x="40" y="193">2. Email:</text>
+      <text class="t" x="40" y="237">3. Password:</text>
+      <text class="t" x="115" y="283" text-anchor="middle">Try to Submit</text>
+      <text class="ts" x="250" y="283">…fields 4 to 6 continue below</text>
+    </svg></div>
+    <figcaption>The browser jumps to the first problem and explains it (message wording varies by browser).</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b><code>required</code></b>Name, Email, Password and Terms can’t be left blank.</div></li>
+    <li><span class="dot">2</span><div><b><code>type="email"</code></b>The browser itself checks the email format (an <code>@</code> and a domain).</div></li>
+    <li><span class="dot">3</span><div><b><code>minlength</code> / <code>maxlength</code></b>The password must be 8 to 20 characters.</div></li>
+    <li><span class="dot">4</span><div><b><code>min</code> / <code>max</code></b>Quantity accepts only 1 to 5.</div></li>
+    <li><span class="dot">5</span><div><b><code>pattern</code></b>Zip Code must be exactly 5 digits (<code>12345</code> passes, <code>1234A</code> fails). The <code>placeholder</code> shows a grey hint inside the empty box.</div></li>
+    <li><span class="dot">6</span><div><b><code>required</code> on a checkbox</b>Forces the user to tick “I agree” before continuing. A very common pattern.</div></li>
+  </ol>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Internal tools you build for customers (a ticket intake form, a prompt-configuration page, a data-upload screen) are mostly forms. Get <code>name</code> right so the backend receives every field, use <code>multipart/form-data</code> for uploads, add labels for accessibility audits, and always validate again on the server.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Form (<code>&lt;form&gt;</code>)</dt><dd>An invisible wrapper around form controls that tells the browser where (<code>action</code>) and how (<code>method</code>) to send their data.</dd></div>
+    <div><dt><code>action</code></dt><dd>The form attribute holding the server address that receives the submitted data, like the “To:” on an envelope.</dd></div>
+    <div><dt><code>enctype</code></dt><dd>How form data is packed before sending; the default URL-encoded string for text, or <code>multipart/form-data</code> for file uploads.</dd></div>
+    <div><dt>Form control</dt><dd>An element the user fills in or clicks, such as <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>, <code>&lt;select&gt;</code> or <code>&lt;button&gt;</code>.</dd></div>
+    <div><dt><code>name</code> attribute</dt><dd>The label attached to a field’s data when it is sent, as in <code>MainCourse=Cheeseburger</code>. Fields without a name are not sent.</dd></div>
+    <div><dt><code>value</code> attribute</dt><dd>The data a field holds: default text for typed fields, or the hidden answer sent for a chosen radio, checkbox or option. On submit and reset buttons it is the button text.</dd></div>
+    <div><dt><code>id</code> attribute</dt><dd>A unique name for one element on the page, used to link a label to its input and to target the element from CSS or JavaScript.</dd></div>
+    <div><dt>Radio button</dt><dd>A round input for choosing exactly one option; radios sharing the same <code>name</code> form one group.</dd></div>
+    <div><dt>Checkbox</dt><dd>A square input for choosing any number of options; each ticked box sends its value under the shared name.</dd></div>
+    <div><dt>Dropdown (<code>&lt;select&gt;</code>)</dt><dd>A collapsible list of <code>&lt;option&gt;</code> elements for choosing one item from many while saving space.</dd></div>
+    <div><dt>Label (<code>&lt;label&gt;</code>)</dt><dd>A text description linked to a form field through matching <code>for</code> and <code>id</code>; clicking it focuses the field and screen readers announce it.</dd></div>
+    <div><dt>Fieldset and legend</dt><dd><code>&lt;fieldset&gt;</code> groups related fields inside a border; <code>&lt;legend&gt;</code> is the group’s title, announced by screen readers.</dd></div>
+    <div><dt>Client-side validation</dt><dd>Checks done by the browser before sending, using attributes like <code>required</code>, <code>min</code> and <code>pattern</code>. Helpful for users, but the server must validate again.</dd></div>
+    <div><dt><code>pattern</code></dt><dd>A validation attribute holding a regular expression the value must match, such as <code>[0-9]{5}</code> for exactly five digits.</dd></div>
+    <div><dt><code>readonly</code> vs <code>disabled</code></dt><dd>Both block editing; a <code>readonly</code> field’s value is still sent, a <code>disabled</code> field is greyed out and not sent.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>Which <code>&lt;form&gt;</code> attribute says <i>where</i> the data should be sent?</p>
+      <ol><li><code>method</code></li><li><code>target</code></li><li><code>action</code></li><li><code>enctype</code></li></ol>
+      <p class="why"><code>action</code> is the destination address; <code>method</code> is how it is sent, and <code>target</code> is where the reply opens.</p></div>
+    <div class="q" data-answer="2"><p>A field has <code>value="Lemonade"</code> but no <code>name</code>. What does the server receive for it?</p>
+      <ol><li><code>Lemonade</code></li><li>Nothing at all</li><li><code>drink=Lemonade</code></li><li>An error message</li></ol>
+      <p class="why">The browser only sends fields that have a name. Without one, the value is thrown away.</p></div>
+    <div class="q" data-answer="4"><p>Three radio buttons let the user pick all three at once. What is most likely wrong?</p>
+      <ol><li>They have no <code>id</code></li><li>They have no <code>checked</code></li><li>They have no <code>value</code></li><li>They don’t share the same <code>name</code></li></ol>
+      <p class="why">Radios become one “pick only one” group by sharing the exact same <code>name</code>.</p></div>
+    <div class="q" data-answer="1"><p>Your form has <code>&lt;input type="file"&gt;</code>. Which <code>enctype</code> do you need?</p>
+      <ol><li><code>multipart/form-data</code></li><li><code>application/x-www-form-urlencoded</code></li><li><code>text/plain</code></li><li>None; files are sent automatically</li></ol>
+      <p class="why">The default encoding can’t carry files. <code>multipart/form-data</code> splits the form into parts, including the file.</p></div>
+    <div class="q" data-answer="3"><p>In <code>&lt;option value="CAN"&gt;Canada&lt;/option&gt;</code>, what does the server receive if it is chosen?</p>
+      <ol><li><code>Canada</code></li><li><code>option</code></li><li><code>CAN</code>, under the select’s name</li><li>Both Canada and CAN</li></ol>
+      <p class="why">Users see the text between the tags; the server gets the option’s <code>value</code>, paired with the <code>&lt;select&gt;</code>’s name.</p></div>
+    <div class="q" data-answer="2"><p>What links <code>&lt;label for="x"&gt;</code> to its input?</p>
+      <ol><li>The input’s <code>name="x"</code></li><li>The input’s <code>id="x"</code></li><li>The input’s <code>value="x"</code></li><li>Placing them on the same line</li></ol>
+      <p class="why">A label’s <code>for</code> must match the input’s <code>id</code>. Then clicking the label focuses the input.</p></div>
+    <div class="q" data-answer="4"><p>You show a user’s account number in a form. They must not change it, but the server needs it. Which attribute?</p>
+      <ol><li><code>disabled</code></li><li><code>required</code></li><li><code>hidden</code> text in a <code>&lt;p&gt;</code></li><li><code>readonly</code></li></ol>
+      <p class="why"><code>readonly</code> blocks editing but still sends the value. <code>disabled</code> would not send it at all.</p></div>
+    <div class="q" data-answer="1"><p>Your form uses <code>required</code> and <code>pattern</code>. Is the server now safe from bad input?</p>
+      <ol><li>No; browser checks can be bypassed, so the server must validate too</li><li>Yes, the browser blocks all bad data</li><li>Yes, if the form uses POST</li><li>Only if <code>type="password"</code> is used</li></ol>
+      <p class="why">Client-side validation helps users, but anyone can skip it. Security comes from checking again on the server.</p></div>
+    <div class="q" data-answer="3"><p>Which value of <code>pattern</code> accepts exactly five digits?</p>
+      <ol><li><code>[5]{0-9}</code></li><li><code>[0-5]</code></li><li><code>[0-9]{5}</code></li><li><code>{5}[digits]</code></li></ol>
+      <p class="why"><code>[0-9]</code> means one digit and <code>{5}</code> means exactly five of them.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A <b>&lt;form&gt;</b> wraps controls and sends them to its <b>action</b>; every field needs a <b>name</b> (and a <b>value</b> for choices) to be sent, a <b>&lt;label&gt;</b> linked by for/id to be usable, and <b>validation attributes</b> to catch mistakes early, while the <b>server</b> still checks everything again.</p>
+  <p>Next up: the Web &amp; HTML module wraps here. Continue with Python Fundamentals, starting with Python Basics · Part 1, to write the code that runs on the other side of the form.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

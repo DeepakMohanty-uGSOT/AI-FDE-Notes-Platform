@@ -24,6 +24,7 @@
 <!-- 1 -->
 <section class="ch" id="what">
   <h2>What is Forward Deployed Engineering?</h2>
+  <figure class="shot"><img src="img/01.webp" alt="Illustration: an FDE at a laptop between the software company on the left and the customer environment and data on the right, with panels for the customer&#39;s real-world problems, understands problem, builds solution, and deploys and improves with a feedback loop. Bottom strip: Software Company, FDE, Works with Customer, Understands Problem, Builds Solution, Deploys and Improves." width="1400" height="765"><figcaption>Technical immersion over physical proximity: company → FDE → works with customer → understands problem → builds solution → deploys &amp; improves.</figcaption></figure>
   <div class="story"><b class="lbl">From the army to the office</b>The term <b>“forward deployed”</b> comes from the military. When troops are forward deployed, they are sent closer to the <b>front line</b>, where the real action is happening, instead of staying back at the main base.</div>
   <p>In technology the idea is the same:</p>
   <div class="two">
@@ -53,7 +54,8 @@
   <h3>A simple example</h3>
   <p>A software company builds an AI platform. Its engineering team builds the main product:</p>
   <div class="flow"><span>Software company</span><span>builds the product</span><span class="ok">AI platform</span></div>
-  <p>But a customer has a unique problem: <i>“We want to connect your AI platform to our existing database and use our internal data.”</i> That needs <b>custom coding</b>, <b>APIs</b>, <b>data integration</b>, <b>cloud configuration</b> and <b>testing</b>. The FDE works directly with that customer to make it happen.</p>
+  <p>But a customer has a unique problem: <i>“We want to connect your AI platform to our existing database and use our internal data.”</i> That needs <b>custom coding</b>, <b>APIs</b>, <b>data integration</b>, <b>cloud configuration</b> and <b>testing</b>. The FDE works directly with that customer:</p>
+  <figure class="shot"><img src="img/02.webp" alt="Staircase diagram: Software Company (assigns FDE to a specific customer account), FDE Works with Customer (direct engagement to understand their needs), Understands Problem (problem diagnosis of the customer&#39;s technical issues), Builds Solution (designs and builds a tailored technical solution), Deploys and Improves (deploys the solution and continuously monitors and improves it)." width="865" height="514"><figcaption>Each step up the stairs: assign → engage → diagnose → build → deploy and keep improving.</figcaption></figure>
   <div class="sticky info l"><strong>Forward ≠ on site</strong> “Forward deployed” does not mean the engineer must physically sit in the customer’s office. It means the engineer is <b>closely connected to the customer and their real-world technical problems</b>. Many FDEs work remotely for most of a project.</div>
 </section>
 
@@ -97,12 +99,18 @@
     <figcaption>The product is the same for everyone. Every customer’s environment is different.</figcaption>
   </figure>
   <p><mark class="g">FDE exists because real customers have unique and complicated environments that the standard product alone cannot always handle.</mark> The FDE takes the company’s <b>core product</b> and <b>adapts, integrates and extends</b> it to solve the customer’s specific problem.</p>
+  <figure class="shot"><img src="img/03.webp" alt="Illustration: the software company&#39;s core product goes to an FDE who understands the customer, then works inside the customer&#39;s environment with its database, APIs and legacy system to produce a working solution. Caption in the image: the FDE takes the company&#39;s core product and adapts, integrates, and extends it to solve the customer&#39;s specific problem." width="1024" height="559"><figcaption>Core product in, working solution out: the FDE adapts, integrates and extends it inside the customer’s environment.</figcaption></figure>
 </section>
 
 <!-- 3 -->
 <section class="ch" id="product-vs-forward">
   <h2>Product-facing vs forward deployed engineering</h2>
   <p>To understand an FDE better, compare it with a traditional <b>product engineer</b>. Engineers in both roles <b>write code and solve technical problems</b>. The difference is <mark>what problem they solve and who they work closely with</mark>.</p>
+  <ul><li><b>Product-facing engineering</b> → builds and improves the core product.</li><li><b>Customer-facing engineering (FDE)</b> → takes that technology and makes it work for a specific customer’s problem.</li></ul>
+  <div class="shots">
+    <figure class="shot"><img src="img/04.webp" alt="Infographic: What does a product-facing engineer do? Product engineers ask how can we make our product better for MANY customers. Around the core product: improving the AI model, building new features, improving performance, fixing bugs, making the system reliable, making the product scalable. Build for many customers: retail business, financial services, e-commerce store, SaaS company, healthcare provider, logistics firm." width="1024" height="559"><figcaption>Product-facing engineer: one core product, built for many customers.</figcaption></figure>
+    <figure class="shot"><img src="img/05.webp" alt="Infographic: FDE bridging technology and customer solutions. The core question: how can we make our technology work for this customer&#39;s particular situation? Understanding the customer: business problem, existing software, databases, APIs, cloud environment, data, security requirements. Practical example: customer database to API to FDE-built integration to the company&#39;s AI platform." width="1400" height="765"><figcaption>FDE: starts from one customer’s situation and connects their database, via an API and an FDE-built integration, to the AI platform.</figcaption></figure>
+  </div>
   <div class="two">
     <div class="card t1 tilt-a"><h4>Product-facing engineer</h4><p>Works on the company’s <b>core product</b>, built for <b>many customers</b>. In an AI-platform company they might improve the AI model, build new features, fix bugs, improve performance, and make the system more reliable and scalable.</p><p><b>Main question:</b> “How can we make our product better for many customers?”</p></div>
     <div class="card t5 tilt-b"><h4>Forward deployed engineer</h4><p>Starts with <b>one customer’s specific problem</b> and works directly with them to understand their business problem, existing software, databases, APIs, cloud environment, data and security requirements.</p><p><b>Main question:</b> “How can we make our technology work for this customer’s particular situation?”</p></div>
@@ -202,7 +210,8 @@
     <li><span class="dot">6</span><div><b>Why is the current system slow?</b>Measure before guessing. <span class="tag">→ the real cause</span></div></li>
   </ol>
   <p>The FDE is moving from <mark>“Something is wrong.”</mark> to <mark class="g">“Here is exactly what is wrong.”</mark></p>
-  <div class="flow"><span class="bad">Business complaint</span><span>Questions</span><span>Look at systems &amp; data</span><span class="ok">Exact technical problem</span></div>
+  <p><b>Practical flow:</b></p>
+  <figure class="shot"><img src="img/06.webp" alt="Flow of hexagons: Slow Registration System (business problem, not technical), Talk to Customer (understand the business problem), Ask Technical Questions (discover the technical root cause), Investigate System Components (analyze API, fraud check, database), Exact Problem Identified (understand technical root cause)." width="1105" height="364"><figcaption>From a business complaint to the exact technical root cause.</figcaption></figure>
 
   <h3>Stage 2 · Translating business into technology</h3>
   <p>Next, the FDE converts the business requirement into a <b>technical solution</b>.</p>
@@ -210,7 +219,8 @@
     <div class="card t3 tilt-a"><h4>Customer says</h4><p>“Stop fraudulent registrations without making registration slow.”</p></div>
     <div class="card t2 tilt-b"><h4>FDE translates</h4><p>“We need to add a <b>fast fraud-detection step</b> before saving a new user.”</p></div>
   </div>
-  <div class="flow"><span class="hl">Business requirement</span><span>FDE translation</span><span class="ok">Technical blueprint</span></div>
+  <p><b>Practical flow:</b></p>
+  <figure class="shot"><img src="img/07.webp" alt="Two translations. Business Language: stop fraudulent registrations without making registration slow, becomes Technical Language: add fraud detection to registration API. Conceptual Goal: identify and block suspicious user registrations, becomes Operational Workflow: connect API to AI model and database." width="1050" height="388"><figcaption>Business language → technical language, and conceptual goal → operational workflow.</figcaption></figure>
 
   <h3>Stage 3 · Building and integrating</h3>
   <p>With the blueprint ready, the FDE rolls up their sleeves and writes real code. <mark>FDEs are not just advisors; they are hands-on software engineers.</mark> Depending on the need, an FDE will:</p>
@@ -261,7 +271,7 @@
   <h3>Stage 4 · Deploying and iterating</h3>
   <p>Writing the code is only half the battle. A solution is not finished until it runs in the customer’s real environment and works smoothly.</p>
   <div class="flow"><span class="op">Code</span><span class="op">Docker</span><span class="op">AWS / Azure</span><span class="ok">Running application</span></div>
-  <p>The customer starts using it, and the first version may not be perfect: <i>“Fraud detection works, but registration has become slower.”</i> The FDE investigates again and optimises the slow step:</p>
+  <p>The customer starts using it, and the first version may not be perfect: <i>“Fraud detection works, but registration has become slower.”</i> The FDE investigates again and may optimise the system. Before and after the improvement:</p>
   <div class="two">
     <div class="flow v"><span>Registration</span><span>Fraud API</span><span class="bad">Wait</span><span>Database</span></div>
     <div class="flow v"><span>Registration</span><span class="ok">Fast fraud check</span><span>Database</span></div>
@@ -334,7 +344,7 @@
   <h2>FDE vs Software Engineer</h2>
   <p>Both are highly technical developers. Both write code, debug errors, build APIs and manage databases. The difference is not <i>what</i> skills they have, but <b>where they apply them</b>.</p>
   <div class="two">
-    <div class="card t1 tilt-a"><h4>Software Engineer</h4><p><b>Builds and improves the product.</b> Works behind the scenes on the company’s core software: new features for everyone, bug fixes, performance, security, and scaling so it doesn’t crash when thousands log in at once.</p><p><i>“How can we build a reliable, high-quality product that works for many different users right out of the box?”</i></p></div>
+    <div class="card t1 tilt-a"><h4>Software Engineer</h4><p><b>Builds and improves the product.</b> Works behind the scenes on the company’s core software: new features for everyone, bug fixes, performance, ensuring security to protect data, and scaling so it doesn’t crash when thousands log in at once.</p><p><i>“How can we build a reliable, high-quality product that works for many different users right out of the box?”</i></p></div>
     <div class="card t5 tilt-b"><h4>FDE</h4><p><b>Makes the product work in a specific customer’s environment.</b> Out in the real world, figuring out how to plug the product into a customer’s often messy setup, one client at a time.</p><p><i>“How do I make the company’s technology work correctly in this customer’s environment?”</i></p></div>
   </div>
   <p>For example, a customer wants the company’s AI platform to use their existing database. Their environment has an existing application, an internal API, a database and cloud infrastructure. The AI platform is separate, so the FDE connects them:</p>
@@ -348,7 +358,8 @@
       <div class="flow v"><span>Customer system</span><span>Customer requirement</span><span class="hl">FDE</span><span>Integration</span><span class="ok">Company product</span></div></div>
   </div>
 
-  <h3>Who they talk to</h3>
+  <h3>Internal team collaboration vs direct customer interaction</h3>
+  <p>Both roles collaborate with other engineers. The difference is the amount and type of customer interaction.</p>
   <div class="tbl"><table>
     <tr><th style="width:50%">Software Engineer works mainly with</th><th style="width:50%">FDE works with</th></tr>
     <tr><td>Software engineers, product managers, designers, QA engineers, DevOps/platform teams</td><td>Customer developers, customer IT teams, customer data teams, business teams, <b>plus</b> product managers, software engineers and cloud/platform teams</td></tr>
@@ -400,6 +411,7 @@
 <section class="ch" id="vs-ai">
   <h2>FDE vs AI Engineer</h2>
   <p>Both can work with AI systems, APIs, databases, cloud platforms and production applications. The main difference is their <b>focus</b>.</p>
+  <figure class="shot"><img src="img/08.webp" alt="Illustration: FDE vs AI Engineer, the focus distinction. Left: the AI engineer in the creation phase, tuning algorithms and training the model brain. Right: the FDE holding the brain and connecting it to data pipelines, the factory floor, industrial automation, business applications and smart data insights. Shared technologies: AI systems, APIs, databases, cloud platforms, production apps." width="1024" height="559"><figcaption>The AI Engineer creates the brain; the FDE connects it to real business systems. Both share the same technologies.</figcaption></figure>
   <div class="story"><b class="lbl">The brain and its job</b>The <b>AI Engineer builds the brain</b>: they create, train and refine AI models and AI systems so they are smart, accurate and fast. <mark>The FDE gives the brain a job</mark>: they plug that ready-made brain into a specific customer’s business, decide how to feed it data and what to do with its answers.</div>
 
   <h3>What does an AI Engineer do?</h3>
@@ -472,6 +484,7 @@
 <section class="ch" id="vs-applied-ai">
   <h2>FDE vs Applied AI Engineer</h2>
   <p>These two can look very similar. Both may work with AI models, APIs, data, RAG, AI agents, the cloud, backend systems and integrations. The difference is their <b>primary focus</b>.</p>
+  <figure class="shot"><img src="img/09.webp" alt="Infographic: Applied AI Engineer vs FDE, shared tech, distinct focus. Shared: AI models, APIs, data, RAG, AI agents, cloud, backend systems, integrations. Applied AI Engineer builds the AI-powered application: smart, accurate, functional; create core functionality; develop agents and RAG; build scalable applications. FDE forces AI to work in messy, real-world environments with old systems, dirty data and custom deployment: deploy into customer context, solve specific problems, navigate messy legacy environments, adapt data and integrations." width="1400" height="765"><figcaption>Same toolbox, different job: build the AI app vs make it work in a messy real-world environment.</figcaption></figure>
   <div class="two">
     <div class="card t2 tilt-a"><h4>Applied AI Engineer · the app builder</h4><p><b>Starting point:</b> “We have a real-world problem. How can we build an AI solution to solve it?”</p><p><b>Does:</b> tests different models (“Does Model A or Model B answer more accurately?”), builds the core RAG pipeline (chunking documents, creating embeddings, setting up vector databases), designs prompts and AI agents.</p><p><b>Finish line:</b> a working AI application that gives accurate answers in a <b>controlled environment</b>.</p></div>
     <div class="card t5 tilt-b"><h4>FDE · the deployer</h4><p><b>Starting point:</b> a customer’s problem, e.g. “We want an AI assistant, but our documents are stored in our internal system.”</p><p><b>Does:</b> investigates the customer environment (internal documents → internal database → internal API → company application), then connects it to the AI platform.</p><p><b>Finish line:</b> the AI application working inside the customer’s <b>messy, real-world environment</b>.</p></div>
@@ -484,6 +497,7 @@
 <section class="ch" id="vs-se">
   <h2>FDE vs Solutions Engineer</h2>
   <p>A <b>Solutions Engineer (SE)</b> and an FDE both work closely with customers and need strong technical knowledge. The biggest difference is <mark>when and why they work with the customer</mark>.</p>
+  <figure class="shot"><img src="img/10.webp" alt="Illustration: Solutions Engineer, the before, proves to sell, presenting a solution fit and proposal (requirements validation, proof of concept, technical proposal) to a buyer holding a Buy Now contract. FDE, the after, makes it work in the real world with cloud deployment and legacy system integration. Shared skills: technical expertise, customer collaboration, problem solving." width="895" height="411"><figcaption>The SE proves it can work so the customer buys; the FDE makes it work after the sale.</figcaption></figure>
   <div class="two">
     <div class="card t1 tilt-a"><h4>Solutions Engineer · the “before”</h4><p>Proves the product <b>can</b> work, so the customer decides to buy it.</p></div>
     <div class="card t5 tilt-b"><h4>FDE · the “after”</h4><p>Does the hands-on engineering to make it <b>actually</b> work in the customer’s real environment.</p></div>
@@ -576,6 +590,7 @@
 <section class="ch" id="vs-consultant">
   <h2>FDE vs Consultant</h2>
   <p>Both work with customers, understand the business, identify problems and suggest solutions. The difference is <mark>what they do after understanding the problem</mark>.</p>
+  <figure class="shot"><img src="img/11.webp" alt="Side by side. Consultant: understand and recommend; understand the business, identify problems, recommend solutions such as strategy, roadmap, best practices and next steps; focus: advisory and strategic recommendations. FDE: understand and build; understand the business, identify problems, build and deploy solutions, with an integration built by the FDE between customer systems and the AI platform; focus: hands-on development and delivery." width="1042" height="493"><figcaption>Same first two steps; then the consultant recommends while the FDE builds and deploys.</figcaption></figure>
   <div class="two">
     <div class="card t7 tilt-a"><h4>Consultant · the advisor</h4><p>Studies business processes, current systems, costs, performance, organisational problems, requirements and risks. Delivers <b>recommendations, strategy, roadmaps, process improvements and plans</b>.</p><p><i>“What is the best advice I can give this customer so they can fix their problem?”</i></p></div>
     <div class="card t5 tilt-b"><h4>FDE · the builder</h4><p>Figures out the problem and then <b>actually builds it</b>: designs the solution, writes the code, connects the systems and puts it live.</p></div>
@@ -629,6 +644,7 @@
 <section class="ch" id="vs-implementation">
   <h2>FDE vs Implementation Engineer</h2>
   <p>Both work directly with customers to get a company’s software working in their environment. The difference:</p>
+  <figure class="shot"><img src="img/12.webp" alt="Side by side. Implementation Engineer, the configurator: product setup checklist (configure settings, set up users, enable features, connect integrations, go live) using existing features; goal: get the existing product up and running for the customer. FDE, the custom builder: customer systems to a custom integration built by the FDE to the product platform; builds custom integrations, solves complex unique problems, extends beyond standard product capabilities, works closely with customer engineering teams; goal: build and deploy a solution that works in the customer&#39;s real environment." width="1044" height="463"><figcaption>Configure what exists vs build what is missing.</figcaption></figure>
   <div class="two">
     <div class="card t8 tilt-a"><h4>Implementation Engineer · the configurator</h4><p>Sets up the existing product using the <b>features, tools and configuration options it already has</b>.</p><p><i>“How do we implement our existing product correctly for this customer?”</i></p></div>
     <div class="card t5 tilt-b"><h4>FDE · the custom builder</h4><p>Steps in when the customer’s problem <b>cannot be fully solved</b> with standard product capabilities and needs additional engineering.</p></div>

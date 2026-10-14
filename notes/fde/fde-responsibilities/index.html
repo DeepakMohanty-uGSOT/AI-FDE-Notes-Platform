@@ -125,7 +125,7 @@
   <figure>
     <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Inside AWS, a private network: SSO login, claims web app, claims API, CMS and PostgreSQL. Outside, a new AI service asks whether it can reach the private API.">
       <g class="rough">
-        <rect class="box f-none dash" x="10" y="30" width="565" height="225" rx="18"/>
+        <rect class="box f-none dash" x="10" y="34" width="565" height="221" rx="18"/>
         <rect class="box f-card" x="25" y="95" width="120" height="60" rx="12"/>
         <rect class="box f-blue" x="170" y="95" width="120" height="60" rx="12"/>
         <rect class="box f-blue" x="315" y="95" width="100" height="60" rx="12"/>
@@ -138,7 +138,7 @@
         <rect class="box f-purple" x="600" y="95" width="110" height="60" rx="12"/>
         <path class="lr dash" d="M655 92 C 640 50, 280 50, 235 90" marker-end="url(#ahr)"/>
       </g>
-      <text class="tr" x="22" y="58">AWS · private network</text>
+      <text class="tr" x="22" y="62">AWS · private network</text>
       <text class="t" x="85" y="121" text-anchor="middle">Claims</text>
       <text class="t" x="85" y="142" text-anchor="middle">web app</text>
       <text class="t" x="230" y="130" text-anchor="middle">Claims API</text>
@@ -146,7 +146,7 @@
       <text class="t" x="500" y="130" text-anchor="middle">PostgreSQL</text>
       <text class="t" x="85" y="215" text-anchor="middle">SSO login</text>
       <text class="t" x="655" y="130" text-anchor="middle">AI service</text>
-      <text class="tr" x="440" y="44" text-anchor="middle">can it call this API?</text>
+      <text class="tr" x="440" y="22" text-anchor="middle">can it call this API?</text>
       <text class="ts" x="655" y="185" text-anchor="middle">new, outside</text>
       <text class="ts" x="655" y="205" text-anchor="middle">the network</text>
       <text class="ts" x="365" y="215" text-anchor="middle">limit: 100 requests / minute</text>
@@ -338,7 +338,7 @@
       <text class="t" x="450" y="224" text-anchor="middle">Claims API</text>
       <text class="t" x="270" y="224" text-anchor="middle">CMS</text>
       <text class="t" x="90" y="224" text-anchor="middle">PostgreSQL</text>
-      <text class="ts" x="660" y="165">human check</text>
+      <text class="ts" x="620" y="165" text-anchor="end">human check</text>
     </svg></div>
     <figcaption>The AI does the heavy lifting; a person still approves before anything is final.</figcaption>
   </figure>
@@ -505,6 +505,7 @@ Claim ID: C-88421   Reason: Timeout   Action: Queued for retry</code></pre>
   <p>Now an engineer can see what failed, when, and for which claim.</p>
 
   <h3>Testing and debugging</h3>
+  <p>Before release, the FDE tests more than the happy path. Three kinds of tests are especially important:</p>
   <div class="tbl"><table>
     <tr><th>Test type</th><th>Example at ABC</th><th>Expected result</th></tr>
     <tr><td>Normal case</td><td>Anita uploads a clear motor claim PDF</td><td>Correct details extracted and saved</td></tr>
@@ -710,7 +711,7 @@ Claim ID: C-88421   Reason: Timeout   Action: Queued for retry</code></pre>
       </g>
       <text class="t" x="138" y="67" text-anchor="end">First test</text>
       <text class="t" x="138" y="137" text-anchor="end">After fix</text>
-      <text class="th" x="552" y="72">78%</text>
+      <text class="th" x="547" y="72">78%</text>
       <text class="th" x="622" y="142">92%</text>
       <text class="tr" x="592" y="192" text-anchor="end">target 90%</text>
       <text class="ts" x="150" y="190" text-anchor="middle">0%</text>
@@ -733,7 +734,7 @@ Claim ID: C-88421   Reason: Timeout   Action: Queued for retry</code></pre>
     <li>Say clearly that the employee <b>still verifies</b> every claim. The AI is a helper, not a replacement.</li>
   </ul>
 
-  <h3>Guides and documentation</h3>
+  <h3>Provide technical guidance and documentation</h3>
   <div class="tbl"><table>
     <tr><th>Guide</th><th>What it explains</th></tr>
     <tr><td>User quick-start</td><td>How to upload a claim and check the extracted details</td></tr>
@@ -779,6 +780,7 @@ Claim ID: C-88421   Reason: Timeout   Action: Queued for retry</code></pre>
   </table></div>
 
   <h3>Measure the impact</h3>
+  <p>The FDE collects real data and compares it before and after. This turns the outcome into real, comparable evidence.</p>
   <div class="tbl"><table>
     <tr><th>Measure</th><th>Before</th><th>After</th></tr>
     <tr><td>Employee time per claim</td><td>30 minutes</td><td>8 minutes</td></tr>

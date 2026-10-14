@@ -87,7 +87,7 @@ Linux is fast</code></pre></div>
     <tr><td><code>-m</code></td><td><b>characters</b> (letters, digits, spaces, punctuation, newlines)</td><td><code>hi.txt</code>: Hello World!</td><td><code>wc -m hi.txt</code></td><td><code>13 hi.txt</code></td></tr>
     <tr><td><code>-c</code></td><td><b>bytes</b> (how much space the text takes)</td><td><code>data.txt</code>: Hello world</td><td><code>wc -c data.txt</code></td><td><code>12 data.txt</code></td></tr>
   </table></div>
-  <p><code>Hello World!</code> has 12 visible characters (H-e-l-l-o, a space, W-o-r-l-d, !). <code>wc -m</code> says 13 because the newline at the end of the line counts too. Likewise <code>Hello world</code> is 11 letters and a space… 11 visible characters + newline = 12 bytes.</p>
+  <p><code>Hello World!</code> has 12 visible characters (H-e-l-l-o, a space, W-o-r-l-d, !). <code>wc -m</code> says 13 because the newline at the end of the line counts too. Likewise <code>Hello world</code> is 10 letters and a space: 11 visible characters + newline = 12 bytes.</p>
   <h3>Characters vs bytes</h3>
   <p>They are not always a 1-to-1 match. <mark>One character on screen can need several bytes of storage.</mark></p>
   <div class="two">
@@ -156,13 +156,13 @@ Zebra</code></pre></div>
   <h3>Numeric sort <code>-n</code></h3>
   <p>Plain <code>sort</code> compares text character by character, so it thinks <b>10</b> comes before <b>2</b> (because “1” comes before “2”). <code>-n</code> tells it to compare whole numbers by value.</p>
   <figure>
-    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Plain sort orders 10, 2, 50, 1 as 1, 10, 2, 50 by first character; sort -n orders them by value as 1, 2, 10, 50">
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Plain sort orders 10, 2, 50, 1 as 1, 10, 2, 50 by first character; sort -n orders them by value as 1, 2, 10, 50">
       <g class="rough">
         <rect class="box f-card" x="20" y="40" width="130" height="160" rx="12"/>
         <rect class="box f-orange" x="290" y="40" width="130" height="160" rx="12"/>
         <rect class="box f-green" x="570" y="40" width="130" height="160" rx="12"/>
         <path class="lr" d="M155 90 L 284 90" marker-end="url(#ahr)"/>
-        <path class="lb" d="M155 150 C 300 215, 450 215, 564 150" marker-end="url(#ahb)"/>
+        <path class="lb" d="M85 204 C 90 250, 630 250, 635 208" marker-end="url(#ahb)"/>
       </g>
       <text class="tm" x="85" y="28" text-anchor="middle">numbers.txt</text>
       <text class="tm" x="85" y="80" text-anchor="middle">10</text>
@@ -175,7 +175,7 @@ Zebra</code></pre></div>
       <text class="tm" x="355" y="144" text-anchor="middle">2</text>
       <text class="tm" x="355" y="176" text-anchor="middle">50</text>
       <text class="ts" x="355" y="28" text-anchor="middle">by first character ✗</text>
-      <text class="tb" x="470" y="186" text-anchor="middle">sort -n</text>
+      <text class="tb" x="360" y="262" text-anchor="middle">sort -n</text>
       <text class="tm" x="635" y="80" text-anchor="middle">1</text>
       <text class="tm" x="635" y="112" text-anchor="middle">2</text>
       <text class="tm" x="635" y="144" text-anchor="middle">10</text>
@@ -330,7 +330,7 @@ e</code></pre></div>
         <path class="lb" d="M312 134 L 558 134"/>
       </g>
       <text class="ts" x="135" y="48" text-anchor="middle">1</text><text class="ts" x="185" y="48" text-anchor="middle">2</text><text class="ts" x="235" y="48" text-anchor="middle">3</text><text class="ts" x="285" y="48" text-anchor="middle">4</text><text class="ts" x="335" y="48" text-anchor="middle">5</text><text class="ts" x="385" y="48" text-anchor="middle">6</text><text class="ts" x="435" y="48" text-anchor="middle">7</text><text class="ts" x="485" y="48" text-anchor="middle">8</text><text class="ts" x="535" y="48" text-anchor="middle">9</text><text class="ts" x="585" y="48" text-anchor="middle">10</text>
-      <text class="th" x="135" y="98" text-anchor="middle">H</text><text class="th" x="185" y="98" text-anchor="middle">E</text><text class="th" x="235" y="98" text-anchor="middle">L</text><text class="th" x="285" y="98" text-anchor="middle">L</text><text class="th" x="335" y="98" text-anchor="middle">O</text><text class="th" x="385" y="98" text-anchor="middle">W</text><text class="th" x="435" y="98" text-anchor="middle">O</text><text class="th" x="485" y="98" text-anchor="middle">R</text><text class="th" x="535" y="98" text-anchor="middle">L</text><text class="th" x="585" y="98" text-anchor="middle">D</text>
+      <text class="t" x="135" y="98" text-anchor="middle">H</text><text class="t" x="185" y="98" text-anchor="middle">E</text><text class="t" x="235" y="98" text-anchor="middle">L</text><text class="t" x="285" y="98" text-anchor="middle">L</text><text class="t" x="335" y="98" text-anchor="middle">O</text><text class="t" x="385" y="98" text-anchor="middle">W</text><text class="t" x="435" y="98" text-anchor="middle">O</text><text class="t" x="485" y="98" text-anchor="middle">R</text><text class="t" x="535" y="98" text-anchor="middle">L</text><text class="t" x="585" y="98" text-anchor="middle">D</text>
       <text class="tm" x="40" y="22">position</text>
       <text class="tb" x="435" y="162" text-anchor="middle">cut -c 5-9  →  OWORL</text>
     </svg></div>
@@ -393,7 +393,7 @@ RAMMI</code></pre></div>
       <text class="ts" x="10" y="50">SET1</text>
       <text class="ts" x="10" y="160">SET2</text>
       <text class="tm" x="415" y="80" text-anchor="middle">hello</text>
-      <text class="th" x="415" y="128" text-anchor="middle">hEllO</text>
+      <text class="tm" x="415" y="128" text-anchor="middle">hEllO</text>
     </svg></div>
     <figcaption>1st of SET1 → 1st of SET2, 2nd → 2nd, and so on.</figcaption>
   </figure>

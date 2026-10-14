@@ -41,6 +41,11 @@
 <section class="ch" id="layers">
   <h2>The layers of Linux architecture</h2>
   <p>Linux is designed in <b>layers</b>, like a building where each floor has its own job. Each layer talks only to the one directly below it.</p>
+  <figure class="shot sm">
+    <img src="img/01.webp" alt="Concentric rings: hardware at the centre, surrounded by the kernel ring, then the shell ring, then the applications ring, with users sitting on the outermost ring" width="664" height="562">
+    <figcaption>The classic “onion” view: users reach the hardware only by passing through applications, the shell and the kernel.</figcaption>
+  </figure>
+  <p>Unrolled into a stack, the same layers look like this:</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="Four stacked layers. Top: user layer with applications. Then the shell. Then the kernel with drivers. Bottom: hardware such as CPU, RAM and disk. Arrows show requests going down and results coming up.">
       <g class="rough">

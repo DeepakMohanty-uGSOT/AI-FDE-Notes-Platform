@@ -466,3 +466,18 @@ pre:has(> .copy){padding-top:34px}
   .corner{display:none}
   .toc-open{font-size:18px;padding:5px 10px}
 }
+
+/* ---------- original screenshots from the course docs ---------- */
+figure.shot{align-items:flex-start}
+figure.shot>a,figure.shot>img{display:block;max-width:100%}
+figure.shot img{display:block;max-width:100%;height:auto;border:2.5px solid var(--ink);border-radius:10px 12px 9px 11px;box-shadow:5px 6px 0 var(--shadow);background:#fff;cursor:zoom-in}
+figure.shot.sm img{max-width:min(100%,460px)}
+figure.shot figcaption::before{content:"📸 ";font-style:normal}
+.lightbox{position:fixed;inset:0;z-index:100;background:rgba(10,12,20,.82);display:grid;place-items:center;padding:20px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.5);background:#fff}
+@media print{figure.shot{break-inside:avoid}figure.shot img{box-shadow:none;max-height:120mm}}
+.codebox>pre+pre,.cmd>pre+pre{margin-top:8px}
+.two>*,.grid>*,.legend>*{min-width:0}
+.flow>span{min-width:0;overflow-wrap:anywhere}
+.shots{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start}
+.shots>figure{min-width:0}

@@ -230,6 +230,7 @@ diff --git a/index.html b/index.html
   <pre><code class="language-bash">git clone https://github.com/username/repo-name.git
 # creates a folder "repo-name" with the project's files and history</code></pre>
   <p>To get the URL on GitHub, open the repository and click the green <b>Code</b> button; the link is shown there.</p>
+  <figure class="shot"><img src="img/01.webp" alt="GitHub repository page for PRABIR07/AuthService-Pizza with the green Code button opened: the Local tab shows Clone with HTTPS, SSH and GitHub CLI options, the SSH URL git@github.com:PRABIR07/AuthService-Pizza.git with a copy button, plus Open with GitHub Desktop and Download ZIP." width="1198" height="732"><figcaption>The green <b>Code</b> button → <b>Local</b> → <b>Clone</b>: pick HTTPS, SSH or GitHub CLI and copy the URL for <code>git clone</code>.</figcaption></figure>
 
   <h3><code>git remote</code> · manage connections</h3>
   <p>A repository can talk to several remotes. <code>git remote</code> lists and manages them.</p>
@@ -306,6 +307,9 @@ git checkout -- &lt;file&gt;                # discard uncommitted edits to a fil
 git checkout &lt;commit_hash&gt; -- &lt;file&gt;  # restore a file from an old commit
 git checkout &lt;commit_hash&gt;            # view an old commit (detached HEAD)
 git checkout --orphan &lt;new_branch&gt;    # new branch with no history</code></pre></div>
+  <p>Checkout can also undo a commit by restoring the files of the commit before it and committing the result as a <b>new</b> commit:</p>
+  <pre><code class="language-bash">git checkout &lt;commit_hash&gt;^ -- .      # restore every file as it was before that commit
+git commit -m "Revert to previous commit"</code></pre>
   <pre><code class="language-bash">git checkout -b feature/new-feature   # everyday shortcut</code></pre>
   <div class="sticky info"><strong>Newer, clearer commands</strong> Since Git 2.23, <code>git switch &lt;branch&gt;</code> (and <code>git switch -c &lt;new&gt;</code>) switches branches, and <code>git restore &lt;file&gt;</code> discards changes to a file. They split <code>checkout</code>’s two jobs; both styles work.</div>
   <div class="sticky warn l"><strong>Detached HEAD</strong> After <code>git checkout &lt;commit_hash&gt;</code> you are not on any branch. Look around freely, but commits made here are easy to lose. To keep work, create a branch first: <code>git switch -c rescue</code>.</div>
@@ -318,6 +322,7 @@ git checkout --orphan &lt;new_branch&gt;    # new branch with no history</code><
   <p>Integrates the changes from one branch into another, typically a finished feature branch back into <code>main</code>. Switch to the branch that should <b>receive</b> the changes, then merge:</p>
   <pre><code class="language-bash">git checkout main
 git merge feature</code></pre>
+  <figure class="shot"><img src="img/03.webp" alt="Git merge illustration: main has commits a to g. Branch feat/users (commits 1, 2) starts at b and merges into e; feat/product (w, x, y) starts at c and merges into f; feat/categories (A, B) starts at d and merges into g." width="832" height="494"><figcaption>Git merge: each feature branch (users, product, categories) is merged back into <code>main</code> when it is done.</figcaption></figure>
   <h3><code>git rebase</code></h3>
   <p>Also integrates changes, but by <b>replaying your branch’s commits on top of</b> another branch. The result is a <mark>clean, straight-line history</mark> with no merge commit.</p>
   <div class="codebox"><span class="cap">rebase feature onto the latest main</span><pre><code class="language-bash"># 1. update main
@@ -329,6 +334,7 @@ git checkout feature
 
 # 3. replay feature's commits on top of main
 git rebase main</code></pre></div>
+  <figure class="shot sm"><img src="img/04.webp" alt="Git rebase illustration. Before: main has commits b, c, d, e, and a feature branch with commits 1, 2, 3 starts from c. After git rebase: one straight line on main: b, c, d, e, 1, 2, 3." width="842" height="690"><figcaption>Git rebase: the feature commits 1, 2, 3 are replayed after <code>e</code>, giving one straight line.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 400" role="img" aria-label="Top: git merge. main C1 C2 C3 and feature F1 F2 from C2 are joined by a new merge commit M. Bottom: git rebase. F1 and F2 are replayed after C3 as new commits F1 prime and F2 prime in one straight line">
       <g class="rough">
@@ -383,6 +389,7 @@ git rebase main</code></pre></div>
   <pre><code class="language-bash">git checkout main
 git merge --squash &lt;branch_name&gt;   # stage all the branch's changes as one set
 git commit -m "feat: Add checkout page"</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Git squash illustration: main has commits a, b, c, d, e. Branch feat/users with commits 1, 2, 3 starts at b; arrows from all three commits land on a single commit on main, labelled Squashed all commits to F." width="836" height="294"><figcaption>Git squash: the three commits of <code>feat/users</code> arrive on <code>main</code> as one single commit.</figcaption></figure>
   <div class="flow"><span class="op">wip</span><span class="op">fix typo</span><span class="op">really fix</span><span class="ok">feat: Add checkout page</span></div>
   <p>You can also squash commits on your own branch with interactive rebase, <code>git rebase -i HEAD~3</code>, and GitHub offers a “Squash and merge” button on pull requests.</p>
 
@@ -390,6 +397,7 @@ git commit -m "feat: Add checkout page"</code></pre>
   <p>Copies <b>one specific commit</b> from another branch and applies it to your current branch, without merging the whole branch. Handy for taking just one bug fix.</p>
   <pre><code class="language-bash">git checkout main
 git cherry-pick &lt;commit_hash&gt;</code></pre>
+  <figure class="shot sm"><img src="img/02.webp" alt="Cherry-pick illustration: main has commits a, b, c, d; feat/branch starts at b with commits 1 and 2. An arrow labelled cherry pick copies commit 1 onto main as d." width="756" height="398"><figcaption>Cherry-pick: only commit <code>1</code> from <code>feat/branch</code> is copied onto <code>main</code>; commit <code>2</code> stays behind.</figcaption></figure>
 </section>
 
 <!-- 9 -->
@@ -507,6 +515,7 @@ d4e8a10 HEAD@{2}: commit: docs: README</code></pre>
   <p>Deletes objects (commits, trees, blobs) from Git’s database that no branch, tag or reflog entry can reach any more. It is normally run for you by <code>git gc</code>, so you rarely need it directly.</p>
   <pre><code class="language-bash">git prune</code></pre>
   <h3><code>git help</code> · built-in documentation</h3>
+  <p>Shows the documentation shipped with Git for any command. <code>git help commit</code> opens the manual page of <code>git commit</code>, with detailed information about how to use it, its options, and examples.</p>
   <pre><code class="language-bash">git help &lt;command&gt;    # full manual page, e.g. git help commit
 git help -a           # list all available Git commands</code></pre>
 </section>

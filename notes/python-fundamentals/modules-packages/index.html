@@ -33,65 +33,30 @@
     <div class="card t5 tilt-a"><h4>Validation</h4><p>checking user input</p></div>
     <div class="card t7 tilt-b"><h4>Fees</h4><p>fee management</p></div>
   </div>
-  <p>Put all of that in one file and you get a 2000-line monster. Finding one function is slow, several people editing the same file collide, and every small change risks breaking something unrelated a few hundred lines away.</p>
+  <p>If you put all of this into one file, you might end up with something like this:</p>
+  <figure class="shot"><img src="img/01.webp" alt="A main.py editor window with user, authentication, product, order and payment functions running past 1000 lines; beside it: one file, everything mixed together, 1000+ lines and dozens of functions, hard to read, navigate and fix" width="1099" height="582" loading="lazy"><figcaption>One file, everything mixed together: 1000+ lines that are hard to read, navigate and fix.</figcaption></figure>
+  <p>Now imagine trying to find one specific function inside a file that long, or several people working on the same file at the same time. Every small change risks breaking something unrelated sitting a few hundred lines away.</p>
   <div class="story"><b class="lbl">The kirana shop vs the supermarket</b>In a tiny kirana shop, everything sits in one heap behind the counter and only the owner can find anything. A supermarket puts rice in one aisle, soap in another, biscuits in a third. <mark>Modules are the aisles of your program: smaller, focused files, each with one clear job.</mark></div>
-  <div class="codebox"><span class="cap">the same project, split into files</span><pre><code class="language-plaintext">student_project/
-│
-├── main.py
-├── students.py
-├── marks.py
-├── attendance.py
-├── reports.py
-├── validation.py
-└── fees.py</code></pre></div>
+  <figure class="shot"><img src="img/02.webp" alt="One giant main.py split into smaller focused files: students.py, marks.py, attendance.py, reports.py and validation.py, each with its own clear job" width="1400" height="700" loading="lazy"><figcaption>Split the giant file into smaller, focused files: students, marks, attendance, reports, validation.</figcaption></figure>
   <p>Each separate <code>.py</code> file is a <b>module</b>. A folder that groups several related modules is a <b>package</b>, which we’ll get to shortly.</p>
 
   <h3>Code organisation and reuse</h3>
   <p>Every module has one responsibility, so anyone can guess where something lives:</p>
   <div class="flow"><span>Need to fix how grades are calculated?</span><span class="ok">Open marks.py, not a 2000-line file</span></div>
   <p>Modules also make <b>reuse</b> possible across programs. A good module isn’t tied to one project: write it once, then bring it into any program without copy-pasting.</p>
+  <figure class="shot"><img src="img/03.webp" alt="marks.py holds calculate_grade(); three different projects (student_app.py, scholarship_app.py, teacher_tool.py) each import marks and call marks.calculate_grade, printing B, A and C" width="1400" height="700" loading="lazy"><figcaption>One <code>marks.py</code>, reused by three different projects through <code>import marks</code>.</figcaption></figure>
 
   <h3>Avoiding duplicate code</h3>
-  <p>Functions remove repetition <i>within</i> a file. Modules extend the same idea <i>across</i> files. Without modules, two programs that both need <code>calculate_average()</code> each carry their own copy, and the old problems return:</p>
+  <p>Functions remove repetition <i>within</i> a file. Modules extend the same idea <i>across</i> files. Without modules, two programs that both need <code>calculate_average()</code> each carry their own copy:</p>
+  <div class="flow v"><span class="op">program_one.py → contains its own copy of calculate_average()</span><span class="op bad">program_two.py → contains ANOTHER copy of calculate_average()</span></div>
+  <p>This brings back exactly the same problems we saw with repeated code earlier:</p>
   <div class="grid">
     <div class="card t3 tilt-a"><h4>More code</h4><p>The same function lives in two places.</p></div>
     <div class="card t4 tilt-b"><h4>Hard to maintain</h4><p>Fix a bug in one copy, forget the other.</p></div>
     <div class="card t6 tilt-a"><h4>More mistakes</h4><p>The two copies slowly drift apart.</p></div>
   </div>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Left: two programs each with their own copy of calculate_average, marked wrong. Right: one marks.py with the only copy, imported by program_one.py and program_two.py">
-      <g class="rough">
-        <rect class="box f-orange" x="20" y="30" width="250" height="76" rx="12"/>
-        <rect class="box f-orange" x="20" y="140" width="250" height="76" rx="12"/>
-        <rect class="box f-green" x="470" y="20" width="230" height="70" rx="12"/>
-        <rect class="box f-blue" x="350" y="170" width="170" height="60" rx="12"/>
-        <rect class="box f-blue" x="540" y="170" width="170" height="60" rx="12"/>
-        <path class="lb" d="M435 166 C 450 130, 500 110, 560 94" marker-end="url(#ahb)"/>
-        <path class="lb" d="M625 166 L 610 96" marker-end="url(#ahb)"/>
-        <path class="ln dash" d="M310 10 L 310 240"/>
-      </g>
-      <text class="tm" x="145" y="62" text-anchor="middle">program_one.py</text>
-      <text class="ts" x="145" y="88" text-anchor="middle">own copy of calculate_average()</text>
-      <text class="tm" x="145" y="172" text-anchor="middle">program_two.py</text>
-      <text class="ts" x="145" y="198" text-anchor="middle">ANOTHER copy</text>
-      <text class="tr" x="145" y="240" text-anchor="middle">✗ copy-paste</text>
-      <text class="tm" x="585" y="50" text-anchor="middle">marks.py</text>
-      <text class="ts" x="585" y="74" text-anchor="middle">the ONE copy</text>
-      <text class="tm" x="435" y="205" text-anchor="middle">program_one.py</text>
-      <text class="tm" x="625" y="205" text-anchor="middle">program_two.py</text>
-      <text class="tb" x="400" y="120" text-anchor="middle">import</text>
-      <text class="tb" x="660" y="140">import</text>
-    </svg></div>
-    <figcaption>One copy in one module; every program imports it. Fix a bug once and everyone benefits.</figcaption>
-  </figure>
-  <div class="two">
-    <div class="codebox"><span class="cap">program_one.py</span><pre><code class="language-python">import marks
-print(marks.calculate_average([85, 72, 91]))</code></pre></div>
-    <div class="codebox"><span class="cap">program_two.py</span><pre><code class="language-python">import marks
-print(marks.calculate_average([60, 75, 90]))</code></pre></div>
-  </div>
-  <pre class="out"><code>82.66666666666667      ← program_one.py
-75.0                   ← program_two.py</code></pre>
+  <p>With a module, there’s only <b>one copy</b>, living in one file, <code>marks.py</code>, and every program that needs it simply imports it. Fix a bug in that single file, and every program using it benefits immediately.</p>
+  <figure class="shot"><img src="img/04.webp" alt="marks.py holds the only copy of calculate_average(); student_management.py and scholarship_system.py both import marks and call marks.calculate_average" width="1400" height="700" loading="lazy"><figcaption>Only one copy of the function is maintained, in <code>marks.py</code>; both programs import and use it.</figcaption></figure>
 
   <h3>Separating related functionality</h3>
   <p>Group code by what it does. Everything about marks goes in one module, everything about attendance in another:</p>
@@ -113,6 +78,7 @@ def mark_absent(name):
 def attendance_percentage(present, total_days):
     return present / total_days * 100</code></pre></div>
   </div>
+  <p>Now each module has a clear purpose: <code>marks.py</code> holds only marks-related functionality, and <code>attendance.py</code> holds only attendance-related functionality.</p>
 </section>
 
 <!-- 2 -->
@@ -138,6 +104,8 @@ greetings.say_hello("Rahul")</code></pre></div>
 │
 ├── main.py
 └── marks.py</code></pre>
+  <figure class="shot sm"><img src="img/05.webp" alt="VS Code Explorer showing the student_project folder with main.py and marks.py" width="444" height="385" loading="lazy"><figcaption>The two files side by side in VS Code’s Explorer.</figcaption></figure>
+  <p>Inside <code>marks.py</code>, create a variable and three functions:</p>
   <div class="codebox"><span class="cap">marks.py</span><pre><code class="language-python">PASS_MARK = 50
 
 def calculate_total(marks_list):
@@ -175,30 +143,10 @@ print(marks.calculate_total(scores))
 print(marks.calculate_average(scores))
 print(marks.PASS_MARK)
 print(marks.is_pass(45))</code></pre></div>
-  <pre class="out"><code>395
-79.0
-50
-False</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="main.py on the left calls marks.calculate_total; the dot leads into the marks.py box on the right, which contains PASS_MARK, calculate_total, calculate_average and is_pass">
-      <g class="rough">
-        <rect class="box f-blue" x="20" y="60" width="270" height="120" rx="14"/>
-        <rect class="box f-green" x="420" y="20" width="280" height="200" rx="14"/>
-        <rect class="box f-yellow" x="440" y="94" width="240" height="34" rx="8"/>
-        <path class="lr" d="M294 120 C 340 120, 380 112, 434 111" marker-end="url(#ahr)"/>
-      </g>
-      <text class="th" x="155" y="96" text-anchor="middle">main.py</text>
-      <text class="tm" x="155" y="132" text-anchor="middle">marks.calculate_total()</text>
-      <text class="ts" x="155" y="160" text-anchor="middle">module name . item name</text>
-      <text class="th" x="560" y="54" text-anchor="middle">marks.py</text>
-      <text class="tm" x="460" y="84">PASS_MARK</text>
-      <text class="tm" x="460" y="117">calculate_total()</text>
-      <text class="tm" x="460" y="152">calculate_average()</text>
-      <text class="tm" x="460" y="182">is_pass()</text>
-      <text class="tr" x="362" y="100" text-anchor="middle">the dot</text>
-    </svg></div>
-    <figcaption>The <code>marks.</code> prefix says exactly which file to look in.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/06.webp" alt="VS Code: main.py imports marks and prints four values; the terminal shows 395, 79.0, 50 and False" width="801" height="765" loading="lazy"><figcaption>The code in VS Code and its output: <code>395</code>, <code>79.0</code>, <code>50</code>, <code>False</code>.</figcaption></figure>
+  <p>Visually, here is what happens step by step:</p>
+  <figure class="shot"><img src="img/07.webp" alt="Five steps: main.py runs; import marks makes Python look for marks.py in the same folder; Python loads marks.py into memory; marks.calculate_total(scores) jumps into the module (module name, then function inside that module); the result 395 is returned to main.py" width="1400" height="700" loading="lazy"><figcaption><code>marks.calculate_total(scores)</code>: module name, a dot, then the function inside that module.</figcaption></figure>
+  <p>The <code>marks.</code> prefix tells Python exactly where the function lives.</p>
   <p>The prefix matters because two modules may each have a function with the same name; the prefix keeps them apart.</p>
 </section>
 
@@ -227,7 +175,7 @@ False</code></pre>
   <h2>The <code>import</code> statement</h2>
   <p>Without <code>import</code>, a file can only use what is written inside it plus built-ins like <code>print()</code> and <code>len()</code>. Python ships with hundreds of ready-made modules, and you have your own too. <code>import</code> is how a file <b>borrows code from another module</b>.</p>
   <pre><code class="language-python">print(sqrt(16))</code></pre>
-  <pre class="out"><code>NameError: name 'sqrt' is not defined</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="Terminal traceback: print(sqrt(16)) on line 1 of main.py fails with NameError: name 'sqrt' is not defined" width="1213" height="210" loading="lazy"><figcaption>Python stops at line 1: <code>NameError: name 'sqrt' is not defined</code>.</figcaption></figure>
   <p>Python doesn’t know <code>sqrt</code>: it lives in the <code>math</code> module, which we haven’t brought in.</p>
   <div class="flow"><span>Code lives in another module</span><span class="bad">our file can’t see it automatically</span><span class="ok">import makes it available</span></div>
   <pre><code class="language-python">import math</code></pre>
@@ -242,9 +190,7 @@ False</code></pre>
 print(math.sqrt(16))
 print(math.pi)
 print(math.factorial(5))</code></pre>
-  <pre class="out"><code>4.0
-3.141592653589793
-120</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal output: 4.0, 3.141592653589793 and 120" width="970" height="159" loading="lazy"><figcaption><code>math.sqrt(16)</code>, <code>math.pi</code> and <code>math.factorial(5)</code>.</figcaption></figure>
   <p>The module name in front tells Python where to look, which keeps things clear when two modules share a member name:</p>
   <pre><code class="language-python">import math
 import cmath
@@ -258,14 +204,13 @@ print(cmath.sqrt(-16))    # from the cmath module, a different function</code></
 
 print(marks.PASS_MARK)
 print(marks.calculate_average([85, 72, 91]))</code></pre>
-  <pre class="out"><code>50
-82.66666666666667</code></pre>
+  <figure class="shot"><img src="img/10.webp" alt="Terminal output: 50 and 82.66666666666667" width="751" height="141" loading="lazy"><figcaption>Our own module, reached the same way: <code>marks.PASS_MARK</code> and <code>marks.calculate_average()</code>.</figcaption></figure>
   <h3>Importing multiple modules</h3>
   <div class="two">
     <div class="codebox"><span class="cap">one per line (recommended)</span><pre><code class="language-python">import math
 import random
 import marks</code></pre></div>
-    <div class="codebox"><span class="cap">several on one line</span><pre><code class="language-python">import math, random, marks</code></pre></div>
+    <div class="codebox"><span class="cap">several on one line, separated by commas</span><pre><code class="language-python">import math, random, marks</code></pre></div>
   </div>
   <p>Both work the same, but one per line is easier to read and is what most Python code uses.</p>
   <pre><code class="language-python">import math
@@ -275,9 +220,7 @@ import marks
 print(math.sqrt(25))
 print(random.randint(1, 10))
 print(marks.PASS_MARK)</code></pre>
-  <pre class="out"><code>5.0
-7          ← random: any whole number from 1 to 10
-50</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal output: 5.0, 9 and 50" width="757" height="178" loading="lazy"><figcaption>This run printed <code>9</code> for <code>random.randint(1, 10)</code>; yours may be any whole number from 1 to 10.</figcaption></figure>
   <h3>Aliases with <code>as</code></h3>
   <p>When a module name is long, give it a short nickname, an <b>alias</b>:</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">import module_name as alias</code></pre></div>
@@ -292,8 +235,7 @@ print(sm.calculate_grade(85))</code></pre></div>
 
 print(m.sqrt(16))       # works
 print(math.sqrt(16))    # NameError</code></pre>
-  <pre class="out"><code>4.0
-NameError: name 'math' is not defined</code></pre>
+  <figure class="shot"><img src="img/12.webp" alt="Terminal: 4.0 is printed, then a traceback at line 4 print(math.sqrt(16)) with NameError: name 'math' is not defined. Did you forget to import 'math'?" width="1147" height="268" loading="lazy"><figcaption><code>m.sqrt(16)</code> prints <code>4.0</code>; <code>math.sqrt(16)</code> raises <code>NameError</code> because only <code>m</code> exists.</figcaption></figure>
   <div class="sticky tip l"><strong>Aliases you’ll see everywhere</strong> <code>import pandas as pd</code>, <code>import numpy as np</code>. These are community conventions, so stick to them.</div>
 </section>
 
@@ -307,25 +249,27 @@ NameError: name 'math' is not defined</code></pre>
     <div><span class="sw a1"></span><p>the module to look in</p></div>
     <div><span class="sw a2"></span><p>the specific member you want added to your file</p></div>
   </div>
+  <p>For example, with <code>import math</code> you had to write <code>math.sqrt(16)</code> and <code>math.pi</code>. With <code>from ... import</code>:</p>
   <pre><code class="language-python">from math import sqrt
-print(sqrt(16))
-
-from math import pi
-print(pi)
-
-from marks import calculate_average
+print(sqrt(16))</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="Terminal output: 4.0" width="885" height="157" loading="lazy"><figcaption><code>sqrt(16)</code> works with no <code>math.</code> prefix.</figcaption></figure>
+  <p>Now you write <code>sqrt(16)</code>, not <code>math.sqrt(16)</code>: the name <code>sqrt</code> was brought straight into your file, so no prefix is needed. The same works for variables:</p>
+  <pre><code class="language-python">from math import pi
+print(pi)</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal output: 3.141592653589793" width="781" height="148" loading="lazy"><figcaption>A variable imported directly: <code>pi</code>.</figcaption></figure>
+  <p>And for our own module from earlier:</p>
+  <pre><code class="language-python">from marks import calculate_average
 scores = [85, 72, 91]
 print(calculate_average(scores))</code></pre>
-  <pre class="out"><code>4.0
-3.141592653589793
-82.66666666666667</code></pre>
-  <p>Now you write <code>sqrt(16)</code>, not <code>math.sqrt(16)</code>: the name was brought straight into your file.</p>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal output: 82.66666666666667" width="906" height="138" loading="lazy"><figcaption>Our own function, called without the <code>marks.</code> prefix.</figcaption></figure>
   <h3>Only the named member is imported</h3>
   <pre><code class="language-python">from math import sqrt
 
 print(sqrt(16))     # works
 print(pi)           # NameError: name 'pi' is not defined
 print(math.pi)      # NameError: name 'math' is not defined</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: 4.0 is printed, then a traceback at line 4 print(pi) with NameError: name 'pi' is not defined" width="1131" height="276" loading="lazy"><figcaption><code>sqrt(16)</code> works, then line 4 <code>print(pi)</code> raises <code>NameError</code>.</figcaption></figure>
+  <p>Notice that the program <b>stops at the first error</b>, so the <code>math.pi</code> line never even runs; it would fail too, because <code>math</code> itself was not added to your file. Only <code>sqrt</code> is added; <code>pi</code>, <code>factorial</code> and the rest are not available.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Two ways to import. import math adds only the name math to your file, and you reach sqrt and pi through it. from math import sqrt adds only the name sqrt; pi and math itself are not added">
       <g class="rough">
@@ -350,30 +294,26 @@ print(math.pi)      # NameError: name 'math' is not defined</code></pre>
     <figcaption><code>import math</code> adds one name, <code>math</code>. <code>from math import sqrt</code> adds one name, <code>sqrt</code>, and nothing else.</figcaption>
   </figure>
   <h3>Importing multiple members</h3>
+  <p>To import several members from the same module, separate them with commas:</p>
   <pre><code class="language-python">from math import sqrt, pi, factorial
-from marks import calculate_total, calculate_average, PASS_MARK
-
 print(sqrt(25))
 print(pi)
-print(factorial(5))
-
+print(factorial(5))</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal output: 5.0, 3.141592653589793 and 120" width="901" height="213" loading="lazy"><figcaption>Three members from <code>math</code>, each used directly.</figcaption></figure>
+  <p>With our own module:</p>
+  <pre><code class="language-python">from marks import calculate_total, calculate_average, PASS_MARK
 scores = [85, 72, 91, 68, 79]
 print(calculate_total(scores))
 print(calculate_average(scores))
 print(PASS_MARK)</code></pre>
-  <pre class="out"><code>5.0
-3.141592653589793
-120
-395
-79.0
-50</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal output: 395, 79.0 and 50" width="774" height="211" loading="lazy"><figcaption>Two functions and a variable from <code>marks</code>.</figcaption></figure>
   <h3>Aliases with <code>from ... import ... as</code></h3>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">from module_name import member_name as alias</code></pre></div>
   <pre><code class="language-python">from math import factorial as fact
 
 print(fact(5))
 # print(factorial(5))   -&gt; NameError: only fact works now</code></pre>
-  <pre class="out"><code>120</code></pre>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal output: 120" width="688" height="139" loading="lazy"><figcaption><code>fact(5)</code> prints <code>120</code>. After this, only <code>fact</code> works; <code>factorial</code> is not defined.</figcaption></figure>
   <p>Aliases also <b>solve name clashes</b>. Suppose <code>marks.py</code> and <code>attendance.py</code> both define <code>calculate_average</code>:</p>
   <pre><code class="language-python">from marks import calculate_average as marks_average
 from attendance import calculate_average as attendance_average
@@ -470,19 +410,15 @@ print(math.factorial(5))</code></pre>
     <figcaption>A package is one more level of organisation. Python reads the dots left to right: package → module → function.</figcaption>
   </figure>
   <h3>Module vs package</h3>
-  <div class="tbl"><table>
-    <tr><th></th><th>What it is</th><th>Example</th></tr>
-    <tr><td><b>Module</b></td><td>a single <code>.py</code> file</td><td><code>marks.py</code></td></tr>
-    <tr><td><b>Package</b></td><td>a folder of modules</td><td><code>school/</code></td></tr>
-  </table></div>
+  <p>The difference is very simple:</p>
+  <figure class="shot"><img src="img/20.webp" alt="Module: ONE .py file containing functions and variables, e.g. marks.py, imported with import marks and used as marks.calculate_average(scores). Package: a folder of modules, e.g. school/, containing many modules plus __init__.py, imported with import school.marks and used as school.marks.calculate_average(scores)" width="1400" height="410" loading="lazy"><figcaption>Module → a single <code>.py</code> file (<code>marks.py</code>). Package → a folder of modules (<code>school/</code>).</figcaption></figure>
   <p>You have already used a package! Python’s own <code>json</code> is really a folder with several modules inside. Print both to see:</p>
   <pre><code class="language-python">import math
 import json
 
 print(math)     # a single built-in module
 print(json)     # a package - comes from json/__init__.py</code></pre>
-  <pre class="out"><code>&lt;module 'math' (built-in)&gt;
-&lt;module 'json' from 'C:\\Python314\\Lib\\json\\__init__.py'&gt;</code></pre>
+  <figure class="shot"><img src="img/21.webp" alt="Terminal output: &lt;module 'math' (built-in)&gt; and &lt;module 'json' from 'C:\\Users\\Chandrakanta\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\json\\__init__.py'&gt;" width="1366" height="156" loading="lazy"><figcaption><code>math</code> is built-in; <code>json</code> is loaded from <code>json\__init__.py</code> inside Python’s <code>Lib</code> folder.</figcaption></figure>
   <p><code>math</code> is a single built-in module. <code>json</code> comes from an <code>__init__.py</code> inside a <code>json</code> <b>folder</b>: that’s a package. (Your path will differ depending on where Python is installed.)</p>
   <h3>Why packages are useful</h3>
   <div class="grid two">
@@ -492,16 +428,9 @@ print(json)     # a package - comes from json/__init__.py</code></pre>
     <div class="card t3 tilt-a"><h4>Reuse other people’s code</h4><p>Thousands of ready-made packages exist, so you don’t write everything yourself.</p></div>
   </div>
   <p>For example, the school and the sports department can both have a <code>marks.py</code>:</p>
-  <pre><code class="language-plaintext">project/
-│
-├── school/
-│   ├── __init__.py
-│   └── marks.py        → school.marks
-│
-└── sports/
-    ├── __init__.py
-    └── marks.py        → sports.marks</code></pre>
-  <p>The biggest advantage is the last one. Developers worldwide publish packages on <b>PyPI</b>, the <b>Python Package Index</b> (pypi.org), and anyone can install them for free.</p>
+  <figure class="shot"><img src="img/22.webp" alt="Without packages: two files called marks.py (exam marks and sports marks) cannot share one folder. With packages: school/marks.py and sports/marks.py, imported as import school.marks and import sports.marks, same name in different packages, no clash" width="1400" height="279" loading="lazy"><figcaption>Same file name, different packages: <code>school.marks</code> and <code>sports.marks</code> don’t clash.</figcaption></figure>
+  <p>The biggest advantage is the last one. Developers worldwide publish packages on <b>PyPI</b>, the <b>Python Package Index</b> (pypi.org), and anyone can install them for free:</p>
+  <figure class="shot"><img src="img/23.webp" alt="PyPI, the Python Package Index: pip install requests (talk to websites and APIs), pandas (tables of data, like Excel), numpy (fast maths with large lists of numbers), matplotlib (charts and graphs), emoji (add emojis to text), flask (build websites)" width="1400" height="327" loading="lazy"><figcaption>A few popular packages on PyPI and what they do.</figcaption></figure>
 </section>
 
 <!-- 8 -->
@@ -512,18 +441,11 @@ print(json)     # a package - comes from json/__init__.py</code></pre>
   <div class="sticky warn l"><strong>Terminal, not .py file.</strong> <code>pip install</code> is typed in the <b>terminal</b>, never inside a Python file. In VS Code open one with <b>Terminal → New Terminal</b>.</div>
   <p>Let’s install a small, fun package called <code>emoji</code>:</p>
   <div class="cmd"><p class="what">Try it</p><pre><code class="language-bash">pip install emoji</code></pre></div>
-  <pre class="out"><code>Collecting emoji
-  Downloading emoji-2.16.0-py3-none-any.whl (… kB)
-Installing collected packages: emoji
-Successfully installed emoji-2.16.0</code></pre>
-  <ol class="path">
-    <li><span class="dot">1</span><div><b>Collecting</b>pip looks up <code>emoji</code> on PyPI.</div></li>
-    <li><span class="dot">2</span><div><b>Downloading</b>it fetches the package file (the version number you see may be newer).</div></li>
-    <li><span class="dot">3</span><div><b>Installing</b>it copies the package into your Python’s <code>site-packages</code> folder.</div></li>
-    <li><span class="dot">4</span><div><b>Done</b>Any program on this Python can now <code>import emoji</code>.</div></li>
-  </ol>
-  <p>Run the same command again and pip doesn’t download twice:</p>
-  <pre class="out"><code>Requirement already satisfied: emoji in …\site-packages (2.16.0)</code></pre>
+  <figure class="shot"><img src="img/24.webp" alt="Terminal: pip install emoji prints Collecting emoji, Downloading emoji-2.16.0-py3-none-any.whl (610 kB) with a progress bar, Installing collected packages: emoji, Successfully installed emoji-2.16.0" width="1366" height="239" loading="lazy"><figcaption>pip collects, downloads (610 kB) and installs <code>emoji-2.16.0</code>. The version you get may be newer.</figcaption></figure>
+  <p>Here is what happened behind the scenes:</p>
+  <figure class="shot"><img src="img/25.webp" alt="Five steps: 1 we type pip install emoji in the terminal, not in Python; 2 pip searches PyPI, the online store of Python packages; 3 it downloads the package files (emoji-2.16.0, 610 kB); 4 it installs them into Python’s site-packages folder; 5 the package is ready to import in any of our programs" width="1400" height="264" loading="lazy"><figcaption>Type the command → pip searches PyPI → downloads → installs into <code>site-packages</code> → ready to <code>import</code>.</figcaption></figure>
+  <p>If you run the same command again, pip doesn’t download it twice; it tells you the package is already there:</p>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: running pip install emoji again prints Requirement already satisfied: emoji in c:\users\chandrakanta\appdata\local\programs\python\python314\lib\site-packages (2.16.0)" width="1366" height="129" loading="lazy"><figcaption><code>Requirement already satisfied</code>: nothing is downloaded the second time.</figcaption></figure>
   <h3>Other useful pip commands</h3>
   <div class="tbl"><table>
     <tr><th>Command</th><th>What it does</th></tr>
@@ -531,6 +453,7 @@ Successfully installed emoji-2.16.0</code></pre>
     <tr><td><code>pip show emoji</code></td><td>show details about one package</td></tr>
     <tr><td><code>pip uninstall emoji</code></td><td>remove a package</td></tr>
   </table></div>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal: pip show emoji lists Name: emoji, Version: 2.16.0, Summary: Emoji for Python, Author-email, License, Location: the Python314 Lib site-packages folder, Requires and Required-by (both empty)" width="1366" height="349" loading="lazy"><figcaption><code>pip show emoji</code>: the version, a summary, and where the package was installed.</figcaption></figure>
   <div class="sticky fde"><strong>In the field (FDE)</strong> On customer projects you’ll record every package in a <code>requirements.txt</code> and install them all with <code>pip install -r requirements.txt</code>, usually inside a virtual environment, so the server gets exactly the same packages as your laptop.</div>
 </section>
 
@@ -543,16 +466,14 @@ Successfully installed emoji-2.16.0</code></pre>
 
 print(emoji.emojize("Great job :thumbs_up:"))
 print(emoji.emojize("Python is fun :snake:"))</code></pre>
-  <pre class="out"><code>Great job 👍
-Python is fun 🐍</code></pre>
+  <figure class="shot"><img src="img/28.webp" alt="Terminal output: Great job with a thumbs-up emoji, and Python is fun with a snake emoji" width="1366" height="156" loading="lazy"><figcaption>The <code>:thumbs_up:</code> and <code>:snake:</code> codes became real emojis.</figcaption></figure>
   <p><code>emoji.emojize()</code> replaces codes like <code>:thumbs_up:</code> with real emojis. You didn’t write it; someone else did, and you simply <b>installed</b> and <b>imported</b> it.</p>
   <h3>Using <code>from ... import</code></h3>
   <pre><code class="language-python">from emoji import emojize, demojize
 
 print(emojize("Rahul scored 95 :party_popper:"))
 print(demojize("I love Python 🐍"))</code></pre>
-  <pre class="out"><code>Rahul scored 95 🎉
-I love Python :snake:</code></pre>
+  <figure class="shot"><img src="img/29.webp" alt="Terminal output: Rahul scored 95 with a party popper emoji, and I love Python :snake:" width="1366" height="156" loading="lazy"><figcaption><code>emojize</code> turns codes into emojis; <code>demojize</code> turns emojis back into codes.</figcaption></figure>
   <h3>Using an alias</h3>
   <pre><code class="language-python">import emoji as em
 
@@ -560,16 +481,12 @@ message = "Rahul scored 95 🎉🎉"
 
 print(em.emoji_count(message))
 print(em.is_emoji("🎉"))</code></pre>
-  <pre class="out"><code>2
-True</code></pre>
+  <figure class="shot"><img src="img/30.webp" alt="Terminal output: 2 and True" width="1366" height="156" loading="lazy"><figcaption><code>em.emoji_count()</code> finds 2 emojis; <code>em.is_emoji("🎉")</code> is <code>True</code>.</figcaption></figure>
   <h3>What if the package isn’t installed?</h3>
   <pre><code class="language-python">import emoji
 
 print(emoji.emojize("Great job :thumbs_up:"))</code></pre>
-  <pre class="out"><code>Traceback (most recent call last):
-  File "main.py", line 1, in &lt;module&gt;
-    import emoji
-ModuleNotFoundError: No module named 'emoji'</code></pre>
+  <figure class="shot"><img src="img/31.webp" alt="Terminal traceback: line 1 import emoji fails with ModuleNotFoundError: No module named 'emoji'" width="1366" height="211" loading="lazy"><figcaption><code>ModuleNotFoundError: No module named 'emoji'</code>, raised at the <code>import</code> line.</figcaption></figure>
   <p>The fix isn’t in your code. Run <code>pip install emoji</code> in the terminal first.</p>
   <div class="two">
     <div class="flow v"><span class="op">pip install emoji</span><span class="hl">in the TERMINAL</span><span>once</span></div>
@@ -589,6 +506,10 @@ ModuleNotFoundError: No module named 'emoji'</code></pre>
     ├── __init__.py       # empty file - makes school a package
     ├── marks.py
     └── attendance.py</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/32.webp" alt="VS Code Explorer: student_project contains a school folder (with __init__.py, attendance.py and marks.py) and main.py" width="440" height="263" loading="lazy"><figcaption>The package in VS Code’s Explorer.</figcaption></figure>
+    <figure class="shot"><img src="img/33.webp" alt="Project folder tree: student_project with main.py and school/ (holding __init__.py, marks.py, attendance.py, fees.py). Labels: school/ is the package, a folder that groups related modules; __init__.py is the package marker that tells Python this folder is a package and can be empty; marks.py, attendance.py, fees.py are modules, normal .py files with related functions; main.py is our program, which imports what it needs from the package" width="1400" height="376" loading="lazy"><figcaption>What each part is: package, package marker, modules, and our program.</figcaption></figure>
+  </div>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Create the folder</b>Make <code>school</code> inside <code>student_project</code>. Package names follow module rules: lowercase, no spaces.</div></li>
     <li><span class="dot">2</span><div><b>Add <code>__init__.py</code></b>Inside <code>school</code>, create an <b>empty</b> file named <code>__init__.py</code> (two underscores before and after). It tells Python “this folder is a package”, and can stay completely empty.</div></li>
@@ -611,26 +532,21 @@ scores = [85, 72, 91, 68, 79]
 
 print(school.marks.calculate_total(scores))
 print(school.marks.calculate_average(scores))</code></pre></div>
-  <pre class="out"><code>395
-79.0</code></pre>
+  <figure class="shot"><img src="img/34.webp" alt="Terminal output: 395 and 79.0" width="1366" height="156" loading="lazy"><figcaption><code>school.marks.calculate_total</code> and <code>calculate_average</code>, reached through the full path.</figcaption></figure>
+  <p>Writing <code>school.marks.</code> every time is long. Just like with modules, <code>from ... import</code> makes it shorter:</p>
   <div class="codebox"><span class="cap">2 · from package import module</span><pre><code class="language-python">from school import marks, attendance
 
 scores = [85, 72, 91, 68, 79]
 
 print(marks.calculate_average(scores))
 print(attendance.attendance_percentage(45, 50))</code></pre></div>
-  <pre class="out"><code>79.0
-90.0</code></pre>
+  <figure class="shot"><img src="img/35.webp" alt="Terminal output: 79.0 and 90.0" width="1366" height="156" loading="lazy"><figcaption>Average marks <code>79.0</code> and attendance <code>90.0</code> percent.</figcaption></figure>
+  <p>And you can go one step further and import just the function:</p>
   <div class="codebox"><span class="cap">3 · from package.module import function</span><pre><code class="language-python">from school.marks import calculate_average
 
 print(calculate_average([85, 72, 91, 68, 79]))</code></pre></div>
-  <pre class="out"><code>79.0</code></pre>
-  <div class="tbl"><table>
-    <tr><th>Import line</th><th>How you call it</th></tr>
-    <tr><td><code>import school.marks</code></td><td><code>school.marks.calculate_average()</code></td></tr>
-    <tr><td><code>from school import marks</code></td><td><code>marks.calculate_average()</code></td></tr>
-    <tr><td><code>from school.marks import calculate_average</code></td><td><code>calculate_average()</code></td></tr>
-  </table></div>
+  <figure class="shot"><img src="img/36.webp" alt="Terminal output: 79.0" width="1366" height="129" loading="lazy"><figcaption>Just the function, no prefix at all.</figcaption></figure>
+  <figure class="shot"><img src="img/37.webp" alt="How we import versus how we call the function: import school.marks gives school.marks.calculate_average(scores), full path every time, very clear; from school import marks gives marks.calculate_average(scores), module name only, shorter; from school.marks import calculate_average gives calculate_average(scores), just the function, shortest" width="1400" height="266" loading="lazy"><figcaption>The three import styles side by side: from clearest to shortest.</figcaption></figure>
   <p><mark>A package is just one more level of organisation:</mark> like going into a folder, opening a file and picking a tool.</p>
 </section>
 
@@ -645,18 +561,15 @@ print(calculate_average([85, 72, 91, 68, 79]))</code></pre></div>
 print("Testing marks module...")
 print(calculate_average([80, 90, 100]))</code></pre></div>
   <p>Run <code>python marks.py</code> directly and the test lines are useful:</p>
-  <pre class="out"><code>Testing marks module...
-90.0</code></pre>
+  <figure class="shot"><img src="img/38.webp" alt="Terminal output: Testing marks module... and 90.0" width="790" height="168" loading="lazy"><figcaption>Running <code>marks.py</code> directly: the test lines print.</figcaption></figure>
   <p>Now <code>main.py</code> imports it:</p>
   <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">import marks
 
 print(marks.calculate_average([85, 72, 91]))</code></pre></div>
   <p>You might expect only <code>82.66666666666667</code>. But Python actually prints:</p>
-  <pre class="out"><code>Testing marks module...
-90.0
-82.66666666666667</code></pre>
+  <figure class="shot"><img src="img/39.webp" alt="Terminal output: Testing marks module..., 90.0, then 82.66666666666667" width="762" height="163" loading="lazy"><figcaption>Running <code>main.py</code>: the test lines from <code>marks.py</code> sneak in before our result.</figcaption></figure>
   <p>The first two lines came from <code>marks.py</code>. Why? When Python sees <code>import marks</code>, it loads <code>marks.py</code> and <b>executes all its top-level code</b>: the <code>def</code> (stores the function) <i>and</i> the two prints.</p>
-  <div class="flow"><span class="op">import marks</span><span>Python runs marks.py top to bottom</span><span>def stored ✓</span><span class="bad">test prints run too ✗</span></div>
+  <figure class="shot"><img src="img/40.webp" alt="Five steps: 1 main.py runs from top to bottom; 2 import marks makes Python look for marks.py in the same folder; 3 Python opens marks.py, executes all its code from top to bottom (including the two test prints) and creates calculate_average() in memory; 4 main.py calls marks.calculate_average([85, 72, 91]); 5 the output is Testing marks module..., 90.0, then 82.66666666666667" width="1400" height="700" loading="lazy"><figcaption>The flow: the test lines run during the import, then <code>main.py</code>’s own call prints its result.</figcaption></figure>
   <p>We want the function available when imported, but the test code to run <b>only when the file is executed directly</b>. That’s what <code>__name__</code> is for.</p>
   <h3>What is <code>__name__</code>?</h3>
   <p>Every Python file automatically gets a special variable called <code>__name__</code>. Python sets its value depending on <b>how the file is being used</b>:</p>
@@ -669,10 +582,12 @@ print(marks.calculate_average([85, 72, 91]))</code></pre></div>
     <div class="codebox"><span class="cap">show_name.py</span><pre><code class="language-python">print(__name__)</code></pre></div>
     <div class="codebox"><span class="cap">other.py</span><pre><code class="language-python">import show_name</code></pre></div>
   </div>
-  <div class="two">
-    <div><p><code>python show_name.py</code>:</p><pre class="out"><code>__main__</code></pre><p>because this file is the starting point.</p></div>
-    <div><p><code>python other.py</code>:</p><pre class="out"><code>show_name</code></pre><p>because <code>show_name.py</code> is now being imported, not run directly.</p></div>
+  <div class="shots">
+    <figure class="shot"><img src="img/41.webp" alt="Terminal output of running show_name.py: __main__" width="838" height="133" loading="lazy"><figcaption><code>python show_name.py</code> prints <code>__main__</code>, because this file is the starting point.</figcaption></figure>
+    <figure class="shot"><img src="img/42.webp" alt="Terminal output of running other.py: show_name" width="748" height="150" loading="lazy"><figcaption><code>python other.py</code> prints <code>show_name</code>, because <code>show_name.py</code> is now being imported, not run directly.</figcaption></figure>
   </div>
+  <p>The important difference, side by side:</p>
+  <figure class="shot"><img src="img/43.webp" alt="Left: run show_name.py directly, print(__name__) outputs __main__, so __name__ is "__main__". Right: other.py does import show_name, and the output is show_name, so __name__ is "show_name"" width="1400" height="700" loading="lazy"><figcaption>Same line of code, two different values of <code>__name__</code>, depending on how the file is used.</figcaption></figure>
   <h3>What does <code>"__main__"</code> mean?</h3>
   <p><code>"__main__"</code> is the special name Python gives to <mark>the file that starts the program</mark>. Run <code>marks.py</code> and it is the starting file, so its <code>__name__</code> is <code>"__main__"</code>. Run <code>main.py</code> (which imports marks) and <code>main.py</code> is the starting file, while <code>marks.py</code> is just an imported file with <code>__name__ = "marks"</code>.</p>
   <h3>Using it with <code>if</code></h3>
@@ -713,8 +628,7 @@ if __name__ == "__main__":
         <li><span class="dot">1</span><div>Python sets <code>__name__ = "__main__"</code></div></li>
         <li><span class="dot">2</span><div><code>if "__main__" == "__main__":</code> is <b>True</b></div></li>
       </ol>
-      <pre class="out"><code>Testing marks module...
-90.0</code></pre>
+      <figure class="shot"><img src="img/44.webp" alt="Terminal output: Testing marks module... and 90.0" width="738" height="165" loading="lazy"><figcaption>Run directly: the guarded test code runs.</figcaption></figure>
     </div>
     <div>
       <p><b>Run <code>python main.py</code></b> (which imports marks)</p>
@@ -722,7 +636,7 @@ if __name__ == "__main__":
         <li><span class="dot">1</span><div>Inside marks.py, <code>__name__ = "marks"</code></div></li>
         <li><span class="dot">2</span><div><code>if "marks" == "__main__":</code> is <b>False</b>, so the tests are skipped</div></li>
       </ol>
-      <pre class="out"><code>82.66666666666667</code></pre>
+      <figure class="shot"><img src="img/45.webp" alt="Terminal output: 82.66666666666667 only" width="790" height="123" loading="lazy"><figcaption>Imported: only <code>main.py</code>’s result prints.</figcaption></figure>
     </div>
   </div>
   <div class="sticky fde"><strong>In the field (FDE)</strong> Nearly every runnable Python script you hand to a customer ends with <code>if __name__ == "__main__": main()</code>. It lets the same file work as a command-line tool <i>and</i> as an importable library for tests or other services.</div>

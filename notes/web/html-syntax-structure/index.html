@@ -72,6 +72,8 @@
     <div class="card t2 tilt-b"><h4>Markup</h4><p>Labels placed around text to define what it is and how it should be presented.</p></div>
     <div class="card t1 tilt-a"><h4>Language</h4><p>A fixed set of rules and syntax you follow when writing the code.</p></div>
   </div>
+  <p>A real-world analogy makes it click:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Illustration: a builder carrying a wooden plank towards the wooden frame of a house that has posts, beams and a roof frame but no paint or decoration" width="1400" height="788"><figcaption>HTML is the frame of the house: the basic shape and layout, before any decoration.</figcaption></figure>
   <div class="story"><b class="lbl">The frame of a house</b>Think of a house being built. The walls, doors and windows give it its basic shape and layout. HTML does the same for a web page: <mark>it tells the browser what each part is, a heading, a paragraph, an image or a link.</mark> Paint and decoration (CSS) and electricity (JavaScript) come later.</div>
   <p>HTML is the <b>foundation of every website</b>. It gives the page structure so that browsers can show it correctly to users.</p>
 </section>
@@ -82,12 +84,24 @@
   <p>You only need a code editor and a browser. Here is the full setup with <b>Visual Studio Code</b> and the <b>Live Server</b> extension.</p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Create a project folder</b>On your desktop (or anywhere), right-click → <b>New → Folder</b>, and name it <code>my-first-html-project</code>. It will hold all your HTML files and related resources.</div></li>
-    <li><span class="dot">2</span><div><b>Open the folder in VS Code</b>Open VS Code, click <b>File → Open Folder</b>, and select <code>my-first-html-project</code>.</div></li>
-    <li><span class="dot">3</span><div><b>Install Live Server</b>Click the <b>Extensions</b> icon in the left sidebar (four small squares), search <i>Live Server</i>, pick the result by <i>Ritwick Dey</i>, and click <b>Install</b>. A <b>Go Live</b> button appears at the bottom right of VS Code. <span class="tag">→ shows your page in a browser and refreshes it as you edit</span></div></li>
-    <li><span class="dot">4</span><div><b>Create an HTML file</b>Click the <b>New File</b> icon and name it <code>index.html</code>. <span class="tag">→ the main file browsers look for</span></div></li>
-    <li><span class="dot">5</span><div><b>Write the basic code</b>Type the code below into <code>index.html</code>.</div></li>
+  </ol>
+  <figure class="shot sm"><img src="img/02.webp" alt="Windows File Explorer open on the empty folder my-first-html-project" width="623" height="347"><figcaption>Step 1: the new, still-empty <code>my-first-html-project</code> folder.</figcaption></figure>
+  <ol class="path" start="2">
+    <li><span class="dot">2</span><div><b>Open the folder in VS Code</b>Open VS Code, click <b>File → Open Folder</b>, and select <code>my-first-html-project</code>. Your project folder is now open in VS Code.</div></li>
+  </ol>
+  <figure class="shot sm"><img src="img/03.webp" alt="VS Code Explorer panel showing the folder MY-FIRST-HTML-PROJECT open and empty" width="661" height="343"><figcaption>Step 2: the folder appears in VS Code’s Explorer.</figcaption></figure>
+  <ol class="path" start="3">
+    <li><span class="dot">3</span><div><b>Install Live Server</b>Live Server lets you view your page in a browser instantly and see changes live as you edit. Click the <b>Extensions</b> icon in the left sidebar (four small squares), type <i>Live Server</i> in the search bar, click the first result by <i>Ritwick Dey</i>, and click <b>Install</b>. Once installed, a <b>Go Live</b> button appears at the bottom right of VS Code.</div></li>
+  </ol>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code Extensions Marketplace: searching live shows Live Server by Ritwick Dey at the top; its details page shows the Live Server extension installed" width="1400" height="447"><figcaption>Step 3: pick <b>Live Server</b> by <b>Ritwick Dey</b> from the Extensions Marketplace.</figcaption></figure>
+  <ol class="path" start="4">
+    <li><span class="dot">4</span><div><b>Create an HTML file</b>Click the <b>New File</b> icon on the left side and name the file <code>index.html</code>. <span class="tag">→ the main file browsers look for</span></div></li>
+  </ol>
+  <figure class="shot sm"><img src="img/05.webp" alt="VS Code Explorer: a new file being named index.html inside MY-FIRST-HTML-PROJECT, with the New File icon highlighted" width="740" height="340"><figcaption>Step 4: the New File icon, and the file being named <code>index.html</code>.</figcaption></figure>
+  <ol class="path" start="5">
+    <li><span class="dot">5</span><div><b>Write the basic code</b>Inside <code>index.html</code>, write the code below.</div></li>
     <li><span class="dot">6</span><div><b>Save</b>Press <kbd>Ctrl</kbd> + <kbd>S</kbd> (Windows) or <kbd>Cmd</kbd> + <kbd>S</kbd> (Mac).</div></li>
-    <li><span class="dot">7</span><div><b>Run it</b>Right-click anywhere in the file and choose <b>Open with Live Server</b>. Your browser opens and shows the page.</div></li>
+    <li><span class="dot">7</span><div><b>Run it</b>Right-click anywhere in the file and choose <b>Open with Live Server</b>. Your browser opens and shows the page automatically.</div></li>
   </ol>
   <div class="codebox"><span class="cap">my-first-html-project/index.html</span><pre><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -100,22 +114,7 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre></div>
   <p>What you’ll see in the browser:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="A browser window. The tab reads My First HTML Project. The page shows a large heading Welcome to My First HTML Page and below it the sentence This is my first webpage using HTML.">
-      <g class="rough">
-        <rect class="box f-card" x="20" y="16" width="680" height="208" rx="14"/>
-        <rect class="box f-grey" x="20" y="16" width="680" height="48" rx="14"/>
-        <rect class="box f-card" x="36" y="26" width="230" height="38" rx="8"/>
-        <rect class="box f-none" x="290" y="28" width="390" height="26" rx="13"/>
-      </g>
-      <text class="t" x="50" y="51">My First HTML Project</text>
-      <text class="tm" x="306" y="46">127.0.0.1:5500/index.html</text>
-      <text class="th" x="50" y="120">Welcome to My First HTML Page</text>
-      <text class="t" x="50" y="162">This is my first webpage using HTML.</text>
-      <text class="ts" x="50" y="204">the &lt;title&gt; shows on the tab; the &lt;body&gt; shows in the window</text>
-    </svg></div>
-    <figcaption>Live Server serves the page at a local address and reloads it every time you save.</figcaption>
-  </figure>
+  <figure class="shot sm"><img src="img/06.webp" alt="Browser at 127.0.0.1:5500/index.html showing the heading Welcome to My First HTML Page and the line This is my first webpage using HTML." width="751" height="426"><figcaption>Live Server serves the page at <code>127.0.0.1:5500</code> and reloads it every time you save.</figcaption></figure>
   <div class="sticky info l"><strong>For now</strong> Just learn how to create an HTML file in VS Code and run it with Live Server. The rest of this note explains what every line of that code means.</div>
 </section>
 
@@ -164,6 +163,7 @@
 <!-- 6 -->
 <section class="ch" id="elements">
   <h2>Elements: the complete building block</h2>
+  <figure class="shot"><img src="img/07.webp" alt="Diagram of the line p This is sample text. /p, with labels: element points to the whole line, opening tag to the p tag, content to the text, closing tag to the /p tag" width="840" height="500"><figcaption>One element = opening tag + content + closing tag.</figcaption></figure>
   <p>An <b>HTML element</b> is the complete unit that represents one part of a page. It tells the browser <b>what to display</b> and <b>how</b>. An element usually has three parts: an <b>opening tag</b> (start), the <b>content</b> (what appears on the page) and a <b>closing tag</b> (end).</p>
   <div class="anatomy"><span class="a1">&lt;p&gt;</span><span class="a4">This is sample text</span><span class="a5">&lt;/p&gt;</span></div>
   <div class="legend">
@@ -188,7 +188,7 @@
       <text class="tr" x="366" y="160">bottom bread</text>
       <text class="ts" x="366" y="180">closing tag</text>
     </svg></div>
-    <figcaption>Like a sandwich: bread, filling, bread. <mark>Tags plus content make one complete element.</mark></figcaption>
+    <figcaption>Like a sandwich: top bread (opening tag), filling such as cheese or vegetables (content), bottom bread (closing tag). <mark>Tags plus content make one complete element.</mark></figcaption>
   </figure>
   <div class="sticky info"><strong>Tag vs element</strong> A <i>tag</i> is just the label (<code>&lt;p&gt;</code>). The <i>element</i> is the whole thing: opening tag, content and closing tag together. A void element such as <code>&lt;br&gt;</code> is a single tag with no content.</div>
 </section>
@@ -196,7 +196,7 @@
 <!-- 7 -->
 <section class="ch" id="attributes">
   <h2>Attributes: extra settings for a tag</h2>
-  <div class="story"><b class="lbl">The fan regulator</b>A ceiling fan is the thing itself; the regulator next to the switch sets its <b>speed</b>. The fan is still a fan, but now with a setting. <mark>An attribute gives a tag extra information about how to show it or how it should work.</mark></div>
+  <div class="story"><b class="lbl">The light bulb</b>Think of a light bulb. The bulb itself is the element; the switch that controls its brightness or colour is like an attribute, an extra setting. The bulb is still a bulb, but now with a setting. <mark>An attribute gives a tag extra information about how to show it or how it should work.</mark></div>
   <p>Every attribute has two parts: a <b>name</b> (what kind of information) and a <b>value</b> (the actual setting). It is always written <b>inside the opening tag</b>:</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-html">&lt;tagname attribute="value"&gt;Content&lt;/tagname&gt;</code></pre></div>
   <div class="anatomy"><span class="a1">&lt;img</span> <span class="a2">src</span>=<span class="a3">"flower.jpg"</span> <span class="a2">alt</span>=<span class="a3">"Beautiful flower"</span><span class="a1">&gt;</span></div>
@@ -261,7 +261,7 @@
   <div class="grid">
     <div class="card t1 tilt-a"><h4>Remember later</h4><p>Weeks later, comments remind you what each part of the code does.</p></div>
     <div class="card t2 tilt-b"><h4>Help others</h4><p>Teammates and students follow your logic more easily.</p></div>
-    <div class="card t5 tilt-a"><h4>Organise code</h4><p>Divide a long file into labelled sections.</p></div>
+    <div class="card t5 tilt-a"><h4>Improves code organisation</h4><p>Divide a long file into labelled sections.</p></div>
   </div>
   <div class="codebox"><span class="cap">comments as section markers</span><pre><code class="language-html">&lt;!-- Header Section --&gt;
 &lt;!-- Main Content Section --&gt;
@@ -276,34 +276,8 @@
   <h2>The core structure: a blueprint for every page</h2>
   <p>Every website you visit (Google, YouTube, your favourite blog) is built on the same HTML skeleton. Don’t worry if it looks like a lot: it is easier than it looks.</p>
   <div class="story"><b class="lbl">The house blueprint</b>An architect’s blueprint shows where the foundation, walls, rooms and furniture go. <mark>HTML structure shows the browser where to place headings, text, images and links.</mark></div>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="A house: the foundation is the DOCTYPE, the roof and walls are the html element, inside are two rooms, head and body, and the furniture is the content inside body">
-      <g class="rough">
-        <path class="box f-orange" d="M60 112 L 260 30 L 460 112 Z"/>
-        <rect class="box f-card" x="80" y="112" width="360" height="156" rx="4"/>
-        <rect class="box f-yellow" x="98" y="130" width="130" height="122" rx="10"/>
-        <rect class="box f-green" x="242" y="130" width="180" height="122" rx="10"/>
-        <rect class="box f-grey" x="60" y="268" width="400" height="38" rx="6"/>
-      </g>
-      <text class="tm" x="260" y="96" text-anchor="middle">&lt;html&gt;</text>
-      <text class="tm" x="163" y="160" text-anchor="middle">&lt;head&gt;</text>
-      <text class="ts" x="163" y="186" text-anchor="middle">storage room</text>
-      <text class="ts" x="163" y="210" text-anchor="middle">title, meta</text>
-      <text class="tm" x="332" y="160" text-anchor="middle">&lt;body&gt;</text>
-      <text class="ts" x="332" y="186" text-anchor="middle">living room</text>
-      <text class="ts" x="332" y="210" text-anchor="middle">h1, p, img, a</text>
-      <text class="tm" x="260" y="292" text-anchor="middle">&lt;!DOCTYPE html&gt;</text>
-      <text class="tr" x="490" y="56">Walls</text>
-      <text class="ts" x="490" y="78">&lt;html&gt; holds everything</text>
-      <text class="tr" x="490" y="126">Rooms</text>
-      <text class="ts" x="490" y="148">&lt;head&gt; info + &lt;body&gt; content</text>
-      <text class="tr" x="490" y="196">Furniture</text>
-      <text class="ts" x="490" y="218">h1, p, img, a inside body</text>
-      <text class="tr" x="490" y="266">Foundation</text>
-      <text class="ts" x="490" y="288">&lt;!DOCTYPE html&gt;, line one</text>
-    </svg></div>
-    <figcaption>Foundation, walls, rooms, furniture: the four layers of every HTML page.</figcaption>
-  </figure>
+  <p>What does an HTML document look like?</p>
+  <figure class="shot"><img src="img/08.webp" alt="Infographic HTML Structure: a house cut open. DOCTYPE html is the foundation that tells the browser this is an HTML5 document; html ... /html are the outer walls covering everything; the upper floor is head, the planning and information area holding the title and styles; the lower floor is body, the living area showing the main content, with an h1 as the room name board, a p paragraph, an img picture on the wall and an a link as the door to another page" width="1400" height="788"><figcaption>Like a house, a web page has a proper structure: foundation, walls, rooms and furniture.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>House part</th><th>HTML</th><th>What it does</th></tr>
     <tr><td>Foundation</td><td><code>&lt;!DOCTYPE html&gt;</code></td><td>First line. Tells the browser “this is an HTML5 document.”</td></tr>
@@ -325,6 +299,8 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre></div>
   <p>Create <code>index.html</code>, paste this in, save, and open it in any browser. Done: your first HTML document.</p>
+  <figure class="shot sm"><img src="img/09.webp" alt="Browser at 127.0.0.1:5500/index.html showing the heading Welcome to HTML and the paragraph This is a simple HTML structure." width="607" height="362"><figcaption>Your first “Welcome to HTML” page in the browser.</figcaption></figure>
+  <p>Now let’s understand the code one part at a time: what each part does and why it’s important.</p>
 </section>
 
 <!-- 10 -->
@@ -333,7 +309,7 @@
   <h3>The doctype declaration</h3>
   <p><code>&lt;!DOCTYPE html&gt;</code> tells the browser which kind of HTML the page uses. In modern pages it means <b>HTML5</b>, and it makes the browser use its <b>standards mode</b> instead of an old “quirks” mode.</p>
   <div class="grid">
-    <div class="card t1 tilt-a"><h4>Purpose</h4><p>Declares the HTML version, keeps pages consistent across browsers, and makes them display correctly.</p></div>
+    <div class="card t1 tilt-a"><h4>Purpose</h4><p>Declares the HTML version, helps maintain cross-browser compatibility, and makes them display correctly.</p></div>
     <div class="card t3 tilt-b"><h4>Must be first</h4><p>It has to be the <b>very first line</b> of every HTML document.</p></div>
     <div class="card t6 tilt-a"><h4>Not case-sensitive</h4><p><code>&lt;!doctype html&gt;</code> works just as well.</p></div>
   </div>
@@ -370,6 +346,7 @@
   <p><b>Why it matters:</b> text displays correctly in any script (Hindi, English, Tamil) and special symbols like ₹, é or emoji don’t turn into garbage.</p>
 
   <h4><code>&lt;meta name="viewport" …&gt;</code> · fitting the screen</h4>
+  <p>This tag controls how a web page looks on different devices: mobile phones, tablets and computers.</p>
   <pre><code class="language-html">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
   <ul>
     <li><b>Viewport</b> is the user’s visible area of a web page. It can differ from the page’s full size.</li>
@@ -408,33 +385,24 @@
   <h3><code>&lt;title&gt;</code>: the page’s name</h3>
   <p>The <code>&lt;title&gt;</code> tag names the page. Think of it as the <b>label on the page</b>.</p>
   <pre><code class="language-html">&lt;title&gt;My Web Page&lt;/title&gt;</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The title My Web Page appears in three places: on the browser tab, as the bookmark name, and as the blue clickable headline in search results">
-      <g class="rough">
-        <rect class="box f-grey" x="20" y="50" width="220" height="110" rx="12"/>
-        <rect class="box f-card" x="36" y="86" width="180" height="40" rx="8"/>
-        <rect class="box f-grey" x="250" y="50" width="220" height="110" rx="12"/>
-        <rect class="box f-card" x="266" y="86" width="188" height="40" rx="6"/>
-        <rect class="box f-card" x="480" y="50" width="220" height="110" rx="12"/>
-      </g>
-      <text class="tr" x="130" y="36" text-anchor="middle">1 · browser tab</text>
-      <text class="t" x="50" y="112">My Web Page</text>
-      <text class="t" x="196" y="112">×</text>
-      <text class="tr" x="360" y="36" text-anchor="middle">2 · bookmark</text>
-      <text class="t" x="280" y="112">★ My Web Page</text>
-      <text class="tr" x="590" y="36" text-anchor="middle">3 · search result</text>
-      <text class="ts" x="496" y="84">example.com</text>
-      <text class="tb" x="496" y="112">My Web Page</text>
-      <text class="ts" x="496" y="138">Page description text…</text>
-      <text class="ts" x="360" y="194" text-anchor="middle">same &lt;title&gt; text everywhere</text>
-    </svg></div>
-    <figcaption>One line of code, three places your users see it.</figcaption>
-  </figure>
+  <p>Output: the title shows on the browser tab.</p>
+  <figure class="shot sm"><img src="img/10.webp" alt="Browser tab labelled My Web Page, circled in red with an arrow, above the page at 127.0.0.1:5500/index.html" width="572" height="211"><figcaption>The text inside <code>&lt;title&gt;</code> is the tab’s label.</figcaption></figure>
   <div class="two">
     <div class="card t1 tilt-a"><h4>What it does</h4><p>Shows the page name (1) on the <b>browser tab</b>, (2) as the <b>bookmark</b> name when saved as a favourite, and (3) as the <b>headline</b> in search results.</p></div>
     <div class="card t2 tilt-b"><h4>Why it matters</h4><p>Users can <b>identify</b> your page among many tabs, and <b>search engines</b> like Google use it to understand what the page is about.</p></div>
   </div>
-  <div class="sticky info l"><strong>See it yourself</strong> Search “What is HTML” on Google, right-click a result page and choose <b>Inspect</b>. In the <code>&lt;head&gt;</code> you will find the <code>&lt;title&gt;</code> that matches the blue headline.</div>
+  <h4>a) In the browser tab</h4>
+  <p>The text inside <code>&lt;title&gt;</code> appears at the top of the browser window or tab. With <code>&lt;title&gt;My Web Page&lt;/title&gt;</code>, the tab shows “My Web Page” (as in the screenshot above).</p>
+  <h4>b) In bookmarks</h4>
+  <p>When you bookmark a page, the title becomes the bookmark’s name. With <code>&lt;title&gt;My Web Page&lt;/title&gt;</code>, the bookmark is called “My Web Page”.</p>
+  <figure class="shot"><img src="img/11.webp" alt="Chrome Bookmark added dialog for 127.0.0.1:5500/index.html, with the Name field pre-filled as My Web Page and Folder set to Bookmarks bar" width="1400" height="373"><figcaption>Click the star: the bookmark’s <b>Name</b> is filled in from the title.</figcaption></figure>
+  <p>After bookmarking, you can easily see it on the bookmarks bar:</p>
+  <figure class="shot sm"><img src="img/12.webp" alt="Chrome bookmarks bar showing a bookmark named My Web Page" width="482" height="196"><figcaption>The bookmark on the bar is labelled “My Web Page”.</figcaption></figure>
+  <h4>c) In search results</h4>
+  <p>When you search on Google, the blue clickable link in each result is that page’s title. For example, search <b>“What is HTML”</b> and the results might show:</p>
+  <figure class="shot"><img src="img/13.webp" alt="Google results for what is HTML: the Wikipedia result with the blue clickable headline HTML" width="1078" height="265"><figcaption>The blue headline of the Wikipedia result comes from that page’s title.</figcaption></figure>
+  <p>Open that page, right-click and choose <b>Inspect</b>: inside the <code>&lt;head&gt;</code> you can see the <code>&lt;title&gt;</code> tag.</p>
+  <figure class="shot"><img src="img/14.webp" alt="Chrome DevTools Elements panel on the Wikipedia HTML page: inside head, the line title HTML - Wikipedia /title is circled in red, right below meta charset UTF-8" width="1178" height="540"><figcaption>DevTools on Wikipedia: <code>&lt;title&gt;HTML - Wikipedia&lt;/title&gt;</code> sits in the <code>&lt;head&gt;</code>.</figcaption></figure>
 </section>
 
 <!-- 12 -->
@@ -457,22 +425,8 @@
     &lt;p&gt;This is a simple HTML structure.&lt;/p&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre></div>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Browser window with tab My Web Page, showing the heading Welcome to HTML and the paragraph This is a simple HTML structure">
-      <g class="rough">
-        <rect class="box f-card" x="20" y="16" width="680" height="170" rx="14"/>
-        <rect class="box f-grey" x="20" y="16" width="680" height="48" rx="14"/>
-        <rect class="box f-card" x="36" y="26" width="170" height="38" rx="8"/>
-        <path class="lr dash" d="M522 128 C 460 130, 390 138, 336 148" marker-end="url(#ahr)"/>
-      </g>
-      <text class="t" x="50" y="51">My Web Page</text>
-      <text class="ts" x="230" y="48">← from &lt;title&gt; in head</text>
-      <text class="th" x="50" y="118">Welcome to HTML</text>
-      <text class="t" x="50" y="156">This is a simple HTML structure.</text>
-      <text class="tr" x="530" y="124">from &lt;body&gt;</text>
-    </svg></div>
-    <figcaption>The head names the tab; the body fills the window.</figcaption>
-  </figure>
+  <p>Output:</p>
+  <figure class="shot sm"><img src="img/09.webp" alt="Browser at 127.0.0.1:5500/index.html showing the heading Welcome to HTML and the paragraph This is a simple HTML structure." width="607" height="362"><figcaption>The body fills the window: one heading, one paragraph.</figcaption></figure>
   <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer says “the page looks broken” or “the special characters are garbled”, open DevTools and check the basics first: a missing doctype (quirks mode), a missing <code>charset</code>, or a missing viewport tag cause a surprising number of real bugs.</div>
 </section>
 
@@ -482,6 +436,10 @@
   <div class="two">
     <div class="card t1 tilt-a"><h4>Block-level</h4><p>Always starts on a <b>new line</b> and takes the <b>full width</b> of its parent. Can contain block or inline elements.<br><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></p></div>
     <div class="card t7 tilt-b"><h4>Inline</h4><p>Does <b>not</b> start a new line and takes <b>only as much width as its content</b>. Usually holds text or other inline elements.<br><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;img&gt;</code></p></div>
+  </div>
+  <div class="shots">
+    <figure class="shot"><img src="img/15.webp" alt="Block-level elements: seven coloured bars, each stretching the full width and each on its own line" width="700" height="442"><figcaption>Block-level: each one starts on a new line and takes the full width.</figcaption></figure>
+    <figure class="shot"><img src="img/16.webp" alt="Inline elements: seven short coloured boxes sitting side by side, wrapping onto a second line only when the first line is full" width="653" height="215"><figcaption>Inline: each takes only the width it needs and sits next to the others.</figcaption></figure>
   </div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Two block elements, h1 and p, each stretch across the full width on their own line. A third paragraph holds inline b and a elements that sit side by side within the same line of text.">

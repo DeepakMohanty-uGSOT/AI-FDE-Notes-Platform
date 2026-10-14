@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Error Handling · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Stop programs from crashing on bad input and missing files: syntax vs runtime errors, reading tracebacks, try/except, specific and multiple exceptions, common built-in exceptions, else and finally, and raising your own exceptions for validation.">
+<meta name="keywords" content="exceptions, traceback, try except, ValueError, else finally, raise, validation">
+<meta name="date" content="2026-09-30">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/error-handling">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Error Handling</h1>
+  <p class="byline">Read Python’s error messages, catch problems with try/except instead of crashing, clean up with finally, and raise your own errors when data breaks your rules.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why error handling?</h2>
+  <p>You have already met several errors in this course: <code>FileNotFoundError</code> when opening a missing file, <code>TypeError</code> when calling a function with too many arguments, <code>NameError</code> when using an undefined variable. Time to understand what they are and why you can’t just ignore them.</p>
+  <pre><code class="language-python">age = int(input("Enter your age: "))
+print("Next year you will be", age + 1)</code></pre>
+  <p>If the user types a number, it works perfectly:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Output: Enter your age: 20, Next year you will be 21" width="900" height="100"><figcaption>A number goes in, the program answers normally.</figcaption></figure>
+  <p>But real users don’t always type what you expect. What if the user types words instead?</p>
+  <figure class="shot"><img src="img/02.webp" alt="Output: Enter your age: twenty, then a traceback ending in ValueError: invalid literal for int() with base 10: 'twenty'" width="900" height="212"><figcaption>Typing <code>twenty</code> crashes the program with a <code>ValueError</code>.</figcaption></figure>
+  <p>Instead of allowing the program to simply crash, we can <b>handle the problem</b> and respond appropriately. That leads us to <b>error handling</b>.</p>
+  <div class="story"><b class="lbl">The Swiggy order</b>You order from a restaurant that just closed. A badly built app would freeze and show you a page of gibberish. A good app says “This restaurant is closed right now. Here are similar ones nearby.” <mark>Error handling is having a plan B, so a problem gets a sensible response instead of a crash.</mark></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what">
+  <h2>What is an error / exception?</h2>
+  <p>Some problems are found <b>before</b> the program runs; others happen <b>while</b> it is running. Two kinds matter first.</p>
+  <h3>1 · Syntax error: the code is written wrongly</h3>
+  <p>Python finds it <b>before running</b>, so nothing runs at all. A missing closing bracket:</p>
+  <pre><code class="language-python">print("Hello"</code></pre>
+  <figure class="shot"><img src="img/03.webp" alt="Output: File main.py, line 1, print(&quot;Hello&quot; with a caret, SyntaxError: '(' was never closed" width="900" height="156"><figcaption>A <code>SyntaxError</code>: Python refuses to run anything.</figcaption></figure>
+  <h3>2 · Runtime error: correct code, impossible situation</h3>
+  <p>The code reads fine, but the situation makes it impossible, like dividing by zero:</p>
+  <pre><code class="language-python">print(10 / 0)</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="Output: traceback for print(10 / 0) ending in ZeroDivisionError: division by zero" width="900" height="184"><figcaption>A runtime error: the code is fine, the situation (dividing by zero) is impossible.</figcaption></figure>
+  <p>When a runtime problem occurs, Python <mark>raises an exception</mark>. If nobody handles it, the program stops and Python prints an error message.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Timeline: Python first checks the code; a syntax error is caught here and nothing runs. Then the program runs; a runtime error raises an exception here, which can be handled">
+      <g class="rough">
+        <path class="ln" d="M30 110 L 690 110" marker-end="url(#ah)"/>
+        <rect class="box f-grey" x="40" y="70" width="240" height="80" rx="14"/>
+        <rect class="box f-blue" x="360" y="70" width="300" height="80" rx="14"/>
+        <path class="lr" d="M160 156 L 160 196" marker-end="url(#ahr)"/>
+        <path class="lb" d="M510 156 L 510 196" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="160" y="104" text-anchor="middle">check code</text>
+      <text class="ts" x="160" y="130" text-anchor="middle">before anything runs</text>
+      <text class="th" x="510" y="104" text-anchor="middle">run program</text>
+      <text class="ts" x="510" y="130" text-anchor="middle">line by line</text>
+      <text class="tr" x="160" y="222" text-anchor="middle">SyntaxError: fix the code</text>
+      <text class="tb" x="510" y="222" text-anchor="middle">exception: can be handled</text>
+      <text class="ts" x="320" y="40" text-anchor="middle">time →</text>
+    </svg></div>
+    <figcaption>Syntax errors stop the program before it starts; exceptions happen mid-run and can be caught.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th></th><th>Syntax error</th><th>Runtime error (exception)</th></tr>
+    <tr><td><b>When?</b></td><td>before the program starts</td><td>while the program is running</td></tr>
+    <tr><td><b>Cause</b></td><td>code written the wrong way</td><td>a situation the code can’t handle</td></tr>
+    <tr><td><b>Example</b></td><td>missing bracket or colon</td><td>dividing by zero, missing file</td></tr>
+    <tr><td><b>Can we handle it?</b></td><td>no: fix the code</td><td>yes: that’s what this note is about</td></tr>
+  </table></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="impact">
+  <h2>Runtime errors and their impact</h2>
+  <p>A small program that stores student marks:</p>
+  <pre><code class="language-python">print("Program started")
+
+marks = [85, 90, 78]
+print(marks[5])
+
+print("Program finished")</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: Program started, then a traceback pointing at line 4, print(marks[5]), IndexError: list index out of range" width="1366" height="266"><figcaption>“Program started” prints, then the crash. “Program finished” never appears.</figcaption></figure>
+  <p>The list has only 3 items, so position 5 doesn’t exist. Python raises an <b>IndexError</b> and the program <b>stops right there</b>. “Program finished” never prints.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Five steps: 1 Program starts (print Program started), 2 Line runs (marks = [85, 90, 78]), 3 Error happens (print(marks[5]) raises IndexError), 4 Program crashes (traceback shown, Python stops), 5 Rest never runs (print Program finished is skipped)" width="1400" height="273"><figcaption>What an unhandled exception does: everything after the error line is skipped.</figcaption></figure>
+  <h3>Reading the error message (the traceback)</h3>
+  <p>The message is called a <b>traceback</b>. It looks scary but it tells you exactly what went wrong:</p>
+  <div class="anatomy"><span class="a1">File "main.py", line 4</span> … <span class="a2">IndexError</span>: <span class="a3">list index out of range</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>WHERE</b> the error happened: file and line number</p></div>
+    <div><span class="sw a2"></span><p><b>WHAT</b> type of exception it is</p></div>
+    <div><span class="sw a3"></span><p><b>WHY</b> it happened</p></div>
+  </div>
+  <div class="sticky tip l"><strong>Read tracebacks bottom-up.</strong> The last line (type + message) is the most useful; the lines above show the path that led there. The <code>~~~^^^</code> markers (Python 3.11+) point at the exact part of the line that failed.</div>
+  <h3>Why this matters</h3>
+  <p>When an exception is not handled:</p>
+  <ul>
+    <li>every line <b>after</b> the error is skipped</li>
+    <li>unfinished work may not be completed</li>
+    <li>data that wasn’t saved yet may be <b>lost</b></li>
+    <li>the user sees a confusing error message</li>
+    <li>in a real application, an unexpected crash can interrupt an important task</li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="unexpected">
+  <h2>Expect the unexpected</h2>
+  <p>You can’t control everything around your program. Real programs face situations you didn’t plan for:</p>
+  <div class="grid two">
+    <div class="card t3 tilt-a"><h4>Bad input</h4><p>The user types <code>abc</code> where a number is expected.</p></div>
+    <div class="card t4 tilt-b"><h4>Missing file</h4><p>A file you want to read was <b>deleted</b> or moved.</p></div>
+    <div class="card t5 tilt-b"><h4>Missing key</h4><p>A dictionary doesn’t have the key you’re looking for.</p></div>
+    <div class="card t1 tilt-a"><h4>Zero</h4><p>A value becomes <code>0</code> and you divide by it.</p></div>
+  </div>
+  <p>None of these are mistakes in your code; they are <b>situations</b>. A good program <b>expects</b> them and has a plan for each.</p>
+  <h3>Option 1: check first</h3>
+  <pre><code class="language-python">value = input("Enter marks: ")
+
+if value.isdigit():
+    marks = int(value)
+    print("Marks entered:", marks)
+else:
+    print("Please enter a valid number.")</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="Terminal: Enter marks: abc, Please enter a valid number." width="1366" height="156"><figcaption>With <code>abc</code>, the check fails and the <code>else</code> message prints instead of a crash.</figcaption></figure>
+  <p>This works here, but checking in advance has limits:</p>
+  <ul>
+    <li><code>.isdigit()</code> says <code>"-5"</code> and <code>"85.5"</code> are <b>not</b> digits, so you’d need more and more checks.</li>
+    <li>Some problems can’t be checked in advance: a file can disappear between your check and the moment you open it.</li>
+    <li>A program has <b>many</b> risky lines; checking each one makes code long and messy.</li>
+  </ul>
+  <p>So Python offers a better tool: <mark>try the risky code, and if it fails, handle it</mark>.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="graceful">
+  <h2>Graceful error handling</h2>
+  <p><b>Graceful error handling</b> means that when something goes wrong, the program gives a <b>clear, useful response</b> instead of crashing with a traceback.</p>
+  <figure class="shot"><img src="img/08.webp" alt="Side by side. Crash, without error handling: the user types abc, a traceback ending in ValueError appears; a confusing message, the program stops immediately, unsaved work may be lost. Graceful, with error handling: the user types abc, Please enter a valid number. Program continues...; a clear friendly message, the program keeps running, nothing is lost" width="1400" height="455"><figcaption>Same input, two outcomes: a crash versus a graceful response.</figcaption></figure>
+  <p>For example, instead of allowing invalid input to crash the program:</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", marks)
+except ValueError:
+    print("Please enter a valid number.")
+
+print("Program continues...")</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal: Enter marks: abc, Please enter a valid number., Program continues..." width="1366" height="184"><figcaption>The user typed <code>abc</code>: a friendly message, and the program carries on.</figcaption></figure>
+  <p><b>No traceback, no crash</b>: just a friendly message, and the program keeps going. Let’s learn exactly how this works.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="try-except">
+  <h2><code>try</code> / <code>except</code></h2>
+  <p>In the previous section, checking input before an operation prevented some problems, but you cannot always predict every problem in advance. So instead of checking everything first, Python lets you <b>try</b> an operation and <b>handle</b> the exception if it occurs.</p>
+  <h3>What do <code>try</code> and <code>except</code> do?</h3>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4><code>try</code></h4><p>“Try running this code; it might fail.” Put the <b>risky</b> lines inside.</p></div>
+    <div class="card t2 tilt-b"><h4><code>except</code></h4><p>“If an exception happens in the <code>try</code> block, handle it here instead of crashing.”</p></div>
+  </div>
+  <div class="codebox"><span class="cap">basic structure</span><pre><code class="language-python">try:
+    # code that might cause an error
+except:
+    # code that runs if an error happens</code></pre></div>
+  <figure class="shot"><img src="img/10.webp" alt="try: marks = int(input(...)) labelled Risky code goes here, Python tries to run this, it might fail. except: print(Please enter a valid number.) labelled Plan B, runs only on error: if anything inside try fails, Python jumps here instead of crashing" width="1400" height="309"><figcaption><code>try</code> holds the risky code; <code>except</code> is plan B.</figcaption></figure>
+  <ul>
+    <li><code>try</code> and <code>except</code> both end with a colon <code>:</code></li>
+    <li>the code inside each is <b>indented</b>, like an <code>if</code> or <code>for</code> body</li>
+    <li><code>except</code> must come <b>directly after</b> the <code>try</code> block</li>
+  </ul>
+  <p>For example, we already saw that converting <code>"abc"</code> to an integer causes a <code>ValueError</code>. Instead of letting the program crash, we can handle that exception:</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", marks)
+except:
+    print("Please enter a valid number.")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/11.webp" alt="Terminal: Enter marks: 85, Marks entered: 85" width="1366" height="156"><figcaption>User types <code>85</code>: the try block finishes.</figcaption></figure>
+    <figure class="shot"><img src="img/07.webp" alt="Terminal: Enter marks: abc, Please enter a valid number." width="1366" height="156"><figcaption>User types <code>abc</code>: the except block runs.</figcaption></figure>
+  </div>
+  <p>With <code>85</code>, the conversion succeeds and <code>except</code> is skipped. With <code>abc</code>, <code>int()</code> raises a <code>ValueError</code>, Python stops the <code>try</code> block and runs <code>except</code>. You get a friendly response instead of an unhandled traceback.</p>
+  <div class="sticky fde"><strong>Real world: ATM withdrawal</strong> The ATM must not crash if someone types letters.
+  <pre><code class="language-python">try:
+    amount = int(input("Enter amount to withdraw: "))
+    print("Please collect your cash:", amount)
+except:
+    print("Please enter the amount in numbers only.")</code></pre>
+  <pre class="out"><code>Enter amount to withdraw: two thousand
+Please enter the amount in numbers only.</code></pre></div>
+  <h3>How the flow works</h3>
+  <p>Python runs the <code>try</code> block <b>line by line</b>. The moment an exception occurs:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Python stops the try block</b></div></li>
+    <li><span class="dot">2</span><div><b>The remaining try lines are skipped</b></div></li>
+    <li><span class="dot">3</span><div><b>Python looks for a matching except</b></div></li>
+    <li><span class="dot">4</span><div><b>That except block runs</b></div></li>
+    <li><span class="dot">5</span><div><b>The program continues after the try/except</b></div></li>
+  </ol>
+  <div class="two">
+    <div><pre><code class="language-python">print("Start")
+
+try:
+    print("Step 1")
+    result = 10 / 0
+    print("Step 2")
+except:
+    print("Something went wrong")
+
+print("End")</code></pre>
+    <figure class="shot"><img src="img/12.webp" alt="Terminal: Start, Step 1, Something went wrong, End" width="1366" height="211"><figcaption>“Step 2” never prints: Python left <code>try</code> at the error line.</figcaption></figure></div>
+    <div><pre><code class="language-python">print("Start")
+
+try:
+    print("Step 1")
+    result = 10 / 2
+    print("Step 2")
+except:
+    print("Something went wrong")
+
+print("End")</code></pre>
+    <figure class="shot"><img src="img/13.webp" alt="Terminal: Start, Step 1, Step 2, End" width="1366" height="211"><figcaption>No error: the whole try block runs and <code>except</code> is skipped.</figcaption></figure></div>
+  </div>
+  <p>On the left, “Step 2” was never printed: Python left the <code>try</code> block at the line with the error. On the right, the same program without an error: this time the whole <code>try</code> block ran, and <code>except</code> was skipped completely.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="try block with Step 1, the 10 divided by 0 line, and Step 2. The error line jumps out to the except block, skipping Step 2, then flow continues to End">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="330" height="200" rx="16"/>
+        <rect class="box f-card" x="40" y="66" width="290" height="38" rx="8"/>
+        <rect class="box f-orange" x="40" y="114" width="290" height="38" rx="8"/>
+        <rect class="box f-grey dash" x="40" y="162" width="290" height="38" rx="8"/>
+        <rect class="box f-green" x="440" y="100" width="260" height="70" rx="14"/>
+        <rect class="box f-yellow" x="440" y="226" width="260" height="56" rx="14"/>
+        <path class="lr" d="M334 133 C 380 133, 400 135, 434 135" marker-end="url(#ahr)"/>
+        <path class="ln" d="M570 174 L 570 220" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="185" y="52" text-anchor="middle">try</text>
+      <text class="tm" x="60" y="90">print("Step 1")  ✓</text>
+      <text class="tm" x="60" y="138">10 / 0  ✗ exception!</text>
+      <text class="tm" x="60" y="186">print("Step 2")  skipped</text>
+      <text class="th" x="570" y="132" text-anchor="middle">except</text>
+      <text class="tm" x="570" y="156" text-anchor="middle">"Something went wrong"</text>
+      <text class="tm" x="570" y="260" text-anchor="middle">print("End")</text>
+      <text class="tr" x="388" y="120" text-anchor="middle">jump</text>
+    </svg></div>
+    <figcaption>An exception jumps straight out of <code>try</code>; the rest of the try block never runs.</figcaption>
+  </figure>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="specific">
+  <h2>Handling specific exceptions</h2>
+  <p>A bare <code>except:</code> catches <b>every</b> kind of error. That sounds handy, but it’s dangerous: it also hides <b>mistakes in your own code</b>. Watch what a small typo does:</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", mark)      # typo: mark instead of marks
+except:
+    print("Please enter a valid number.")</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal: Enter marks: 85, Please enter a valid number." width="1366" height="156"><figcaption>A valid <code>85</code>, yet the program says “Please enter a valid number.”</figcaption></figure>
+  <p>The user typed a perfectly valid number, but the program blames them. The real problem was our typo, a <code>NameError</code>, and the bare <code>except</code> hid it.</p>
+  <div class="codebox"><span class="cap">syntax: name the exception you expect</span><pre><code class="language-python">try:
+    # risky code
+except ExceptionName:
+    # runs only for THIS type of exception</code></pre></div>
+  <p>Now the same program with the typo:</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", mark)      # typo: mark instead of marks
+except ValueError:
+    print("Please enter a valid number.")</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal: Enter marks: 85, then a traceback at line 3 pointing at mark, NameError: name 'mark' is not defined. Did you mean: 'marks'?" width="1366" height="266"><figcaption>With <code>except ValueError</code>, the real bug (a <code>NameError</code>) is no longer hidden.</figcaption></figure>
+  <p>Now Python shows the <b>real</b> problem so you can fix it. Only a <code>ValueError</code> (the exception you expected) is handled. After fixing the typo:</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", marks)
+except ValueError:
+    print("Please enter a valid number.")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/11.webp" alt="Terminal: Enter marks: 85, Marks entered: 85" width="1366" height="156"><figcaption>User types <code>85</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/07.webp" alt="Terminal: Enter marks: abc, Please enter a valid number." width="1366" height="156"><figcaption>User types <code>abc</code>.</figcaption></figure>
+  </div>
+  <div class="sticky warn l"><strong>Avoid bare <code>except:</code></strong> It swallows bugs (typos, wrong types) and makes them look like user errors. Always name the exception you expect.</div>
+  <h3>Seeing the details with <code>as</code></h3>
+  <p><code>as e</code> stores the exception in a variable (<code>e</code> is just a name, like <code>file</code> in <code>with open() as file</code>):</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+except ValueError as e:
+    print("Error:", e)</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: Enter marks: abc, Error: invalid literal for int() with base 10: 'abc'" width="1366" height="156"><figcaption><code>e</code> holds Python’s own explanation of what went wrong.</figcaption></figure>
+  <div class="sticky fde"><strong>Real world: train booking</strong> Show the exact reason when the seat count isn’t a number.
+  <pre><code class="language-python">try:
+    seats = int(input("Enter number of seats: "))
+except ValueError as e:
+    print("Booking failed:", e)</code></pre>
+  <pre class="out"><code>Enter number of seats: two
+Booking failed: invalid literal for int() with base 10: 'two'</code></pre>
+  In production you’d <b>log</b> <code>e</code> for engineers and show users a friendlier sentence.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="multiple">
+  <h2>Handling multiple exception types</h2>
+  <p>One piece of code can fail in <b>more than one way</b>:</p>
+  <pre><code class="language-python">total = int(input("Enter total marks: "))
+students = int(input("Enter number of students: "))
+print("Average:", total / students)</code></pre>
+  <div class="flow"><span>user types a word</span><span class="bad">ValueError</span><span>students is 0</span><span class="bad">ZeroDivisionError</span></div>
+  <p>Write <b>one except block per exception</b>, one after another:</p>
+  <pre><code class="language-python">try:
+    total = int(input("Enter total marks: "))
+    students = int(input("Enter number of students: "))
+    print("Average:", total / students)
+except ValueError:
+    print("Please enter numbers only.")
+except ZeroDivisionError:
+    print("Number of students cannot be zero.")</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: Enter total marks: abc, Please enter numbers only." width="1366" height="156"><figcaption>User types <code>abc</code>: the <code>ValueError</code> block runs.</figcaption></figure>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: Enter total marks: 250, Enter number of students: 0, Number of students cannot be zero." width="1366" height="184"><figcaption>User types <code>250</code> and <code>0</code>: the <code>ZeroDivisionError</code> block runs.</figcaption></figure>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal: Enter total marks: 250, Enter number of students: 3, Average: 83.33333333333333" width="1366" height="184"><figcaption>User types <code>250</code> and <code>3</code>: no error, the average prints.</figcaption></figure>
+  <p>Each problem gets its <b>own</b> message. Python checks the except blocks <b>top to bottom</b> and runs only the <b>first one that matches</b>.</p>
+  <figure class="shot"><img src="img/20.webp" alt="Error raised in try: total / students, ZeroDivisionError. Python checks each except from top to bottom: except ValueError, no match; except ZeroDivisionError, match, runs; except IndexError, not checked. Only the first matching except block runs" width="1400" height="304"><figcaption>Once one <code>except</code> matches, the blocks below it aren’t even checked.</figcaption></figure>
+  <div class="sticky fde"><strong>Real world: splitting a restaurant bill</strong>
+  <pre><code class="language-python">try:
+    bill = int(input("Enter total bill: "))
+    friends = int(input("Enter number of friends: "))
+    print("Each person pays:", bill / friends)
+except ValueError:
+    print("Please enter numbers only.")
+except ZeroDivisionError:
+    print("Number of friends cannot be zero.")</code></pre>
+  <pre class="out"><code>Enter total bill: 1200
+Enter number of friends: 4
+Each person pays: 300.0</code></pre></div>
+  <h3>Same response for several exceptions</h3>
+  <p>Group them in brackets (a tuple):</p>
+  <pre><code class="language-python">try:
+    total = int(input("Enter total marks: "))
+    students = int(input("Enter number of students: "))
+    print("Average:", total / students)
+except (ValueError, ZeroDivisionError):
+    print("Invalid input. Please try again.")</code></pre>
+  <figure class="shot"><img src="img/21.webp" alt="Terminal: Enter total marks: 250, Enter number of students: 0, Invalid input. Please try again." width="1366" height="184"><figcaption>User types <code>250</code> and <code>0</code>: the grouped handler catches it.</figcaption></figure>
+  <div class="sticky tip"><strong>Real world: vehicle mileage</strong> Text input and 0 litres both get the same message.
+  <pre><code class="language-python">try:
+    distance = float(input("Enter distance travelled (km): "))
+    fuel = float(input("Enter fuel used (litres): "))
+    print("Mileage:", distance / fuel, "km per litre")
+except (ValueError, ZeroDivisionError):
+    print("Invalid input. Please try again.")</code></pre>
+  <pre class="out"><code>Enter distance travelled (km): 450
+Enter fuel used (litres): 30
+Mileage: 15.0 km per litre</code></pre></div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="common">
+  <h2>Common built-in exceptions</h2>
+  <p>Python has many built-in exceptions, but a few appear again and again. For each one, let’s see what causes it and how to handle it.</p>
+  <figure class="shot"><img src="img/22.webp" alt="Six cards: ValueError, right type wrong value, int(&quot;abc&quot;); TypeError, operation on the wrong type, &quot;Total: &quot; + 85; ZeroDivisionError, dividing by zero, 250 / 0; IndexError, list position doesn't exist, students[3]; KeyError, dictionary key doesn't exist, student[&quot;email&quot;]; FileNotFoundError, file isn't there, open(&quot;marks.txt&quot;)" width="1400" height="380"><figcaption>The six exceptions you’ll meet most often, each with a one-line trigger.</figcaption></figure>
+
+  <h3><code>ValueError</code></h3>
+  <p>Sometimes Python receives a value of the correct general type, but the <b>content</b> of that value is not acceptable for the operation. <code>input()</code> gives you a string, and <code>int()</code> can convert a string that contains a valid whole number, but this cannot be converted:</p>
+  <pre><code class="language-python">age = int("twenty")</code></pre>
+  <figure class="shot"><img src="img/23.webp" alt="Terminal: traceback for age = int(&quot;twenty&quot;), ValueError: invalid literal for int() with base 10: 'twenty'" width="1366" height="239"><figcaption>Python raises a <code>ValueError</code>.</figcaption></figure>
+  <p>Handling it:</p>
+  <pre><code class="language-python">try:
+    age = int(input("Enter your age: "))
+    print("Next year you will be", age + 1)
+except ValueError:
+    print("Age must be a whole number, like 21.")</code></pre>
+  <figure class="shot"><img src="img/24.webp" alt="Terminal: Enter your age: twenty, Age must be a whole number, like 21." width="1366" height="156"><figcaption>User types <code>twenty</code>: a helpful message instead of a crash.</figcaption></figure>
+  <p>Common causes: <code>int()</code> or <code>float()</code> on text like <code>"abc"</code> or <code>"12a"</code>; converting user input that can’t be converted. A shop asking for a quantity behaves the same way:</p>
+  <pre><code class="language-python">try:
+    quantity = int(input("Enter quantity: "))
+    print("Total price:", quantity * 40)
+except ValueError:
+    print("Quantity must be a whole number, like 3.")</code></pre>
+  <pre class="out"><code>Enter quantity: 2.5
+Quantity must be a whole number, like 3.</code></pre>
+
+  <h3><code>TypeError</code></h3>
+  <p>A value is used with an operation that doesn’t support its type:</p>
+  <pre><code class="language-python">marks = 85
+print("Total: " + marks)</code></pre>
+  <p>We are trying to use <code>+</code> between a string and an integer, so Python raises a <code>TypeError</code>:</p>
+  <figure class="shot"><img src="img/25.webp" alt="Terminal: traceback at line 2, print(&quot;Total: &quot; + marks), TypeError: can only concatenate str (not &quot;int&quot;) to str" width="1366" height="239"><figcaption>A string and an int can’t be joined with <code>+</code>.</figcaption></figure>
+  <p>Handling it:</p>
+  <pre><code class="language-python">marks = 85
+
+try:
+    print("Total: " + marks)
+except TypeError:
+    print("Cannot join text and a number directly.")</code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: Cannot join text and a number directly." width="1366" height="129"><figcaption>The <code>except TypeError</code> message.</figcaption></figure>
+  <div class="sticky warn l"><strong>A TypeError is usually a bug.</strong> It usually means a mistake in your code, not a bad situation. Don’t hide it: the real fix is to correct the code, here with <code>str(marks)</code>.</div>
+  <pre><code class="language-python">marks = 85
+print("Total: " + str(marks))</code></pre>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal: Total: 85" width="1366" height="129"><figcaption>Fixed: <code>str()</code> turns the number into text first.</figcaption></figure>
+  <p>The same fix works anywhere you join text and numbers:</p>
+  <pre><code class="language-python">items_in_cart = 4
+print("Items in your cart: " + str(items_in_cart))</code></pre>
+  <pre class="out"><code>Items in your cart: 4</code></pre>
+
+  <h3><code>ZeroDivisionError</code></h3>
+  <p>Python can’t divide by zero. This happens when averaging an empty list:</p>
+  <pre><code class="language-python">marks = []
+average = sum(marks) / len(marks)</code></pre>
+  <figure class="shot"><img src="img/28.webp" alt="Terminal: traceback at line 2, average = sum(marks) / len(marks), ZeroDivisionError: division by zero" width="1366" height="239"><figcaption>An empty list has length 0, so the division fails.</figcaption></figure>
+  <p>Handling it (and the same idea for a product with no reviews yet):</p>
+  <div class="two">
+    <div><pre><code class="language-python">marks = []
+
+try:
+    average = sum(marks) / len(marks)
+    print("Average:", average)
+except ZeroDivisionError:
+    print("No marks available yet.")</code></pre>
+    <figure class="shot"><img src="img/29.webp" alt="Terminal: No marks available yet." width="1366" height="129"><figcaption>Handled: a clear message instead of a crash.</figcaption></figure></div>
+    <div><pre><code class="language-python">ratings = []   # a brand-new product
+
+try:
+    average_rating = sum(ratings) / len(ratings)
+    print("Average rating:", average_rating)
+except ZeroDivisionError:
+    print("No reviews yet for this product.")</code></pre>
+    <pre class="out"><code>No reviews yet for this product.</code></pre></div>
+  </div>
+
+  <h3><code>IndexError</code></h3>
+  <p>Accessing a list position that doesn’t exist. A list of 3 students has positions 0, 1, 2, not 3.</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+print(students[3])</code></pre>
+  <figure class="shot"><img src="img/30.webp" alt="Terminal: traceback at line 2, print(students[3]), IndexError: list index out of range" width="1366" height="239"><figcaption>Position 3 doesn’t exist in a 3-item list.</figcaption></figure>
+  <p>Handling it:</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+
+try:
+    position = int(input("Enter position: "))
+    print("Student:", students[position])
+except IndexError:
+    print("There is no student at that position.")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/31.webp" alt="Terminal: Enter position: 1, Student: Priya" width="1366" height="156"><figcaption>User types <code>1</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/32.webp" alt="Terminal: Enter position: 7, There is no student at that position." width="1366" height="156"><figcaption>User types <code>7</code>.</figcaption></figure>
+  </div>
+  <p>A music app playing a chosen song number from a playlist works the same way:</p>
+  <pre><code class="language-python">playlist = ["Song A", "Song B", "Song C"]
+
+try:
+    song_number = int(input("Enter song number: "))
+    print("Now playing:", playlist[song_number])
+except IndexError:
+    print("There is no song at that number.")</code></pre>
+  <pre class="out"><code>Enter song number: 5
+There is no song at that number.</code></pre>
+  <div class="sticky info"><strong>Two gotchas</strong> Positions start at 0, so “song number 1” plays <i>Song B</i>; real apps use <code>playlist[song_number - 1]</code>. And negative numbers like <code>-1</code> don’t raise <code>IndexError</code> at all: they count from the end.</div>
+
+  <h3><code>KeyError</code></h3>
+  <p>Looking up a dictionary <b>key</b> that doesn’t exist:</p>
+  <pre><code class="language-python">student = {"name": "Rahul", "age": 21}
+print(student["email"])</code></pre>
+  <figure class="shot"><img src="img/33.webp" alt="Terminal: traceback at line 2, print(student[&quot;email&quot;]), KeyError: 'email'" width="1366" height="239"><figcaption>The dictionary has no <code>"email"</code> key.</figcaption></figure>
+  <p>Handling it:</p>
+  <div class="two">
+    <div><pre><code class="language-python">student = {"name": "Rahul", "age": 21}
+
+try:
+    print("Email:", student["email"])
+except KeyError:
+    print("Email not available for", student["name"])</code></pre>
+    <figure class="shot"><img src="img/34.webp" alt="Terminal: Email not available for Rahul" width="1366" height="129"><figcaption>Handled with a fallback message.</figcaption></figure></div>
+    <div><pre><code class="language-python">customer = {"name": "Kavya", "city": "Pune"}
+
+try:
+    print("Phone:", customer["phone"])
+except KeyError:
+    print("Phone number not available for", customer["name"])</code></pre>
+    <pre class="out"><code>Phone number not available for Kavya</code></pre></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> <code>KeyError</code> is everywhere when working with <b>JSON</b> and API responses: not every record has every key. Handle it, or use <code>record.get("phone", "not available")</code> to supply a default.</div>
+
+  <h3><code>FileNotFoundError</code></h3>
+  <p>You met this in File Modes: opening a missing file in <code>"r"</code> mode.</p>
+  <pre><code class="language-python">with open("marks.txt", "r") as file:
+    content = file.read()</code></pre>
+  <figure class="shot"><img src="img/35.webp" alt="Terminal: traceback at line 1, with open(&quot;marks.txt&quot;, &quot;r&quot;) as file:, FileNotFoundError: [Errno 2] No such file or directory: 'marks.txt'" width="1366" height="239"><figcaption>There is no <code>marks.txt</code> to open.</figcaption></figure>
+  <p>Handling it:</p>
+  <pre><code class="language-python">try:
+    with open("marks.txt", "r") as file:
+        content = file.read()
+        print(content)
+except FileNotFoundError:
+    print("marks.txt not found. Please check the file name.")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/36.webp" alt="Terminal: marks.txt not found. Please check the file name." width="1366" height="129"><figcaption>The friendly message is shown…</figcaption></figure>
+    <figure class="shot"><img src="img/37.webp" alt="VS Code explorer: student_project folder holds main.py and students.txt; students.txt contains Rahul, Priya, Amit" width="642" height="165"><figcaption>…because the folder only has <code>students.txt</code>, no <code>marks.txt</code>.</figcaption></figure>
+  </div>
+  <p>An app loading saved settings can fall back to defaults the same way:</p>
+  <pre><code class="language-python">try:
+    with open("settings.txt", "r") as file:
+        settings = file.read()
+        print(settings)
+except FileNotFoundError:
+    print("settings.txt not found. Using default settings.")</code></pre>
+  <pre class="out"><code>settings.txt not found. Using default settings.</code></pre>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="choosing">
+  <h2>Choosing what to catch</h2>
+  <p>Before writing <code>except</code>, ask: <b>“What could go wrong on these lines?”</b> The answer tells you which exception to catch.</p>
+  <figure class="shot"><img src="img/38.webp" alt="Table, what could go wrong and what to catch: converting user input to a number, except ValueError; adding or joining values of different types, except TypeError; dividing by a value that might be 0, except ZeroDivisionError; accessing a list position from input, except IndexError; looking up a key that might be missing, except KeyError; opening a file that might not exist, except FileNotFoundError" width="1400" height="590"><figcaption>Match the risky situation to the exception it can raise.</figcaption></figure>
+  <p>Some simple rules:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Catch the specific exception you expect</b>never a bare <code>except:</code></div></li>
+    <li><span class="dot">2</span><div><b>Keep the try block small</b>only the risky lines go inside</div></li>
+    <li><span class="dot">3</span><div><b>Fix bugs, don’t hide them</b>if the exception means a mistake in your code (like most TypeErrors), correct the code</div></li>
+  </ol>
+  <h3>Keep the <code>try</code> block small</h3>
+  <div class="two">
+    <div class="codebox"><span class="cap">everything inside try</span><pre><code class="language-python">try:
+    students = ["Rahul", "Priya", "Amit"]
+    position = int(input("Enter position: "))
+    print("Student:", students[position])
+    print("Total students:", len(students))
+except ValueError:
+    print("Please enter a number.")</code></pre></div>
+    <div class="codebox"><span class="cap">only the risky part inside try</span><pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+
+try:
+    position = int(input("Enter position: "))
+except ValueError:
+    print("Please enter a number.")</code></pre></div>
+  </div>
+  <p>Only <b>one</b> line can raise a <code>ValueError</code>: the <code>int(input(...))</code>. Keeping just that line inside <code>try</code> makes it clear <b>where</b> you expect problems. (The code that uses <code>position</code> then belongs in an <code>else</code> block, coming next.)</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="else-finally">
+  <h2><code>else</code> and <code>finally</code></h2>
+  <h3><code>else</code>: runs only when <code>try</code> succeeded</h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">try:
+    # risky code
+except ExceptionName:
+    # runs if an error happens
+else:
+    # runs if NO error happens</code></pre></div>
+  <p>Why not just put the success code at the end of <code>try</code>? Because <code>try</code> should hold <b>only the risky code</b>. Success code goes in <code>else</code>, so if <i>it</i> has a problem, that problem isn’t accidentally caught by the wrong <code>except</code>.</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+except ValueError:
+    print("Please enter a valid number.")
+else:
+    print("Marks saved:", marks)
+    print("Well done!")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/39.webp" alt="Terminal: Enter marks: 85, Marks saved: 85, Well done!" width="1366" height="184"><figcaption>User types <code>85</code>: no error, so <code>else</code> runs.</figcaption></figure>
+    <figure class="shot"><img src="img/07.webp" alt="Terminal: Enter marks: abc, Please enter a valid number." width="1366" height="156"><figcaption>User types <code>abc</code>: <code>except</code> runs, <code>else</code> is skipped.</figcaption></figure>
+  </div>
+  <div class="two">
+    <div class="flow v"><span>no error</span><span class="skip">except skipped</span><span class="ok">else RUNS</span></div>
+    <div class="flow v"><span>error</span><span class="hl">except runs</span><span class="skip">else SKIPPED</span></div>
+  </div>
+  <div class="sticky tip l"><strong>Real world: mobile recharge</strong> Confirm only if the amount is valid.
+  <pre><code class="language-python">try:
+    amount = int(input("Enter recharge amount: "))
+except ValueError:
+    print("Please enter a valid amount.")
+else:
+    print("Recharge successful for", amount)
+    print("Thank you!")</code></pre>
+  <pre class="out"><code>Enter recharge amount: 299
+Recharge successful for 299
+Thank you!</code></pre></div>
+  <h3><code>finally</code>: runs always</h3>
+  <p><code>finally</code> runs <b>no matter what</b>: error or no error, handled or not.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">try:
+    # risky code
+except ExceptionName:
+    # runs if an error happens
+finally:
+    # runs ALWAYS</code></pre></div>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+    print("Marks entered:", marks)
+except ValueError:
+    print("Please enter a valid number.")
+finally:
+    print("Thank you for using the program.")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/40.webp" alt="Terminal: Enter marks: 85, Marks entered: 85, Thank you for using the program." width="1366" height="184"><figcaption>User types <code>85</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/41.webp" alt="Terminal: Enter marks: abc, Please enter a valid number., Thank you for using the program." width="1366" height="184"><figcaption>User types <code>abc</code>.</figcaption></figure>
+  </div>
+  <p>Both times, the <code>finally</code> message was printed.</p>
+  <div class="sticky fde"><strong>Real world: ATM card reminder</strong> Whether the transaction worked or not, the ATM always says “Please take your card.”
+  <pre><code class="language-python">try:
+    amount = int(input("Enter amount: "))
+    print("Withdrawing", amount)
+except ValueError:
+    print("Invalid amount entered.")
+finally:
+    print("Please take your card.")</code></pre>
+  <pre class="out"><code>Enter amount: abc
+Invalid amount entered.
+Please take your card.</code></pre></div>
+  <p><code>finally</code> runs even when the exception is <b>not</b> handled. Here we divide by zero but only catch <code>ValueError</code>:</p>
+  <pre><code class="language-python">try:
+    total = int(input("Enter total marks: "))
+    print("Average:", total / 0)
+except ValueError:
+    print("Please enter a valid number.")
+finally:
+    print("finally block ran")</code></pre>
+  <figure class="shot"><img src="img/42.webp" alt="Terminal: Enter total marks: 250, finally block ran, then a traceback at line 3, print(&quot;Average:&quot;, total / 0), ZeroDivisionError: division by zero" width="1366" height="294"><figcaption>User types <code>250</code>: “finally block ran” appears above the traceback.</figcaption></figure>
+  <p>The program still crashed with a <code>ZeroDivisionError</code>, but look carefully: “finally block ran” was printed <b>before</b> the crash.</p>
+  <h3>Cleanup with <code>finally</code></h3>
+  <p>Because it always runs, <code>finally</code> is the place for <b>cleanup</b>, like closing a file. Suppose <code>students.txt</code> holds names (Rahul, Priya, Amit), but the program expects a number:</p>
+  <pre><code class="language-python">file = open("students.txt", "r")
+
+try:
+    count = int(file.read())
+    print("Count:", count)
+except ValueError:
+    print("The file does not contain a number.")
+finally:
+    file.close()
+    print("File closed:", file.closed)</code></pre>
+  <figure class="shot"><img src="img/43.webp" alt="Terminal: The file does not contain a number., File closed: True" width="1366" height="156"><figcaption>The conversion failed, yet <code>finally</code> still closed the file.</figcaption></figure>
+  <p>The conversion failed, but the file was still <b>closed</b>. A shop reading its stock count from <code>stock.txt</code> uses the same pattern: with <code>42</code> in the file it prints <code>Items in stock: 42</code> then <code>File closed: True</code>; with text in it, the error message then <code>File closed: True</code>.</p>
+  <pre><code class="language-python">file = open("stock.txt", "r")
+try:
+    stock = int(file.read())
+    print("Items in stock:", stock)
+except ValueError:
+    print("stock.txt does not contain a valid number.")
+finally:
+    file.close()
+    print("File closed:", file.closed)</code></pre>
+  <div class="sticky info l"><strong>This is what <code>with</code> does for you.</strong> <code>with open(...)</code> has a built-in “finally” that closes the file.
+  <div class="tbl"><table>
+    <tr><th>Manual</th><th>With <code>with</code></th></tr>
+    <tr><td><code>file = open(...)</code></td><td><code>with open(...) as file:</code></td></tr>
+    <tr><td><code>try: ...</code></td><td><code>    ...</code></td></tr>
+    <tr><td><code>finally: file.close()</code></td><td>(closed automatically)</td></tr>
+  </table></div></div>
+  <h3>All four together</h3>
+  <div class="codebox"><span class="cap">the order is always the same</span><pre><code class="language-python">try:
+    # risky code
+except ExceptionName:
+    # runs if an error happens
+else:
+    # runs if NO error happens
+finally:
+    # runs ALWAYS</code></pre></div>
+  <figure class="shot"><img src="img/44.webp" alt="Two panels. No error: try runs fully, except skipped, else runs, finally always runs, program continues. Error inside try: try stops at error, except runs, else skipped, finally always runs, program continues" width="1400" height="373"><figcaption>Which parts run with and without an error.</figcaption></figure>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 350" role="img" aria-label="Flowchart: try runs; if an exception happens go to except, otherwise go to else; both paths then go to finally, then the rest of the program">
+      <g class="rough">
+        <rect class="box f-blue" x="270" y="14" width="180" height="54" rx="12"/>
+        <path class="box f-yellow" d="M360 92 L 450 132 L 360 172 L 270 132 Z"/>
+        <rect class="box f-orange" x="40" y="186" width="180" height="64" rx="12"/>
+        <rect class="box f-green" x="500" y="186" width="180" height="64" rx="12"/>
+        <rect class="box f-purple" x="270" y="262" width="180" height="54" rx="12"/>
+        <path class="ln" d="M360 70 L 360 88" marker-end="url(#ah)"/>
+        <path class="lr" d="M275 140 C 200 150, 140 165, 130 184" marker-end="url(#ahr)"/>
+        <path class="lb" d="M445 140 C 520 150, 580 165, 590 184" marker-end="url(#ahb)"/>
+        <path class="ln" d="M130 254 C 140 280, 200 289, 264 289" marker-end="url(#ah)"/>
+        <path class="ln" d="M590 254 C 580 280, 520 289, 456 289" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 318 L 360 342" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="360" y="50" text-anchor="middle">try</text>
+      <text class="t" x="360" y="138" text-anchor="middle">exception?</text>
+      <text class="tr" x="180" y="150" text-anchor="middle">YES</text>
+      <text class="tb" x="545" y="150" text-anchor="middle">NO</text>
+      <text class="th" x="130" y="216" text-anchor="middle">except</text>
+      <text class="th" x="590" y="216" text-anchor="middle">else</text>
+      <text class="th" x="360" y="298" text-anchor="middle">finally</text>
+      <text class="ts" x="130" y="240" text-anchor="middle">handle it</text>
+      <text class="ts" x="590" y="240" text-anchor="middle">success code</text>
+      <text class="ts" x="376" y="340">rest of program</text>
+    </svg></div>
+    <figcaption>Exactly one of <code>except</code> / <code>else</code> runs; <code>finally</code> always runs.</figcaption>
+  </figure>
+  <p>Let’s add a print to every part and watch the flow:</p>
+  <pre><code class="language-python">print("Start")
+
+try:
+    print("try: converting...")
+    marks = int(input("Enter marks: "))
+except ValueError:
+    print("except: invalid number")
+else:
+    print("else: marks =", marks)
+finally:
+    print("finally: always here")
+
+print("End")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/45.webp" alt="Terminal: Start, try: converting..., Enter marks: 85, else: marks = 85, finally: always here, End" width="1366" height="266"><figcaption>User types <code>85</code>: try → else → finally.</figcaption></figure>
+    <figure class="shot"><img src="img/46.webp" alt="Terminal: Start, try: converting..., Enter marks: abc, except: invalid number, finally: always here, End" width="1366" height="266"><figcaption>User types <code>abc</code>: try → except → finally.</figcaption></figure>
+  </div>
+  <div class="tbl"><table>
+    <tr><th></th><th>Path</th></tr>
+    <tr><td>no error</td><td><code>try</code> → <code>else</code> → <code>finally</code> → rest of program</td></tr>
+    <tr><td>error</td><td><code>try</code> (stops) → <code>except</code> → <code>finally</code> → rest of program</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>Real world: library counter</strong>
+  <pre><code class="language-python">print("Issuing a book")
+try:
+    member_id = int(input("Enter member ID: "))
+except ValueError:
+    print("Invalid member ID.")
+else:
+    print("Book issued to member", member_id)
+finally:
+    print("Session closed.")
+print("Next customer please")</code></pre>
+  <div class="two">
+    <pre class="out"><code>Issuing a book
+Enter member ID: 1042
+Book issued to member 1042
+Session closed.
+Next customer please</code></pre>
+    <pre class="out"><code>Issuing a book
+Enter member ID: A12
+Invalid member ID.
+Session closed.
+Next customer please</code></pre>
+  </div></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="raise">
+  <h2>Raising exceptions</h2>
+  <p>Until now <b>Python</b> raised every exception. Now you’ll raise them <b>yourself</b>.</p>
+  <h3>Why raise manually?</h3>
+  <p>Some values are perfectly fine for Python, but wrong for <b>your</b> program. Look at this:</p>
+  <pre><code class="language-python">marks = int(input("Enter marks: "))
+print("Marks saved:", marks)</code></pre>
+  <figure class="shot"><img src="img/47.webp" alt="Terminal: Enter marks: 150, Marks saved: 150" width="1366" height="156"><figcaption>User types <code>150</code>: no error, and the wrong value is saved.</figcaption></figure>
+  <p>Marks can’t be 150; the maximum is 100. But to Python, 150 is just a number, so there’s <b>no error</b> and wrong data is silently saved. <mark>Python doesn’t know the rules of your program</mark>, so when you spot a problem Python can’t see, you <b>raise</b> the exception yourself.</p>
+  <h3>The <code>raise</code> statement</h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">raise ExceptionName("message explaining the problem")</code></pre></div>
+  <figure class="shot"><img src="img/48.webp" alt="raise ValueError(&quot;Marks must be between 0 and 100&quot;) split into three parts: raise tells Python stop, something is wrong here; ValueError is which exception, the type of problem, so the right except can catch it; the message explains what went wrong in our own words" width="1400" height="370"><figcaption>The three parts of a <code>raise</code> statement.</figcaption></figure>
+  <p>For example:</p>
+  <pre><code class="language-python">marks = int(input("Enter marks: "))
+
+if marks &lt; 0 or marks &gt; 100:
+    raise ValueError("Marks must be between 0 and 100")
+
+print("Marks saved:", marks)</code></pre>
+  <figure class="shot"><img src="img/49.webp" alt="Terminal: Enter marks: 150, traceback at line 4, raise ValueError(&quot;Marks must be between 0 and 100&quot;), ValueError: Marks must be between 0 and 100" width="1366" height="239"><figcaption>User types <code>150</code>: your own <code>ValueError</code> stops the program.</figcaption></figure>
+  <p>150 is <b>not</b> saved. The program stops with a <code>ValueError</code> and <b>your own message</b>, exactly like a built-in exception.</p>
+  <h3>Raise the right type</h3>
+  <p>Just like when catching, pick the exception type that describes the problem:</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4><code>ValueError</code></h4><p>right type, unacceptable value: marks = 150, age = -5</p></div>
+    <div class="card t3 tilt-b"><h4><code>TypeError</code></h4><p>wrong type altogether: a number where text is expected</p></div>
+  </div>
+  <div class="two">
+    <div><pre><code class="language-python">age = -5
+
+if age &lt; 0:
+    raise ValueError("Age cannot be negative")</code></pre>
+    <figure class="shot"><img src="img/50.webp" alt="Terminal: traceback at line 4, raise ValueError(&quot;Age cannot be negative&quot;), ValueError: Age cannot be negative" width="1366" height="211"><figcaption>A negative age raises a <code>ValueError</code>.</figcaption></figure></div>
+    <div><pre><code class="language-python">def set_name(name):
+    if not isinstance(name, str):
+        raise TypeError("Name must be text")
+    print("Name set to", name)
+
+try:
+    set_name(42)
+except TypeError as e:
+    print("Error:", e)</code></pre>
+    <pre class="out"><code>Error: Name must be text</code></pre></div>
+  </div>
+  <p>The type matters because it decides <b>which except block</b> can catch it: <code>except ValueError</code> catches the first, <code>except TypeError</code> the second.</p>
+  <h3>Validation: raise + try/except</h3>
+  <p>The real power comes from combining them: <b>raise</b> when data breaks your rules, <b>catch</b> it to show a friendly message.</p>
+  <pre><code class="language-python">try:
+    marks = int(input("Enter marks: "))
+
+    if marks &lt; 0 or marks &gt; 100:
+        raise ValueError("Marks must be between 0 and 100")
+
+    print("Marks saved:", marks)
+except ValueError as e:
+    print("Invalid input:", e)</code></pre>
+  <figure class="shot"><img src="img/51.webp" alt="Terminal: Enter marks: 85, Marks saved: 85" width="1366" height="156"><figcaption>User types <code>85</code>: valid, saved.</figcaption></figure>
+  <figure class="shot"><img src="img/52.webp" alt="Terminal: Enter marks: 150, Invalid input: Marks must be between 0 and 100" width="1366" height="156"><figcaption>User types <code>150</code>: your rule catches it.</figcaption></figure>
+  <figure class="shot"><img src="img/53.webp" alt="Terminal: Enter marks: abc, Invalid input: invalid literal for int() with base 10: 'abc'" width="1366" height="156"><figcaption>User types <code>abc</code>: Python’s own <code>ValueError</code>, same handler.</figcaption></figure>
+  <p>The <b>same</b> <code>except ValueError</code> handled two different problems: 150 (raised by <b>you</b>) and <code>abc</code> (raised by <b>Python</b> inside <code>int()</code>). <code>e</code> carries the right message each time.</p>
+  <div class="sticky tip l"><strong>Real world: cinema booking</strong> Only 1 to 10 tickets at a time.
+  <pre><code class="language-python">try:
+    tickets = int(input("Enter number of tickets: "))
+    if tickets &lt; 1 or tickets &gt; 10:
+        raise ValueError("You can book between 1 and 10 tickets")
+    print("Tickets booked:", tickets)
+except ValueError as e:
+    print("Invalid input:", e)</code></pre>
+  <pre class="out"><code>Enter number of tickets: 12
+Invalid input: You can book between 1 and 10 tickets</code></pre></div>
+  <h3>Validating more than one rule</h3>
+  <pre><code class="language-python">try:
+    name = input("Enter student name: ").strip()
+    if name == "":
+        raise ValueError("Name cannot be empty")
+
+    age = int(input("Enter age: "))
+    if age &lt; 5:
+        raise ValueError("Age must be at least 5")
+
+    print("Student added:", name, age)
+except ValueError as e:
+    print("Could not add student:", e)</code></pre>
+  <figure class="shot"><img src="img/54.webp" alt="Terminal: Enter student name: (empty), Could not add student: Name cannot be empty" width="1366" height="156"><figcaption>User presses Enter without a name.</figcaption></figure>
+  <figure class="shot"><img src="img/55.webp" alt="Terminal: Enter student name: Priya, Enter age: 3, Could not add student: Age must be at least 5" width="1366" height="184"><figcaption>User types <code>Priya</code> and <code>3</code>.</figcaption></figure>
+  <figure class="shot"><img src="img/56.webp" alt="Terminal: Enter student name: Priya, Enter age: 22, Student added: Priya 22" width="1366" height="184"><figcaption>User types <code>Priya</code> and <code>22</code>.</figcaption></figure>
+  <div class="sticky fde"><strong>Real world: opening a bank account</strong> Name must not be empty; opening deposit at least 1000.
+  <pre><code class="language-python">try:
+    name = input("Enter account holder name: ").strip()
+    if name == "":
+        raise ValueError("Name cannot be empty")
+    deposit = int(input("Enter opening deposit: "))
+    if deposit &lt; 1000:
+        raise ValueError("Opening deposit must be at least 1000")
+    print("Account opened for", name, "with", deposit)
+except ValueError as e:
+    print("Could not open account:", e)</code></pre>
+  <pre class="out"><code>Enter account holder name: Kavya
+Enter opening deposit: 500
+Could not open account: Opening deposit must be at least 1000</code></pre>
+  This is exactly how API back-ends validate requests; libraries like Pydantic (later in the course) automate it.</div>
+  <h3>Detecting vs raising</h3>
+  <p>Both end in an exception. The difference is <b>who finds the problem</b>.</p>
+  <figure class="shot"><img src="img/57.webp" alt="Two panels. Detecting: Python finds the problem, we catch it with except (try: marks = int(&quot;abc&quot;) except ValueError: print(&quot;Invalid number&quot;)); Python raises the exception itself, we only decide how to respond, for problems Python already knows about. Raising: we find the problem, we report it with raise (marks = 150, if marks &gt; 100: raise ValueError(&quot;Too high&quot;)); Python sees nothing wrong with 150, we decide it is an error, for rules of our own program" width="1400" height="435"><figcaption>Detecting versus raising: who spots the problem?</figcaption></figure>
+  <ul>
+    <li><b>detecting</b>: Python finds the problem (like <code>int("abc")</code>) and raises the exception; you only decide how to respond with <code>except</code></li>
+    <li><b>raising</b>: Python sees nothing wrong (like <code>marks = 150</code>); you decide it’s a problem and report it with <code>raise</code></li>
+  </ul>
+  <div class="two">
+    <div class="flow v"><span>detecting</span><span class="op">Python raises</span><span class="ok">you CATCH with except</span></div>
+    <div class="flow v"><span>raising</span><span class="op">YOU raise with raise</span><span class="hl">anyone can catch it</span></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="glance">
+  <h2>Error handling at a glance</h2>
+  <figure class="shot"><img src="img/58.webp" alt="Five cards: try, run the risky code; except, runs if an error happens; else, runs if NO error happens; finally, runs ALWAYS, cleanup; raise, create an error ourselves" width="1400" height="156"><figcaption>The five keywords of error handling, in one line each.</figcaption></figure>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Syntax error</dt><dd>A mistake in how code is written (e.g. a missing bracket), found before the program runs; it must be fixed, not handled.</dd></div>
+    <div><dt>Exception</dt><dd>A runtime error object Python raises when something goes wrong while the program is running, such as dividing by zero.</dd></div>
+    <div><dt>Traceback</dt><dd>The error report Python prints for an unhandled exception, showing where (file, line), what (exception type) and why (message).</dd></div>
+    <div><dt>try / except</dt><dd>A structure that runs risky code in <code>try</code> and, if a matching exception occurs, runs the <code>except</code> block instead of crashing.</dd></div>
+    <div><dt>Bare except</dt><dd>An <code>except:</code> with no exception name; it catches everything, including bugs, so it should be avoided.</dd></div>
+    <div><dt>else (in try)</dt><dd>A block that runs only when the <code>try</code> block finished without any exception.</dd></div>
+    <div><dt>finally</dt><dd>A block that always runs after try/except, error or not; used for cleanup like closing files.</dd></div>
+    <div><dt>raise</dt><dd>A statement that raises an exception on purpose, e.g. <code>raise ValueError("Marks must be between 0 and 100")</code>.</dd></div>
+    <div><dt>ValueError</dt><dd>Raised when a value has the right type but unacceptable content, e.g. <code>int("twenty")</code>.</dd></div>
+    <div><dt>TypeError</dt><dd>Raised when an operation gets a value of the wrong type, e.g. adding a string and an int.</dd></div>
+    <div><dt>ZeroDivisionError</dt><dd>Raised when dividing by zero, e.g. averaging an empty list.</dd></div>
+    <div><dt>IndexError / KeyError</dt><dd>Raised when a list position or a dictionary key doesn’t exist.</dd></div>
+    <div><dt>Graceful error handling</dt><dd>Responding to a problem with a clear, useful message and continuing, instead of crashing with a traceback.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>Which problem can <b>not</b> be handled with try/except?</p>
+      <ol><li>Dividing by zero</li><li>A missing closing bracket</li><li>A missing file</li><li>A missing dictionary key</li></ol>
+      <p class="why">A syntax error is found before the program runs, so no code (including try) ever executes. Fix the code.</p></div>
+    <div class="q" data-answer="3"><p>In <code>try: print("A"); x = 1/0; print("B")</code> with <code>except: print("C")</code>, what prints?</p>
+      <ol><li>A B C</li><li>A B</li><li>A C</li><li>C</li></ol>
+      <p class="why">"A" runs, then 1/0 raises, so Python jumps to except, skipping "B".</p></div>
+    <div class="q" data-answer="4"><p>Why is a bare <code>except:</code> risky?</p>
+      <ol><li>It is a syntax error</li><li>It runs slower</li><li>It only catches ValueError</li><li>It also hides bugs like NameError from typos</li></ol>
+      <p class="why">It catches everything, so a typo looks like bad user input. Name the exception you expect.</p></div>
+    <div class="q" data-answer="1"><p>With <code>except ValueError</code> and <code>except ZeroDivisionError</code> blocks, the user enters 250 and 0. Which runs?</p>
+      <ol><li>Only the ZeroDivisionError block</li><li>Both blocks</li><li>Only the ValueError block</li><li>Neither; the program crashes</li></ol>
+      <p class="why">250 and 0 are valid numbers; dividing by 0 raises ZeroDivisionError, and only the first matching block runs.</p></div>
+    <div class="q" data-answer="2"><p>When does the <code>else</code> block of a try statement run?</p>
+      <ol><li>Always</li><li>Only if the try block raised no exception</li><li>Only if an exception was caught</li><li>Only if an exception was not caught</li></ol>
+      <p class="why"><code>else</code> is the success path; it’s skipped whenever an exception happens.</p></div>
+    <div class="q" data-answer="3"><p>The try block raises ZeroDivisionError, but only <code>except ValueError</code> exists, plus a <code>finally</code>. What happens?</p>
+      <ol><li>The except block runs</li><li>Nothing prints and the program continues</li><li>finally runs, then the program crashes with ZeroDivisionError</li><li>The program crashes before finally runs</li></ol>
+      <p class="why"><code>finally</code> always runs, even for an unhandled exception, which then still stops the program.</p></div>
+    <div class="q" data-answer="4"><p>Marks must be 0–100. The user enters 150. Which line enforces the rule?</p>
+      <ol><li><code>except ValueError: pass</code></li><li><code>int(150)</code></li><li><code>finally: print("150")</code></li><li><code>raise ValueError("Marks must be between 0 and 100")</code></li></ol>
+      <p class="why">Python sees nothing wrong with 150, so you must raise the exception yourself.</p></div>
+    <div class="q" data-answer="1"><p><code>student = {"name": "Rahul"}</code>. What does <code>student["email"]</code> raise?</p>
+      <ol><li><code>KeyError</code></li><li><code>IndexError</code></li><li><code>ValueError</code></li><li><code>NameError</code></li></ol>
+      <p class="why">Looking up a missing dictionary key raises KeyError; IndexError is for list positions.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Syntax errors must be <b>fixed</b>, but runtime <b>exceptions</b> can be <b>handled</b>: put only the risky lines in <b>try</b>, catch the <b>specific</b> exception in <b>except</b> (use <b>as e</b> for details), put success code in <b>else</b>, cleanup in <b>finally</b>, and <b>raise</b> your own exceptions when data breaks your program’s rules.</p>
+  <p>Next up: <b>Intro to OOP · Part 1</b>, where you start bundling data and the functions that work on it into your own classes and objects.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

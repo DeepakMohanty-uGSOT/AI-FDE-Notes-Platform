@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GitHub, Pull Requests &amp; GitHub Desktop · Git &amp; GitHub | AIFDE Notes</title>
+<meta name="description" content="What GitHub is and why teams use it: set up an account, link it to VS Code, create a repo and push code, fork projects, open pull requests, resolve merge conflicts, host a site on GitHub Pages, compare alternatives, and use GitHub Desktop.">
+<meta name="keywords" content="GitHub, pull request, fork and upstream, merge conflicts, GitHub Pages, git remote add origin, GitHub Desktop, GitLab and Bitbucket">
+<meta name="date" content="2026-10-13">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="git/github">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>GitHub, Pull Requests &amp; GitHub Desktop</h1>
+  <p class="byline">Put your Git repositories online, collaborate through forks and pull requests, fix merge conflicts, publish a website for free, and do it all from a GUI if you prefer.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what-is-github">
+  <h2>What GitHub is</h2>
+  <div class="story"><b class="lbl">The housing society notice board</b>Each family keeps its own diary at home (that’s Git on your laptop). But the society has one notice board in the lobby where everyone pins proposals, comments on them and the secretary approves what goes ahead. <mark>GitHub is that shared notice board for code: one central place to share repositories, discuss changes and approve them.</mark></div>
+  <p><b>GitHub</b> is a platform where you upload a copy of your Git repository (often shortened to <b>repo</b>), hosted on <code>github.com</code>. It does much more than store repos: it makes it easy to <b>collaborate</b> by giving you</p>
+  <ul>
+    <li>a <b>central location</b> to share the repository,</li>
+    <li>a <b>web interface</b> to browse code, history and branches, and</li>
+    <li>features like <b>forking, pull requests, Issues, Projects and Wikis</b> to specify, discuss and review changes with your team.</li>
+  </ul>
+  <div class="sticky info l"><strong>Git vs GitHub</strong> Git is the version control <i>tool</i> that runs on your machine. GitHub is a <i>website</i> that hosts Git repositories and adds teamwork features. You can use Git without GitHub, but not the other way round.</div>
+  <h3>The GitHub flow</h3>
+  <p>Almost every team on GitHub follows the same simple loop, called the <b>GitHub flow</b>:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="GitHub flow: create a branch off main, add commits, open a pull request for review, merge the branch back into main, then deploy">
+      <g class="rough">
+        <path class="ln" d="M30 60 L 594 60" marker-end="url(#ah)"/>
+        <path class="lr" d="M80 74 C 100 150, 130 170, 180 170 L 480 170 C 520 170, 545 120, 556 80" marker-end="url(#ahr)"/>
+        <circle class="box f-blue" cx="70" cy="60" r="16"/>
+        <circle class="box f-blue" cx="560" cy="60" r="16"/>
+        <circle class="box f-purple" cx="230" cy="170" r="16"/>
+        <circle class="box f-purple" cx="310" cy="170" r="16"/>
+        <rect class="box f-yellow" x="395" y="150" width="80" height="40" rx="10"/>
+        <rect class="box f-green" x="600" y="40" width="100" height="40" rx="10"/>
+      </g>
+      <text class="tm" x="30" y="36">main</text>
+      <text class="th" x="435" y="179" text-anchor="middle">PR</text>
+      <text class="tr" x="548" y="34" text-anchor="end">4 · merge</text>
+      <text class="t" x="650" y="66" text-anchor="middle">5 · deploy</text>
+      <text class="ts" x="130" y="220" text-anchor="middle">1 · create branch</text>
+      <text class="ts" x="270" y="220" text-anchor="middle">2 · add commits</text>
+      <text class="ts" x="435" y="220" text-anchor="middle">3 · open PR + review</text>
+    </svg></div>
+    <figcaption>Branch, commit, open a pull request, get it reviewed, merge into <code>main</code>, deploy. Then start again.</figcaption>
+  </figure>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="why-github">
+  <h2>Why use GitHub?</h2>
+  <p>GitHub is much more than a place to store repositories. It gives you:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · Version control</h4><p>Built on Git, a powerful distributed version control system: track changes, collaborate and manage project versions effectively.</p></div>
+    <div class="card t3 tilt-b"><h4>2 · Documented requirements</h4><p>Use <b>Issues</b> to record bugs or describe new features you want the team to build.</p></div>
+    <div class="card t5 tilt-a"><h4>3 · Independent streams of history</h4><p>With <b>branches and pull requests</b>, people collaborate on different features at the same time.</p></div>
+    <div class="card t2 tilt-b"><h4>4 · Review work in progress</h4><p>The pull request list shows every feature being worked on. Open one to see the latest changes, the discussion, the status of checks like a <b>Continuous Integration (CI)</b> server, and to add your own review before changes are accepted.</p></div>
+    <div class="card t8 tilt-a"><h4>5 · Team progress</h4><p>The <b>commit history</b> shows what the team has been working on.</p></div>
+    <div class="card t4 tilt-b"><h4>6 · Public and private repos</h4><p><b>Public</b> repos encourage open collaboration and sharing; <b>private</b> repos keep proprietary or sensitive projects secure.</p></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Your GitHub profile is your portfolio. Customers and hiring managers look at public repos, READMEs and how you write PR descriptions. Keep demo projects tidy and documented.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="account">
+  <h2>Setting up a GitHub account</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Visit the official website</b>Open your browser and go to <code>https://github.com/</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Sign up</b>Click the <b>Sign up</b> button in the top-right corner.</div></li>
+    <li><span class="dot">3</span><div><b>Complete the sign-up form</b>Enter your email, a password and a username, then click <b>Create account</b>. <span class="tag">→ pick a professional username</span></div></li>
+    <li><span class="dot">4</span><div><b>Verify your email address</b>GitHub sends a verification email (or code). Open it and confirm your address.</div></li>
+    <li><span class="dot">5</span><div><b>Set up your account</b>A few onboarding steps personalise your experience: preferences, interests and some introductory options.</div></li>
+    <li><span class="dot">6</span><div><b>Welcome to GitHub</b>You land on your <b>dashboard</b> and can start creating and exploring repositories.</div></li>
+  </ol>
+  <div class="sticky tip"><strong>Turn on two-factor authentication</strong> Under Settings → Password and authentication, enable 2FA. GitHub asks code contributors to do this anyway, and it protects every repo you can push to.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="vscode">
+  <h2>Linking your GitHub account with VS Code</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Download and install VS Code</b>From <code>https://code.visualstudio.com/Download</code>; pick the version for your operating system.</div></li>
+    <li><span class="dot">2</span><div><b>Make sure Git is installed</b>Check in the terminal with <code>git --version</code>. If not installed, download it from <code>https://git-scm.com/downloads</code>.</div></li>
+    <li><span class="dot">3</span><div><b>Enable Git in VS Code</b>Settings (<kbd>Ctrl</kbd> + <kbd>,</kbd>, or <kbd>Cmd</kbd> + <kbd>,</kbd> on Mac) → search “Git” → make sure <b>Git: Enabled</b> is ticked.</div></li>
+    <li><span class="dot">4</span><div><b>Have a GitHub account and configure Git</b>Sign up at <code>https://github.com/signup</code> if needed, then set your name and email in Git.</div></li>
+    <li><span class="dot">5</span><div><b>Verify the configuration</b>List your global settings to confirm. <span class="tag">→ git config --global --list</span></div></li>
+    <li><span class="dot">6</span><div><b>Sign in to GitHub from VS Code</b>Click the <b>Accounts</b> icon (bottom-left) → <b>Sign in with GitHub</b>, and approve in the browser. VS Code also prompts you on your first push.</div></li>
+  </ol>
+  <pre><code class="language-bash">git --version</code></pre>
+  <pre class="out"><code>git version 2.40.0.windows.1</code></pre>
+  <div class="codebox"><span class="cap">configure Git with your GitHub details</span><pre><code class="language-bash"># set your Git username (use your GitHub username)
+git config --global user.name "your_user_name"
+
+# set your Git email (use the email on your GitHub account)
+git config --global user.email "youremail@gmail.com"
+
+# verify what was set
+git config --global --list</code></pre></div>
+  <pre class="out"><code>user.email=youremail@gmail.com
+user.name=your_user_name</code></pre>
+  <div class="sticky warn l"><strong>config is not login</strong> <code>user.name</code> and <code>user.email</code> only label your commits; they don’t prove who you are to GitHub. Pushing needs real authentication: the browser sign-in (step 6), a personal access token, or an SSH key. GitHub no longer accepts your account password for Git over HTTPS.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="create-repo">
+  <h2>Creating a repository on GitHub</h2>
+  <p>Click the <b>+</b> sign at the top right of any GitHub page (next to your profile picture) and choose <b>New repository</b>. The new-repository form asks for six things:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Owner</b>Create the repo under your own username or under an organisation. If you have no organisation access, leave it as your username.</div></li>
+    <li><span class="dot">2</span><div><b>Repository name</b>Use letters, numbers, hyphens, underscores and periods. Any other character is replaced with a hyphen. <span class="tag">→ e.g. project_html</span></div></li>
+    <li><span class="dot">3</span><div><b>Description (optional)</b>A few words about what the repository is for.</div></li>
+    <li><span class="dot">4</span><div><b>Public or Private</b>Public repos can be viewed by anyone. Private repos can be viewed only by people you invite as collaborators.</div></li>
+    <li><span class="dot">5</span><div><b>Add a README file</b>Tick the checkbox to start the repo with a <code>README.md</code> that explains the project.</div></li>
+    <li><span class="dot">6</span><div><b>.gitignore and license</b>Pick a <code>.gitignore</code> template for your language and a license (such as MIT), then click <b>Create repository</b>.</div></li>
+  </ol>
+  <div class="sticky warn"><strong>Pushing an existing project?</strong> Leave README, <code>.gitignore</code> and license <b>unticked</b>. Otherwise the GitHub repo starts with a commit your laptop doesn’t have, and your first push is rejected until you pull and merge it.</div>
+  <p>For more on what goes in <code>.gitignore</code>, see <a href="../git-workflows/index.html#gitignore-samples">the samples in the previous note</a>.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="push">
+  <h2>Pushing code to GitHub</h2>
+  <p>Once the repository exists on GitHub, there are two ways to get your code into it.</p>
+  <h3>Way 1 · Start a new project with Git and push it</h3>
+  <div class="codebox"><span class="cap">new project → GitHub</span><pre><code class="language-bash"># 1. create a folder "project_html"
+mkdir project_html
+
+# 2. move into the project folder
+cd project_html
+
+# 3. initialise git
+git init
+
+# 4. add code files, then stage and commit
+touch index.html          # create the HTML file and add some HTML code
+git add .
+git commit -m "initial commit"
+
+# 5. connect to the GitHub repo and push
+# add a remote named "origin" that points to your GitHub repo
+git remote add origin &lt;github_repo_link&gt;
+
+# rename the current branch to "main" (older Git calls it "master")
+git branch -M main
+
+# push the local "main" branch to "origin" and set it as upstream
+git push -u origin main</code></pre></div>
+
+  <h3>Way 2 · Push an existing Git project</h3>
+  <p>You already have a project with staged and committed work. From its root directory:</p>
+  <div class="codebox"><span class="cap">existing repo → GitHub</span><pre><code class="language-bash"># add a remote named "origin" for your local repository
+git remote add origin &lt;github_repo_link&gt;
+
+# rename the default branch master to main
+git branch -M main
+
+# push the local branch to the remote named origin
+git push -u origin main</code></pre></div>
+
+  <h3>What those three commands do</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:36%">Command</th><th>Meaning</th></tr>
+    <tr><td><code>git remote add origin &lt;url&gt;</code></td><td>Saves the GitHub URL under the short name <code>origin</code>, so you don’t type the URL again.</td></tr>
+    <tr><td><code>git branch -M main</code></td><td>Renames the current branch to <code>main</code>; <code>-M</code> forces it even if a <code>main</code> already exists.</td></tr>
+    <tr><td><code>git push -u origin main</code></td><td>Uploads <code>main</code> to <code>origin</code>. <code>-u</code> remembers the link, so next time plain <code>git push</code> is enough.</td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>GitHub shows you these commands</strong> A freshly created empty repo displays both recipes, with your repo’s URL already filled in. Copy them from there.</div>
+  <div class="sticky warn"><strong>“remote origin already exists”</strong> You ran <code>git remote add origin</code> twice, or the repo was cloned. Check with <code>git remote -v</code>; change the URL with <code>git remote set-url origin &lt;new_url&gt;</code>.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="fork">
+  <h2>Forking an existing repository</h2>
+  <p><b>Forking</b> creates a copy of someone else’s repository (the <b>upstream</b> repository) under <b>your own</b> GitHub account. This copy, the <b>fork</b>, is an independent repository: <mark>you can change, add to and experiment with the code in your fork without affecting the original.</mark></p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Open the repository you want to fork</b>On GitHub, go to the project’s page.</div></li>
+    <li><span class="dot">2</span><div><b>Click Fork</b>The button is at the top right of the repository page. Choose your account as owner and click <b>Create fork</b>.</div></li>
+    <li><span class="dot">3</span><div><b>Find your copy</b>The fork now appears in your repositories as <code>your-username/project</code>, with a note “forked from owner/project”.</div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="The upstream repo (owner/project) is forked on GitHub into origin (you/project). You clone origin to your laptop and push back to it. You pull updates from upstream, and a pull request goes from origin back to upstream">
+      <g class="rough">
+        <rect class="box f-blue" x="30" y="70" width="240" height="80" rx="14"/>
+        <rect class="box f-purple" x="450" y="70" width="240" height="80" rx="14"/>
+        <rect class="box f-green" x="250" y="230" width="220" height="70" rx="14"/>
+        <path class="ln" d="M274 110 L 444 110" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M560 66 C 500 20, 220 20, 160 62" marker-end="url(#ahr)"/>
+        <path class="ln" d="M600 154 L 476 260" marker-end="url(#ah)"/>
+        <path class="lr" d="M440 226 L 520 158" marker-end="url(#ahr)"/>
+        <path class="lb dash" d="M150 154 L 244 252" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="150" y="104" text-anchor="middle">upstream</text>
+      <text class="ts" x="150" y="132" text-anchor="middle">original: owner/project</text>
+      <text class="th" x="570" y="104" text-anchor="middle">origin</text>
+      <text class="ts" x="570" y="132" text-anchor="middle">your fork: you/project</text>
+      <text class="th" x="360" y="262" text-anchor="middle">your laptop</text>
+      <text class="ts" x="360" y="286" text-anchor="middle">local clone</text>
+      <text class="t" x="360" y="100" text-anchor="middle">fork</text>
+      <text class="tr" x="360" y="58" text-anchor="middle">pull request</text>
+      <text class="tr" x="468" y="186" text-anchor="end">push</text>
+      <text class="tb" x="572" y="218">clone · pull</text>
+      <text class="tb" x="186" y="214" text-anchor="end">pull upstream</text>
+    </svg></div>
+    <figcaption><code>origin</code> is your fork, <code>upstream</code> is the original. You push to origin, sync from upstream, and ask upstream to take your work through a pull request.</figcaption>
+  </figure>
+  <p>To work on the fork, clone <b>your fork</b> and add the original as a second remote:</p>
+  <pre><code class="language-bash"># clone your fork (this becomes "origin")
+git clone https://github.com/&lt;your-username&gt;/&lt;project&gt;.git
+cd &lt;project&gt;
+
+# add the original repository as "upstream"
+git remote add upstream https://github.com/&lt;owner&gt;/&lt;project&gt;.git
+
+# check both remotes
+git remote -v</code></pre>
+  <pre class="out"><code>origin    https://github.com/your-username/project.git (fetch)
+origin    https://github.com/your-username/project.git (push)
+upstream  https://github.com/owner/project.git (fetch)
+upstream  https://github.com/owner/project.git (push)</code></pre>
+  <div class="sticky info l"><strong>Fork or just clone?</strong> If you have <b>write access</b> (a teammate added you), clone and push branches directly. If you don’t, as with most open-source projects, fork first: you can push to your fork, and send work upstream with a pull request.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="pull-requests">
+  <h2>Pull requests (and merge requests)</h2>
+  <div class="story"><b class="lbl">The leave application</b>You don’t change the office calendar yourself. You write a leave application, your manager reads it, maybe asks a question, and then approves it. <mark>A pull request is an application to merge your branch: “here are my changes, please review and pull them in.”</mark></div>
+  <p>Pull requests are the heart of collaborative development on GitHub. <b>Merge request</b> is simply GitLab’s name for the same thing. After you have <a href="#fork">forked</a> and cloned the project, follow these steps:</p>
+
+  <h3>1 · Create a branch</h3>
+  <p>Make a new branch for your feature, bug fix or improvement.</p>
+  <pre><code class="language-bash"># create a branch
+git branch &lt;branch_name&gt;
+
+# switch to it
+git checkout &lt;branch_name&gt;</code></pre>
+
+  <h3>2 · Make changes</h3>
+  <p>Edit the code in your branch. Make sure the changes address the issue or feature you are working on, and nothing else.</p>
+
+  <h3>3 · Stage and commit</h3>
+  <pre><code class="language-bash"># stage all changes
+git add .
+
+# commit them with a clear message
+git commit -m "feat: add contact form"</code></pre>
+
+  <h3>4 · Sync with the original repository</h3>
+  <p><code>git pull</code> fetches and merges changes from a remote into your local branch. In a fork, plain <code>git pull</code> talks to <b>your fork</b>, so to get the original project’s latest work, pull from <code>upstream</code>:</p>
+  <pre><code class="language-bash"># bring the original project's latest main into your branch
+git pull upstream main</code></pre>
+
+  <h3>5 · Push the branch</h3>
+  <pre><code class="language-bash"># from your branch: create it on your fork and link it
+git push -u origin &lt;branch_name&gt;</code></pre>
+
+  <h3>6 · Open a pull request</h3>
+  <ol class="path">
+    <li><span class="dot">a</span><div><b>Go to your fork on GitHub</b>A yellow banner usually offers <b>Compare &amp; pull request</b> for the branch you just pushed. Otherwise open the <b>Pull requests</b> tab and click <b>New pull request</b>.</div></li>
+    <li><span class="dot">b</span><div><b>Pick the branches</b><b>base</b> = where the changes should go (e.g. <code>owner/project : main</code>); <b>compare</b> = your branch with the changes.</div></li>
+    <li><span class="dot">c</span><div><b>Describe it</b>Give a descriptive title and a detailed description: what changed, why, and how to test it. Then click <b>Create pull request</b>.</div></li>
+  </ol>
+
+  <h3>7 · Review and discuss</h3>
+  <p>Invite relevant teammates or the maintainers as reviewers. Discuss the changes and respond to feedback and concerns in the PR’s comments.</p>
+  <h3>8 · Make necessary changes</h3>
+  <p>If reviewers ask for changes, make them on the <b>same branch</b>, commit and push again. The PR updates automatically.</p>
+  <h3>9 · Merge the pull request</h3>
+  <p>Once the PR is approved and all discussions are resolved, a maintainer clicks <b>Merge pull request</b>, and your changes join the original repository.</p>
+  <h3>10 · Delete the branch</h3>
+  <p>After merging, delete the branch (GitHub shows a <b>Delete branch</b> button), and locally with <code>git branch -d &lt;branch_name&gt;</code>.</p>
+
+  <div class="flow"><span>fork</span><span class="op">clone</span><span class="op">branch</span><span class="op">commit</span><span class="op">pull upstream</span><span class="op">push</span><span class="hl">open PR</span><span>review</span><span class="ok">merge</span><span class="skip">delete branch</span></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Keep PRs <b>small and focused</b>. A 50-line PR with a clear description and screenshots gets reviewed the same day; a 2,000-line one sits for a week. Link the PR to the customer ticket or Issue it solves.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="conflicts">
+  <h2>Handling merge conflicts</h2>
+  <p>A <b>merge conflict</b> happens when two branches change the <b>same lines</b> of a file (or one deletes a file the other edits) and Git cannot decide which version to keep. It shows up during a merge, when Git integrates changes from one branch into another, for example during <code>git pull</code> or <code>git merge</code>. <mark>Git stops and asks you, a human, to choose.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 245" role="img" aria-label="A conflicted file: the line with seven less-than signs and HEAD starts your side; the content from the current branch follows; seven equals signs divide the two; the content from the incoming branch follows; seven greater-than signs and the branch name end the conflict">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="20" width="430" height="210" rx="12"/>
+        <rect class="box f-blue" x="30" y="34" width="410" height="72" rx="8"/>
+        <rect class="box f-orange" x="30" y="142" width="410" height="72" rx="8"/>
+        <path class="ln dash" d="M454 52 L 474 52"/>
+        <path class="ln dash" d="M454 88 L 474 88"/>
+        <path class="ln dash" d="M454 124 L 474 124"/>
+        <path class="ln dash" d="M454 160 L 474 160"/>
+        <path class="ln dash" d="M454 196 L 474 196"/>
+      </g>
+      <text class="tm" x="40" y="57">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</text>
+      <text class="tm" x="40" y="93">This is the content from the current branch</text>
+      <text class="tm" x="40" y="129">=======</text>
+      <text class="tm" x="40" y="165">This is the content from the incoming branch</text>
+      <text class="tm" x="40" y="201">&gt;&gt;&gt;&gt;&gt;&gt;&gt; incoming-branch</text>
+      <text class="t" x="482" y="57">start of your side (HEAD)</text>
+      <text class="ts" x="482" y="93">your version, current branch</text>
+      <text class="t" x="482" y="129">divider</text>
+      <text class="ts" x="482" y="165">their version, incoming</text>
+      <text class="t" x="482" y="201">end + incoming branch name</text>
+    </svg></div>
+    <figcaption>Everything between <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> and <code>=======</code> is yours; everything between <code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> is theirs.</figcaption>
+  </figure>
+  <h3>Steps to resolve a conflict</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Identify the conflicted files</b>When <code>git pull</code> or <code>git merge</code> hits a conflict, Git says so and lists the files. <code>git status</code> shows them as “both modified”.</div></li>
+    <li><span class="dot">2</span><div><b>Open the conflicted files</b>Open each one in your editor. Git has marked the conflicting sections with conflict markers.</div></li>
+    <li><span class="dot">3</span><div><b>Resolve the conflicts</b>Decide what the final text should be: yours, theirs, or a mix. Then <b>delete all three marker lines</b>. VS Code offers “Accept Current / Incoming / Both Changes” buttons above each conflict.</div></li>
+    <li><span class="dot">4</span><div><b>Stage, commit and push</b>Mark each file resolved with <code>git add</code>, finish the merge with <code>git commit</code>, then <code>git push</code>.</div></li>
+  </ol>
+  <pre class="out"><code>Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+  <div class="codebox"><span class="cap">after you have edited the file</span><pre><code class="language-bash">git status                       # lists files still "both modified"
+git add index.html               # mark it as resolved
+git commit -m "merge: resolve conflict in index.html"
+git push</code></pre></div>
+  <div class="sticky warn l"><strong>Don’t commit the markers</strong> A file that still contains <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> or <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> will break your code. Search for them before you commit. Stuck halfway? <code>git merge --abort</code> puts everything back as it was before the merge.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="pages">
+  <h2>Hosting a website on GitHub Pages</h2>
+  <p><b>GitHub Pages</b> hosts <b>static websites</b> (HTML, CSS and JavaScript files) directly from a GitHub repository, for free. No server to manage.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 235" role="img" aria-label="GitHub Pages deploy: a public repo, push your HTML, CSS and JS files, open Settings then Pages, choose deploy from a branch with main and root and click Save, then after a few minutes the site is live at username.github.io/repo">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="30" width="150" height="100" rx="14"/>
+        <rect class="box f-green" x="200" y="30" width="150" height="100" rx="14"/>
+        <rect class="box f-yellow" x="380" y="30" width="150" height="100" rx="14"/>
+        <rect class="box f-purple" x="560" y="30" width="150" height="100" rx="14"/>
+        <rect class="box f-card" x="160" y="165" width="400" height="54" rx="14"/>
+        <path class="ln" d="M172 80 L 196 80" marker-end="url(#ah)"/>
+        <path class="ln" d="M352 80 L 376 80" marker-end="url(#ah)"/>
+        <path class="ln" d="M532 80 L 556 80" marker-end="url(#ah)"/>
+        <path class="lr" d="M635 134 C 630 170, 600 190, 566 192" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="95" y="66" text-anchor="middle">public repo</text>
+      <text class="ts" x="95" y="94" text-anchor="middle">on GitHub</text>
+      <text class="t" x="275" y="66" text-anchor="middle">push files</text>
+      <text class="ts" x="275" y="94" text-anchor="middle">HTML · CSS · JS</text>
+      <text class="t" x="455" y="66" text-anchor="middle">Settings</text>
+      <text class="ts" x="455" y="94" text-anchor="middle">→ Pages</text>
+      <text class="t" x="635" y="62" text-anchor="middle">from a branch</text>
+      <text class="ts" x="635" y="88" text-anchor="middle">main · /(root)</text>
+      <text class="ts" x="635" y="110" text-anchor="middle">click Save</text>
+      <text class="tm" x="360" y="197" text-anchor="middle">https://username.github.io/repo/</text>
+      <text class="ts" x="652" y="214" text-anchor="middle">a few minutes</text>
+    </svg></div>
+    <figcaption>Push your site, point Pages at a branch, wait a few minutes, and it’s live.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a GitHub repository</b>Make sure it is <b>public</b> (on a free account, Pages works only for public repos).</div></li>
+    <li><span class="dot">2</span><div><b>Push your website files</b>Add all the HTML, CSS and JavaScript files your site needs. The home page must be called <code>index.html</code>.</div></li>
+    <li><span class="dot">3</span><div><b>Set up and enable GitHub Pages</b>
+      <ol class="path">
+        <li><span class="dot">a</span><div><b>Open Settings</b>Click the <b>Settings</b> tab of the repository you want to host.</div></li>
+        <li><span class="dot">b</span><div><b>Select Pages</b>In the <b>left</b> sidebar, under “Code and automation”.</div></li>
+        <li><span class="dot">c</span><div><b>Choose the source</b>Under “Build and deployment”, set Source to <b>Deploy from a branch</b>.</div></li>
+        <li><span class="dot">d</span><div><b>Pick the branch and folder</b>Select the branch (e.g. <code>main</code>) and the folder <code>/ (root)</code>, then click <b>Save</b>. Wait a few minutes for the site to build.</div></li>
+      </ol></div></li>
+    <li><span class="dot">4</span><div><b>Open your web page</b>The live link appears at the top of the <b>Pages</b> section: <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code>.</div></li>
+  </ol>
+  <div class="sticky tip"><strong>Every push redeploys</strong> Once Pages is on, each push to the chosen branch republishes the site automatically. A repo named exactly <code>&lt;username&gt;.github.io</code> is served at the root URL <code>https://&lt;username&gt;.github.io/</code>.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Pages is perfect for a quick customer demo, a product prototype or your own portfolio. It cannot run server code (Python, databases); for anything with a backend you will need a real host.</div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="alternatives">
+  <h2>Alternatives to GitHub</h2>
+  <p>Several platforms offer similar functionality:</p>
+  <div class="tbl"><table>
+    <tr><th style="width:18%">Platform</th><th>What it offers</th></tr>
+    <tr><td><b>GitLab</b></td><td>A comparable suite: Git repository hosting, code collaboration and built-in continuous integration (CI). Offers <b>GitLab Pages</b> for website hosting. Calls pull requests “merge requests”.</td></tr>
+    <tr><td><b>Bitbucket</b></td><td>A robust alternative (by Atlassian) with Git hosting, code collaboration and issue tracking. Supports CI through <b>Bitbucket Pipelines</b>, and fits well with Jira.</td></tr>
+    <tr><td><b>SourceForge</b></td><td>A long-standing open-source development platform with code hosting, issue tracking and project management. Free for open-source projects, with paid plans for private projects.</td></tr>
+    <tr><td><b>Launchpad</b></td><td>A software collaboration platform by <b>Canonical</b>, the company behind Ubuntu. Code hosting, issue tracking and more for open-source projects. Free to use.</td></tr>
+    <tr><td><b>Gitea</b></td><td>A <b>self-hosted</b> Git service: free, open source, with many of GitHub’s features. A good option for teams who want to run their own code hosting.</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Enterprise customers often use GitLab (sometimes self-hosted) or Bitbucket instead of GitHub. The Git commands are identical; only the web screens and the words (“merge request”, “pipeline”) change.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="desktop-install">
+  <h2>GitHub Desktop: what it is and how to install it</h2>
+  <p><b>GitHub Desktop</b> is a free application that gives Git and GitHub a <b>graphical user interface (GUI)</b>. Common operations such as cloning repositories, making and committing changes, and pushing to GitHub become buttons instead of commands.</p>
+  <div class="grid two">
+    <div class="card t2 tilt-a"><h4>For beginners</h4><p>Learn the basics of Git without worrying about the command line.</p></div>
+    <div class="card t1 tilt-b"><h4>For experienced users</h4><p>Speed up the workflow: see diffs visually, pick lines to commit, and collaborate more easily.</p></div>
+  </div>
+  <h3>Installation</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Download</b>Visit <code>https://desktop.github.com</code> and download the version for your operating system (Windows or macOS). The download button is pre-selected for your OS.</div></li>
+    <li><span class="dot">2</span><div><b>Install</b>Run the installer and follow the on-screen instructions.</div></li>
+    <li><span class="dot">3</span><div><b>Launch GitHub Desktop</b>Open the app after installation.</div></li>
+    <li><span class="dot">4</span><div><b>Sign in</b>Sign in with your GitHub account to access your repositories. You can continue without signing in, but then you can’t publish to GitHub. <span class="tag">→ you land on the home screen</span></div></li>
+  </ol>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="desktop-use">
+  <h2>How to use GitHub Desktop</h2>
+  <p>With a GitHub account and the app installed and signed in, here is the everyday loop, and the Git command each button runs for you:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a new repository</b>File → <b>New repository</b> (or “Create a New Repository on your hard drive” on the home screen). Fill in the name, folder and options, then click <b>Create repository</b>. <span class="tag">→ git init</span></div></li>
+    <li><span class="dot">2</span><div><b>Clone a repository</b>Click <b>Clone a repository from the Internet</b>. Search your repositories, select one and click <b>Clone</b>, or open the <b>URL</b> tab and paste a repo link. <span class="tag">→ git clone</span></div></li>
+    <li><span class="dot">3</span><div><b>Create a new branch</b>Click <b>Current Branch</b> at the top to see all branches, then <b>New Branch</b>. Enter the name and click <b>Create branch</b>. <span class="tag">→ git checkout -b</span></div></li>
+    <li><span class="dot">4</span><div><b>Make changes and commit</b>Open the repo in your editor, edit and save. The changed files and their diffs appear in the <b>Changes</b> list. Type a summary in the box at the <b>bottom left</b> and click <b>Commit to &lt;branch&gt;</b>. <span class="tag">→ git add + git commit</span></div></li>
+    <li><span class="dot">5</span><div><b>Publish to GitHub</b>After committing, click <b>Publish branch</b> (first time) or <b>Push origin</b> in the top bar. <span class="tag">→ git push</span></div></li>
+    <li><span class="dot">6</span><div><b>Pull changes from GitHub</b>When others have pushed, click <b>Fetch origin</b> to check, then <b>Pull origin</b> to bring the updates in. <span class="tag">→ git fetch / git pull</span></div></li>
+  </ol>
+  <p>Repeat this loop until the project is done: edit, commit, push, and pull your teammates’ work as you go.</p>
+  <div class="tbl"><table>
+    <tr><th>GitHub Desktop button</th><th>Same as</th></tr>
+    <tr><td>New repository</td><td><code>git init</code></td></tr>
+    <tr><td>Clone repository</td><td><code>git clone &lt;url&gt;</code></td></tr>
+    <tr><td>New branch</td><td><code>git checkout -b &lt;name&gt;</code></td></tr>
+    <tr><td>Commit to &lt;branch&gt;</td><td><code>git add</code> + <code>git commit -m</code></td></tr>
+    <tr><td>Publish branch / Push origin</td><td><code>git push</code> (first time with <code>-u origin</code>)</td></tr>
+    <tr><td>Fetch origin / Pull origin</td><td><code>git fetch</code> / <code>git pull</code></td></tr>
+  </table></div>
+  <div class="sticky info l"><strong>GUI or terminal?</strong> Both drive the same Git. Learn the commands, because servers and CI have no GUI, but use whatever is fastest on your laptop.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>GitHub</dt><dd>A website that hosts Git repositories and adds collaboration features such as pull requests, Issues, Projects, Wikis and GitHub Pages.</dd></div>
+    <div><dt>Repository (repo)</dt><dd>A project folder tracked by Git, including all its files and full history; on GitHub it also has its own web page.</dd></div>
+    <div><dt>origin</dt><dd>The default name for the main remote repository your local repo pushes to and pulls from, usually your copy on GitHub.</dd></div>
+    <div><dt>upstream</dt><dd>By convention, the remote name for the original repository you forked from, used to pull in the project’s latest changes.</dd></div>
+    <div><dt>Fork</dt><dd>Your own independent copy of someone else’s repository under your GitHub account, which you can change without affecting the original.</dd></div>
+    <div><dt>Pull request (PR)</dt><dd>A request to merge the commits from one branch into another, with a place for review, discussion and automated checks before merging.</dd></div>
+    <div><dt>Merge request (MR)</dt><dd>GitLab’s name for a pull request; it works the same way.</dd></div>
+    <div><dt>Merge conflict</dt><dd>What happens when two branches change the same lines and Git cannot combine them automatically, so a person must choose the final content.</dd></div>
+    <div><dt>Conflict markers</dt><dd>The lines <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> that Git writes into a file to show the two competing versions of a conflict.</dd></div>
+    <div><dt>GitHub Pages</dt><dd>GitHub’s free hosting for static websites, served straight from a branch of a repository at <code>username.github.io/repo</code>.</dd></div>
+    <div><dt>README.md</dt><dd>A Markdown file at the root of a repo that explains the project; GitHub shows it on the repository’s front page.</dd></div>
+    <div><dt>GitHub Desktop</dt><dd>A free graphical app for Windows and macOS that performs common Git and GitHub operations with buttons instead of commands.</dd></div>
+  </dl>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What is the difference between Git and GitHub?</p>
+      <ol><li>They are two names for the same tool</li><li>GitHub runs on your laptop; Git is a website</li><li>Git is the version control tool; GitHub hosts Git repos and adds collaboration features</li><li>Git only works with GitHub</li></ol>
+      <p class="why">Git tracks history on your machine. GitHub is a hosting platform built around Git.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>git remote add origin &lt;url&gt;</code> do?</p>
+      <ol><li>Saves the URL under the short name <code>origin</code></li><li>Uploads all your commits</li><li>Creates a repository on GitHub</li><li>Renames your branch to origin</li></ol>
+      <p class="why">It only registers a remote. <code>git push</code> is what actually uploads.</p></div>
+    <div class="q" data-answer="2"><p>What does the <code>-u</code> in <code>git push -u origin main</code> do?</p>
+      <ol><li>Undoes the last push</li><li>Links local <code>main</code> to <code>origin/main</code>, so plain <code>git push</code> works next time</li><li>Pushes only updated files</li><li>Makes the repo public</li></ol>
+      <p class="why"><code>-u</code> sets the upstream (tracking) branch.</p></div>
+    <div class="q" data-answer="4"><p>You forked a project. Which command brings the <b>original</b> project’s latest <code>main</code> into your branch?</p>
+      <ol><li><code>git pull</code></li><li><code>git push upstream main</code></li><li><code>git clone origin</code></li><li><code>git pull upstream main</code></li></ol>
+      <p class="why">In a fork, <code>origin</code> is your copy. The original is the <code>upstream</code> remote you added.</p></div>
+    <div class="q" data-answer="2"><p>In a pull request, what is the <b>base</b> branch?</p>
+      <ol><li>The branch with your new changes</li><li>The branch the changes should be merged into</li><li>The oldest branch in the repo</li><li>A backup of main</li></ol>
+      <p class="why">Base is the destination (often <code>main</code>); compare is the branch carrying your changes.</p></div>
+    <div class="q" data-answer="3"><p>In a conflicted file, which part is the incoming branch’s version?</p>
+      <ol><li>Between <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> and <code>=======</code></li><li>Above <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code></li><li>Between <code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></li><li>Below <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></li></ol>
+      <p class="why">HEAD (your current branch) comes first; the incoming branch’s text sits after the <code>=======</code> divider.</p></div>
+    <div class="q" data-answer="1"><p>You’ve edited a conflicted file into its final form. What next?</p>
+      <ol><li><code>git add</code> the file, then <code>git commit</code></li><li>Delete the branch</li><li>Run <code>git init</code></li><li>Nothing, Git detects it automatically</li></ol>
+      <p class="why"><code>git add</code> marks the conflict resolved and <code>git commit</code> completes the merge.</p></div>
+    <div class="q" data-answer="4"><p>Which site can GitHub Pages host?</p>
+      <ol><li>A Django app with a database</li><li>A Node.js API server</li><li>A private site on any free account</li><li>A static HTML, CSS and JavaScript site</li></ol>
+      <p class="why">Pages serves static files only; it runs no server code, and free accounts need a public repo.</p></div>
+    <div class="q" data-answer="3"><p>In GitHub Desktop, which button does the same job as <code>git push</code>?</p>
+      <ol><li>Fetch origin</li><li>Current Branch</li><li>Push origin / Publish branch</li><li>Commit to main</li></ol>
+      <p class="why">Push origin (or Publish branch the first time) uploads your commits; Fetch origin only checks for new ones.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>GitHub</b> hosts your Git repos: connect with <b>git remote add origin</b> and <b>git push -u</b>, contribute by <b>forking</b>, branching and opening a <b>pull request</b>, fix <b>merge conflicts</b> by choosing between the markers, publish static sites with <b>GitHub Pages</b>, and use <b>GitHub Desktop</b> when you’d rather click than type.</p>
+  <p>Next up: the module wraps here. Continue with the Web &amp; HTML module, starting with HTML Syntax and Structure, and publish your first page with GitHub Pages.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

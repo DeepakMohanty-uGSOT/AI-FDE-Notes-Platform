@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OSI Model &amp; Data Communication · Networking Basics | AIFDE Notes</title>
+<meta name="description" content="Why networking is split into layers, the seven OSI layers told through one report travelling from Bengaluru to Bhubaneswar, encapsulation and data units, and what really happens when you open a website.">
+<meta name="keywords" content="OSI model, seven layers, layering, encapsulation, decapsulation, segment packet frame bits, opening a website">
+<meta name="date" content="2026-09-09">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="networking/osi-model">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>OSI Model &amp; Data Communication</h1>
+  <p class="byline">See how all the networking pieces fit into seven tidy layers, watch data get wrapped and unwrapped, and trace exactly what happens when you open a website.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why-layers">
+  <h2>Why networking needs layers</h2>
+  <p>Sending one message involves many jobs at once: turning data into physical signals, delivering it within the local network, addressing it across networks, choosing routes, making delivery reliable between applications, and presenting the data correctly at the other end. Handle all of that as one giant process and nobody could design, understand, fix or improve one part without risking everything else.</p>
+  <div class="story"><b class="lbl">Departments in a company</b>A company doesn’t make every employee do sales, finance and engineering. It has departments, each doing one job well and trusting the others to do theirs. <mark>Layering splits networking into separate layers, each with one clear job, each relying on the layer below to have done its part.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Left: all networking jobs tangled into one knot. Right: the same jobs as a neat stack of separate layers.">
+      <g class="rough">
+        <path class="lr" d="M120 90 C 160 40, 240 80, 200 120 C 160 160, 100 140, 130 100 C 160 60, 230 150, 180 170 C 130 190, 110 120, 170 110 C 230 100, 210 60, 150 70"/>
+        <path class="ln" d="M300 120 L 400 120" marker-end="url(#ah)"/>
+        <rect class="box f-purple" x="430" y="24" width="270" height="36" rx="8"/>
+        <rect class="box f-yellow" x="430" y="66" width="270" height="36" rx="8"/>
+        <rect class="box f-blue" x="430" y="108" width="270" height="36" rx="8"/>
+        <rect class="box f-teal" x="430" y="150" width="270" height="36" rx="8"/>
+      </g>
+      <text class="ts" x="70" y="36" text-anchor="middle">signals</text>
+      <text class="ts" x="270" y="44" text-anchor="middle">routing</text>
+      <text class="ts" x="60" y="196" text-anchor="middle">local delivery</text>
+      <text class="ts" x="270" y="196" text-anchor="middle">reliability</text>
+      <text class="ts" x="40" y="120" text-anchor="middle">format</text>
+      <text class="t" x="565" y="48" text-anchor="middle">presenting the data</text>
+      <text class="t" x="565" y="90" text-anchor="middle">reliable delivery</text>
+      <text class="t" x="565" y="132" text-anchor="middle">addressing &amp; routing</text>
+      <text class="t" x="565" y="174" text-anchor="middle">signals on the wire</text>
+      <text class="th" x="170" y="228" text-anchor="middle">one tangle</text>
+      <text class="th" x="565" y="228" text-anchor="middle">clean layers</text>
+    </svg></div>
+    <figcaption>Same jobs, organised. Each layer only talks to the layer just above and just below it.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>The real benefit</strong> Change one layer without redesigning the others. Upgrading from an older Wi-Fi standard to a newer one doesn’t touch your browser, as long as each layer keeps doing its job and talking properly to its neighbours.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="osi">
+  <h2>The OSI model: seven layers</h2>
+  <p>The <b>OSI Model (Open Systems Interconnection)</b> is a framework for understanding how data travels from one device to another. It divides communication into <b>seven layers</b>, each with a specific job.</p>
+  <h3>Why it was created</h3>
+  <p>Long before everyday Internet use, companies in different countries built computers with completely different designs and communication methods. Even when cabled together, they often couldn’t interpret each other’s data, like one person who speaks only Tamil and another who speaks only German. The international body <b>ISO (International Organization for Standardization)</b> developed a common framework: the OSI Model.</p>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Open</h4><p>Built on common standards, not controlled by any one company.</p></div>
+    <div class="card t1 tilt-b"><h4>Systems</h4><p>Computers and other network devices.</p></div>
+    <div class="card t5 tilt-a"><h4>Interconnection</h4><p>Connecting those systems so they can communicate.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 450" role="img" aria-label="The seven OSI layers from top to bottom: 7 Application, 6 Presentation, 5 Session, 4 Transport, 3 Network, 2 Data Link, 1 Physical, each with its job and examples">
+      <g class="rough">
+        <rect class="box f-purple" x="20" y="20" width="680" height="50" rx="10"/>
+        <rect class="box f-purple" x="20" y="76" width="680" height="50" rx="10"/>
+        <rect class="box f-purple" x="20" y="132" width="680" height="50" rx="10"/>
+        <rect class="box f-yellow" x="20" y="188" width="680" height="50" rx="10"/>
+        <rect class="box f-blue" x="20" y="244" width="680" height="50" rx="10"/>
+        <rect class="box f-blue" x="20" y="300" width="680" height="50" rx="10"/>
+        <rect class="box f-blue" x="20" y="356" width="680" height="50" rx="10"/>
+      </g>
+      <text class="tm" x="36" y="50">L7</text><text class="th" x="76" y="55">Application</text><text class="ts" x="262" y="50">network services for apps</text><text class="tm" x="530" y="50">HTTP(S) DNS SMTP</text>
+      <text class="tm" x="36" y="106">L6</text><text class="th" x="76" y="111">Presentation</text><text class="ts" x="262" y="106">translate · encrypt · compress</text><text class="tm" x="530" y="106">formats, crypto</text>
+      <text class="tm" x="36" y="162">L5</text><text class="th" x="76" y="167">Session</text><text class="ts" x="262" y="162">open, manage, close sessions</text><text class="tm" x="530" y="162">session control</text>
+      <text class="tm" x="36" y="218">L4</text><text class="th" x="76" y="223">Transport</text><text class="ts" x="262" y="218">split, number, ack, resend, ports</text><text class="tm" x="530" y="218">TCP · UDP</text>
+      <text class="tm" x="36" y="274">L3</text><text class="th" x="76" y="279">Network</text><text class="ts" x="262" y="274">IP addresses, best path, routing</text><text class="tm" x="530" y="274">IP · routers</text>
+      <text class="tm" x="36" y="330">L2</text><text class="th" x="76" y="335">Data Link</text><text class="ts" x="262" y="330">frames, MAC, error check</text><text class="tm" x="530" y="330">Ethernet·switch</text>
+      <text class="tm" x="36" y="386">L1</text><text class="th" x="76" y="391">Physical</text><text class="ts" x="262" y="386">bits as signals on the medium</text><text class="tm" x="530" y="386">cables · Wi-Fi</text>
+      <text class="tr" x="360" y="438" text-anchor="middle">All People Seem To Need Data Processing</text>
+    </svg></div>
+    <figcaption>Top to bottom: Application → Presentation → Session → Transport → Network → Data Link → Physical. The mnemonic gives the first letters.</figcaption>
+  </figure>
+  <div class="grid">
+    <div class="card t5 tilt-a"><h4>Upper layers (7, 6, 5)</h4><p>The “software” layers: applications, data and communication sessions.</p></div>
+    <div class="card t7 tilt-b"><h4>Transport (4): the heart</h4><p>Sits between the two groups and manages end-to-end delivery. “Heart” is an informal nickname, not an official OSI term.</p></div>
+    <div class="card t1 tilt-a"><h4>Lower layers (3, 2, 1)</h4><p>The “hardware” side: network devices, connections and actual transmission.</p></div>
+  </div>
+  <div class="two">
+    <div class="flow v"><span class="hl">Sending</span><span>Layer 7</span><span>… each layer down …</span><span class="ok">Layer 1 → onto the wire</span></div>
+    <div class="flow v"><span class="hl">Receiving</span><span>Layer 1 ← off the wire</span><span>… each layer up …</span><span class="ok">Layer 7</span></div>
+  </div>
+  <div class="sticky info"><strong>OSI vs what the Internet actually runs</strong> The real Internet is built on the simpler <b>TCP/IP model</b>, which folds layers 5–7 into one Application layer (and 1–2 into a link layer). OSI is the shared vocabulary: engineers still say “that’s a Layer 7 problem” or “an L4 load balancer”.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="story-setup">
+  <h2>The story: a report from Bengaluru to Bhubaneswar</h2>
+  <p>Instead of memorising names, follow one message. <b>Trident Softwares</b> in Bengaluru must send a huge <b>500-page project report</b> to <b>Debashish</b> at <b>Meghna Info Systems</b> in Bhubaneswar. The catch: the report is in <b>Kannada</b>, and Debashish reads only <b>Odia</b>. So it must be prepared, translated, split, addressed and delivered, then received, checked, reassembled and translated back.</p>
+  <div class="story"><b class="lbl">Seven employees, seven jobs</b>At Trident, seven people each handle one step, in order. None of them needs to know the others’ jobs. <mark>That is exactly how the seven OSI layers work.</mark></div>
+  <div class="tbl"><table>
+    <tr><th>Layer</th><th>Person at Trident</th><th>What they do in the story</th></tr>
+    <tr><td>7 · Application</td><td>Ananya, project head</td><td>Prepares the report in the mailing app and decides to send it</td></tr>
+    <tr><td>6 · Presentation</td><td>Rakesh, executive assistant</td><td>Puts it into a suitable format and encrypts it</td></tr>
+    <tr><td>5 · Session</td><td>Faizan, coordinator</td><td>Sets up the transfer with Meghna (6:30 pm), keeps it organised, closes it</td></tr>
+    <tr><td>4 · Transport</td><td>Meera</td><td>Splits 500 pages into 5 numbered parts of 100 pages</td></tr>
+    <tr><td>3 · Network</td><td>Vikram</td><td>Adds source and destination IP addresses, works out the route</td></tr>
+    <tr><td>2 · Data Link</td><td>Sandeep</td><td>Wraps each part in a frame with MAC addresses and error checks</td></tr>
+    <tr><td>1 · Physical</td><td>Om Prakash &amp; Deepa</td><td>Turn it into electrical, light or radio signals that leave the building</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 410" role="img" aria-label="Two seven-layer stacks. On the Bengaluru side data goes down from layer 7 to layer 1, crosses the medium as signals, and on the Bhubaneswar side goes up from layer 1 to layer 7.">
+      <g class="rough">
+        <rect class="box f-purple" x="50" y="40" width="210" height="40" rx="8"/>
+        <rect class="box f-purple" x="50" y="86" width="210" height="40" rx="8"/>
+        <rect class="box f-purple" x="50" y="132" width="210" height="40" rx="8"/>
+        <rect class="box f-yellow" x="50" y="178" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="50" y="224" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="50" y="270" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="50" y="316" width="210" height="40" rx="8"/>
+        <rect class="box f-purple" x="460" y="40" width="210" height="40" rx="8"/>
+        <rect class="box f-purple" x="460" y="86" width="210" height="40" rx="8"/>
+        <rect class="box f-purple" x="460" y="132" width="210" height="40" rx="8"/>
+        <rect class="box f-yellow" x="460" y="178" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="460" y="224" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="460" y="270" width="210" height="40" rx="8"/>
+        <rect class="box f-blue" x="460" y="316" width="210" height="40" rx="8"/>
+        <path class="lr" d="M30 44 L 30 350" marker-end="url(#ahr)"/>
+        <path class="lb" d="M690 352 L 690 46" marker-end="url(#ahb)"/>
+        <path class="lr" d="M262 336 C 320 380, 400 380, 456 336" marker-end="url(#ahr)"/>
+      </g>
+      <text class="t" x="155" y="26" text-anchor="middle">Trident · Bengaluru</text>
+      <text class="t" x="565" y="26" text-anchor="middle">Meghna · Bhubaneswar</text>
+      <text class="t" x="155" y="66" text-anchor="middle">7 · Application</text>
+      <text class="t" x="155" y="112" text-anchor="middle">6 · Presentation</text>
+      <text class="t" x="155" y="158" text-anchor="middle">5 · Session</text>
+      <text class="t" x="155" y="204" text-anchor="middle">4 · Transport</text>
+      <text class="t" x="155" y="250" text-anchor="middle">3 · Network</text>
+      <text class="t" x="155" y="296" text-anchor="middle">2 · Data Link</text>
+      <text class="t" x="155" y="342" text-anchor="middle">1 · Physical</text>
+      <text class="t" x="565" y="66" text-anchor="middle">7 · Application</text>
+      <text class="t" x="565" y="112" text-anchor="middle">6 · Presentation</text>
+      <text class="t" x="565" y="158" text-anchor="middle">5 · Session</text>
+      <text class="t" x="565" y="204" text-anchor="middle">4 · Transport</text>
+      <text class="t" x="565" y="250" text-anchor="middle">3 · Network</text>
+      <text class="t" x="565" y="296" text-anchor="middle">2 · Data Link</text>
+      <text class="t" x="565" y="342" text-anchor="middle">1 · Physical</text>
+      <text class="tr" x="360" y="200" text-anchor="middle">down, then up</text>
+      <text class="ts" x="360" y="398" text-anchor="middle">signals over cables, fiber, radio</text>
+    </svg></div>
+    <figcaption>Sender: 7 → 1. Receiver: 1 → 7. Each receiving layer undoes what its matching sending layer did.</figcaption>
+  </figure>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="upper-layers">
+  <h2>Layers 7, 6, 5: application, presentation, session</h2>
+  <h3>Layer 7 · Application</h3>
+  <p>The top layer provides <b>network services to the applications</b> people use. It is where the user’s wish to communicate begins: opening a website, sending an email, uploading or downloading a file, looking up a domain name. It cares about <i>what</i> the app wants to send or receive, not how it travels.</p>
+  <div class="tbl"><table>
+    <tr><th>Protocol</th><th>Used for</th></tr>
+    <tr><td>HTTP / HTTPS</td><td>Communication between web browsers and web servers</td></tr>
+    <tr><td>FTP</td><td>Transferring files</td></tr>
+    <tr><td>DNS</td><td>Finding the IP address for a domain name</td></tr>
+    <tr><td>DHCP</td><td>Automatically giving devices their network configuration</td></tr>
+    <tr><td>SMTP</td><td>Sending email</td></tr>
+  </table></div>
+  <div class="sticky warn"><strong>App ≠ Application-layer protocol</strong> Gmail is an application/service; SMTP is a protocol (rules) for sending email. A browser is an application; HTTP/HTTPS is the protocol it speaks to web servers.</div>
+  <p><b>In the story:</b> Ananya opens the company’s mailing application, prepares the 500-page Kannada report, and decides to send it to Debashish. No thought yet of routes, IPs, cables or signals. Those belong to other layers.</p>
+
+  <h3>Layer 6 · Presentation</h3>
+  <p>Makes sure the data is in a form the <b>receiving application can understand and use</b>. Three jobs:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Translation</h4><p>Convert data from one format or representation to another.</p></div>
+    <div class="card t5 tilt-b"><h4>Encryption / decryption</h4><p>Turn readable data into unreadable <b>ciphertext</b> before sending; decrypt at the other end.</p></div>
+    <div class="card t2 tilt-a"><h4>Compression / decompression</h4><p>Shrink data to send it efficiently; restore it on arrival.</p></div>
+  </div>
+  <p>SSL/TLS are associated with this kind of secure communication. In modern TCP/IP systems these functions are usually done by the application or application-level protocols rather than a separate Layer 6, but the responsibilities still exist.</p>
+  <p><b>In the story:</b> Rakesh prepares the report into a suitable format and, because it is confidential, <b>encrypts</b> it so anyone intercepting it can’t read it.</p>
+
+  <h3>Layer 5 · Session</h3>
+  <p>A <b>session</b> is an ongoing period of communication between two systems. This layer:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Creates sessions</b>Establishes communication so the two systems can start exchanging data.</div></li>
+    <li><span class="dot">2</span><div><b>Manages sessions</b>Keeps the conversation organised from start to end, so data from one conversation doesn’t mix with another.</div></li>
+    <li><span class="dot">3</span><div><b>Terminates sessions</b>Ends it properly, manually or automatically, like a banking site logging you out after inactivity.</div></li>
+  </ol>
+  <p><b>In the story:</b> Faizan contacts Meghna Info Systems, confirms they’re ready for a large report, fixes <b>6:30 pm</b> for the transfer, keeps it organised while it runs, and formally closes it once done.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="transport">
+  <h2>Layer 4 · Transport: the heart</h2>
+  <p>The Transport layer manages <mark>end-to-end delivery between the two communicating devices</mark>. Upper layers care about <i>what</i> the communication is; lower layers care about <i>how</i> it moves. Transport sits in between, which is why it is nicknamed the “heart” of OSI.</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Segmentation</h4><p>Break large data into smaller pieces (with TCP: <b>segments</b>).</p></div>
+    <div class="card t1 tilt-b"><h4>Sequencing</h4><p>Number the pieces so the receiver can rebuild them in order.</p></div>
+    <div class="card t2 tilt-a"><h4>Acknowledgment</h4><p>With TCP, the receiver confirms what arrived.</p></div>
+    <div class="card t4 tilt-b"><h4>Retransmission</h4><p>Missing data (no acknowledgment) is sent again.</p></div>
+    <div class="card t7 tilt-a"><h4>Ports</h4><p>The IP finds the device; the port finds the service on it.</p></div>
+  </div>
+  <p>The two big protocols are <b>TCP</b> (reliability, ordering, acknowledgments, retransmission) and <b>UDP</b> (simpler, without those guarantees). The three-way handshake and TCP headers come in the TCP &amp; UDP module.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Meera takes the 500-page report and splits it into five numbered parts of 100 pages each">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="44" width="140" height="120" rx="8"/>
+        <path class="ln" d="M40 72 L 140 72 M 40 92 L 140 92 M 40 112 L 140 112"/>
+        <path class="lr" d="M168 104 L 222 104" marker-end="url(#ahr)"/>
+        <rect class="box f-yellow" x="232" y="58" width="72" height="92" rx="8"/>
+        <rect class="box f-yellow" x="320" y="58" width="72" height="92" rx="8"/>
+        <rect class="box f-yellow" x="408" y="58" width="72" height="92" rx="8"/>
+        <rect class="box f-yellow" x="496" y="58" width="72" height="92" rx="8"/>
+        <rect class="box f-yellow" x="584" y="58" width="72" height="92" rx="8"/>
+      </g>
+      <text class="th" x="90" y="148" text-anchor="middle">500 pp</text>
+      <text class="th" x="268" y="106" text-anchor="middle">1</text>
+      <text class="th" x="356" y="106" text-anchor="middle">2</text>
+      <text class="th" x="444" y="106" text-anchor="middle">3</text>
+      <text class="th" x="532" y="106" text-anchor="middle">4</text>
+      <text class="th" x="620" y="106" text-anchor="middle">5</text>
+      <text class="ts" x="268" y="136" text-anchor="middle">100 pp</text>
+      <text class="ts" x="356" y="136" text-anchor="middle">100 pp</text>
+      <text class="ts" x="444" y="136" text-anchor="middle">100 pp</text>
+      <text class="ts" x="532" y="136" text-anchor="middle">100 pp</text>
+      <text class="ts" x="620" y="136" text-anchor="middle">100 pp</text>
+      <text class="tr" x="444" y="40" text-anchor="middle">Meera splits and numbers</text>
+      <text class="ts" x="360" y="192" text-anchor="middle">numbers let the receiver reorder parts and ask again for a missing one</text>
+    </svg></div>
+    <figcaption>Segmentation + sequencing: the parts can travel separately and still be rebuilt correctly.</figcaption>
+  </figure>
+  <p><b>In the story:</b> Meera divides the 500 pages into <b>five parts of 100 pages</b> and numbers them 1 to 5. If parts arrive out of order, the numbers fix it; if one is lost and a reliable transport (TCP) is in use, that part is sent again.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="network">
+  <h2>Layer 3 · Network: addressing and routing</h2>
+  <p>The Network layer gets data from the source device to the destination device, <b>even when they are on different networks</b>. Here the data unit is a <b>packet</b>.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Logical addressing</h4><p>Adds a <b>source IP</b> (where it came from) and a <b>destination IP</b> (where it must end up).</p></div>
+    <div class="card t2 tilt-b"><h4>Path determination</h4><p>Decides which path is <b>best</b> from the source network to the destination network.</p></div>
+    <div class="card t3 tilt-a"><h4>Routing</h4><p>Forwards the packet network by network. Each <b>router</b> reads the destination IP and picks the next hop.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="A packet travels from the Bengaluru network through routers R1, R2 and R3 to the Bhubaneswar network. Each router reads the destination IP and forwards it to the next hop.">
+      <g class="rough">
+        <ellipse class="box f-blue" cx="90" cy="110" rx="72" ry="44"/>
+        <ellipse class="box f-green" cx="630" cy="110" rx="72" ry="44"/>
+        <circle class="box f-yellow" cx="240" cy="80" r="24"/>
+        <circle class="box f-yellow" cx="360" cy="140" r="24"/>
+        <circle class="box f-yellow" cx="480" cy="80" r="24"/>
+        <path class="lr" d="M162 104 L 214 86" marker-end="url(#ahr)"/>
+        <path class="lr" d="M262 92 L 336 130" marker-end="url(#ahr)"/>
+        <path class="lr" d="M384 130 L 458 92" marker-end="url(#ahr)"/>
+        <path class="lr" d="M504 86 L 556 104" marker-end="url(#ahr)"/>
+        <rect class="box f-orange" x="190" y="180" width="340" height="44" rx="10"/>
+      </g>
+      <text class="t" x="90" y="106" text-anchor="middle">Bengaluru</text>
+      <text class="ts" x="90" y="128" text-anchor="middle">Trident</text>
+      <text class="t" x="630" y="106" text-anchor="middle">Bhubaneswar</text>
+      <text class="ts" x="630" y="128" text-anchor="middle">Meghna</text>
+      <text class="t" x="240" y="86" text-anchor="middle">R1</text>
+      <text class="t" x="360" y="146" text-anchor="middle">R2</text>
+      <text class="t" x="480" y="86" text-anchor="middle">R3</text>
+      <text class="ts" x="360" y="34" text-anchor="middle">each router: “destination IP? → next hop”</text>
+      <text class="tm" x="360" y="207" text-anchor="middle">src 198.51.100.5 → dst 203.0.113.20</text>
+    </svg></div>
+    <figcaption>Packets are not sent “directly” from Bengaluru to Bhubaneswar; routers pass them network by network. (Example addresses.)</figcaption>
+  </figure>
+  <p><b>Path determination</b> is <i>deciding</i> the best path; <b>routing</b> is choosing and using that path to forward packets between networks.</p>
+  <p><b>In the story:</b> Vikram labels each of the five parts with the source IP (Trident) and destination IP (Meghna), works out the best route, and sends them off through a chain of routers.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="data-link">
+  <h2>Layer 2 · Data Link: frames and the next hop</h2>
+  <p>The Data Link layer delivers data from one device to the <b>next directly connected device</b> on the local network (home, office, building). The unit is a <b>frame</b>.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:26%">Function</th><th>What it means</th></tr>
+    <tr><td>Framing</td><td>Puts the packet from Layer 3 inside a structured unit called a frame</td></tr>
+    <tr><td>Addressing</td><td>Adds a <b>source MAC</b> (device sending this frame) and <b>destination MAC</b> (device that should receive it next)</td></tr>
+    <tr><td>Node-to-node delivery</td><td>Moves the frame to the next directly connected node (computer, switch, router)</td></tr>
+    <tr><td>Flow control</td><td>Stops a fast sender from overwhelming a slower receiver on that link</td></tr>
+    <tr><td>Error detection</td><td>Adds check information so the receiver can spot a damaged or altered frame</td></tr>
+    <tr><td>Local delivery</td><td>A switch reads the destination MAC and forwards the frame to the right port</td></tr>
+  </table></div>
+  <h3>The big idea: IP is the destination, MAC is the next hop</h3>
+  <p>The laptop at Trident doesn’t put the Bhubaneswar server’s MAC in its frame; that server is on another network. The destination MAC is the <b>next device on the local network</b>, usually the company router. The router then builds a <b>new frame</b> for the next link. <mark>MAC addresses change at every hop; the IP addresses stay the same end to end.</mark></p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Laptop to Router A to Router B to Server. On each of the three links the frame carries different source and destination MAC addresses, but the source and destination IP addresses stay Laptop and Server.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="20" width="120" height="50" rx="10"/>
+        <rect class="box f-yellow" x="210" y="20" width="120" height="50" rx="10"/>
+        <rect class="box f-yellow" x="400" y="20" width="120" height="50" rx="10"/>
+        <rect class="box f-green" x="590" y="20" width="110" height="50" rx="10"/>
+        <path class="ln" d="M142 45 L 204 45 M 332 45 L 394 45 M 522 45 L 584 45"/>
+        <path class="ln dash" d="M173 50 L 140 106 M 363 50 L 360 106 M 553 50 L 580 106"/>
+        <rect class="box f-card" x="40" y="110" width="200" height="112" rx="10"/>
+        <rect class="box f-card" x="260" y="110" width="200" height="112" rx="10"/>
+        <rect class="box f-card" x="480" y="110" width="200" height="112" rx="10"/>
+      </g>
+      <text class="t" x="80" y="51" text-anchor="middle">Laptop</text>
+      <text class="t" x="270" y="51" text-anchor="middle">Router A</text>
+      <text class="t" x="460" y="51" text-anchor="middle">Router B</text>
+      <text class="t" x="645" y="51" text-anchor="middle">Server</text>
+      <text class="ts" x="140" y="130" text-anchor="middle">frame on link 1</text>
+      <text class="tm" x="54" y="154">src MAC Laptop</text>
+      <text class="tm" x="54" y="172">dst MAC Router A</text>
+      <text class="tm" x="54" y="194">src IP  Laptop</text>
+      <text class="tm" x="54" y="212">dst IP  Server</text>
+      <text class="ts" x="360" y="130" text-anchor="middle">frame on link 2</text>
+      <text class="tm" x="274" y="154">src MAC Router A</text>
+      <text class="tm" x="274" y="172">dst MAC Router B</text>
+      <text class="tm" x="274" y="194">src IP  Laptop</text>
+      <text class="tm" x="274" y="212">dst IP  Server</text>
+      <text class="ts" x="580" y="130" text-anchor="middle">frame on link 3</text>
+      <text class="tm" x="494" y="154">src MAC Router B</text>
+      <text class="tm" x="494" y="172">dst MAC Server</text>
+      <text class="tm" x="494" y="194">src IP  Laptop</text>
+      <text class="tm" x="494" y="212">dst IP  Server</text>
+      <text class="tr" x="360" y="256" text-anchor="middle">MAC changes every hop · IP stays the same</text>
+    </svg></div>
+    <figcaption>Each router unwraps the frame, reads the IP, and wraps the packet in a fresh frame for the next link.</figcaption>
+  </figure>
+  <p><b>In the story:</b> Sandeep puts each addressed part into a frame, writes the source MAC (his device) and destination MAC (the next device: the switch or the local router), handles flow control and adds error-check information, then passes the frame to the Physical layer.</p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="physical">
+  <h2>Layer 1 · Physical: bits become signals</h2>
+  <p>The bottom layer deals with the actual medium: network cables, fiber, connectors, wireless antennas. It <b>doesn’t understand meaning</b>: no files, no IPs, no MACs. It just carries <b>bits</b> (0s and 1s) as physical signals.</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Electrical signals</h4><p>Over copper network cables.</p></div>
+    <div class="card t7 tilt-b"><h4>Light pulses</h4><p>Over fiber-optic cables.</p></div>
+    <div class="card t1 tilt-a"><h4>Radio waves</h4><p>Through the air, e.g. Wi-Fi.</p></div>
+  </div>
+  <div class="flow"><span class="hl">frame</span><span class="op">0100 1101 0110 …</span><span class="ok">signals on the medium</span></div>
+  <p><b>In the story:</b> Om Prakash and Deepa run Trident’s cables, fiber links and Wi-Fi antennas. They convert everything into electrical signals, light pulses or radio waves, and the report physically leaves the Bengaluru building.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="receiver">
+  <h2>The receiving side: back up the stack</h2>
+  <p>At Meghna Info Systems everything happens in reverse, from Layer 1 up to Layer 7. Each layer undoes what its partner did in Bengaluru.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Physical</b>Cables, fiber or Wi-Fi receivers turn incoming signals back into digital data. No interpretation yet.</div></li>
+    <li><span class="dot">2</span><div><b>Data Link</b>Rebuilds frames, checks the destination MAC (“is this for me?”) and checks for transmission errors. Not for this interface? The frame is ignored here. <span class="tag">→ MAC check</span></div></li>
+    <li><span class="dot">3</span><div><b>Network</b>Checks the destination IP (“is this packet for Meghna?”). If it doesn’t match this device, the packet is not accepted and is dropped. <span class="tag">→ IP check</span></div></li>
+    <li><span class="dot">4</span><div><b>Transport</b>Uses Meera’s numbers to put parts 1 → 2 → 3 → 4 → 5 in order and rebuild the 500 pages. A missing part? TCP gets it resent. <span class="tag">→ reassemble</span></div></li>
+    <li><span class="dot">5</span><div><b>Session</b>Confirms Faizan’s session is still active and uninterrupted; closes it once the whole report has arrived.</div></li>
+    <li><span class="dot">6</span><div><b>Presentation</b>Decrypts Rakesh’s encryption, then translates the report into Odia. <span class="tag">→ readable</span></div></li>
+    <li><span class="dot">7</span><div><b>Application</b>The report lands in Debashish’s mailing app: complete, in order, decrypted, in Odia. He can finally read it.</div></li>
+  </ol>
+  <div class="story"><b class="lbl">Why bother with all seven?</b>Ananya never thought about MAC addresses; Om Prakash and Deepa never thought about translation. Each person trusted the previous one and did one job well. <mark>The OSI model turns one enormous task into seven small, independent responsibilities.</mark></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Debug bottom-up, layer by layer. Is the cable/Wi-Fi up (L1)? Got an IP and gateway (L3)? Can you <code>ping</code> the host (L3)? Is the port open (L4)? Does TLS succeed (L6-ish)? Does the API return the right thing (L7)? Saying “it’s L4, the port is blocked” gets a customer’s network team moving fast.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="encapsulation">
+  <h2>Encapsulation, decapsulation and data units</h2>
+  <p>As data moves <b>down</b> at the sender, each layer adds its own control information (a <b>header</b>; Layer 2 also adds a trailer) without changing the original content. That wrapping is <mark>encapsulation</mark>. At the receiver, each layer reads and removes the header added by its matching layer on the way <b>up</b>: <mark class="g">decapsulation</mark>.</p>
+  <div class="story"><b class="lbl">Parcel inside parcels</b>You put a gift in a box, the box in a courier bag with an address label, the bag in a sack for the truck. The recipient unpacks in reverse: sack, bag, box, gift.</div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 310" role="img" aria-label="Encapsulation: data; a TCP header added makes a segment; an IP header added makes a packet; a MAC header and trailer added make a frame; the frame becomes bits">
+      <g class="rough">
+        <rect class="box f-green" x="420" y="20" width="200" height="40" rx="6"/>
+        <rect class="box f-yellow" x="330" y="76" width="90" height="40" rx="6"/>
+        <rect class="box f-green" x="420" y="76" width="200" height="40" rx="6"/>
+        <rect class="box f-blue" x="240" y="132" width="90" height="40" rx="6"/>
+        <rect class="box f-yellow" x="330" y="132" width="90" height="40" rx="6"/>
+        <rect class="box f-green" x="420" y="132" width="200" height="40" rx="6"/>
+        <rect class="box f-orange" x="150" y="188" width="90" height="40" rx="6"/>
+        <rect class="box f-blue" x="240" y="188" width="90" height="40" rx="6"/>
+        <rect class="box f-yellow" x="330" y="188" width="90" height="40" rx="6"/>
+        <rect class="box f-green" x="420" y="188" width="200" height="40" rx="6"/>
+        <rect class="box f-orange" x="620" y="188" width="80" height="40" rx="6"/>
+      </g>
+      <text class="th" x="20" y="50">Data</text>
+      <text class="th" x="20" y="106">Segment</text>
+      <text class="th" x="20" y="162">Packet</text>
+      <text class="th" x="20" y="218">Frame</text>
+      <text class="th" x="20" y="274">Bits</text>
+      <text class="t" x="520" y="46" text-anchor="middle">DATA</text>
+      <text class="tm" x="375" y="101" text-anchor="middle">TCP hdr</text>
+      <text class="t" x="520" y="102" text-anchor="middle">DATA</text>
+      <text class="tm" x="285" y="157" text-anchor="middle">IP hdr</text>
+      <text class="tm" x="375" y="157" text-anchor="middle">TCP hdr</text>
+      <text class="t" x="520" y="158" text-anchor="middle">DATA</text>
+      <text class="tm" x="195" y="213" text-anchor="middle">MAC hdr</text>
+      <text class="tm" x="285" y="213" text-anchor="middle">IP hdr</text>
+      <text class="tm" x="375" y="213" text-anchor="middle">TCP hdr</text>
+      <text class="t" x="520" y="214" text-anchor="middle">DATA</text>
+      <text class="tm" x="660" y="213" text-anchor="middle">trailer</text>
+      <text class="tm" x="150" y="270">01001101 10100110 01110010 11010001 …</text>
+      <text class="ts" x="360" y="300" text-anchor="middle">going down: wrap (encapsulate) · going up: unwrap (decapsulate)</text>
+    </svg></div>
+    <figcaption>Each layer wraps the previous layer’s unit. The original DATA is never changed, only wrapped.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Stage</th><th>Name of the unit</th><th>What was added</th><th>Who works with it</th></tr>
+    <tr><td>Layers 7–5</td><td><b>Data</b></td><td>Nothing yet: the actual content (Ananya’s report)</td><td>Applications</td></tr>
+    <tr><td>Layer 4</td><td><b>Segment</b> (TCP) / <b>Datagram</b> (UDP)</td><td>Transport info such as port numbers and sequence numbers</td><td>The two endpoints</td></tr>
+    <tr><td>Layer 3</td><td><b>Packet</b></td><td>Source and destination IP addresses</td><td>Routers</td></tr>
+    <tr><td>Layer 2</td><td><b>Frame</b></td><td>Source and destination MAC addresses, error-check trailer</td><td>Switches</td></tr>
+    <tr><td>Layer 1</td><td><b>Bits</b></td><td>Turned into electrical, light or radio signals</td><td>Cables, fiber, radios</td></tr>
+  </table></div>
+  <div class="flow v"><span>Application data</span><span class="hl">Segment (TCP) or Datagram (UDP)</span><span class="hl">Packet · + IP</span><span class="hl">Frame · + MAC</span><span class="ok">Bits · on the wire</span></div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="website-journey">
+  <h2>The complete journey: opening a website</h2>
+  <p>Now tie all three notes together. You type <code>https://example.com</code> and press Enter.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 310" role="img" aria-label="The browser asks a DNS server for the IP, then the request goes laptop to switch to home router to ISP, across Internet routers to the example.com server; the response returns the same way back to the laptop">
+      <g class="rough">
+        <rect class="box f-yellow" x="60" y="26" width="150" height="46" rx="10"/>
+        <path class="lb dash" d="M50 146 L 86 78" marker-end="url(#ahb)"/>
+        <rect class="box f-blue" x="10" y="150" width="100" height="56" rx="10"/>
+        <rect class="box f-teal" x="130" y="150" width="80" height="56" rx="10"/>
+        <rect class="box f-yellow" x="230" y="150" width="90" height="56" rx="10"/>
+        <rect class="box f-orange" x="340" y="150" width="70" height="56" rx="10"/>
+        <ellipse class="box f-grey" cx="500" cy="178" rx="74" ry="44"/>
+        <rect class="box f-green" x="596" y="150" width="114" height="56" rx="10"/>
+        <path class="lr" d="M112 178 L 126 178" marker-end="url(#ahr)"/>
+        <path class="lr" d="M212 178 L 226 178" marker-end="url(#ahr)"/>
+        <path class="lr" d="M322 178 L 336 178" marker-end="url(#ahr)"/>
+        <path class="lr" d="M412 178 L 422 178" marker-end="url(#ahr)"/>
+        <path class="lr" d="M576 178 L 592 178" marker-end="url(#ahr)"/>
+        <path class="lb" d="M702 208 C 702 286, 18 286, 18 212" marker-end="url(#ahb)"/>
+      </g>
+      <text class="t" x="135" y="55" text-anchor="middle">DNS server</text>
+      <text class="tm" x="222" y="58">example.com → IP</text>
+      <text class="t" x="60" y="183" text-anchor="middle">Laptop</text>
+      <text class="t" x="170" y="183" text-anchor="middle">Switch</text>
+      <text class="t" x="275" y="183" text-anchor="middle">Router</text>
+      <text class="t" x="375" y="183" text-anchor="middle">ISP</text>
+      <text class="t" x="500" y="184" text-anchor="middle">Internet</text>
+      <text class="t" x="653" y="183" text-anchor="middle">example.com</text>
+      <text class="ts" x="60" y="232" text-anchor="middle">browser</text>
+      <text class="ts" x="170" y="232" text-anchor="middle">MAC, L2</text>
+      <text class="ts" x="275" y="232" text-anchor="middle">gateway</text>
+      <text class="ts" x="375" y="232" text-anchor="middle">your ISP</text>
+      <text class="ts" x="500" y="240" text-anchor="middle">many routers, IP</text>
+      <text class="ts" x="653" y="232" text-anchor="middle">port 443</text>
+      <text class="tb" x="360" y="294" text-anchor="middle">the webpage comes back the same way</text>
+    </svg></div>
+    <figcaption>DNS first, then out through switch, router and ISP, across the Internet to the server, and back again.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Application creates the request</b>The browser, at Layer 7, prepares to talk to a web server using HTTPS. <span class="tag">→ L7</span></div></li>
+    <li><span class="dot">2</span><div><b>DNS finds the destination</b><code>example.com</code> is a name, so the device resolves it: name → DNS → IP address. <span class="tag">→ note 2</span></div></li>
+    <li><span class="dot">3</span><div><b>Local or remote?</b>The device checks whether that IP is on its own network. For a website it almost never is, so traffic goes to the <b>default gateway</b>. <span class="tag">→ note 1</span></div></li>
+    <li><span class="dot">4</span><div><b>Local network delivery</b>The NIC, MAC addressing and the local switch carry the frame to the router. <span class="tag">→ L2</span></div></li>
+    <li><span class="dot">5</span><div><b>Transport</b>The request is tied to port <b>443</b> (HTTPS) and prepared with <b>TCP</b> for reliable delivery. <span class="tag">→ L4</span></div></li>
+    <li><span class="dot">6</span><div><b>Network</b>It becomes a packet with source and destination IP addresses, ready to be routed. <span class="tag">→ L3</span></div></li>
+    <li><span class="dot">7</span><div><b>The Internet journey</b>Through your ISP and many interconnected networks; every router decides the next hop. <span class="tag">→ routing</span></div></li>
+    <li><span class="dot">8</span><div><b>Arrival at the server</b>The server decapsulates up through its layers until the HTTPS request reaches its web software.</div></li>
+    <li><span class="dot">9</span><div><b>The response travels back</b>The page content goes through the same layered process in reverse: Internet, ISP, router, local network, your device.</div></li>
+    <li><span class="dot">10</span><div><b>The browser displays it</b>Back at Layer 7, the browser renders the webpage.</div></li>
+  </ol>
+  <div class="cmd"><p class="what">See parts of the journey yourself</p>
+  <pre><code class="language-bash">nslookup example.com           # step 2: DNS
+ip route                       # step 3: your default gateway (Linux)
+traceroute example.com         # step 7: the routers along the way (tracert on Windows)
+curl -v https://example.com    # steps 5-10: TCP to :443, TLS, HTTP request and response</code></pre></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="series-recap">
+  <h2>The whole series in one map</h2>
+  <p>Every idea in these three notes answers one question: <b>how can two devices, anywhere in the world, exchange information correctly and reliably?</b></p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Connect</h4><p>Standalone computers can’t share. NICs, cables, Wi-Fi, switches (not hubs) and routers link devices and networks.</p></div>
+    <div class="card t2 tilt-b"><h4>Scale</h4><p>LAN for one location, WAN for long distances; the Internet is a network of networks joined through ISPs.</p></div>
+    <div class="card t3 tilt-a"><h4>Identify</h4><p>MAC locally, IP across networks, port for the exact app.</p></div>
+    <div class="card t5 tilt-b"><h4>Agree</h4><p>Protocols make sure data is formatted and understood the same way, whatever the brand.</p></div>
+    <div class="card t7 tilt-a"><h4>Organise</h4><p>The OSI model puts it all into seven layers.</p></div>
+    <div class="card t8 tilt-b"><h4>Wrap &amp; unwrap</h4><p>Data → segment/datagram → packet → frame → bits, and back.</p></div>
+  </div>
+  <h3>What comes next</h3>
+  <div class="tbl"><table>
+    <tr><th>Module</th><th>Goes deep into</th></tr>
+    <tr><td>IP Addressing</td><td>IPv4, public vs private, subnetting, CIDR, subnet masks, default gateways, network and broadcast addresses</td></tr>
+    <tr><td>TCP &amp; UDP</td><td>Their internal working, including the TCP three-way handshake</td></tr>
+    <tr><td>DNS</td><td>Name resolution, record types such as A and CNAME, basic troubleshooting</td></tr>
+    <tr><td>Network Troubleshooting</td><td>Hands-on: <code>ping</code>, <code>curl</code>, <code>ss</code>, <code>nslookup</code>/<code>dig</code>, <code>traceroute</code>, <code>ip addr</code>/<code>ip route</code></td></tr>
+  </table></div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Layering</dt><dd>Splitting a complex system into separate layers, each with one job, each relying on the layer below and serving the layer above.</dd></div>
+    <div><dt>OSI model</dt><dd>Open Systems Interconnection: ISO’s seven-layer framework (Application, Presentation, Session, Transport, Network, Data Link, Physical) for describing network communication.</dd></div>
+    <div><dt>Application layer (L7)</dt><dd>Provides network services to applications; protocols include HTTP/HTTPS, FTP, DNS, DHCP and SMTP.</dd></div>
+    <div><dt>Presentation layer (L6)</dt><dd>Makes data usable by the receiving application through translation, encryption/decryption and compression/decompression.</dd></div>
+    <div><dt>Session layer (L5)</dt><dd>Creates, manages and terminates communication sessions between two systems.</dd></div>
+    <div><dt>Transport layer (L4)</dt><dd>Manages end-to-end delivery with segmentation, sequencing, acknowledgment, retransmission and ports, using TCP or UDP.</dd></div>
+    <div><dt>Network layer (L3)</dt><dd>Adds source and destination IP addresses, determines the best path and routes packets between networks.</dd></div>
+    <div><dt>Data Link layer (L2)</dt><dd>Puts packets into frames with source and destination MAC addresses and delivers them to the next directly connected node, with flow control and error detection.</dd></div>
+    <div><dt>Physical layer (L1)</dt><dd>Transmits bits as electrical signals, light pulses or radio waves over the medium, without understanding their meaning.</dd></div>
+    <div><dt>Encapsulation</dt><dd>Each layer adding its own header (and at Layer 2 a trailer) around the data as it moves down the stack at the sender.</dd></div>
+    <div><dt>Decapsulation</dt><dd>Each layer reading and removing its matching header as data moves up the stack at the receiver.</dd></div>
+    <div><dt>Segment / Datagram</dt><dd>The Layer 4 unit of data: called a segment with TCP and a datagram with UDP.</dd></div>
+    <div><dt>Packet</dt><dd>The Layer 3 unit of data, carrying source and destination IP addresses; the unit routers work with.</dd></div>
+    <div><dt>Frame</dt><dd>The Layer 2 unit of data, carrying source and destination MAC addresses; the unit switches work with, rebuilt at every hop.</dd></div>
+  </dl>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>What is the main benefit of layering?</p>
+      <ol><li>It makes data travel faster</li><li>It removes the need for protocols</li><li>Each layer does one job, so one layer can change without redesigning the others</li><li>It lets every device skip the Physical layer</li></ol>
+      <p class="why">Layering separates responsibilities, e.g. upgrading Wi-Fi doesn’t require changing your browser.</p></div>
+    <div class="q" data-answer="2"><p>Which is the correct order from Layer 7 down to Layer 1?</p>
+      <ol><li>Application, Session, Presentation, Network, Transport, Data Link, Physical</li><li>Application, Presentation, Session, Transport, Network, Data Link, Physical</li><li>Physical, Data Link, Network, Transport, Session, Presentation, Application</li><li>Application, Presentation, Transport, Session, Network, Physical, Data Link</li></ol>
+      <p class="why">“All People Seem To Need Data Processing.” Option 3 is the right list but in bottom-to-top order.</p></div>
+    <div class="q" data-answer="4"><p>In the story, Meera splits the 500-page report into five numbered parts. Which layer is she?</p>
+      <ol><li>Network</li><li>Session</li><li>Data Link</li><li>Transport</li></ol>
+      <p class="why">Segmentation and sequencing are Transport layer jobs.</p></div>
+    <div class="q" data-answer="1"><p>Rakesh encrypts the report so interceptors can’t read it. Which layer does this represent?</p>
+      <ol><li>Presentation</li><li>Application</li><li>Physical</li><li>Network</li></ol>
+      <p class="why">Translation, encryption and compression belong to the Presentation layer.</p></div>
+    <div class="q" data-answer="3"><p>A packet travels laptop → router A → router B → server. What happens to the addresses?</p>
+      <ol><li>Both MAC and IP stay the same</li><li>The IPs change at every hop; the MACs stay the same</li><li>The MACs change at every hop; the source and destination IPs stay the same</li><li>Both change at every hop</li></ol>
+      <p class="why">Each link gets a new frame with new MACs (next hop), while the IPs name the true source and destination end to end.</p></div>
+    <div class="q" data-answer="2"><p>Which unit of data does a router mainly work with?</p>
+      <ol><li>Frame</li><li>Packet</li><li>Segment</li><li>Bits</li></ol>
+      <p class="why">Routers read the IP header, which belongs to the Layer 3 packet. Switches work with frames.</p></div>
+    <div class="q" data-answer="4"><p>What is decapsulation?</p>
+      <ol><li>Encrypting data before sending</li><li>Splitting data into segments</li><li>Adding headers as data goes down the stack</li><li>Each receiving layer reading and removing its matching header as data goes up</li></ol>
+      <p class="why">Encapsulation wraps on the way down; decapsulation unwraps on the way up.</p></div>
+    <div class="q" data-answer="1"><p>When you open https://example.com, what must happen before the browser can connect to the server?</p>
+      <ol><li>DNS must resolve example.com to an IP address</li><li>The server must send its MAC address to you</li><li>Your laptop must get a new MAC address</li><li>The Session layer must pick port 80</li></ol>
+      <p class="why">Without the IP from DNS, nothing below Layer 7 knows where to send the request. HTTPS uses port 443, not 80.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">The <b>OSI model</b> splits communication into <b>seven layers</b>; going down, each layer <b>encapsulates</b> the data (segment → packet → frame → bits), going up each layer <b>decapsulates</b> it, and opening a website is just <b>DNS, ports, TCP, IP routing and MAC delivery</b> working together through those layers.</p>
+  <p>Next up: <b>IP Address Fundamentals</b>, a proper look at IPv4 addresses, public vs private ranges and how the network and host parts work.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

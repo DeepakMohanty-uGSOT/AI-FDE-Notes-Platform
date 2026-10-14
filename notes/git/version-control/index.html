@@ -65,34 +65,15 @@
 
   <h3>1. Local version control</h3>
   <p>The simplest form, designed for <b>one person or a small project</b>. A database of versions sits on your own computer, and you check out the version you want to work on.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="One computer holds both a version database with versions 1, 2 and 3 and the working file checked out from it">
-      <g class="rough">
-        <rect class="box f-grey" x="20" y="20" width="680" height="210" rx="18"/>
-        <rect class="box f-card" x="60" y="60" width="270" height="150" rx="14"/>
-        <rect class="box f-blue" x="85" y="110" width="65" height="70" rx="10"/>
-        <rect class="box f-blue" x="162" y="110" width="65" height="70" rx="10"/>
-        <rect class="box f-blue" x="239" y="110" width="65" height="70" rx="10"/>
-        <rect class="box f-green" x="460" y="95" width="200" height="90" rx="14"/>
-        <path class="lr" d="M335 140 L 452 140" marker-end="url(#ahr)"/>
-      </g>
-      <text class="ts" x="40" y="46">your computer</text>
-      <text class="t" x="195" y="92" text-anchor="middle">Version database</text>
-      <text class="th" x="117" y="154" text-anchor="middle">v1</text>
-      <text class="th" x="194" y="154" text-anchor="middle">v2</text>
-      <text class="th" x="271" y="154" text-anchor="middle">v3</text>
-      <text class="tr" x="394" y="128" text-anchor="middle">checkout</text>
-      <text class="th" x="560" y="138" text-anchor="middle">Working file</text>
-      <text class="ts" x="560" y="164" text-anchor="middle">what you edit</text>
-    </svg></div>
-    <figcaption>Local VCS: everything is on one machine. Simple, but no sharing and no backup if the disk dies.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/03.webp" alt="Local version control: inside the Local Computer box, a checkout holding the project file points to a Project Version store with version 3, version 2 and version 1." width="1400" height="755"><figcaption>Overview of a local VCS: everything is on one machine. Simple, but no sharing and no backup if the disk dies.</figcaption></figure>
 
   <h3>2. Centralised version control (CVCS)</h3>
   <p>One <b>central server</b> stores the main repository with the <b>entire history</b> of the project. Developers fetch the latest files from it and send their changes back to it. Examples: Subversion (SVN), CVS.</p>
+  <figure class="shot"><img src="img/02.webp" alt="Centralized version control: Computer A checkout and Computer B checkout, each holding a project file, both connect with two-way arrows to the Central VCS server, which stores the project versions: version 3, version 2, version 1." width="1400" height="887"><figcaption>Overview of a CVCS: the computers hold checked-out files; the version history lives on the central server.</figcaption></figure>
 
   <h3>3. Distributed version control (DVCS)</h3>
   <p><mark>Many full copies of the repository exist, and each one contains the complete history of the project.</mark> Every developer has the whole thing on their own machine; a shared remote is used to exchange work. Examples: <b>Git</b>, Mercurial.</p>
+  <figure class="shot"><img src="img/01.webp" alt="Distributed version control: a Remote Repository holding the project history (version 1, 2, 3) connects with two-way arrows to Developer A, Developer B and Developer C, and each developer has a Local Repository with the same versions 1, 2 and 3." width="1400" height="788"><figcaption>Overview of a DVCS: every developer’s local repository holds the full project history, just like the remote.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 340" role="img" aria-label="Left: centralised, one central server with full history and three developers holding only the latest files. Right: distributed, a remote and three developers who each hold a full copy of the history">
       <g class="rough">
@@ -174,6 +155,7 @@
     <li><span class="dot">11</span><div><b>Remote repository</b>A copy hosted on a server (GitHub, GitLab, Bitbucket) so people in different places can share work.</div></li>
   </ol>
   <div class="flow"><span>local copy</span><span>make changes</span><span class="hl">commit</span><span class="op">push</span><span class="ok">shared remote</span><span class="op">pull</span><span>teammates’ copies</span></div>
+  <figure class="shot sm"><img src="img/04.webp" alt="A Central Repository at the top with two-way arrows to three ellipses: Local copy Dev 1, Local copy Dev 2, Local copy Dev 3. Under each local copy, dashed arrows show changes and commits." width="644" height="706"><figcaption>Overview of how a VCS works: each developer makes changes and commits in a local copy, and exchanges them with the central repository.</figcaption></figure>
 </section>
 
 <!-- 5 -->
@@ -182,34 +164,8 @@
   <p><b>Git</b> is a <b>distributed</b> version control system created by <b>Linus Torvalds in 2005</b> (originally to manage the Linux kernel source). It has since become the <mark>industry standard for source code management</mark>, known for its <b>speed</b>, <b>flexibility</b> and <b>powerful branching</b>.</p>
   <div class="notes"><div class="note"><b>2005</b>year Git was created</div><div class="note"><b>DVCS</b>every clone has full history</div><div class="note"><b>.git</b>folder that holds the repo</div></div>
   <h3>The basic flow of Git</h3>
-  <p>Your work moves through four places. The next note covers every command in detail; for now, just get the shape.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Working directory to staging area with git add, staging area to local repository with git commit, local repository to remote repository with git push, and git pull bringing changes from the remote back to the local repository">
-      <g class="rough">
-        <rect class="box f-yellow" x="10" y="70" width="140" height="84" rx="14"/>
-        <rect class="box f-orange" x="195" y="70" width="140" height="84" rx="14"/>
-        <rect class="box f-green" x="380" y="70" width="140" height="84" rx="14"/>
-        <rect class="box f-blue" x="565" y="70" width="145" height="84" rx="14"/>
-        <path class="lr" d="M154 112 L 189 112" marker-end="url(#ahr)"/>
-        <path class="lr" d="M339 112 L 374 112" marker-end="url(#ahr)"/>
-        <path class="lr" d="M524 112 L 559 112" marker-end="url(#ahr)"/>
-        <path class="lb" d="M637 158 C 637 205, 450 205, 450 162" marker-end="url(#ahb)"/>
-      </g>
-      <text class="th" x="80" y="108" text-anchor="middle">Working</text>
-      <text class="ts" x="80" y="134" text-anchor="middle">your files</text>
-      <text class="th" x="265" y="108" text-anchor="middle">Staging</text>
-      <text class="ts" x="265" y="134" text-anchor="middle">the index</text>
-      <text class="th" x="450" y="108" text-anchor="middle">Local</text>
-      <text class="ts" x="450" y="134" text-anchor="middle">the .git folder</text>
-      <text class="th" x="637" y="108" text-anchor="middle">Remote</text>
-      <text class="ts" x="637" y="134" text-anchor="middle">e.g. GitHub</text>
-      <text class="tm" x="172" y="56" text-anchor="middle">git add</text>
-      <text class="tm" x="357" y="56" text-anchor="middle">git commit</text>
-      <text class="tm" x="542" y="56" text-anchor="middle">git push</text>
-      <text class="tm" x="543" y="214" text-anchor="middle">git pull</text>
-    </svg></div>
-    <figcaption>Edit in the working directory, choose what to save with <code>add</code>, save a snapshot with <code>commit</code>, share it with <code>push</code>.</figcaption>
-  </figure>
+  <p>Your work moves through four places. More details about the keywords used in this diagram are discussed in the next note; for now, just get the shape.</p>
+  <figure class="shot"><img src="img/05.webp" alt="Sequence diagram with four lanes: Working directory, Staging area, Local repository, remote repository. git add goes from working directory to staging area; git commit from staging area to local repository; git clone from remote to local repository; git push from local to remote; git fetch/pull from remote to local; git checkout and git merge from local repository back to the working directory." width="912" height="634"><figcaption>The basic flow of Git: <code>add</code>, <code>commit</code> and <code>push</code> move work right; <code>clone</code>, <code>fetch/pull</code>, <code>checkout</code> and <code>merge</code> bring it back.</figcaption></figure>
 </section>
 
 <!-- 6 -->
@@ -250,10 +206,10 @@
 <!-- 7 -->
 <section class="ch" id="install">
   <h2>Installing Git</h2>
-  <p>The steps depend on your operating system.</p>
+  <p>To install Git, follow the specific instructions for your operating system.</p>
   <h3>Windows</h3>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Open the official site</b>Go to Git for Windows at <code>https://git-scm.com/install/windows</code>.</div></li>
+    <li><span class="dot">1</span><div><b>Visit the official Git for Windows website</b>Go to <code>https://git-scm.com/install/windows</code>.</div></li>
     <li><span class="dot">2</span><div><b>Download the installer</b>Pick the latest version; <b>64-bit</b> is recommended.</div></li>
     <li><span class="dot">3</span><div><b>Run the installation wizard</b>You will see many configuration options. <b>The defaults are fine for most users.</b> <span class="tag">→ this also installs Git Bash</span></div></li>
   </ol>

@@ -360,7 +360,7 @@ the kitchen. The kitchen prepares it and gives the result back to you.</code></p
 
   <h3>RACE</h3>
   <p>Role, Action, Context, Expectation. A simple all-rounder; common in HR, customer support, marketing, education and software development.</p>
-  <div class="anatomy"><span class="a1">R · Role</span><span class="a2">A · Action</span><span class="a3">C · Context</span><span class="a4">E · Expectation</span></div>
+  <div class="anatomy"><span class="a1">&nbsp;R · Role&nbsp;</span><span class="a2">&nbsp;A · Action&nbsp;</span><span class="a3">&nbsp;C · Context&nbsp;</span><span class="a4">&nbsp;E · Expectation&nbsp;</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p>Who the AI should act as</p></div>
     <div><span class="sw a2"></span><p>What it should do</p></div>
@@ -382,7 +382,7 @@ Thank you for taking the time to interview with us. We enjoyed meeting you...
 
   <h3>CO-STAR</h3>
   <p>Context, Objective, Style, Tone, Audience, Response. Best when <b>how</b> the AI communicates matters; common in marketing, education, business communication, support and content creation.</p>
-  <div class="anatomy"><span class="a1">C · Context</span><span class="a2">O · Objective</span><span class="a3">S · Style</span><span class="a4">T · Tone</span><span class="a5">A · Audience</span><span class="a6">R · Response</span></div>
+  <div class="anatomy"><span class="a1">&nbsp;C · Context&nbsp;</span><span class="a2">&nbsp;O · Objective&nbsp;</span><span class="a3">&nbsp;S · Style&nbsp;</span><span class="a4">&nbsp;T · Tone&nbsp;</span><span class="a5">&nbsp;A · Audience&nbsp;</span><span class="a6">&nbsp;R · Response&nbsp;</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p>Background information</p></div>
     <div><span class="sw a2"></span><p>The goal of the task</p></div>
@@ -404,7 +404,7 @@ Join us at the first meeting on Monday!</code></pre>
 
   <h3>RTCE</h3>
   <p>Role, Task, Context, Expected output. Very close to RACE, with the output format spelled out; common in support, education, marketing and business communication.</p>
-  <div class="anatomy"><span class="a1">R · Role</span><span class="a2">T · Task</span><span class="a3">C · Context</span><span class="a4">E · Expected output</span></div>
+  <div class="anatomy"><span class="a1">&nbsp;R · Role&nbsp;</span><span class="a2">&nbsp;T · Task&nbsp;</span><span class="a3">&nbsp;C · Context&nbsp;</span><span class="a4">&nbsp;E · Expected output&nbsp;</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p>Who the AI should act as</p></div>
     <div><span class="sw a2"></span><p>What the AI needs to do</p></div>
@@ -454,7 +454,7 @@ Subject, Duration, and Activity columns.</code></pre>
       <text class="th" x="120" y="110" text-anchor="middle">Reason</text>
       <text class="th" x="360" y="110" text-anchor="middle">Act</text>
       <text class="th" x="600" y="110" text-anchor="middle">Observe</text>
-      <text class="tr" x="360" y="36" text-anchor="middle">repeat until enough info</text>
+      <text class="tr" x="360" y="58" text-anchor="middle">repeat until enough info</text>
       <text class="t" x="360" y="210" text-anchor="middle">tools</text>
       <text class="ts" x="360" y="230" text-anchor="middle">database · calculator · search</text>
       <text class="t" x="120" y="220" text-anchor="middle">final answer</text>
@@ -514,9 +514,9 @@ Final answer: The total price is 165,000 rupees.</code></pre>
       <text class="t" x="110" y="153" text-anchor="middle">retrieved docs</text>
       <text class="t" x="110" y="207" text-anchor="middle">memory</text>
       <text class="t" x="110" y="261" text-anchor="middle">tool results</text>
-      <text class="th" x="400" y="140" text-anchor="middle">Context</text>
-      <text class="th" x="400" y="170" text-anchor="middle">window</text>
-      <text class="ts" x="400" y="200" text-anchor="middle">only what this task needs</text>
+      <text class="th" x="400" y="132" text-anchor="middle">Context</text>
+      <text class="th" x="400" y="166" text-anchor="middle">window</text>
+      <text class="ts" x="400" y="198" text-anchor="middle">only what this task needs</text>
       <text class="tr" x="400" y="50" text-anchor="middle">select · trim · organise</text>
       <text class="th" x="630" y="158" text-anchor="middle">LLM</text>
     </svg></div>
@@ -736,8 +736,8 @@ except ValidationError as err:
       <text class="th" x="600" y="198" text-anchor="middle">Improve</text>
       <text class="th" x="360" y="198" text-anchor="middle">Test again</text>
       <text class="th" x="120" y="198" text-anchor="middle">Ship</text>
-      <text class="tr" x="400" y="130">still failing</text>
-      <text class="tb" x="240" y="232" text-anchor="middle">all pass</text>
+      <text class="tr" x="296" y="140">still failing</text>
+      <text class="tb" x="240" y="150" text-anchor="middle">all pass</text>
     </svg></div>
     <figcaption>Prompt improvement is iterative: keep looping until the test set passes.</figcaption>
   </figure>
@@ -860,7 +860,7 @@ Result: PASS</code></pre>
       <text class="th" x="110" y="99" text-anchor="middle">v1</text>
       <text class="th" x="360" y="99" text-anchor="middle">v2</text>
       <text class="th" x="610" y="99" text-anchor="middle">v3</text>
-      <text class="tr" x="488" y="28" text-anchor="middle">roll back if v3 breaks</text>
+      <text class="tr" x="488" y="50" text-anchor="middle">roll back if v3 breaks</text>
       <text class="ts" x="110" y="146" text-anchor="middle">fails on empty message</text>
       <text class="ts" x="360" y="146" text-anchor="middle">adds empty-message rule</text>
       <text class="ts" x="610" y="146" text-anchor="middle">new tone change</text>

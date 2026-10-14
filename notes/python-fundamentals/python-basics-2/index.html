@@ -23,7 +23,8 @@
 
 <!-- 1 -->
 <section class="ch" id="recap">
-  <h2>Where Part 1 left off</h2>
+  <h2>Quick recap of Part 1</h2>
+  <p>This is the second part of the Python Basics module, and it continues directly from Part 1. The source notes keep Part 1’s section numbering, so this part begins at Section 13, and earlier sections are referred to by their topic wherever a new concept builds on them. As before, each concept comes with what it is, its syntax, an example and the output. <b>Run every example yourself</b> before moving to the next topic.</p>
   <p>In Part 1 you learned how Python runs a program, its syntax and indentation rules, comments, variables and naming, the basic data types and literals, type conversion, and <code>input()</code>/<code>print()</code>. Every interactive program so far follows this flow:</p>
   <div class="flow"><span>User types</span><span class="op">input()</span><span>string</span><span class="op">int() / float()</span><span class="hl">processing</span><span class="ok">print()</span></div>
   <p>You have covered every step except one: <mark>processing</mark>. Look at this program:</p>
@@ -44,7 +45,7 @@ Enter number of child tickets: 1
 2 1</code></pre>
   <p>Both programs collect and convert the values correctly, but neither can work out a total, compare it to a limit or check a condition. All of that needs <b>operators</b>, which is where this part begins.</p>
   <h3>The road through this note</h3>
-  <div class="flow"><span class="hl">Operators</span><span>Precedence</span><span>Separators</span><span>Strings · indexing · slicing · f-strings</span><span>Booleans · None</span><span>Built-ins</span><span class="ok">Common errors</span></div>
+  <div class="flow"><span class="hl">Operators</span><span>Precedence</span><span>Separators &amp; delimiters</span><span>Strings · indexing · slicing · f-strings</span><span>Booleans · None</span><span>Built-in functions</span><span>Common errors</span><span class="ok">Module 2: Control Flow</span></div>
 </section>
 
 <!-- 2 -->
@@ -85,13 +86,7 @@ print(units_sold / units_per_box)
 print(units_sold // units_per_box)
 print(units_sold % units_per_box)
 print(units_per_box ** 2)</code></pre>
-  <pre class="out"><code>22
-12
-85
-3.4
-3
-2
-25</code></pre>
+  <figure class="shot"><img src="img/01.webp" alt="VS Code: units_sold = 17, units_per_box = 5 and seven print lines using + - * / // % **; the terminal prints 22, 12, 85, 3.4, 3, 2, 25" width="1380" height="409"><figcaption>One line of output per operator: 22, 12, 85, 3.4, 3, 2 and 25.</figcaption></figure>
   <p><code>/</code>, <code>//</code> and <code>%</code> confuse almost every beginner. Picture packing 17 units into boxes of 5:</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="17 units packed into boxes of 5: three full boxes and two units left over. 17 / 5 is 3.4, 17 // 5 is 3, 17 % 5 is 2">
@@ -154,13 +149,7 @@ x %= 3
 print("x %= 3 means x = x % 3, so x =", x)
 x **= 2
 print("x **= 2 means x = x ** 2, so x =", x)</code></pre>
-  <pre class="out"><code>x += 5 means x = x + 5, so x = 15
-x -= 3 means x = x - 3, so x = 12
-x *= 2 means x = x * 2, so x = 24
-x /= 4 means x = x / 4, so x = 6.0
-x //= 2 means x = x // 2, so x = 3.0
-x %= 3 means x = x % 3, so x = 0.0
-x **= 2 means x = x ** 2, so x = 0.0</code></pre>
+  <figure class="shot"><img src="img/02.webp" alt="VS Code: x starts at 10 and goes through += 5, -= 3, *= 2, /= 4, //= 2, %= 3 and **= 2, printing after each; the terminal shows x = 15, 12, 24, 6.0, 3.0, 0.0, 0.0" width="1351" height="745"><figcaption>Follow <code>x</code> down the terminal: 15, 12, 24, then <code>6.0</code> once <code>/=</code> turns it into a float, then 3.0, 0.0, 0.0.</figcaption></figure>
   <div class="sticky info l"><strong>Why 6.0 and not 6?</strong> <code>/</code> always produces a <code>float</code>. Once <code>x</code> is a float, <code>//</code> and <code>%</code> keep it a float (<code>3.0</code>, <code>0.0</code>).</div>
   <p>Tracking a wallet balance through the day:</p>
   <pre><code class="language-python">wallet_balance = 5000
@@ -192,12 +181,7 @@ print("cart_total &gt; threshold:", cart_total &gt; free_shipping_threshold)
 print("cart_total &lt; threshold:", cart_total &lt; free_shipping_threshold)
 print("cart_total &gt;= threshold:", cart_total &gt;= free_shipping_threshold)
 print("cart_total &lt;= threshold:", cart_total &lt;= free_shipping_threshold)</code></pre>
-  <pre class="out"><code>cart_total == threshold: False
-cart_total != threshold: True
-cart_total &gt; threshold: True
-cart_total &lt; threshold: False
-cart_total &gt;= threshold: True
-cart_total &lt;= threshold: False</code></pre>
+  <figure class="shot"><img src="img/03.webp" alt="VS Code: cart_total = 1500, free_shipping_threshold = 1000 and six comparison prints; the terminal shows == False, != True, &gt; True, &lt; False, &gt;= True, &lt;= False" width="1400" height="375"><figcaption>Every comparison answers with a Boolean: 1500 is not equal to 1000, but it is greater.</figcaption></figure>
   <p>Checking a student’s result:</p>
   <pre><code class="language-python">student_marks = 72
 passing_marks = 40
@@ -230,9 +214,7 @@ is_active_employee = True
 print("Age is between 18 and 60:", employee_age &gt;= 18 and employee_age &lt;= 60)
 print("Employee is active or under 18:", is_active_employee or employee_age &lt; 18)
 print("Employee is not active:", not is_active_employee)</code></pre>
-  <pre class="out"><code>Age is between 18 and 60: True
-Employee is active or under 18: True
-Employee is not active: False</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code: employee_age = 35, is_active_employee = True and three prints using and, or, not; the terminal shows True, True, False" width="1400" height="333"><figcaption><code>and</code> and <code>or</code> both give <code>True</code> here; <code>not</code> flips <code>True</code> to <code>False</code>.</figcaption></figure>
   <p>A bank approves a loan only if the applicant is 21 to 60 years old <b>and</b> earns at least 25,000 a month:</p>
   <pre><code class="language-python">applicant_age = 29
 monthly_income = 42000
@@ -260,8 +242,7 @@ Clean payment record: True</code></pre>
   <pre><code class="language-python">log_message = "Connection timeout while reaching database"
 print("timeout" in log_message)
 print("success" not in log_message)</code></pre>
-  <pre class="out"><code>True
-True</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="VS Code: log_message contains Connection timeout while reaching database; print(&quot;timeout&quot; in log_message) and print(&quot;success&quot; not in log_message) both print True" width="1400" height="200"><figcaption>“timeout” is in the message and “success” is not, so both lines print <code>True</code>.</figcaption></figure>
   <p>A sign-up form checks that an email has an <code>@</code> and no spaces:</p>
   <pre><code class="language-python">email = "priya.sharma@example.com"
 
@@ -278,7 +259,7 @@ Has no spaces: True</code></pre>
   </table></div>
   <pre><code class="language-python">last_error = None
 print(last_error is None)</code></pre>
-  <pre class="out"><code>True</code></pre>
+  <figure class="shot"><img src="img/06.webp" alt="VS Code: last_error = None and print(last_error is None); the terminal prints True" width="1400" height="288"><figcaption><code>last_error</code> is the one and only <code>None</code> object, so <code>is None</code> gives <code>True</code>.</figcaption></figure>
   <p>A delivery app checks whether a delivery partner has been assigned yet:</p>
   <pre><code class="language-python">assigned_partner = None
 print("Waiting for partner:", assigned_partner is None)
@@ -327,20 +308,20 @@ print(bill_amount)</code></pre>
   <pre><code class="language-python">print(2 + 3 * 4 - 6 / 2)</code></pre>
   <pre class="out"><code>11.0</code></pre>
   <figure>
-    <div class="dia"><svg viewBox="0 0 720 280" role="img" aria-label="2 + 3 * 4 - 6 / 2 reduces to 2 + 12 - 3.0, then 14 - 3.0, then 11.0">
+    <div class="dia"><svg viewBox="0 0 720 284" role="img" aria-label="2 + 3 * 4 - 6 / 2 reduces to 2 + 12 - 3.0, then 14 - 3.0, then 11.0">
       <g class="rough">
         <rect class="box f-yellow" x="40" y="14" width="300" height="50" rx="12"/>
         <rect class="box f-card" x="40" y="88" width="300" height="50" rx="12"/>
         <rect class="box f-card" x="40" y="162" width="300" height="50" rx="12"/>
-        <rect class="box f-green" x="120" y="226" width="140" height="46" rx="12"/>
+        <rect class="box f-green" x="120" y="232" width="140" height="42" rx="12"/>
         <path class="ln" d="M190 66 L 190 84" marker-end="url(#ah)"/>
         <path class="ln" d="M190 140 L 190 158" marker-end="url(#ah)"/>
-        <path class="ln" d="M190 214 L 190 222" marker-end="url(#ah)"/>
+        <path class="ln" d="M190 214 L 190 228" marker-end="url(#ah)"/>
       </g>
       <text class="th" x="190" y="48" text-anchor="middle">2 + 3 * 4 - 6 / 2</text>
       <text class="th" x="190" y="122" text-anchor="middle">2 + 12 - 3.0</text>
       <text class="th" x="190" y="196" text-anchor="middle">14 - 3.0</text>
-      <text class="th" x="190" y="258" text-anchor="middle">11.0</text>
+      <text class="th" x="190" y="262" text-anchor="middle">11.0</text>
       <text class="tr" x="380" y="44">step 1: * and / first</text>
       <text class="ts" x="380" y="64">3 * 4 = 12 and 6 / 2 = 3.0</text>
       <text class="tr" x="380" y="118">step 2: + and -, left to right</text>
@@ -414,12 +395,8 @@ x = 10; y = 20                   # semicolon
 
 message = "Hello\nWorld"         # backslash
 print(message)</code></pre>
-  <pre class="out"><code>Hello Rohan
-Adult
-Rohan
-Rohan
-Hello
-World</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="VS Code: the separators example with comma, colon, square brackets, curly braces, semicolon, hash and backslash; the terminal prints Hello Rohan, Adult, Rohan, Rohan, Hello, World" width="1400" height="727"><figcaption>The <code>\n</code> in <code>"Hello\nWorld"</code> becomes a real line break, so the last two output lines are <code>Hello</code> and <code>World</code>.</figcaption></figure>
+  <p>Each symbol has a specific role in structuring or writing Python code.</p>
   <p>Putting them together for a customer’s delivery label:</p>
   <pre><code class="language-python">customer = {"name": "Anita", "city": "Pune"}    # curly braces
 items = ["Rice", "Oil", "Sugar"]               # square brackets
@@ -457,12 +434,11 @@ train_name = 'Shatabdi Express'
 coach = "C2"</code></pre>
   <p>You can also build strings by <b>concatenation</b> (below) or by converting another type with <code>str()</code>:</p>
   <pre><code class="language-python">employee_id = str(1042)
-print(employee_id, type(employee_id))
-
-pin_code = str(560001)                # a PIN code stored as part of an address
+print(employee_id, type(employee_id))</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="VS Code: employee_id = str(1042) and print(employee_id, type(employee_id)); the terminal prints 1042 class str" width="1400" height="303"><figcaption>It still looks like 1042, but its type is now <code>str</code>.</figcaption></figure>
+  <pre><code class="language-python">pin_code = str(560001)                # a PIN code stored as part of an address
 print(pin_code, type(pin_code))</code></pre>
-  <pre class="out"><code>1042 &lt;class 'str'&gt;
-560001 &lt;class 'str'&gt;</code></pre>
+  <pre class="out"><code>560001 &lt;class 'str'&gt;</code></pre>
   <h3>Single vs double quotes</h3>
   <p>There is <b>no difference</b> in behaviour. If the text contains an apostrophe, wrap it in double quotes so the apostrophe isn’t mistaken for the closing quote:</p>
   <pre><code class="language-python">status_message = "It's ready for deployment"
@@ -570,6 +546,7 @@ Bengaluru</code></pre>
 print("Logged in as", username)</code></pre>
   <pre class="out"><code>Enter username:    priya_s
 Logged in as priya_s</code></pre>
+  <p><code>.replace(old, new)</code> swaps every occurrence of <code>old</code> for <code>new</code>. <code>.split(separator)</code> breaks a string into a list of smaller strings wherever the given separator occurs; if no separator is given, it splits on any whitespace by default.</p>
   <pre><code class="language-python">file_path = "C:/old_folder/report.csv"
 print(file_path.replace("old_folder", "new_folder"))
 
@@ -660,7 +637,7 @@ print("Last digit:", vehicle_number[-1])</code></pre>
   <pre class="out"><code>n
 Last digit: 7</code></pre>
   <h3>Index out of range</h3>
-  <p>Asking for a position that doesn’t exist is an error:</p>
+  <p>Trying to access an index that does not exist in the string causes an error, rather than returning something meaningless:</p>
   <pre><code class="language-python">word = "Python"
 print(word[10])</code></pre>
   <pre class="out"><code>IndexError: string index out of range</code></pre>
@@ -907,7 +884,7 @@ False</code></pre>
       <text class="th" x="360" y="78" text-anchor="middle">0</text>
       <text class="t" x="360" y="108" text-anchor="middle">a number: zero</text>
       <text class="ts" x="360" y="132" text-anchor="middle">counted, nothing left</text>
-      <text class="th" x="595" y="78" text-anchor="middle">""</text>
+      <text class="tm" x="595" y="78" text-anchor="middle">""</text>
       <text class="t" x="595" y="108" text-anchor="middle">a string: empty</text>
       <text class="ts" x="595" y="132" text-anchor="middle">feedback box left blank</text>
       <text class="tr" x="360" y="190" text-anchor="middle">all three are falsy, but none of them are equal to each other</text>

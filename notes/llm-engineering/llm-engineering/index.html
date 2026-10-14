@@ -49,6 +49,7 @@ elif "late" in message or "delay" in message:
 else:
     print("Unknown request")</code></pre></div>
   <p>This breaks very quickly:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Same request written three ways. The rule-based program understands only 'I want a refund'; 'Can I get my money back?' and 'This product is useless, return it' are not understood. The LLM maps all three to Refund." width="1400" height="557" loading="lazy"><figcaption>The rule matches only the exact words the programmer thought of; the LLM recognises the <b>intent</b>, however it is phrased.</figcaption></figure>
   <div class="grid two">
     <div class="card t3 tilt-a"><h4>Same meaning, different words</h4><p>“money back” means refund, but the rule only looks for the word <code>refund</code>.</p></div>
     <div class="card t4 tilt-b"><h4>Typos and slang</h4><p>“refnd plz” or “paisa wapas” are not matched.</p></div>
@@ -57,13 +58,15 @@ else:
   </div>
   <p>Rules work for exact, structured data. Human language is not exact. <mark>LLMs understand meaning and intent, not just keywords, and one model can handle many tasks without new rules for each one.</mark></p>
 
-  <h3>Traditional software vs traditional ML vs LLMs</h3>
-  <div class="tbl"><table>
-    <tr><th>Approach</th><th>Who writes the logic?</th><th>How many tasks?</th><th>How you change behaviour</th></tr>
-    <tr><td><b>Traditional software</b></td><td>The programmer writes every rule; the computer follows them</td><td>Whatever you coded</td><td>Edit the code. Output is exact and predictable.</td></tr>
-    <tr><td><b>Traditional ML</b></td><td>The model learns the rule from labelled examples (e.g. 10,000 emails marked spam / not spam)</td><td>Usually one</td><td>Collect new data and retrain</td></tr>
-    <tr><td><b>LLM</b></td><td>The model already learned language in general from huge amounts of text</td><td>Many</td><td>Describe the task in plain English in the prompt</td></tr>
-  </table></div>
+  <h3>How LLMs differ from traditional software and traditional ML models</h3>
+  <p>To understand where LLMs fit, compare three ways of building software:</p>
+  <figure class="shot"><img src="img/02.webp" alt="Three ways of building software. Traditional software: rules plus data go into a program that gives answers (billing system, calculator). Traditional ML: data plus answers go into training, giving a model for one task (spam filter, price prediction). LLM: a huge amount of text goes into pre-training, giving a general model plus prompt for many tasks (chat assistant, summarizer, coding helper)." width="1400" height="782" loading="lazy"><figcaption>Rules written by hand, rules learned for one task, or language learned in general and steered by a prompt.</figcaption></figure>
+  <ul>
+    <li><b>Traditional software</b>: the programmer writes every rule. The computer only follows them. Output is exact and predictable.</li>
+    <li><b>Traditional machine learning (ML)</b>: we give the computer examples with correct answers (like 10,000 emails marked spam or not spam), and it learns the rule itself. But that model can usually do only one task.</li>
+    <li><b>LLMs</b>: the model has already learned language in general from huge amounts of text. We don’t retrain it for each task; we simply describe the task in plain English in the prompt.</li>
+  </ul>
+  <figure class="shot"><img src="img/03.webp" alt="Comparison table. Who decides the logic: programmer rule by rule / model learns from labelled data / model learned from huge text, guided by prompts. Tasks handled: only what was coded / usually one specific task / many tasks with the same model. How we instruct it: write code / collect data and retrain / write a prompt in natural language. Output: exact and predictable / a label or a number / free-form text that can vary each time. Handles unseen phrasing: no / only within its task / yes, usually very well." width="1400" height="471" loading="lazy"><figcaption>The same comparison point by point. Note the LLM’s output is free-form text that <b>can vary each time</b>.</figcaption></figure>
   <div class="sticky info"><strong>Key idea</strong> With an LLM, the “program” is often just a well-written instruction. Change the instruction and the behaviour changes, with no new training.</div>
   <div class="sticky fde l"><strong>In the field (FDE)</strong> Customers often arrive with a pile of brittle keyword rules (an <code>if/elif</code> ticket router, regex email parsers). Replacing them with one well-tested LLM classification prompt is one of the most common and fastest FDE wins.</div>
 </section>
@@ -72,38 +75,8 @@ else:
 <section class="ch" id="journey">
   <h2>The journey of a prompt</h2>
   <p>When you send a prompt to an LLM, the text goes through a fixed series of steps. Each step gets its own section below; here is the whole journey once.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Six steps: tokenizer, token IDs, embeddings, transformer, probabilities, pick a token, and a loop back to repeat">
-      <g class="rough">
-        <rect class="box f-blue" x="20" y="30" width="200" height="72" rx="14"/>
-        <rect class="box f-blue" x="260" y="30" width="200" height="72" rx="14"/>
-        <rect class="box f-teal" x="500" y="30" width="200" height="72" rx="14"/>
-        <rect class="box f-purple" x="500" y="164" width="200" height="72" rx="14"/>
-        <rect class="box f-yellow" x="260" y="164" width="200" height="72" rx="14"/>
-        <rect class="box f-green" x="20" y="164" width="200" height="72" rx="14"/>
-        <path class="ln" d="M224 66 L 254 66" marker-end="url(#ah)"/>
-        <path class="ln" d="M464 66 L 494 66" marker-end="url(#ah)"/>
-        <path class="ln" d="M600 106 L 600 158" marker-end="url(#ah)"/>
-        <path class="ln" d="M496 200 L 466 200" marker-end="url(#ah)"/>
-        <path class="ln" d="M256 200 L 226 200" marker-end="url(#ah)"/>
-        <path class="lr dash" d="M120 160 L 120 108" marker-end="url(#ahr)"/>
-      </g>
-      <text class="th" x="120" y="66" text-anchor="middle">Tokenizer</text>
-      <text class="ts" x="120" y="90" text-anchor="middle">text → tokens</text>
-      <text class="th" x="360" y="66" text-anchor="middle">Token IDs</text>
-      <text class="ts" x="360" y="90" text-anchor="middle">tokens → numbers</text>
-      <text class="th" x="600" y="66" text-anchor="middle">Embeddings</text>
-      <text class="ts" x="600" y="90" text-anchor="middle">numbers → meaning</text>
-      <text class="th" x="600" y="200" text-anchor="middle">Transformer</text>
-      <text class="ts" x="600" y="224" text-anchor="middle">tokens share context</text>
-      <text class="th" x="360" y="200" text-anchor="middle">Probabilities</text>
-      <text class="ts" x="360" y="224" text-anchor="middle">a score for every token</text>
-      <text class="th" x="120" y="200" text-anchor="middle">Pick a token</text>
-      <text class="ts" x="120" y="224" text-anchor="middle">add it to the text</text>
-      <text class="tr" x="134" y="140">repeat</text>
-    </svg></div>
-    <figcaption>Text in, one token out, then the whole loop runs again for the next token.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/04.webp" alt="How an LLM works, the basic workflow, with an example on the right: input text 'The capital of France is'; tokenizer splits it into The | capital | of | France | is; token IDs [976, 9029, 328, 10128, 382]; embeddings turn 976 into a vector [0.12, -0.40, 0.88, ...]; transformer layers see capital + France means the question is about a country's capital; next-token probabilities Paris 0.91, a 0.03, the 0.02; pick one token: Paris (ID 12650); output text 'The capital of France is Paris'. The new token is added and the process repeats." width="1400" height="1577" loading="lazy"><figcaption>One full pass, traced with a real example. The new token is added to the text and the whole process repeats until the answer is complete.</figcaption></figure>
+  <p>Trace through it:</p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Tokenizer</b>The text is broken into small pieces called <b>tokens</b>. <span class="tag">→ Tokens</span></div></li>
     <li><span class="dot">2</span><div><b>Token IDs</b>Each token becomes a number, because models only work with numbers.</div></li>
@@ -118,12 +91,14 @@ else:
 <section class="ch" id="training-inference">
   <h2>Training vs inference, and how text is generated</h2>
   <div class="story"><b class="lbl">Studying vs the exam</b>A student spends years studying, then sits in the exam hall and writes answers. Nothing new is learned in the exam hall. <mark>Training is the studying; inference is writing the exam.</mark></div>
-  <p>An LLM has two completely different phases in its life:</p>
+  <p>An LLM has two completely different phases in its life: <b>training</b> (when it learns) and <b>inference</b> (when it is used).</p>
+  <figure class="shot"><img src="img/05.webp" alt="Training vs inference. Training, the learning phase: massive text data (trillions of tokens), predict the next token and compare with the real next token, adjust weights and repeat billions of times, giving trained model weights where the knowledge is stored; takes weeks to months, extremely expensive, thousands of GPUs, done by the model provider. Inference, the using phase: your prompt, the trained model (frozen, weights do not change), a response generated token by token; milliseconds to seconds, small cost per request, happens on every request, this is what we do as LLM engineers." width="1400" height="866" loading="lazy"><figcaption>Training happens once, at huge cost, at the provider. Inference happens on every request, and it is our job.</figcaption></figure>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Training (learning)</h4><p>The model reads massive amounts of text and practises one task again and again: <b>predict the next token</b>. Every time it is wrong, its internal numbers, called <b>weights</b> or <b>parameters</b>, are nudged slightly. After billions of these corrections the weights hold the patterns of language, facts and reasoning.</p></div>
     <div class="card t2 tilt-b"><h4>Inference (using)</h4><p>The trained model is simply <b>used</b>: you send a prompt and it generates a response. The weights <b>do not change</b>. The model does not learn from your conversation.</p></div>
   </div>
   <p>Training usually happens in stages:</p>
+  <figure class="shot"><img src="img/06.webp" alt="How a raw model becomes a helpful assistant: 1. pre-training reads huge text and learns to predict the next token; 2. instruction tuning learns from examples of instructions plus good answers; 3. alignment, where human (and AI) feedback teaches it to be helpful and safe; result: a chat assistant ready for inference." width="1400" height="258" loading="lazy"><figcaption>Pre-training → instruction tuning → alignment → a chat assistant ready for inference.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Pre-training</b>Learn language from huge amounts of text. The result can continue text, but is not yet a good assistant.</div></li>
     <li><span class="dot">2</span><div><b>Instruction tuning</b>Train on examples of instructions with good answers, so it learns to <i>follow instructions</i>.</div></li>
@@ -132,35 +107,17 @@ else:
   <div class="sticky info l"><strong>Key idea</strong> As LLM engineers we almost always work with <b>inference</b>. Training a large model from scratch costs millions of dollars and is done by a handful of companies.</div>
 
   <h3>One token at a time</h3>
-  <p>An LLM does not write a whole answer at once. At each step it looks at all the text so far, calculates the probability of every possible next token, picks one, <b>adds it to the input</b>, and repeats. This loop is called <mark>autoregressive generation</mark>.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Three steps: The capital of France is predicts Paris; with Paris appended it predicts a full stop; then it predicts end and stops">
-      <g class="rough">
-        <rect class="box f-card" x="20" y="20" width="360" height="50" rx="12"/>
-        <rect class="box f-green" x="450" y="20" width="140" height="50" rx="12"/>
-        <rect class="box f-card" x="20" y="95" width="360" height="50" rx="12"/>
-        <rect class="box f-green" x="450" y="95" width="140" height="50" rx="12"/>
-        <rect class="box f-card" x="20" y="170" width="360" height="50" rx="12"/>
-        <rect class="box f-orange" x="450" y="170" width="140" height="50" rx="12"/>
-        <path class="ln" d="M386 45 L 444 45" marker-end="url(#ah)"/>
-        <path class="ln" d="M386 120 L 444 120" marker-end="url(#ah)"/>
-        <path class="ln" d="M386 195 L 444 195" marker-end="url(#ah)"/>
-        <path class="lr dash" d="M500 74 C 480 90, 410 80, 370 92" marker-end="url(#ahr)"/>
-        <path class="lr dash" d="M500 149 C 480 165, 410 155, 370 167" marker-end="url(#ahr)"/>
-      </g>
-      <text class="tm" x="200" y="50" text-anchor="middle">The capital of France is</text>
-      <text class="tm" x="200" y="125" text-anchor="middle">The capital of France is Paris</text>
-      <text class="tm" x="200" y="200" text-anchor="middle">The capital of France is Paris.</text>
-      <text class="tm" x="520" y="50" text-anchor="middle">" Paris"</text>
-      <text class="tm" x="520" y="125" text-anchor="middle">"."</text>
-      <text class="tm" x="520" y="200" text-anchor="middle">&lt;end&gt;</text>
-      <text class="ts" x="610" y="50">step 1</text>
-      <text class="ts" x="610" y="125">step 2</text>
-      <text class="ts" x="610" y="200">stop</text>
-      <text class="tr" x="600" y="92">append</text>
-    </svg></div>
-    <figcaption>Each predicted token is glued onto the input before the next prediction.</figcaption>
-  </figure>
+  <p>An LLM does not write a whole answer at once. It produces text <b>one token at a time</b>. At each step it looks at all the text so far and calculates the probability of every possible next token:</p>
+  <figure class="shot"><img src="img/07.webp" alt="Next-token prediction: 'The capital of France is' goes into the LLM, which scores every possible next token: Paris 0.91, a 0.03, the 0.02, located 0.01, known 0.01, others 0.02. Illustrative probabilities; every token in the vocabulary gets a score and they add up to 1." width="1400" height="371" loading="lazy"><figcaption>Every token in the vocabulary gets a score, and the scores add up to 1. (Illustrative numbers.)</figcaption></figure>
+  <p>The model picks a token (usually one with a high probability), <b>adds it to the input</b>, and repeats the whole process to predict the next one. This is called <mark>autoregressive generation</mark>.</p>
+  <figure class="shot"><img src="img/08.webp" alt="Generating text means predicting one token at a time. Step 1: 'The capital of France is' goes to the LLM, which outputs ' Paris'. Paris is added to the input. Step 2: 'The capital of France is Paris' gives '.'. Step 3: 'The capital of France is Paris.' gives end. The model stops when it predicts a special end-of-text token, or when it reaches the maximum output length." width="1400" height="509" loading="lazy"><figcaption>Each predicted token is added to the input before the next prediction. Generation stops at the end-of-text token or the maximum output length.</figcaption></figure>
+  <pre class="out"><code>Input: "The capital of France is"           -&gt; predicts " Paris"
+  |
+Input: "The capital of France is Paris"     -&gt; predicts "."
+  |
+Input: "The capital of France is Paris."    -&gt; predicts &lt;end&gt;
+  |
+Generation stops</code></pre>
   <div class="sticky tip"><strong>Why this one fact matters</strong> A 500-token answer means the model ran its prediction <b>500 times</b>. That explains why longer answers take longer and cost more, and why a model can “talk itself” into a wrong answer one token at a time.</div>
 </section>
 
@@ -168,80 +125,57 @@ else:
 <section class="ch" id="tokens">
   <h2>Tokens: how text becomes numbers</h2>
   <div class="story"><b class="lbl">Cutting vegetables</b>You can’t cook a whole pumpkin in one go, and you don’t dice it into individual fibres either. You cut it into sensible pieces. <mark>Tokens are the “sensible pieces” an LLM cuts text into.</mark></div>
-  <p>Computers cannot do maths on letters; a model only understands numbers. So the text must become a sequence of numbers first. The question is <i>how to cut the text into pieces</i> before numbering them.</p>
-  <div class="tbl"><table>
-    <tr><th>Cut into…</th><th>Vocabulary size</th><th>Problem</th></tr>
-    <tr><td><b>Characters</b></td><td>Tiny (letters, digits, symbols)</td><td>Sequences become very long, and single letters carry little meaning</td></tr>
-    <tr><td><b>Whole words</b></td><td>Enormous</td><td>Cannot handle new words, names, typos or other languages it has never seen</td></tr>
-    <tr><td><b>Tokens</b> (middle path)</td><td>Fixed, typically tens of thousands to a few hundred thousand</td><td>Balanced: common words stay whole, rare words split into known pieces, so any text can be written</td></tr>
-  </table></div>
-  <p>A <b>token</b> is a small chunk of text the model treats as one unit: a whole word, part of a word, a single character, a word with its leading space, or a punctuation mark.</p>
+  <p>Computers cannot do maths on letters; a model only understands numbers. So before an LLM can read the prompt, the text must become a sequence of numbers. The question is: <i>how do we cut the text into pieces</i> before giving each piece a number?</p>
+  <p>We could cut it into <b>characters</b> or into <b>whole words</b>. Both have problems. LLMs use a middle path: <b>tokens</b>.</p>
+  <h3>What is a token?</h3>
+  <p>A <b>token</b> is a small chunk of text the model treats as one unit: a whole word, part of a word, a single character, a space with a word, or a punctuation mark.</p>
   <pre class="out"><code>"Hello"        -&gt; 1 token
-" learning"    -&gt; 1 token   (the space is part of the token)
+" learning"    -&gt; 1 token   (notice the space is part of the token)
 "Tokenization" -&gt; 2 tokens  ("Token" + "ization")
 "!"            -&gt; 1 token</code></pre>
-  <div class="notes"><div class="note"><b>≈ 4</b>characters per token (English)</div><div class="note"><b>≈ 0.75</b>words per token</div><div class="note"><b>100</b>tokens ≈ 75 words</div></div>
+  <p>A useful rule of thumb for English text:</p>
+  <div class="notes"><div class="note"><b>&#8776; 4</b>characters per token</div><div class="note"><b>&#8776; 0.75</b>words per token</div><div class="note"><b>100</b>tokens &#8776; 75 words</div></div>
+
+  <h3>Tokens vs words vs characters</h3>
+  <figure class="shot"><img src="img/09.webp" alt="The same sentence 'Tokenization is unbelievably important.' split three ways: characters, 39 pieces; words, 5 pieces (Tokenization, is, unbelievably, important, full stop); tokens, 6 pieces (Token, ization, is, unbelievably, important, full stop)." width="1400" height="430" loading="lazy"><figcaption>Characters give 39 pieces, words give 5, tokens give 6: &#8220;Tokenization&#8221; splits into &#8220;Token&#8221; + &#8220;ization&#8221;, while &#8220;unbelievably&#8221; stays whole.</figcaption></figure>
 
   <h3>Tokenization</h3>
-  <p><b>Tokenization</b> converts text into tokens and then into <b>token IDs</b>. It is done by a separate program, the <b>tokenizer</b>, which ships with every model.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="The text Tokenization is fun! is split into five tokens, Token, ization, space is, space fun, and exclamation mark, and each token becomes a number">
-      <g class="rough">
-        <rect class="box f-card" x="150" y="20" width="342" height="44" rx="12"/>
-        <path class="ln" d="M321 68 L 321 96" marker-end="url(#ah)"/>
-        <rect class="box f-blue" x="150" y="100" width="70" height="40" rx="8"/>
-        <rect class="box f-green" x="230" y="100" width="86" height="40" rx="8"/>
-        <rect class="box f-yellow" x="326" y="100" width="50" height="40" rx="8"/>
-        <rect class="box f-pink" x="386" y="100" width="60" height="40" rx="8"/>
-        <rect class="box f-purple" x="456" y="100" width="36" height="40" rx="8"/>
-        <path class="ln" d="M185 144 L 185 172" marker-end="url(#ah)"/>
-        <path class="ln" d="M273 144 L 273 172" marker-end="url(#ah)"/>
-        <path class="ln" d="M351 144 L 351 172" marker-end="url(#ah)"/>
-        <path class="ln" d="M416 144 L 416 172" marker-end="url(#ah)"/>
-        <path class="ln" d="M474 144 L 474 172" marker-end="url(#ah)"/>
-        <rect class="box f-grey" x="150" y="176" width="70" height="40" rx="8"/>
-        <rect class="box f-grey" x="230" y="176" width="86" height="40" rx="8"/>
-        <rect class="box f-grey" x="326" y="176" width="50" height="40" rx="8"/>
-        <rect class="box f-grey" x="386" y="176" width="60" height="40" rx="8"/>
-        <rect class="box f-grey" x="456" y="176" width="36" height="40" rx="8"/>
-      </g>
-      <text class="t" x="20" y="47">text</text>
-      <text class="t" x="20" y="125">tokens</text>
-      <text class="t" x="20" y="201">token IDs</text>
-      <text class="tm" x="321" y="47" text-anchor="middle">Tokenization is fun!</text>
-      <text class="tm" x="185" y="125" text-anchor="middle">Token</text>
-      <text class="tm" x="273" y="125" text-anchor="middle">ization</text>
-      <text class="tm" x="351" y="125" text-anchor="middle">·is</text>
-      <text class="tm" x="416" y="125" text-anchor="middle">·fun</text>
-      <text class="tm" x="474" y="125" text-anchor="middle">!</text>
-      <text class="tm" x="185" y="201" text-anchor="middle">4421</text>
-      <text class="tm" x="273" y="201" text-anchor="middle">2860</text>
-      <text class="tm" x="351" y="201" text-anchor="middle">382</text>
-      <text class="tm" x="416" y="201" text-anchor="middle">2827</text>
-      <text class="tm" x="474" y="201" text-anchor="middle">0</text>
-      <text class="ts" x="512" y="125">5 tokens (· = space)</text>
-      <text class="ts" x="512" y="201">what the model sees</text>
-    </svg></div>
-    <figcaption>Text → tokens → IDs. The split and the ID numbers here are illustrative; each tokenizer has its own.</figcaption>
-  </figure>
-  <p>How does the tokenizer decide where to cut? Most modern tokenizers use <b>Byte Pair Encoding (BPE)</b>: start with single characters (or bytes) and keep merging the pairs that appear together most often in a huge amount of text, until the vocabulary reaches its target size.</p>
+  <p><b>Tokenization</b> is the process of converting text into tokens, and then into <b>token IDs</b>. It is done by a separate program called the <b>tokenizer</b>, which comes with every model.</p>
+  <figure class="shot"><img src="img/10.webp" alt="What the tokenizer does: the text 'Hello! I am learning LLM Engineering.' is split into tokens Hello, !, I, am, learning, L, LM, Engineering, full stop; the IDs are looked up in a fixed vocabulary of about 200,000 tokens, giving [13225, 0, 357, 939, 7524, 451, 19641, 21495, 13]. Decoding is the reverse: [12650] becomes ' Paris'." width="1400" height="305" loading="lazy"><figcaption>Text &#8594; tokens &#8594; IDs from a fixed vocabulary (about 200,000 tokens for this tokenizer). Decoding turns IDs back into text.</figcaption></figure>
+  <p>How does the tokenizer decide where to cut? Most modern tokenizers use <b>Byte Pair Encoding (BPE)</b>. The idea is simple: start with single characters, and keep merging the pairs that appear together most often in a huge amount of text.</p>
+  <figure class="shot"><img src="img/11.webp" alt="Tokenization concept, building tokens from smaller pieces: start with individual characters u n b e l i e v a b l y; merge pairs that appear together very often: un be li ev ab ly; keep merging bigger common pieces: un believ ably; final vocabulary: very common words end up as one token, unbelievably. The tokenizer learns these merges once from a huge amount of text; after that it always splits text the same way." width="1400" height="894" loading="lazy"><figcaption>The merges are learned <b>once</b>. After that, splitting is a fixed lookup, not something the model &#8220;decides&#8221; each time.</figcaption></figure>
+  <p>Key rules:</p>
   <ul>
     <li><b>Common words</b> usually become one token.</li>
-    <li><b>Rare words, names and typos</b> split into several smaller tokens.</li>
+    <li><b>Rare words, names and typos</b> are split into several smaller tokens.</li>
     <li>A <b>space is usually attached to the start</b> of the next word (<code>" learning"</code>, not <code>"learning "</code>).</li>
     <li><b>Different model families use different tokenizers</b>, so the same text can have different token counts.</li>
   </ul>
 
-  <h3>Seeing tokens with a tokenizer tool</h3>
-  <p>OpenAI offers a free online <b>Tokenizer</b> page where you type any text and see exactly how it is split (each coloured block is one token). Results from the GPT-4o tokenizer show the patterns clearly:</p>
-  <div class="tbl"><table>
-    <tr><th>Example</th><th>What you see</th><th>Lesson</th></tr>
-    <tr><td>A normal sentence (37 characters)</td><td>9 tokens; “LLM” splits into <code>" L"</code> + <code>"LM"</code> while <code>" learning"</code> stays whole</td><td>≈ 4 characters per token, as the rule of thumb says</td></tr>
-    <tr><td>Common vs rare words</td><td><code>" unbelievably"</code> = 1 token; <i>Supercalifragilisticexpialidocious</i> = 10 tokens</td><td>Rare words are expensive</td></tr>
-    <tr><td>The same sentence in three languages</td><td>8 tokens in English, 13 in Hindi, 18 in Kannada</td><td>Tokenizers are trained mostly on English, so other languages cost more tokens</td></tr>
-    <tr><td>Code, numbers and dates</td><td><code>123456789</code> → <code>123</code> <code>456</code> <code>789</code></td><td>Long numbers are chunked (up to 3 digits each), one reason LLMs slip on arithmetic</td></tr>
-    <tr><td>Capitals and spaces</td><td><code>apple</code>, <code>Apple</code> and <code>APPLE</code> are different tokens; an extra space can be its own token</td><td>The model sees tokens, not “words”</td></tr>
-  </table></div>
+  <h3>Practical: seeing tokens with the OpenAI Tokenizer</h3>
+  <p>OpenAI provides a free online tool where you can type any text and see exactly how it is split into tokens. Use it to build intuition.</p>
+  <figure class="shot"><img src="img/12.webp" alt="Try it yourself, the OpenAI Tokenizer: 1 open the tool at platform.openai.com/tokenizer; 2 pick the GPT model family whose tokenizer you want; 3 type or paste any sentence, code, numbers or another language; 4 read the counts of tokens and characters; 5 see the split: tokens are coloured, switch to Token IDs to see the numbers." width="1400" height="317" loading="lazy"><figcaption>Five steps: open <code>platform.openai.com/tokenizer</code>, pick a model, paste text, read the counts, see the split.</figcaption></figure>
+  <p>Below are real tokenization results for different kinds of text, generated with the same GPT-4o tokenizer (<code>o200k_base</code>) that the tool uses. <b>Each coloured block is one token.</b></p>
+
+  <p><b>Example 1: a normal sentence</b></p>
+  <figure class="shot"><img src="img/13.webp" alt="GPT-4o tokenizer, a normal English sentence 'Hello! I am learning LLM Engineering.': Tokens 9, Characters 37. Tokens: Hello, !, I, am, learning, L, LM, Engineering, full stop. Token IDs [13225, 0, 357, 939, 7524, 451, 19641, 21495, 13]." width="1400" height="301" loading="lazy"><figcaption>9 tokens, 37 characters. &#8220;LLM&#8221; splits into <code>" L"</code> + <code>"LM"</code>.</figcaption></figure>
+  <p>Notice that &#8220;LLM&#8221; is split into <code>" L"</code> and <code>"LM"</code>, while common words like <code>" learning"</code> stay whole. The sentence has 37 characters and 9 tokens, about 4 characters per token, just like the rule of thumb.</p>
+
+  <p><b>Example 2: common vs rare words</b></p>
+  <figure class="shot"><img src="img/14.webp" alt="GPT-4o tokenizer. 'Tokenization is unbelievably important.': Tokens 6, Characters 39; tokens Token, ization, is, unbelievably, important, full stop; IDs [4421, 2860, 382, 180692, 3378, 13]. 'Supercalifragilisticexpialidocious': Tokens 10, Characters 34; tokens Super, cal, if, rag, il, istic, exp, ial, id, ocious." width="1400" height="497" loading="lazy"><figcaption>A common long word stays whole (6 tokens for the sentence); a rare word is split into 10 known pieces.</figcaption></figure>
+  <p><code>" unbelievably"</code> appears often in text, so it is a single token. The long, rare word <i>Supercalifragilisticexpialidocious</i> is not in the vocabulary, so it costs <b>10 tokens</b>.</p>
+
+  <p><b>Example 3: other languages</b></p>
+  <figure class="shot"><img src="img/15.webp" alt="GPT-4o tokenizer, the same meaning in three languages. English 'I am learning to build AI applications.': Tokens 8, Characters 39. Hindi, same meaning: Tokens 13, Characters 36. Kannada, same meaning: Tokens 18, Characters 52." width="1400" height="583" loading="lazy"><figcaption>Same meaning: 8 tokens in English, 13 in Hindi, 18 in Kannada.</figcaption></figure>
+  <p>The same sentence takes 8 tokens in English, 13 in Hindi and 18 in Kannada. Tokenizers are trained mostly on English text, so other languages are usually split into more pieces. <mark>This matters: more tokens means higher cost and less room in the context window.</mark></p>
+
+  <p><b>Example 4: code, numbers and dates</b></p>
+  <figure class="shot"><img src="img/16.webp" alt="GPT-4o tokenizer. Python code 'def add(a, b): return a + b' over two lines: Tokens 11, Characters 31; tokens def, add, (a, comma, b, ): plus newline, indent, return, a, +, b. 'Order 123456789 placed on 2026-10-05': Tokens 14, Characters 36; tokens Order, space, 123, 456, 789, placed, on, space, 202, 6, -, 10, -, 05." width="1400" height="497" loading="lazy"><figcaption>Code spends tokens on brackets and indentation. <code>123456789</code> becomes <code>123</code> <code>456</code> <code>789</code>, and the year 2026 becomes <code>202</code> + <code>6</code>.</figcaption></figure>
+  <p>Long numbers are split into chunks of up to 3 digits (<code>123</code> <code>456</code> <code>789</code>). This is one reason LLMs can make mistakes with arithmetic: they don&#8217;t see a number as a single value.</p>
+
+  <p><b>Example 5: capital letters and spaces</b></p>
+  <figure class="shot"><img src="img/17.webp" alt="GPT-4o tokenizer, capital letters and spaces change the tokens: 'apple Apple APPLE  apple': Tokens 6, Characters 24; tokens apple, Apple, APP, LE, an extra space, apple; IDs [34058, 10124, 30593, 1400, 220, 30366]." width="1400" height="301" loading="lazy"><figcaption><code>apple</code>, <code>Apple</code> and <code>APPLE</code> (split as <code>APP</code> + <code>LE</code>) all get different IDs, and the extra space is its own token (ID 220).</figcaption></figure>
+  <p><code>apple</code>, <code>Apple</code> and <code>APPLE</code> are all different tokens to the model, and even an extra space becomes its own token.</p>
   <div class="sticky fde"><strong>In the field (FDE)</strong> Indian customers often serve users in Hindi, Tamil or Kannada. The same message can cost <b>2× or more</b> the tokens of English, which changes both the bill and how much fits in the context window. Measure token counts on <i>real</i> customer text before you quote a cost.</div>
 </section>
 
@@ -253,6 +187,7 @@ else:
     <div class="card t1 tilt-a"><h4>Input tokens (prompt tokens)</h4><p>Everything you send: instructions, the user’s question, conversation history, documents.</p></div>
     <div class="card t2 tilt-b"><h4>Output tokens (completion tokens)</h4><p>Everything the model generates in its response.</p></div>
   </div>
+  <figure class="shot"><img src="img/18.webp" alt="Input tokens and output tokens: the prompt 'Summarize the following customer review in one sentence.' plus the review text is 250 input tokens; it goes to the LLM; the response 'The customer loved the fast delivery but found the battery weak.' is 14 output tokens. Total tokens for this request = 250 + 14 = 264; input and output are counted, and usually priced, separately." width="1400" height="443" loading="lazy"><figcaption>250 input + 14 output = 264 tokens. Input and output are counted (and usually priced) <b>separately</b>.</figcaption></figure>
   <p>Providers <b>charge per token</b>, usually quoted per 1 million tokens. Input and output are priced separately, and <mark>output tokens typically cost several times more than input tokens</mark>, because each one needs its own prediction.</p>
   <h3>Worked example: a support assistant</h3>
   <p>10,000 requests a day, each about 1,200 input tokens and 300 output tokens. Example prices (not real prices; always check the provider’s pricing page, since prices change often): input $2.50 and output $10.00 per 1,000,000 tokens.</p>
@@ -265,6 +200,8 @@ Per month = $60 x 30 days             = $1,800</code></pre>
   <div class="sticky warn l"><strong>Notice</strong> Output was only 20% of the tokens but 50% of the cost. Asking for shorter answers is often the cheapest optimisation you can make.</div>
 
   <h3>Token limits</h3>
+  <p>Every model has limits on how many tokens it can handle. There are three kinds you must know:</p>
+  <figure class="shot"><img src="img/19.webp" alt="Three kinds of token limits. Context window: maximum tokens the model can handle in one request, input plus output together; exceeded means the request is rejected with an error. Max output tokens: maximum tokens the model may generate in one response; exceeded means the answer is cut off mid-sentence. Rate limits: maximum tokens or requests your account may use per minute or per day; exceeded means requests fail until the limit resets." width="1400" height="404" loading="lazy"><figcaption>What happens when each is exceeded: the request is rejected, the answer is cut off mid-sentence, or requests fail until the limit resets.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Limit</th><th>What it caps</th></tr>
     <tr><td><b>Context window</b></td><td>Total tokens (input + output) the model can handle in one request (next section)</td></tr>
@@ -279,32 +216,11 @@ Per month = $60 x 30 days             = $1,800</code></pre>
 <section class="ch" id="context-window">
   <h2>Context windows</h2>
   <div class="story"><b class="lbl">The study desk</b>You can only work with the papers that fit on your desk right now. Anything in the cupboard doesn’t count until you put it on the desk. <mark>The context window is the model’s desk: everything it needs must fit on it at the same time.</mark></div>
-  <p>Something surprising: <b>an LLM has no memory between requests</b>. Each request is processed completely fresh. So how do chat apps remember the conversation? <b>The app re-sends the whole conversation with every new message.</b> The model only knows what is inside the current request, its <b>context</b>. If information is not in the context, the model cannot use it.</p>
+  <p>Something surprising: <b>an LLM has no memory between requests</b>. Each request is processed completely fresh. So how do chat apps remember the conversation? <b>The app re-sends the whole conversation with every new message.</b> The model only knows what is inside the current request, its <b>context</b>.</p>
+  <figure class="shot"><img src="img/20.webp" alt="Why context is needed. Without context: You say 'My name is Riya.', the LLM replies 'Nice to meet you, Riya!', you ask 'What is my name?' and the LLM answers 'Sorry, I don't know your name.' because only the last message was sent. With context: the same chat, but the LLM answers 'Your name is Riya.' because the app sent the whole conversation again." width="1400" height="764" loading="lazy"><figcaption>Left: only the last message was sent, so the model has no memory of the first. Right: the app re-sent the whole conversation, so the answer is in the context.</figcaption></figure>
+  <p><mark>If information is not in the context, the model cannot use it.</mark> Context is how we give the model everything it needs to answer this request.</p>
   <p>The <b>context window</b> is the maximum number of tokens a model can process in one request. All of these share it:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="A long bar labelled context window, split into system instructions, history, documents, the question, and space for the answer. Input plus output must fit">
-      <g class="rough">
-        <rect class="box f-none" x="20" y="44" width="680" height="80" rx="14"/>
-        <rect class="box f-purple" x="28" y="52" width="112" height="64" rx="10"/>
-        <rect class="box f-blue" x="146" y="52" width="180" height="64" rx="10"/>
-        <rect class="box f-yellow" x="332" y="52" width="160" height="64" rx="10"/>
-        <rect class="box f-pink" x="498" y="52" width="80" height="64" rx="10"/>
-        <rect class="box f-green dash" x="584" y="52" width="108" height="64" rx="10"/>
-        <path class="ln" d="M28 140 L 578 140"/>
-        <path class="lb" d="M584 140 L 692 140"/>
-      </g>
-      <text class="th" x="20" y="32">Context window</text>
-      <text class="t" x="84" y="89" text-anchor="middle">system</text>
-      <text class="t" x="236" y="89" text-anchor="middle">history</text>
-      <text class="t" x="412" y="89" text-anchor="middle">documents</text>
-      <text class="ts" x="538" y="89" text-anchor="middle">question</text>
-      <text class="t" x="638" y="89" text-anchor="middle">answer</text>
-      <text class="ts" x="303" y="162" text-anchor="middle">input tokens</text>
-      <text class="tb" x="638" y="166" text-anchor="middle">output</text>
-      <text class="tr" x="360" y="198" text-anchor="middle">input + output ≤ context window</text>
-    </svg></div>
-    <figcaption>The answer is written onto the same desk as everything you sent.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/21.webp" alt="What goes inside the context window, e.g. 128,000 tokens: system instructions, conversation history, documents or data, the current question (all input, what we send), then space for the answer (output, generated)." width="1400" height="299" loading="lazy"><figcaption>Everything you send and the answer the model writes share one window (here, for example, 128,000 tokens).</figcaption></figure>
   <ul>
     <li><b>System instructions</b>: how the assistant should behave (“You are a polite support agent…”).</li>
     <li><b>Conversation history</b>: the earlier messages.</li>
@@ -314,7 +230,9 @@ Per month = $60 x 30 days             = $1,800</code></pre>
   </ul>
   <p>Window sizes vary a lot: from a few thousand tokens in older models to hundreds of thousands, and over a million in some modern ones. Always check the model’s documentation.</p>
 
-  <h3>Input and output share the window</h3>
+  <h3>Input context vs generated output</h3>
+  <p>The input you send and the output the model generates share the same window. The rule is simple: <code>input tokens + output tokens &lt;= context window</code>.</p>
+  <figure class="shot"><img src="img/22.webp" alt="Input and output share the same window, example window 8,000 tokens. Case 1, short prompt: input 1,500 tokens, free for output 6,500 tokens. Case 2, very long prompt: input 7,600 tokens, only 400 left, so the answer gets cut off after about 400 tokens." width="1400" height="530" loading="lazy"><figcaption>A long prompt leaves almost no room for the answer.</figcaption></figure>
   <pre class="out"><code>Context window = 8,000 tokens
 
 Case 1: input = 1,500  -&gt;  room for output = 8,000 - 1,500 = 6,500 tokens
@@ -331,29 +249,18 @@ Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
   <div class="sticky info"><strong>Key idea</strong> A good LLM engineer sends the model the <b>right</b> information, not <b>all</b> the information.</div>
 
   <h3>How conversations consume context</h3>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Bars growing with each turn: turn 1 is 350 tokens, turn 2 is 900, turn 3 is 1,700, because each turn re-sends everything before it">
-      <g class="rough">
-        <rect class="box f-purple" x="110" y="30" width="40" height="36" rx="6"/>
-        <rect class="box f-blue" x="150" y="30" width="67" height="36" rx="6"/>
-        <rect class="box f-purple" x="110" y="85" width="40" height="36" rx="6"/>
-        <rect class="box f-blue" x="150" y="85" width="235" height="36" rx="6"/>
-        <rect class="box f-purple" x="110" y="140" width="40" height="36" rx="6"/>
-        <rect class="box f-blue" x="150" y="140" width="480" height="36" rx="6"/>
-      </g>
-      <text class="t" x="20" y="54">Turn 1</text>
-      <text class="t" x="20" y="109">Turn 2</text>
-      <text class="t" x="20" y="164">Turn 3</text>
-      <text class="tm" x="228" y="53">350</text>
-      <text class="tm" x="396" y="108">900</text>
-      <text class="tm" x="640" y="163">1,700</text>
-      <text class="ts" x="130" y="22" text-anchor="middle">system</text>
-      <text class="ts" x="420" y="22">tokens sent per turn</text>
-    </svg></div>
-    <figcaption>Every turn = all previous turns + the new message, so long chats get slower and pricier.</figcaption>
-  </figure>
+  <p>Because the whole conversation is re-sent on every turn, the context keeps growing as the chat goes on:</p>
+  <figure class="shot"><img src="img/23.webp" alt="Every turn re-sends the whole conversation: turn 1 is 350 tokens, turn 2 900, turn 3 1,700, turn 4 2,900, turn 5 4,400, turn 6 6,300, approaching a context limit of 8,000 tokens. Turn 6 sends turns 1 to 5 plus the new message; cost and waiting time grow until the limit is reached." width="1400" height="678" loading="lazy"><figcaption>By turn 6 the request is already 6,300 of the 8,000-token limit.</figcaption></figure>
+  <pre class="out"><code>Turn 1: [system] + [user 1]                                  -&gt;   350 tokens
+Turn 2: [system] + [user 1] + [reply 1] + [user 2]           -&gt;   900 tokens
+Turn 3: [system] + [user 1] + [reply 1] + ... + [user 3]     -&gt; 1,700 tokens
+  |
+Every turn = all previous turns + the new message</code></pre>
+  <p>Long chats get slower and more expensive with every message, and eventually hit the context limit. <b>A chat app must have a plan for this.</b></p>
 
   <h3>Managing long contexts</h3>
+  <p>There are several common strategies for keeping the context under control:</p>
+  <figure class="shot"><img src="img/24.webp" alt="Managing long contexts: 1 sliding window keeps only the most recent messages (dropped, dropped, msg 8, 9, 10); 2 summarize old messages (summary of 1 to 7, msg 8, 9, 10); 3 retrieve only what is relevant (chunk 4, chunk 17, question; RAG); 4 trim and clean the input of repeated text, boilerplate and unneeded fields; 5 choose a bigger window; 6 limit the output with a sensible maximum length." width="1400" height="470" loading="lazy"><figcaption>Six ways to keep the context under control.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Strategy</th><th>How it works</th><th>Trade-off</th></tr>
     <tr><td><b>Sliding window</b></td><td>Keep only the last few messages, drop the oldest</td><td>Simple, but early details are forgotten</td></tr>
@@ -366,11 +273,7 @@ Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
 
   <h3>Context window vs model memory</h3>
   <p>Beginners often mix up what the model <i>knows</i> with what it <i>remembers</i>. There are three different kinds of “memory”:</p>
-  <div class="grid">
-    <div class="card t1 tilt-a"><h4>Weights (knowledge)</h4><p>What the model learned in training. Fixed after training; does not change when you chat.</p></div>
-    <div class="card t2 tilt-b"><h4>Context window (working memory)</h4><p>What is on the desk for <b>this</b> request only. Gone when the request ends.</p></div>
-    <div class="card t3 tilt-a"><h4>External memory (app storage)</h4><p>A database or file your <b>app</b> keeps, and puts back into the context when needed.</p></div>
-  </div>
+  <figure class="shot"><img src="img/25.webp" alt="Table of three kinds of memory. Model knowledge: what the model learned during training, stored in its weights; like everything you learned in school; does not change until a new model version; lasts permanently but can be outdated; huge but not exact facts. Context window: the text sent in the current request; like what is on your desk right now; rebuilt on every request; lasts only for that one request; limited in size. External memory: data your app stores and adds back when needed (database, files, saved notes); like your notebook in the drawer; your app updates it; lasts as long as your app keeps it; practically unlimited." width="1400" height="531" loading="lazy"><figcaption>Model knowledge (school learning), context window (your desk right now), external memory (your notebook in the drawer).</figcaption></figure>
   <p>When a chat app “remembers” your name next week, the model has not learned anything. <mark>The app saved your name and placed it back into the context window; the weights never changed.</mark></p>
 </section>
 
@@ -378,7 +281,8 @@ Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
 <section class="ch" id="embeddings">
   <h2>Embeddings: numbers that carry meaning</h2>
   <div class="story"><b class="lbl">Roll numbers vs a map</b>Roll number 12 and roll number 13 sit next to each other on the register, but the two students may have nothing in common. A map is different: two cities with close latitude and longitude really are close. <mark>A token ID is a name tag. An embedding is a description.</mark></div>
-  <p>The tokenizer gives each token an ID, like <code>9247</code> for “cat”. But IDs are only labels: the IDs of “cat” and “car” can be neighbours while the words have nothing in common. The model needs numbers that describe <b>meaning</b>, so that “cat” and “dog” get similar numbers and “car” gets very different ones.</p>
+  <p>The tokenizer gives each token an ID, like <code>9247</code> for “cat”. But IDs are only labels: the IDs of “cat” and “car” can be neighbours while the words have nothing in common. The model needs numbers that describe <b>meaning</b>, so that “cat” and “dog” get similar numbers and “car” gets very different ones. (The IDs in the picture are examples.)</p>
+  <figure class="shot"><img src="img/26.webp" alt="Why token IDs are not enough. Token ID is a roll number, only a label: cat is ID 9247, dog is ID 3086, car is ID 9248. Problem: cat (9247) and car (9248) look like neighbours but have nothing in common, while cat and dog are very similar yet their numbers are far apart. Embedding is a description: cat [0.82, 0.10, 0.75, 0.05], dog [0.79, 0.14, 0.71, 0.08], car [0.05, 0.91, 0.12, 0.88]. Better: cat and dog get similar numbers; car gets very different numbers." width="1400" height="558" loading="lazy"><figcaption>IDs 9247 (cat) and 9248 (car) are neighbours by accident. Embeddings put cat and dog close, and car far away.</figcaption></figure>
   <p>An <b>embedding</b> is a list of numbers (a <b>vector</b>) that represents the meaning of a token, like coordinates on a map of meaning:</p>
   <pre class="out"><code>"cat"  -&gt; [0.82, 0.10, 0.75, 0.05, ...]
 "dog"  -&gt; [0.79, 0.14, 0.71, 0.08, ...]
@@ -387,39 +291,17 @@ Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
 
   <h3>Converting tokens into vectors</h3>
   <p>The conversion is just a <b>lookup</b>. The model has a big table with one row per token in its vocabulary; the token ID says which row to pick.</p>
-  <div class="flow"><span class="op">"cat"</span><span class="op">token ID 9247</span><span>row 9247 of the table</span><span class="ok">[0.82, 0.10, 0.75, …]</span></div>
+  <figure class="shot"><img src="img/27.webp" alt="Turning a token into a vector is a table lookup. The token 'cat' gets ID 9247 from the tokenizer. The embedding table has one row for every token in the vocabulary, with columns dim 1, dim 2, dim 3, dim 4 and more; rows 0, 1, ..., 9247, ..., 99999. Row 9247 is picked out: [0.82, 0.10, 0.75, 0.05, ...], the embedding of 'cat'. The table's numbers start random and are learned during training until similar words end up with similar rows." width="1400" height="600" loading="lazy"><figcaption>The embedding table is a giant lookup sheet: the token ID picks the row.</figcaption></figure>
+  <div class="flow"><span class="op">"cat"</span><span class="op">token ID 9247</span><span>row 9247 of the table</span><span class="ok">[0.82, 0.10, 0.75, 0.05, …]</span></div>
   <p>The rows start as random values and are adjusted during training so that tokens used in similar ways end up with similar rows. <b>The embedding table is part of the model’s weights.</b></p>
 
   <h3>Meaning as a map</h3>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="A 2D map of meaning: animals cat, dog, lion cluster together, fruits apple, mango, banana cluster together, vehicles car, bus, truck cluster together far away">
-      <g class="rough">
-        <path class="ln" d="M40 270 L 690 270" marker-end="url(#ah)"/>
-        <path class="ln" d="M40 270 L 40 20" marker-end="url(#ah)"/>
-        <ellipse class="box f-green" cx="170" cy="90" rx="115" ry="50"/>
-        <ellipse class="box f-yellow" cx="210" cy="215" rx="125" ry="40"/>
-        <ellipse class="box f-blue" cx="560" cy="120" rx="115" ry="60"/>
-        <path class="lr dash" d="M200 85 L 520 120"/>
-      </g>
-      <text class="t" x="100" y="78">cat</text>
-      <text class="t" x="160" y="104">dog</text>
-      <text class="t" x="210" y="74">lion</text>
-      <text class="t" x="110" y="222">apple</text>
-      <text class="t" x="180" y="206">mango</text>
-      <text class="t" x="254" y="228">banana</text>
-      <text class="t" x="500" y="104">car</text>
-      <text class="t" x="560" y="146">bus</text>
-      <text class="t" x="600" y="104">truck</text>
-      <text class="tb" x="170" y="26" text-anchor="middle">animals</text>
-      <text class="tb" x="410" y="226">fruits</text>
-      <text class="tb" x="560" y="50" text-anchor="middle">vehicles</text>
-      <text class="tr" x="360" y="80" text-anchor="middle">far apart</text>
-    </svg></div>
-    <figcaption>Similar meanings land close together. Real embeddings have hundreds or thousands of directions, not two.</figcaption>
-  </figure>
+  <p>Let us see what “meaning as numbers” looks like. If we draw every embedding as a point on a map, tokens with similar meaning form groups:</p>
+  <figure class="shot"><img src="img/28.webp" alt="Embeddings place words on a map of meaning, a simplified 2-D picture with dimension 1 and dimension 2: animals cat, dog, lion, tiger in one group; fruits apple, grapes, mango, banana in another; vehicles car, train, bus, truck in a third. Real embeddings have hundreds or thousands of dimensions, but the idea is the same." width="1400" height="792" loading="lazy"><figcaption>Animals, fruits and vehicles each form their own cluster on the map of meaning.</figcaption></figure>
   <ul>
     <li>Animals sit together, fruits sit together, vehicles sit together.</li>
     <li>The <b>distance</b> between two points tells how related the meanings are.</li>
+    <li>A real map has <b>hundreds or thousands of directions</b>, not 2. We can only draw 2, but the idea is the same.</li>
     <li><b>Directions</b> can carry meaning too. A famous (rough) example from early embedding research: <i>king − man + woman ≈ queen</i>.</li>
   </ul>
 
@@ -433,11 +315,17 @@ Case 2: input = 7,600  -&gt;  room for output = 8,000 - 7,600 =   400 tokens
     <tr><td>OpenAI text-embedding-3-large</td><td>search, RAG (API)</td><td>3,072</td></tr>
     <tr><td>Llama 3 8B (inside the LLM)</td><td>the LLM’s own token vectors</td><td>4,096</td></tr>
   </table></div>
-  <p>These are examples; always check the model’s documentation. More dimensions give more room to describe meaning (often better quality) but cost more memory, slower search and higher cost.</p>
+  <p>These are examples; always check the model’s documentation for its exact size.</p>
+  <figure class="shot"><img src="img/29.webp" alt="Embedding dimensions means how many numbers describe each token: 2 dimensions (toy example), 8 dimensions, 1,536 dimensions (a real embedding model). Storage needed for 1 million embeddings at 4 bytes per number: 384 dimensions 1.5 GB, 768 dimensions 3.1 GB, 1,536 dimensions 6.1 GB, 3,072 dimensions 12.3 GB. More dimensions means more detail about meaning, but more memory, cost and search time." width="1400" height="516" loading="lazy"><figcaption>Storing 1 million embeddings: 1.5 GB at 384 dimensions, 12.3 GB at 3,072 (1,000,000 × dimensions × 4 bytes).</figcaption></figure>
+  <ul>
+    <li>More dimensions = more room to describe meaning, so quality is often better.</li>
+    <li>More dimensions also means more memory, slower search and higher cost.</li>
+  </ul>
   <div class="sticky warn l"><strong>Same model, both sides</strong> Documents and questions must be embedded with the <b>same</b> embedding model. Vectors from two different models cannot be compared.</div>
 
   <h3>Semantic similarity</h3>
   <p>Because meanings are now numbers, we can measure how close two meanings are. The most common method is <b>cosine similarity</b>: it looks at the <b>angle</b> between two vectors. A small angle (a value near 1) means similar meaning.</p>
+  <figure class="shot"><img src="img/30.webp" alt="Semantic similarity: each embedding is an arrow. Cat and dog point in nearly the same direction, car points almost straight up. Cosine similarity scores: cat-dog 0.98, cat-car 0.35, dog-car 0.52. Close to 1 means pointing the same way (very similar); a lower number means pointing apart; 0 is a right angle (unrelated); -1 is opposite." width="1400" height="662" loading="lazy"><figcaption>The smaller the angle between two arrows, the more similar the meaning. 1 = same direction, 0 = unrelated, &#8722;1 = opposite.</figcaption></figure>
   <pre class="out"><code>Toy 2-number vectors:
 cat = (0.90, 0.25)   dog = (0.85, 0.42)   car = (0.08, 0.97)
 
@@ -455,6 +343,7 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
     <div class="card t5 tilt-a"><h4>Duplicate detection</h4><p>Find questions that mean the same thing.</p></div>
     <div class="card t8 tilt-b"><h4>Cross-language search</h4><p>A Hindi question can match an English document, if the embedding model knows both languages.</p></div>
   </div>
+  <figure class="shot"><img src="img/31.webp" alt="Use case, search by meaning. Step 1, prepare once: documents Refund policy, Delivery times and Contact us go through an embedding model (text to vector) into a vector database that stores one vector per document. Step 2, for every question: 'paisa wapas kaise milega?' goes through the embedding model, find nearest gives Refund policy 0.87, Contact us 0.41, Delivery times 0.35, so the best match is Refund policy. The question shares no words with Refund policy but the meaning is close; this is the base of RAG. Scores are illustrative." width="1400" height="618" loading="lazy"><figcaption>A Hinglish question finds the “Refund policy” document with no shared words. This is the base of RAG.</figcaption></figure>
   <div class="sticky info"><strong>Two places you’ll meet embeddings</strong> (1) <b>Inside every LLM</b>, as the first step after tokenizing. (2) In <b>separate embedding models</b> built only to create vectors for search. Both turn text into vectors of meaning.</div>
   <p>One problem remains: inside the LLM, a token like “bank” gets the <b>same</b> vector in every sentence. The Transformer fixes this using the words around it. First, a little history.</p>
 </section>
@@ -464,39 +353,21 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
   <h2>Before Transformers: ANNs and RNNs</h2>
   <h3>What is an ANN?</h3>
   <p>An <b>Artificial Neural Network (ANN)</b> is a computer system that <b>learns from examples</b> instead of following rules written by a programmer. Show it many students and who passed or failed, and later it can guess whether a new student will pass.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="A neuron: hours studied with weight 0.8 and attendance with weight 0.2 feed a sum plus bias, then an activation function, then a pass or fail output">
-      <g class="rough">
-        <rect class="box f-blue" x="20" y="40" width="150" height="50" rx="12"/>
-        <rect class="box f-blue" x="20" y="150" width="150" height="50" rx="12"/>
-        <path class="lr" d="M174 65 C 240 70, 270 95, 304 112" marker-end="url(#ahr)"/>
-        <path class="lb" d="M174 175 C 240 170, 270 145, 304 130" marker-end="url(#ahb)"/>
-        <circle class="box f-yellow" cx="360" cy="120" r="52"/>
-        <path class="ln" d="M416 120 L 446 120" marker-end="url(#ah)"/>
-        <rect class="box f-purple" x="450" y="92" width="125" height="56" rx="12"/>
-        <path class="ln" d="M579 120 L 601 120" marker-end="url(#ah)"/>
-        <rect class="box f-green" x="605" y="92" width="105" height="56" rx="12"/>
-      </g>
-      <text class="t" x="95" y="70" text-anchor="middle">hours studied</text>
-      <text class="t" x="95" y="180" text-anchor="middle">attendance</text>
-      <text class="tr" x="230" y="52" text-anchor="middle">w = 0.8</text>
-      <text class="tb" x="230" y="200" text-anchor="middle">w = 0.2</text>
-      <text class="t" x="360" y="117" text-anchor="middle">Σ inputs×w</text>
-      <text class="ts" x="360" y="138" text-anchor="middle">+ bias</text>
-      <text class="t" x="512" y="125" text-anchor="middle">activation</text>
-      <text class="t" x="657" y="125" text-anchor="middle">Pass/Fail</text>
-      <text class="ts" x="360" y="200" text-anchor="middle">e.g. 0.92</text>
-      <text class="ts" x="512" y="170" text-anchor="middle">strong enough?</text>
-    </svg></div>
-    <figcaption>One neuron: weigh the inputs, add a bias, pass the number through a gate.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/32.webp" alt="Traditional program: data and rules written by the programmer go into a program that produces answers. ANN: data and answers (pass or fail examples) go into learning, which produces the rules (the weights)." width="973" height="265" loading="lazy"><figcaption>A traditional program turns rules into answers; an ANN turns answers (examples) into rules, stored as weights.</figcaption></figure>
+  <h3>How it works: the building blocks</h3>
+  <p>Every ANN is built from the same basic ingredients: inputs, weights, bias, an activation function, and an output.</p>
+  <figure class="shot"><img src="img/33.webp" alt="Diagram of one artificial neuron. Inputs x1 to xn, the raw numbers fed into the network, are multiplied by weights w1 to wn, numbers that control how strongly each input influences the neuron. The sum adds all weighted inputs, sum of xi times wi. Bias b, one extra number added to the sum, helps the neuron make better decisions. The activation function f(z) transforms the combined value into a usable output, for example squashing it to 0 to 1 or keeping only positive values. Output y is the final result the neuron produces." width="1400" height="496" loading="lazy"><figcaption>Inputs × weights → sum → + bias → activation function → output.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Inputs</b>The data given to the network: hours studied, attendance, previous marks.</div></li>
     <li><span class="dot">2</span><div><b>Weights</b>How strongly each input affects the decision. If hours studied matter a lot and attendance less, give them 0.8 and 0.2.</div></li>
     <li><span class="dot">3</span><div><b>Bias</b>An extra value added to the weighted sum (<i>weighted inputs + bias</i>) that helps the neuron shift its decision.</div></li>
     <li><span class="dot">4</span><div><b>Activation function</b>Turns the number (say 0.92) into a decision, like a gate asking “is this strong enough to say Pass?”. It is also what lets networks learn complex, non-linear patterns.</div></li>
-    <li><span class="dot">5</span><div><b>Output</b>The final result: Pass / Fail.</div></li>
+    <li><span class="dot">5</span><div><b>Output</b>The final result produced by the neuron: Pass / Fail.</div></li>
   </ol>
+  <div class="two">
+    <div class="flow v"><span>Calculated value</span><span class="hl">Activation function</span><span class="ok">Useful output</span></div>
+    <div class="flow v"><span>Input data</span><span class="hl">Neuron</span><span>Output</span><span class="ok">Pass / Fail</span></div>
+  </div>
 
   <h3>Watching an ANN learn: TensorFlow Playground</h3>
   <p><b>playground.tensorflow.org</b> is a free site where you can watch a small network learn in real time. Before training (epoch 0) the weights are random, so it knows nothing:</p>
@@ -510,7 +381,15 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
     <tr><td>Play button</td><td>Start training</td><td>Starts the learning</td></tr>
     <tr><td>Epoch = 0</td><td>Training rounds</td><td>Rounds of practice done so far: none</td></tr>
   </table></div>
-  <p>Press <b>Play</b>: the network looks at the examples again and again (each full round is an <b>epoch</b>), adjusts its weights a little after each round, and the test loss falls from 0.715 towards 0.000. It can now tell a pass student from a fail student.</p>
+  <p>Visually, with the seven markers numbered on the real screen:</p>
+  <figure class="shot"><img src="img/34.webp" alt="TensorFlow Playground before training, Epoch 0: weights are random so the guess is wrong. Marked: 1 the two-groups dataset (pass and fail students); 2 inputs X1 = hours studied and X2 = hours slept; 3 one hidden layer with 3 neurons; 4 the output square, whose background colour is the network's guess; 5 test loss 0.715 (training loss 0.690); 6 the play button; 7 epoch 000,000. Settings: learning rate 0.03, activation Tanh, no regularization, classification." width="1400" height="788" loading="lazy"><figcaption>Step 1, before training: epoch 0, test loss 0.715. The background colour does not yet separate the orange and blue dots.</figcaption></figure>
+  <p>Now press the <b>Play</b> button:</p>
+  <figure class="shot"><img src="img/35.webp" alt="TensorFlow Playground after training, epoch 000,229: the network now has 2 hidden layers (4 neurons and 2 neurons). Marked: 1 dataset; 2 inputs X1 and X2; 3 first hidden layer, 4 neurons; 4 second hidden layer, 2 neurons; 5 the outputs are mixed with varying weights shown by line thickness; 6 output, now cleanly split into an orange region and a blue region; 7 test loss 0.000 and training loss 0.000; 8 loss curve dropping to zero; 9 epoch counter; 10 learning rate 0.03 and activation Tanh." width="1400" height="698" loading="lazy"><figcaption>After 229 epochs (this run uses 2 hidden layers of 4 and 2 neurons): test loss 0.000, and the output cleanly separates blue from orange.</figcaption></figure>
+  <ul>
+    <li>The network looked at the examples again and again (each full round is an <b>epoch</b>).</li>
+    <li>After each round it adjusted its weights a little to make fewer mistakes.</li>
+    <li>Test loss fell from <b>0.715 to 0.000</b>. It can now tell a pass student from a fail student.</li>
+  </ul>
 
   <h3>Where ANNs fall short</h3>
   <div class="grid two">
@@ -520,33 +399,7 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
 
   <h3>RNN: an ANN with memory</h3>
   <p>A <b>Recurrent Neural Network (RNN)</b> is built for data that comes in order: sentences, speech, stock prices. It reads one item at a time, updates a small memory called the <b>hidden state</b>, and passes it to the next step.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="An RNN reading The cat sat down one word at a time, passing a memory box from step to step">
-      <g class="rough">
-        <rect class="box f-purple" x="30" y="40" width="130" height="60" rx="12"/>
-        <rect class="box f-purple" x="205" y="40" width="130" height="60" rx="12"/>
-        <rect class="box f-purple" x="380" y="40" width="130" height="60" rx="12"/>
-        <rect class="box f-purple" x="555" y="40" width="130" height="60" rx="12"/>
-        <path class="lr" d="M164 70 L 199 70" marker-end="url(#ahr)"/>
-        <path class="lr" d="M339 70 L 374 70" marker-end="url(#ahr)"/>
-        <path class="lr" d="M514 70 L 549 70" marker-end="url(#ahr)"/>
-        <path class="ln" d="M95 150 L 95 106" marker-end="url(#ah)"/>
-        <path class="ln" d="M270 150 L 270 106" marker-end="url(#ah)"/>
-        <path class="ln" d="M445 150 L 445 106" marker-end="url(#ah)"/>
-        <path class="ln" d="M620 150 L 620 106" marker-end="url(#ah)"/>
-      </g>
-      <text class="t" x="95" y="76" text-anchor="middle">memory h1</text>
-      <text class="t" x="270" y="76" text-anchor="middle">memory h2</text>
-      <text class="t" x="445" y="76" text-anchor="middle">memory h3</text>
-      <text class="t" x="620" y="76" text-anchor="middle">memory h4</text>
-      <text class="tm" x="95" y="172" text-anchor="middle">"The"</text>
-      <text class="tm" x="270" y="172" text-anchor="middle">"cat"</text>
-      <text class="tm" x="445" y="172" text-anchor="middle">"sat"</text>
-      <text class="tm" x="620" y="172" text-anchor="middle">"down"</text>
-      <text class="ts" x="360" y="208" text-anchor="middle">one word at a time; each step must wait for the previous one</text>
-    </svg></div>
-    <figcaption>At step 4 the RNN knows the earlier words only through one small, constantly rewritten memory.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/36.webp" alt="One word at a time, passing its memory forward: RNN step 1 reads 'I' (memory: I), step 2 reads 'love' (memory: I love), step 3 reads 'learning' (memory: I love learning), step 4 reads 'AI' (memory: I love learning AI). The memory is passed from each step to the next." width="1140" height="267" loading="lazy"><figcaption>At step 4 the RNN “knows” the earlier words only through this memory, like reading a long story and trying to remember everything in your head.</figcaption></figure>
   <p>An RNN fixed the memory problem but created new ones:</p>
   <ul>
     <li><b>Too slow</b>: each step waits for the one before, so it can’t use the full parallel power of GPUs, and training on huge text takes very long.</li>
@@ -559,6 +412,7 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
 <section class="ch" id="transformers">
   <h2>Transformers and attention</h2>
   <p>In 2017, researchers at Google published <b>“Attention Is All You Need”</b> and introduced the <b>Transformer</b>. The big idea: <mark>don’t read word by word; look at all the words at once, and let every word directly look at every other word.</mark></p>
+  <figure class="shot"><img src="img/37.webp" alt="Why Transformers were introduced. RNN, one word at a time: The, cat, sat, on, the, mat are steps 1 to 6; it must wait for the previous step and early words slowly fade from memory. Transformer, all words at once: arcs connect every word to every other word; all words are processed together, fast on GPUs, and every word can look at every other word." width="1400" height="455" loading="lazy"><figcaption>An RNN reads in a chain and forgets; a Transformer connects every word to every other word in one go.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th></th><th>ANN</th><th>RNN</th><th>Transformer</th></tr>
     <tr><td><b>How it reads</b></td><td>one input at a time, no order</td><td>one word at a time, in order</td><td>all words at once</td></tr>
@@ -566,82 +420,23 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
     <tr><td><b>Speed on long text</b></td><td>fast, but no context</td><td>slow</td><td>fast (runs in parallel)</td></tr>
     <tr><td><b>Used for</b></td><td>simple predictions</td><td>older speech and translation systems</td><td>all modern LLMs</td></tr>
   </table></div>
+  <div class="sticky info"><strong>Key idea</strong> Transformers are <b>fast to train</b>, <b>remember far-away words</b>, and <b>get better when we make them bigger</b>. That is why today’s LLMs are built on them.</div>
 
   <h3>The Transformer as a tower</h3>
   <p>Don’t worry about the maths. Think of a tower of identical floors, called <b>blocks</b> or <b>layers</b>. Text goes in at the bottom, every floor improves the understanding, and the prediction comes out at the top.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 400" role="img" aria-label="A tower from bottom to top: text, tokenizer and IDs, embeddings plus position, block 1, block 2, more blocks repeated N times, output scores, and the next token on top">
-      <g class="rough">
-        <rect class="box f-green" x="210" y="10" width="300" height="40" rx="10"/>
-        <rect class="box f-yellow" x="210" y="64" width="300" height="40" rx="10"/>
-        <rect class="box f-purple dash" x="210" y="118" width="300" height="40" rx="10"/>
-        <rect class="box f-purple" x="210" y="172" width="300" height="40" rx="10"/>
-        <rect class="box f-purple" x="210" y="226" width="300" height="40" rx="10"/>
-        <rect class="box f-teal" x="210" y="280" width="300" height="40" rx="10"/>
-        <rect class="box f-blue" x="210" y="334" width="300" height="40" rx="10"/>
-        <path class="ln" d="M360 332 L 360 324" marker-end="url(#ah)"/>
-        <path class="ln" d="M360 278 L 360 270" marker-end="url(#ah)"/>
-        <path class="ln" d="M360 224 L 360 216" marker-end="url(#ah)"/>
-        <path class="ln" d="M360 170 L 360 162" marker-end="url(#ah)"/>
-        <path class="ln" d="M360 116 L 360 108" marker-end="url(#ah)"/>
-        <path class="ln" d="M360 62 L 360 54" marker-end="url(#ah)"/>
-        <path class="lr" d="M196 120 L 186 120 L 186 264 L 196 264"/>
-      </g>
-      <text class="t" x="360" y="36" text-anchor="middle">next token: " on"</text>
-      <text class="t" x="360" y="90" text-anchor="middle">output scores (probabilities)</text>
-      <text class="t" x="360" y="144" text-anchor="middle">… more blocks …</text>
-      <text class="t" x="360" y="198" text-anchor="middle">Block 2</text>
-      <text class="t" x="360" y="252" text-anchor="middle">Block 1</text>
-      <text class="t" x="360" y="306" text-anchor="middle">embeddings + position</text>
-      <text class="t" x="360" y="360" text-anchor="middle">"The cat sat" → token IDs</text>
-      <text class="tr" x="176" y="188" text-anchor="end">× N blocks</text>
-      <text class="ts" x="526" y="190">each block =</text>
-      <text class="ts" x="526" y="210">self-attention</text>
-      <text class="ts" x="526" y="230">+ feed-forward</text>
-      <text class="ts" x="526" y="304">vectors of meaning</text>
-      <text class="ts" x="526" y="324">+ where each token sits</text>
-    </svg></div>
-    <figcaption>More blocks and longer vectors = a bigger model: more capable, but more expensive to run.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/38.webp" alt="Basic Transformer architecture, decoder-style LLM: input text 'The cat sat'; tokenizer to token IDs [464, 3797, 3332], text becomes numbers; embeddings plus position, meaning plus where each token sits, because word order matters ('dog bit man' is not 'man bit dog'); Transformer block repeated N times, each with self-attention (tokens look at each other) and feed-forward (each token processed further), repeated from about a dozen to 100+ blocks, making every token's vector richer in context; output scores, a score for every token in the vocabulary: ' on' 0.62, ' down' 0.08, ' there' 0.05; next token ' on' is chosen." width="1400" height="952" loading="lazy"><figcaption>Text goes in at the bottom; every block (repeated from about a dozen to 100+ times) makes each token’s vector richer in context.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Tokenizer and token IDs</b>Text becomes numbers.</div></li>
     <li><span class="dot">2</span><div><b>Embeddings + position</b>Numbers become vectors of meaning, plus information about where each token sits. Because a Transformer reads all words together, without position it could not tell “dog bit man” from “man bit dog”.</div></li>
     <li><span class="dot">3</span><div><b>Transformer block × N</b>Each block has <b>self-attention</b> (tokens share information with each other) and a <b>feed-forward</b> step (each token is processed further on its own). The block repeats many times.</div></li>
     <li><span class="dot">4</span><div><b>Output scores</b>A score for every token in the vocabulary, which becomes the next-token probabilities.</div></li>
   </ol>
+  <div class="sticky tip"><strong>Key idea</strong> More blocks and longer vectors = a bigger model. It can do more, but it costs more to run.</div>
   <p>Follow the three tokens of “The cat sat”: they become 3 IDs, then 3 embedding vectors (+ position). Block 1 outputs 3 vectors with a little more context, block 2 more, … block N outputs 3 vectors rich with context. Every block takes in and gives out vectors of the <b>same size</b>. After the last block, the vector of the <b>last token</b> (“sat”) is used to score the next token, here <code>" on"</code>.</p>
 
   <h3>Attention, conceptually</h3>
   <p>Read: <i>“The animal didn’t cross the street because it was too tired.”</i> What does “it” mean? You know at once: the animal. A model must work this out too. <mark>Attention lets a token look at the other tokens and decide how much each one matters for understanding it.</mark></p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="The word it in the sentence sends a thick arrow to animal at 62 percent, smaller arrows to street at 12 percent and tired at 15 percent">
-      <g class="rough">
-        <rect class="box f-purple" x="56" y="183" width="60" height="26" rx="6"/>
-        <rect class="box f-yellow" x="420" y="183" width="30" height="26" rx="6"/>
-        <path class="lr" d="M430 180 C 380 50, 140 50, 90 178" marker-end="url(#ahr)"/>
-        <path class="ln dash" d="M432 180 C 410 132, 340 132, 316 180" marker-end="url(#ah)"/>
-        <path class="lb dash" d="M440 180 C 465 122, 540 122, 560 180" marker-end="url(#ahb)"/>
-      </g>
-      <text class="t" x="20" y="201">The</text>
-      <text class="t" x="60" y="201">animal</text>
-      <text class="t" x="125" y="201">didn’t</text>
-      <text class="t" x="190" y="201">cross</text>
-      <text class="t" x="247" y="201">the</text>
-      <text class="t" x="287" y="201">street</text>
-      <text class="t" x="352" y="201">because</text>
-      <text class="t" x="426" y="201">it</text>
-      <text class="t" x="457" y="201">was</text>
-      <text class="t" x="497" y="201">too</text>
-      <text class="t" x="537" y="201">tired.</text>
-      <text class="tr" x="262" y="62" text-anchor="middle">62%</text>
-      <text class="t" x="372" y="116" text-anchor="middle">12%</text>
-      <text class="tb" x="500" y="122" text-anchor="middle">15%</text>
-      <text class="ts" x="620" y="150">“it” asks:</text>
-      <text class="ts" x="620" y="168">who am I?</text>
-      <text class="ts" x="360" y="232" text-anchor="middle">percentages are made up to explain the idea; real ones are learned</text>
-    </svg></div>
-    <figcaption>“it” pays most attention to “animal”, so its vector picks up the animal’s meaning.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/39.webp" alt="Attention, which words matter for this word, in 'The animal didn't cross the street because it was too tired.' The word 'it' sends its thickest line, 62%, to 'animal', 11% to 'street' and 14% to 'tired', with thin lines to the other words. To understand 'it', the model gives most attention to 'animal', the thing that was tired. Thicker line means more attention. Illustrative weights." width="1400" height="602" loading="lazy"><figcaption>“it” gives 62% of its attention to “animal”, 14% to “tired” and only 11% to “street”. (Illustrative weights.)</figcaption></figure>
   <p>Think of a <b>library</b>:</p>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>Query</h4><p>Your question: <i>“what am I looking for?”</i></p></div>
@@ -652,17 +447,20 @@ dog &lt;-&gt; car  =  0.52   (far apart)</code></pre>
 
   <h3>Self-attention</h3>
   <p><b>Self-attention</b> is attention where tokens look at the other tokens in the <b>same</b> text (and at themselves), all at the same time, in three steps:</p>
+  <figure class="shot"><img src="img/40.webp" alt="Self-attention, every word looks at every word in the same sentence 'The cat sat on the mat'. A 6 by 6 grid: rows are the word asking, columns the word it looks at; each row adds up to 100%. Row 'sat': 5% The, 45% cat, 20% sat, 10% on, 5% the, 15% mat. Steps: 1 score, how related is each pair of words; 2 softmax, turn scores into percentages, each row adds up to 100%; 3 mix, blend information from other words using these percentages." width="1400" height="714" loading="lazy"><figcaption>Read row “sat”: 45% attention to “cat” (who sat?) and 15% to “mat” (where?). (Illustrative numbers.)</figcaption></figure>
   <div class="flow"><span class="hl">Score</span><span>how related is each pair?</span><span class="hl">Softmax</span><span>turn scores into % (each row sums to 100%)</span><span class="hl">Mix</span><span>blend in information using those %</span></div>
   <p>A Transformer runs this many times in parallel. Each copy is a <b>head</b>, and each head can notice something different: grammar, who did what, nearby words. Their results are combined; this is <b>multi-head attention</b>.</p>
+  <p>The percentages in the picture are made up to explain the idea. In a real model, these numbers are learned during training.</p>
 
   <h3>How tokens change after attention</h3>
-  <div class="grid two">
-    <div class="card t8 tilt-a"><h4>“I sat on the river <u>bank</u>.”</h4><p>Before attention: the generic “bank” vector. After: pulled towards <b>water, shore, river</b>.</p></div>
-    <div class="card t7 tilt-b"><h4>“I deposited cash at the <u>bank</u>.”</h4><p>Before attention: the <b>same</b> generic vector. After: pulled towards <b>money, account, branch</b>.</p></div>
-  </div>
+  <p>After self-attention, the vector of each token has been updated with information from the tokens related to it. Look at the word “bank”:</p>
+  <figure class="shot"><img src="img/41.webp" alt="Attention gives each word a context-aware meaning. 'I sat on the river bank.': bank starts as [0.41, 0.17, ...], attention looks at the other words, and bank becomes [0.90, 0.05, ...], near river, shore, water. 'I deposited cash at the bank.': bank starts as the same [0.41, 0.17, ...] and becomes [0.07, 0.88, ...], near money, loan, account." width="1400" height="408" loading="lazy"><figcaption>Same starting vector [0.41, 0.17, …] in both sentences; after attention one “bank” is near river, shore, water, the other near money, loan, account.</figcaption></figure>
+  <p>At the start, “bank” has the <b>same</b> vector in both sentences, because the embedding table does not know the sentence. After attention, each “bank” carries the meaning from its own sentence.</p>
   <div class="sticky info"><strong>Key idea</strong> The embedding gives the <b>dictionary meaning</b>; attention adds the <b>meaning in this sentence</b>. Early blocks tend to pick up simple things (grammar, nearby words); later blocks tend to pick up deeper things (meaning, intent).</div>
 
   <h3>Encoder and decoder</h3>
+  <p>The original Transformer had two parts, and models today use one part or both:</p>
+  <figure class="shot"><img src="img/42.webp" alt="Encoder and decoder. Encoder, reads and understands: a full 6 by 6 grid, every word may look at every word, left and right; good for search embeddings and classification; examples BERT-style models. Decoder, reads and writes: a lower-triangle grid, each word may look only at earlier words, reading left to right and predicting the next token; good for chat, writing, code (most LLMs); examples GPT-style models, Llama, Mistral, Qwen. Encoder plus decoder, understand then write: Hindi 'mujhe chhutti chahiye' goes through the encoder and decoder to English 'I need leave'; good for translation and summarising; examples T5 and the original 2017 Transformer. Most of today's chat LLMs are decoder-only." width="1400" height="708" loading="lazy"><figcaption>The encoder sees the whole grid; the decoder sees only the tokens before it (the lower triangle). Most chat LLMs are decoder-only.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Part</th><th>What it does</th><th>Good for / examples</th></tr>
     <tr><td><b>Encoder</b></td><td>Reads the whole text and builds a deep understanding. Each word can look both left and right.</td><td>Search embeddings, classification (BERT-style models)</td></tr>

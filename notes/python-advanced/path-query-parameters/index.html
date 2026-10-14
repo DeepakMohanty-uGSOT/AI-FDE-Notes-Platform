@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Path &amp; Query Parameters · Python Advanced &amp; FastAPI | AIFDE Notes</title>
+<meta name="description" content="Make FastAPI routes dynamic: path parameters pick one item, query parameters filter, sort and paginate a list. Type conversion, 422 errors, route order, optional values, skip and limit, and a Student Search API.">
+<meta name="keywords" content="path parameters, query parameters, dynamic routes, type conversion, 422 error, route order, pagination, skip and limit">
+<meta name="date" content="2026-10-09">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-advanced/path-query-parameters">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Path &amp; Query Parameters</h1>
+  <p class="byline">Let the client tell your API exactly which item it wants, and how it wants a list back: filtered, combined and one page at a time.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why do APIs need parameters?</h2>
+  <div class="story"><b class="lbl">At the library counter</b>“Give me a book” is not enough for the librarian. You either say <b>which</b> book (“book number 101”) or <b>what kind</b> (“only science books, five at a time”). <mark>Those extra details are parameters: path parameters say which one, query parameters say how you want the list.</mark></div>
+  <div class="flow"><span>Static vs dynamic routes</span><span>Path parameters</span><span>Type conversion</span><span>Route order</span><span>Query parameters</span><span>Filters &amp; defaults</span><span>Pagination</span><span class="ok">Student Search API</span></div>
+  <div class="sticky info l"><strong>Setup</strong> Keep working in your FastAPI project (<code>app/main.py</code>), run with <code>uvicorn app.main:app --reload</code>. Leave the server running and just save the file after each change.</div>
+  <h3>Quick recap: what is a route?</h3>
+  <p>A <b>route</b> connects a URL path to a Python function:</p>
+  <pre><code class="language-python">@app.get("/about")
+def about():
+    return {"message": "About Page"}</code></pre>
+  <p>When a request comes in, FastAPI compares its path (e.g. <code>/about</code>) with the path of every route. If one matches, it runs that function; if none does, it returns <b>404 Not Found</b>. <b>How</b> it compares depends on whether the route is static or dynamic.</p>
+  <h3>Static routes</h3>
+  <p>A <b>static route</b> has a <b>completely fixed</b> path, such as <code>/about</code>, <code>/contact</code>, <code>/students</code> or <code>/students/1</code>. FastAPI runs it only when the URL is <b>exactly the same</b>, character for character. Even a small difference means no match.</p>
+  <figure class="shot">
+    <img src="img/01.webp" alt="Static route @app.get('/students/1'): /students/1 matches and student_1() runs; /students/2 and /Students/1 get 404 Not Found. Like a nameplate on a door, only for Rahul." width="1400" height="688">
+    <figcaption>A static route is like a nameplate on a door: <code>/students/1</code> matches, but <code>/students/2</code> and even <code>/Students/1</code> (capital S) get 404.</figcaption>
+  </figure>
+  <p>Static routes are perfect for things that never change, like an About page, a Contact page or the list of all students.</p>
+  <h3>The problem with static routes</h3>
+  <p>To show one student at a time by id, static routes force you to write one route per student. This causes real problems:</p>
+  <pre><code class="language-plaintext">/students/1   →  student_1()
+/students/2   →  student_2()
+/students/3   →  student_3()
+...           →  ...</code></pre>
+  <div class="grid two">
+    <div class="card t3 tilt-a"><h4>Repeated code</h4><p>Every function does the same job; only the number changes.</p></div>
+    <div class="card t4 tilt-b"><h4>New student = new code</h4><p>Every admission means writing code and restarting the app.</p></div>
+    <div class="card t6 tilt-b"><h4>Impossible at scale</h4><p>A college with 5,000 students needs 5,000 functions.</p></div>
+    <div class="card t1 tilt-a"><h4>Missing routes break</h4><p>Forget <code>/students/4</code> and that student just gets a 404.</p></div>
+  </div>
+  <p>Look closely: <code>/students/</code> is always the same and only the number at the end changes. What if we wrote the fixed part once and left a <b>blank</b> for the number?</p>
+  <h3>Dynamic routes</h3>
+  <p>A <b>dynamic route</b> has two parts: a <b>fixed part</b> that must match exactly (<code>/students/</code>), and a <b>changing part</b> in curly brackets (<code>{student_id}</code>). The curly part is a <b>placeholder</b>, a blank filled with whatever the client sends.</p>
+  <pre><code class="language-python">@app.get("/students/{student_id}")</code></pre>
+  <p>When a request comes in, FastAPI checks the <b>fixed part</b> first. If it matches, FastAPI takes whatever is written in the place of the blank and gives it to your function in a variable named <code>student_id</code>.</p>
+  <figure class="shot">
+    <img src="img/02.webp" alt="Dynamic route /students/{student_id}: /students/1 and /students/250 match with student_id = 1 and 250; /students and /students/1/marks get 404. Like a form with a blank Roll No." width="1400" height="761">
+    <figcaption>Like a printed form with a blank (“Roll No: ____”): <code>/students</code> (nothing in the blank) and <code>/students/1/marks</code> (extra part) don’t match.</figcaption>
+  </figure>
+  <p>So one dynamic route can answer <code>/students/1</code>, <code>/students/2</code>, <code>/students/250</code>, and every other student, with <b>one function</b>.</p>
+  <!-- previous hand-drawn static-vs-dynamic SVG removed: covered by img 01, 02 and 07 -->
+  <div class="tbl"><table>
+    <tr><th></th><th>Static route</th><th>Dynamic route</th></tr>
+    <tr><td>Path</td><td>Completely fixed: <code>/students/1</code></td><td>Fixed part + blank: <code>/students/{student_id}</code></td></tr>
+    <tr><td>URLs it matches</td><td>Exactly one</td><td>Many: any value in the blank</td></tr>
+    <tr><td>Value from the URL</td><td>Nothing is passed to the function</td><td>The value in the blank is passed to the function</td></tr>
+    <tr><td>Best for</td><td>Pages that never change: <code>/about</code>, <code>/students</code></td><td>One item out of many</td></tr>
+  </table></div>
+  <h3>So, what is an API parameter?</h3>
+  <p>The value the client puts in the blank (like <code>250</code> in <code>/students/250</code>) is a <b>parameter</b>: an extra piece of information sent with the request so the API knows <b>exactly what to return</b>. FastAPI has two main kinds:</p>
+  <div class="tbl"><table>
+    <tr><th>Kind</th><th>Where it goes</th><th>Example</th><th>Answers</th></tr>
+    <tr><td><b>Path parameter</b></td><td>Inside the path, in the blank</td><td><code>/students/250</code></td><td>Which item?</td></tr>
+    <tr><td><b>Query parameter</b></td><td>At the end, after <code>?</code></td><td><code>/students?course=BCA</code></td><td>How should the list come back?</td></tr>
+  </table></div>
+  <h3>Practical: from static routes to one dynamic route</h3>
+  <p><b>Step 1:</b> static routes, one per student:</p>
+  <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/students/1")
+def student_1():
+    return {"id": 1, "name": "Rahul"}
+
+@app.get("/students/2")
+def student_2():
+    return {"id": 2, "name": "Priya"}
+
+@app.get("/students/3")
+def student_3():
+    return {"id": 3, "name": "Aman"}</code></pre>
+  <figure class="shot">
+    <img src="img/03.webp" alt="VS Code: main.py with three static routes; terminal shows GET /students/1 200 OK and GET /students/4 404 Not Found" width="1400" height="877">
+    <figcaption>The server log: <code>/students/1</code> → 200 OK, <code>/students/4</code> → 404 Not Found.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/04.webp" alt="Browser: /students/1 returns id 1, name Rahul; /students/4 returns detail Not Found" width="1400" height="339">
+    <figcaption>In the browser: Rahul for <code>/students/1</code>, <code>{"detail": "Not Found"}</code> for <code>/students/4</code>.</figcaption>
+  </figure>
+  <p><code>/students/1</code> works because a route with that exact path exists. <code>/students/4</code> gives <b>404 Not Found</b>, because no route has that exact path. This is exactly the problem described above.</p>
+  <p><b>Step 2:</b> replace all of them with <b>one</b> dynamic route:</p>
+  <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    return {"student_id": student_id}</code></pre>
+  <figure class="shot">
+    <img src="img/05.webp" alt="VS Code: one dynamic route /students/{student_id}; terminal shows GET /students/1 and GET /students/250, both 200 OK" width="1400" height="665">
+    <figcaption>One route now answers both <code>/students/1</code> and <code>/students/250</code> with 200 OK.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/06.webp" alt="Browser: /students/1 returns student_id 1; /students/250 returns student_id 250" width="1400" height="314">
+    <figcaption>The value from the URL comes straight back: <code>{"student_id": 1}</code> and <code>{"student_id": 250}</code>.</figcaption>
+  </figure>
+  <p>For <code>/students/250</code>, FastAPI matched the fixed part <code>/students/</code>, put <code>250</code> into the blank <code>{student_id}</code>, and called <code>get_student(student_id=250)</code>. The function simply returned the value it received.</p>
+  <figure class="shot">
+    <img src="img/07.webp" alt="Static routes vs one dynamic route: three static routes plus /students/4 not written, versus /students/1, /2, /999 all going to /students/{student_id} and one get_student function" width="1400" height="729">
+    <figcaption>1000 students = 1000 static functions, or one dynamic route where the changing part of the URL becomes a <b>variable</b>.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Remember</strong> Static route = exact path, one URL. Dynamic route = fixed part + <code>{blank}</code>, many URLs. <mark>The value in the blank is a path parameter.</mark></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="path-params">
+  <h2>Path parameters: pick one specific item</h2>
+  <p>A <b>path parameter</b> is a changing value written <b>directly inside the URL path</b>. It tells the API <b>which specific item</b> you want.</p>
+  <figure class="shot">
+    <img src="img/08.webp" alt="Parts of a path parameter URL: /students/ is the fixed part, 101 is the path parameter; @app.get('/students/{student_id}') leads to student_id = 101" width="1400" height="466">
+    <figcaption><code>/students/</code> is always the same; <code>101</code> changes for every student, and FastAPI fills it into <code>student_id</code>.</figcaption>
+  </figure>
+  <p>In FastAPI, mark the changing part with <code>{ }</code> and add a function parameter with the <b>same name</b>:</p>
+  <pre><code class="language-python">@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    return {"student_id": student_id}</code></pre>
+  <ul>
+    <li><code>{student_id}</code> in the route means “this part of the URL can change”.</li>
+    <li><code>student_id: int</code> in the function means “give me that value, as an integer”.</li>
+    <li>The two names <b>must match</b> exactly.</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="The URL /students/2 is lined up against the pattern /students/{student_id}. The text 2 in the blank's position is taken, converted to the integer 2, and passed as get_student(student_id=2).">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="20" width="250" height="56" rx="12"/>
+        <rect class="box f-blue" x="20" y="140" width="250" height="56" rx="12"/>
+        <rect class="box f-purple" x="330" y="80" width="140" height="60" rx="12"/>
+        <rect class="box f-green" x="520" y="80" width="185" height="60" rx="12"/>
+        <path class="ln dash" d="M200 80 L 200 136"/>
+        <path class="lr" d="M274 48 C 300 60, 310 80, 325 100" marker-end="url(#ahr)"/>
+        <path class="lb" d="M474 110 L 514 110" marker-end="url(#ahb)"/>
+      </g>
+      <text class="ts" x="145" y="14" text-anchor="middle">the request</text>
+      <text class="tm" x="145" y="54" text-anchor="middle">/students/2</text>
+      <text class="tm" x="145" y="174" text-anchor="middle">/students/{student_id}</text>
+      <text class="ts" x="145" y="214" text-anchor="middle">the route pattern</text>
+      <text class="ts" x="210" y="114">same spot</text>
+      <text class="tm" x="400" y="106" text-anchor="middle">"2" → 2</text>
+      <text class="ts" x="400" y="128" text-anchor="middle">because : int</text>
+      <text class="tm" x="612" y="106" text-anchor="middle">get_student(</text>
+      <text class="tm" x="612" y="128" text-anchor="middle">student_id=2)</text>
+    </svg></div>
+    <figcaption>FastAPI lines the URL up with the pattern, takes the value from the blank, converts it and calls your function.</figcaption>
+  </figure>
+  <h3>How path parameters work</h3>
+  <figure class="shot">
+    <img src="img/09.webp" alt="How a path parameter travels: client GET /students/101, FastAPI matches /students/{student_id}, extracts student_id = 101, get_student(101) runs, response {student_id: 101}, client receives JSON" width="1400" height="458">
+    <figcaption>Client → FastAPI matches → extracts <code>student_id = 101</code> → your function runs → JSON response.</figcaption>
+  </figure>
+  <h3>When are path parameters used?</h3>
+  <figure class="shot">
+    <img src="img/10.webp" alt="When do we use path parameters: 'Which resource?' examples /students/101, /users/25, /products/500, /orders/123" width="1400" height="512">
+    <figcaption>Whenever the value says <b>which</b> single item: student 101, user 25, product 500, order 123.</figcaption>
+  </figure>
+  <div class="sticky tip l"><strong>When to use a path parameter?</strong> Ask: <b>“Which resource?”</b> If the value points to one specific thing (a student, a user, an order), use a path parameter.</div>
+
+  <h3>Setting up practice data</h3>
+  <p>To do something useful with parameters we need some data. Add this list at the top of <code>main.py</code>, just below <code>app = FastAPI()</code>:</p>
+  <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">students = [
+    {"id": 1, "name": "Rahul", "age": 21, "course": "BCA"},
+    {"id": 2, "name": "Priya", "age": 22, "course": "BTech"},
+    {"id": 3, "name": "Aman", "age": 20, "course": "BCA"},
+    {"id": 4, "name": "Sneha", "age": 21, "course": "BTech"}
+]</code></pre></div>
+  <figure class="shot">
+    <img src="img/11.webp" alt="Practice data table: students[0] to students[3] with id, name, age, course for Rahul, Priya, Aman, Sneha. In-memory data lives only while the server runs." width="1400" height="622">
+    <figcaption>A list of dictionaries works like a tiny in-memory database: it starts fresh every time the server restarts.</figcaption>
+  </figure>
+  <p>Now add a route that returns the complete list. (Remove the earlier test routes so the file stays clean.)</p>
+  <pre><code class="language-python">@app.get("/students")
+def get_all_students():
+    return students</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/12.webp" alt="VS Code: main.py with the students list and the get_all_students route" width="1400" height="552">
+      <figcaption>The file so far.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/13.webp" alt="Browser: /students returns all four students as a JSON list" width="1172" height="1276">
+      <figcaption><code>/students</code> returns all four students.</figcaption>
+    </figure>
+  </div>
+  <p>We reuse this <code>students</code> list for the whole note.</p>
+
+  <h3>Fetch a student by id</h3>
+  <p>Goal: <code>GET /students/2</code> returns <b>only Priya</b>. Add below <code>get_all_students()</code>:</p>
+  <pre><code class="language-python">@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    for student in students:
+        if student["id"] == student_id:
+            return student
+
+    return {"message": "Student not found"}</code></pre>
+  <figure class="shot">
+    <img src="img/14.webp" alt="VS Code: get_student route with a for loop; terminal shows GET /students/2 and GET /students/9, both 200 OK" width="1400" height="770">
+    <figcaption>Both requests come back <b>200 OK</b>, even <code>/students/9</code>.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/15.webp" alt="Browser: /students/2 returns Priya's record; /students/9 returns message Student not found" width="1400" height="389">
+    <figcaption><code>/students/2</code> → Priya; <code>/students/9</code> → “Student not found”.</figcaption>
+  </figure>
+  <h3>How <code>/students/2</code> becomes <code>student_id = 2</code></h3>
+  <figure class="shot">
+    <img src="img/16.webp" alt="Route pattern /students/{student_id} lined up with URL /students/2 gives student_id = 2; the for loop checks ids 1 to 4 and returns id 2" width="1400" height="801">
+    <figcaption>The value at the same position goes into the variable, then the <code>for</code> loop stops at the student whose id is 2.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Request</b>The client visits <code>/students/2</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Match</b>FastAPI compares it with <code>/students/{student_id}</code> and takes <code>2</code> from the blank’s position.</div></li>
+    <li><span class="dot">3</span><div><b>Convert and call</b>It turns <code>"2"</code> into the integer <code>2</code> (because of <code>: int</code>) and calls <code>get_student(student_id=2)</code>.</div></li>
+    <li><span class="dot">4</span><div><b>Find</b>The loop finds the student whose id is 2 and returns Priya.</div></li>
+    <li><span class="dot">5</span><div><b>Not found</b>For <code>/students/9</code> the loop finds nobody, so the last line runs. <span class="tag">→ still 200 OK</span></div></li>
+  </ol>
+  <div class="sticky info"><strong>Status code note</strong> “Student not found” here still comes with status <b>200 OK</b>. In a later module you’ll send a proper <b>404</b> using <code>HTTPException</code>.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="conversion">
+  <h2>Type conversion and validation</h2>
+  <h3>String vs integer</h3>
+  <p>Why write <code>student_id: int</code>? Remove <code>: int</code> and add a <code>print()</code> to see the value and its type in the terminal:</p>
+  <pre><code class="language-python">@app.get("/students/{student_id}")
+def get_student(student_id):
+    print(student_id, type(student_id))
+    for student in students:
+        if student["id"] == student_id:
+            return student
+
+    return {"message": "Student not found"}</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/17.webp" alt="VS Code: get_student without a type hint and with a print; terminal prints 2 <class 'str'>" width="1400" height="691">
+      <figcaption>The terminal prints <code>2 &lt;class 'str'&gt;</code>.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/18.webp" alt="Browser: /students/2 returns message Student not found" width="1172" height="448">
+      <figcaption>…so the browser shows “Student not found”.</figcaption>
+    </figure>
+  </div>
+  <p>Priya exists, yet we get “Student not found”! The terminal explains why: <code>2 &lt;class 'str'&gt;</code>. Everything in a URL is <b>text</b>, so <code>student_id</code> is the string <code>"2"</code>, and in Python <code>"2" == 2</code> is <b>False</b>. The loop never finds a match.</p>
+  <p>Now put the type back, <code>def get_student(student_id: int):</code>, and try again:</p>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/19.webp" alt="VS Code: get_student(student_id: int) with print; terminal prints 2 <class 'int'>" width="1400" height="691">
+      <figcaption>Now the terminal prints <code>2 &lt;class 'int'&gt;</code>.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/20.webp" alt="Browser: /students/2 returns Priya's full record" width="1172" height="556">
+      <figcaption>…and Priya is found.</figcaption>
+    </figure>
+  </div>
+  <p>This time the terminal prints <code>2 &lt;class 'int'&gt;</code>. FastAPI read the type hint and <b>converted</b> the text to a number for us, so the comparison works.</p>
+  <figure class="shot">
+    <img src="img/21.webp" alt="Why the type hint matters: without a type '2' == 2 is False so Student not found; with int, '2' becomes 2, 2 == 2 is True, Priya's details; 'abc' cannot become an int, 422 error, function never runs" width="1400" height="832">
+    <figcaption>Without a type hint the text never equals a number; with <code>: int</code> it is converted, and impossible values like <code>"abc"</code> are stopped with a 422.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Tidy up</strong> You can now delete the <code>print()</code> line. It was only for learning.</div>
+  <h3>Invalid input</h3>
+  <p>What if the value <b>cannot</b> become a number?</p>
+  <pre><code class="language-plaintext">http://127.0.0.1:8000/students/abc</code></pre>
+  <figure class="shot">
+    <img src="img/22.webp" alt="Browser: /students/abc returns detail with type int_parsing, loc path student_id, msg Input should be a valid integer, input abc" width="1400" height="611">
+    <figcaption>The error body names the problem (<code>int_parsing</code>), where it is (<code>path</code> → <code>student_id</code>) and what was sent (<code>"abc"</code>).</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/23.webp" alt="VS Code terminal: GET /students/abc HTTP/1.1 422 Unprocessable Content" width="1400" height="386">
+    <figcaption>The server log shows <b>422 Unprocessable Content</b>.</figcaption>
+  </figure>
+  <p>FastAPI <b>rejected</b> the request before our function even ran, with status <b>422 Unprocessable Content</b>. <code>"loc": ["path", "student_id"]</code> says exactly where the problem is. (That message should look familiar: FastAPI uses <b>Pydantic</b> under the hood to do this checking.)</p>
+  <figure class="shot">
+    <img src="img/24.webp" alt="Reading FastAPI's validation error: type is the short error name, loc is the location (path, student_id), msg is a plain-English message, input is the exact value sent. 422 means the request was understood but the data inside it is wrong." width="1400" height="950">
+    <figcaption>The four fields of every validation error. <b>422</b> means “I understood your request, but the data inside it is wrong.”</figcaption>
+  </figure>
+  <div class="sticky tip l"><strong>A type hint does two jobs</strong> It <b>converts</b> good input (<code>"2"</code> → <code>2</code>) and <b>rejects</b> bad input (<code>"abc"</code> → 422). <mark>You get both for free.</mark></div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="multiple-path">
+  <h2>Multiple path parameters and route order</h2>
+  <p>A URL can carry more than one path parameter, for example “course 5 of student 2”:</p>
+  <div class="anatomy"><span>/students/</span><span class="a1">2</span><span>/courses/</span><span class="a2">5</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>student_id</code> = 2</p></div>
+    <div><span class="sw a2"></span><p><code>course_id</code> = 5</p></div>
+  </div>
+  <figure class="shot">
+    <img src="img/25.webp" alt="Multiple path parameters: /students/2/courses/5 matched against /students/{student_id}/courses/{course_id} gives student_id = 2 and course_id = 5, matched by name" width="1400" height="488">
+    <figcaption>FastAPI matches them by <b>name</b>: <code>{student_id}</code> in the path goes to the function parameter named <code>student_id</code>.</figcaption>
+  </figure>
+  <p>Add this route:</p>
+  <pre><code class="language-python">@app.get("/students/{student_id}/courses/{course_id}")
+def get_course(student_id: int, course_id: int):
+    return {
+        "student_id": student_id,
+        "course_id": course_id
+    }</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/26.webp" alt="VS Code: get_course route below get_student; terminal shows GET /students/2/courses/5 200 OK" width="1400" height="825">
+      <figcaption>The new route, below <code>get_student</code>.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/27.webp" alt="Browser: /students/2/courses/5 returns student_id 2 and course_id 5" width="1172" height="484">
+      <figcaption><code>{"student_id": 2, "course_id": 5}</code></figcaption>
+    </figure>
+  </div>
+  <p>Each <code>{ }</code> needs a function parameter with the same name. Both are converted and checked separately, so <code>/students/2/courses/abc</code> gives a 422 that points at <code>course_id</code>:</p>
+  <pre class="out"><code>{"detail": [{"type": "int_parsing", "loc": ["path", "course_id"],
+             "msg": "Input should be a valid integer, unable to parse string as an integer", "input": "abc"}]}</code></pre>
+
+  <h3>Route order: fixed before dynamic</h3>
+  <p>Many apps have a special URL <code>/students/me</code> meaning “the logged-in student”. It looks very similar to <code>/students/{student_id}</code>. Add it <b>below</b> the dynamic route:</p>
+  <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    return {"student_id": student_id}
+
+@app.get("/students/me")
+def get_current_student():
+    return {"message": "This is the logged-in student"}</code></pre>
+  <figure class="shot">
+    <img src="img/28.webp" alt="VS Code: dynamic route written above /students/me; terminal shows GET /students/me 422 Unprocessable Content" width="1400" height="746">
+    <figcaption>Dynamic route first: <code>/students/me</code> → 422.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/29.webp" alt="Browser: /students/me returns int_parsing error for path student_id with input me" width="1400" height="611">
+    <figcaption>The error says <code>"me"</code> could not be parsed as the integer <code>student_id</code>.</figcaption>
+  </figure>
+  <p>A 422 saying <code>"me"</code> is not a valid integer! FastAPI checks routes <b>from top to bottom</b> and uses the <b>first</b> whose pattern fits. <code>me</code> fits into <code>{student_id}</code>, so FastAPI picks that route and then fails to turn <code>"me"</code> into a number. Our <code>/students/me</code> route is never reached.</p>
+  <p>Now move the fixed route <b>above</b> the dynamic one:</p>
+  <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/students/me")
+def get_current_student():
+    return {"message": "This is the logged-in student"}
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    return {"student_id": student_id}</code></pre>
+  <figure class="shot">
+    <img src="img/30.webp" alt="VS Code: /students/me written above /students/{student_id}; terminal shows GET /students/me and GET /students/5, both 200 OK" width="1400" height="770">
+    <figcaption>Fixed route first: both requests return 200 OK.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/31.webp" alt="Browser: /students/me returns This is the logged-in student; /students/5 returns student_id 5" width="1400" height="302">
+    <figcaption><code>/students/me</code> hits the fixed route, and <code>/students/5</code> still goes to the dynamic route.</figcaption>
+  </figure>
+  <p>Both work now: <code>/students/me</code> hits the fixed route, and <code>/students/5</code> still goes to the dynamic route.</p>
+  <figure class="shot">
+    <img src="img/32.webp" alt="Route order: with the dynamic route first, /students/me matches it, tries student_id = 'me' and fails with 422; with the fixed route first, /students/me matches exactly and /students/{student_id} still handles /students/5" width="1400" height="841">
+    <figcaption>Rule: write <b>fixed</b> routes (like <code>/students/me</code>) <b>above</b> dynamic routes that could also match them.</figcaption>
+  </figure>
+  <!-- previous hand-drawn route-order SVG removed: img 32 shows the same thing -->
+</section>
+
+<!-- 5 -->
+<section class="ch" id="query-params">
+  <h2>Query parameters: how you want the list</h2>
+  <p>Path parameters answer <b>“which one?”</b>. Often we want a <b>list</b>, filtered or arranged a certain way: “show me only BCA students”. For that we use the second kind of parameter.</p>
+  <p>A <b>query parameter</b> is a <code>key=value</code> pair added at the <b>end</b> of the URL, after a question mark <code>?</code>. It gives extra instructions such as filtering, searching, sorting or pagination.</p>
+  <div class="anatomy"><span class="a6">http://127.0.0.1:8000</span><span class="a1">/students</span><span class="a3">?</span><span class="a2">course</span><span>=</span><span class="a4">BCA</span><span class="a3">&amp;</span><span class="a2">age</span><span>=</span><span class="a4">21</span></div>
+  <div class="legend">
+    <div><span class="sw a6"></span><p>Host and port: where the server is.</p></div>
+    <div><span class="sw a1"></span><p><b>Path</b>: the main resource, <code>/students</code>.</p></div>
+    <div><span class="sw a3"></span><p><code>?</code> starts the query string; <code>&amp;</code> joins one pair to the next.</p></div>
+    <div><span class="sw a2"></span><p><b>Key</b>: the parameter name (<code>course</code>, <code>age</code>).</p></div>
+    <div><span class="sw a4"></span><p><b>Value</b>: what the client wants for that key.</p></div>
+  </div>
+  <p>In <code>/students?course=BCA</code>: <code>/students</code> is the main path, <code>?</code> marks where the query parameters begin, and <code>course=BCA</code> is the query parameter (key <code>course</code>, value <code>BCA</code>).</p>
+  <h3>Query parameter structure</h3>
+  <figure class="shot">
+    <img src="img/33.webp" alt="Parts of a URL with query parameters: /students?course=BCA&city=Bangalore. /students is the path, ? starts the query parameters, course and city are keys, BCA and Bangalore are values, & joins two parameters" width="1400" height="514">
+    <figcaption>Each query parameter is a <b>key=value</b> pair. There is only one <code>?</code>, then pairs joined with <code>&amp;</code>. The order of the pairs does not matter.</figcaption>
+  </figure>
+  <h3>When are query parameters used?</h3>
+  <figure class="shot">
+    <img src="img/34.webp" alt="When do we use query parameters: 'How do I want the results?' Filter /students?course=BCA, Search /products?search=laptop, Sort /products?sort=price, Paginate /students?skip=10&limit=5. Google ?q= and YouTube ?v= use them too." width="1400" height="661">
+    <figcaption>Filter, search, sort, paginate. You already use them every day: Google search (<code>?q=fastapi</code>) and YouTube (<code>?v=...</code>).</figcaption>
+  </figure>
+  <div class="sticky tip l"><strong>When to use a query parameter?</strong> Ask: <b>“How do I want the resources returned?”</b> Filtered? Sorted? One page at a time? Then use query parameters.</div>
+  <h3>First practical example</h3>
+  <p>Change the <code>get_all_students()</code> route into this (keep the <code>students</code> list):</p>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(course: str):
+    return {"course": course}</code></pre>
+  <p>Notice: the route is just <code>"/students"</code>. There is <b>no</b> <code>{course}</code> in it, yet the function has a <code>course</code> parameter.</p>
+  <figure class="shot">
+    <img src="img/35.webp" alt="VS Code: get_students(course: str) returning course; terminal shows GET /students?course=BCA 200 OK" width="1400" height="560">
+    <figcaption>The route has no <code>{course}</code>, yet the request works.</figcaption>
+  </figure>
+  <p>Visit <code>/students?course=BCA</code>:</p>
+  <figure class="shot">
+    <img src="img/36.webp" alt="Browser: /students?course=BCA returns course BCA" width="1172" height="448">
+    <figcaption><code>{"course": "BCA"}</code></figcaption>
+  </figure>
+  <p>FastAPI read <code>course=BCA</code> from the URL and passed <code>course="BCA"</code> to the function automatically. How did it know this was a query parameter?</p>
+  <figure class="shot">
+    <img src="img/37.webp" alt="How does FastAPI know path or query: in get_courses(student_id: int, semester: int) on route /students/{student_id}/courses, student_id is PATH because its name is inside { }; semester is QUERY because it is not in the route" width="1400" height="584">
+    <figcaption>Simple rule: <b>name inside <code>{ }</code></b> = path parameter. <b>Any other simple parameter</b> (str, int, bool…) = query parameter.</figcaption>
+  </figure>
+  <p>The full rule FastAPI follows for every function parameter has one more branch:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="FastAPI's rule: if the parameter's name appears in curly brackets in the path, it is a path parameter. Otherwise, if its type is a simple type like int, str, float or bool, it is a query parameter. Otherwise, such as a Pydantic model or dict, it is read from the request body.">
+      <g class="rough">
+        <rect class="box f-yellow" x="10" y="95" width="140" height="70" rx="12"/>
+        <path class="box f-blue" d="M265 70 L 355 130 L 265 190 L 175 130 Z"/>
+        <path class="box f-blue" d="M485 150 L 575 205 L 485 260 L 395 205 Z"/>
+        <rect class="box f-purple" x="395" y="20" width="180" height="56" rx="12"/>
+        <rect class="box f-green" x="600" y="100" width="110" height="56" rx="12"/>
+        <rect class="box f-orange" x="600" y="200" width="110" height="56" rx="12"/>
+        <path class="ln" d="M153 130 L 170 130" marker-end="url(#ah)"/>
+        <path class="lb" d="M300 92 C 320 60, 350 50, 389 48" marker-end="url(#ahb)"/>
+        <path class="lr" d="M318 166 C 340 190, 360 200, 390 204" marker-end="url(#ahr)"/>
+        <path class="lb" d="M540 182 C 565 150, 580 135, 594 130" marker-end="url(#ahb)"/>
+        <path class="lr" d="M578 210 L 594 222" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="80" y="122" text-anchor="middle">a function</text>
+      <text class="ts" x="80" y="144" text-anchor="middle">parameter</text>
+      <text class="t" x="265" y="126" text-anchor="middle">name in</text>
+      <text class="tm" x="265" y="148" text-anchor="middle">{ }?</text>
+      <text class="tb" x="278" y="72">yes</text>
+      <text class="tr" x="318" y="216">no</text>
+      <text class="th" x="485" y="56" text-anchor="middle">path</text>
+      <text class="t" x="485" y="200" text-anchor="middle">simple type?</text>
+      <text class="ts" x="485" y="222" text-anchor="middle">int, str, float…</text>
+      <text class="tb" x="518" y="152">yes</text>
+      <text class="tr" x="560" y="250">no</text>
+      <text class="th" x="655" y="136" text-anchor="middle">query</text>
+      <text class="th" x="655" y="236" text-anchor="middle">body</text>
+    </svg></div>
+    <figcaption>In the route’s <code>{ }</code> → path. A simple type, not in the route → query. A Pydantic model or <code>dict</code> → request body.</figcaption>
+  </figure>
+  <p>That last branch is why <code>book: dict</code> in the previous note was read from the request body.</p>
+  <h3>What if we forget the query parameter?</h3>
+  <p>Visit plain <code>/students</code> (no <code>?course=</code>):</p>
+  <figure class="shot">
+    <img src="img/38.webp" alt="Browser: /students returns detail with type missing, loc query course, msg Field required, input null" width="1400" height="611">
+    <figcaption>A required query parameter is missing: <code>"loc": ["query", "course"]</code>, <code>"msg": "Field required"</code>.</figcaption>
+  </figure>
+  <p>Because <code>course: str</code> has no default, the parameter is <b>required</b>, and FastAPI answers 422. <code>"loc": ["query", "course"]</code> and <code>"msg": "Field required"</code> tell us exactly what is missing. We fix this shortly with default values.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="filtering">
+  <h2>Filtering, optional parameters and defaults</h2>
+  <h3>Use the value to filter</h3>
+  <p>Returning <code>{"course": "BCA"}</code> is not very useful. Let’s use the value to <b>filter</b> real data:</p>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(course: str):
+    result = []
+
+    for student in students:
+        if student["course"] == course:
+            result.append(student)
+
+    return result</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/39.webp" alt="VS Code: get_students filters by course with a loop; terminal shows GET /students?course=BCA and ?course=bca, both 200 OK" width="1400" height="718">
+      <figcaption>The filter route, tested with <code>BCA</code> and <code>bca</code>.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/40.webp" alt="Browser: /students?course=BCA returns Rahul and Aman" width="1172" height="844">
+      <figcaption><code>/students?course=BCA</code> → Rahul and Aman.</figcaption>
+    </figure>
+  </div>
+  <p>Only Rahul and Aman (the BCA students) come back. <mark>This is why query parameters exist: the same route returns different results based on what the client asks.</mark></p>
+  <figure class="shot sm">
+    <img src="img/41.webp" alt="Browser: /students?course=bca returns an empty list []" width="1172" height="376">
+    <figcaption>Lower-case <code>bca</code> → <code>[]</code>.</figcaption>
+  </figure>
+  <div class="sticky warn"><strong>Watch out: values are case-sensitive</strong> <code>/students?course=bca</code> returns an <b>empty list</b> <code>[]</code>, because <code>"bca" != "BCA"</code> in Python. An empty list is still a valid answer: “I searched, and nothing matched.”</div>
+  <h3>Making the filter optional</h3>
+  <p>We want <code>/students</code> to return <b>everyone</b> and <code>/students?course=BCA</code> only BCA students. So <code>course</code> must be <b>optional</b>:</p>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(course: str | None = None):
+    if course:
+        return [
+            student for student in students
+            if student["course"] == course
+        ]
+
+    return students</code></pre>
+  <ul>
+    <li><code>str | None</code> means “a string, <b>or</b> nothing”.</li>
+    <li><code>= None</code> means “if the client doesn’t send it, use <code>None</code>”. The default is what makes it optional.</li>
+    <li><code>if course:</code> is true only when a course was actually sent; otherwise we return the whole list.</li>
+  </ul>
+  <figure class="shot">
+    <img src="img/42.webp" alt="VS Code: get_students(course: str | None = None); terminal shows GET /students and GET /students?course=BTech, both 200 OK" width="1400" height="718">
+    <figcaption>One function, tested with and without the filter.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/43.webp" alt="Browser: /students returns all four students; /students?course=BTech returns Priya and Sneha" width="1400" height="827">
+    <figcaption><code>/students</code> → all 4 students; <code>/students?course=BTech</code> → Priya and Sneha.</figcaption>
+  </figure>
+  <p>Both URLs work now with <b>one</b> function.</p>
+  <h3>Default values</h3>
+  <p>A query parameter can also have a normal default. To see it clearly, use a small default of 2:</p>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(limit: int = 2):
+    return {"limit": limit, "students": students[:limit]}</code></pre>
+  <figure class="shot">
+    <img src="img/44.webp" alt="Browser: /students returns limit 2 with Rahul and Priya; /students?limit=3 returns limit 3 with Rahul, Priya and Aman" width="1400" height="757">
+    <figcaption>No <code>?limit=</code> → the default 2; <code>?limit=3</code> → three students.</figcaption>
+  </figure>
+  <p>Without <code>?limit=</code>, FastAPI uses the default 2. With <code>?limit=3</code>, the client’s value wins. Real APIs usually use something like <code>limit: int = 10</code>.</p>
+  <figure class="shot">
+    <img src="img/45.webp" alt="Required, optional and default parameters: course: str is required (422 Field required); course: str | None = None is optional (becomes None); limit: int = 10 has a default (becomes 10)" width="1400" height="620">
+    <figcaption><code>str | None</code> means “a string, or nothing at all”; anything after <code>=</code> is used when the client leaves it out.</figcaption>
+  </figure>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="multiple-query">
+  <h2>Multiple query parameters</h2>
+  <p>Clients often combine filters, for example “BCA students who are 21”. Pairs are joined with <code>&amp;</code>:</p>
+  <div class="anatomy"><span class="a1">/students</span><span class="a3">?</span><span class="a2">course=BCA</span><span class="a3">&amp;</span><span class="a4">age=21</span></div>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(
+    course: str | None = None,
+    age: int | None = None
+):
+    result = students
+
+    if course:
+        result = [
+            student for student in result
+            if student["course"] == course
+        ]
+
+    if age:
+        result = [
+            student for student in result
+            if student["age"] == age
+        ]
+
+    return result</code></pre>
+  <p>We start with <b>all</b> students in <code>result</code>, and each filter that was sent makes the list smaller.</p>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/46.webp" alt="VS Code: get_students with optional course and age filters; terminal shows four requests: /students, ?course=BCA, ?age=21, ?course=BCA&age=21, all 200 OK" width="1400" height="1059">
+      <figcaption>Four requests, one function.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/47.webp" alt="Browser: /students?course=BCA&age=21 returns only Rahul" width="1172" height="628">
+      <figcaption><code>?course=BCA&amp;age=21</code> → only Rahul.</figcaption>
+    </figure>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Request</th><th>Result</th></tr>
+    <tr><td><code>/students</code></td><td>All 4 students</td></tr>
+    <tr><td><code>/students?course=BCA</code></td><td>Rahul, Aman</td></tr>
+    <tr><td><code>/students?age=21</code></td><td>Rahul, Sneha</td></tr>
+    <tr><td><code>/students?course=BCA&amp;age=21</code></td><td>Rahul</td></tr>
+  </table></div>
+  <figure class="shot">
+    <img src="img/48.webp" alt="Multiple filters work like a funnel: all four students, course == BCA leaves Rahul and Aman, age == 21 leaves Rahul" width="1400" height="721">
+    <figcaption>Filters work like a funnel. A filter that is not sent (<code>None</code>) is simply skipped, which is why <code>/students</code> still returns everyone.</figcaption>
+  </figure>
+  <p>Notice that <code>age</code> was declared as <code>int</code>, so <code>?age=21</code> was converted to the number 21 automatically, just like path parameters.</p>
+  <div class="sticky info l"><strong>A subtle trap</strong> <code>if age:</code> is False for <code>0</code> as well as for <code>None</code>, so <code>?age=0</code> would be ignored. When 0 is a meaningful value, write <code>if age is not None:</code> instead.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="pagination">
+  <h2>Pagination with <code>skip</code> and <code>limit</code></h2>
+  <p>Imagine <b>50,000</b> students. Sending all of them in one response is slow for the server, heavy on the network and useless for the user, who sees about 10 on screen. So we send data <b>one page at a time</b>. This is <b>pagination</b>.</p>
+  <div class="tbl"><table>
+    <tr><th>Parameter</th><th>Meaning</th></tr>
+    <tr><td><code>skip</code></td><td>How many records to jump over</td></tr>
+    <tr><td><code>limit</code></td><td>How many records to return</td></tr>
+  </table></div>
+  <pre><code class="language-python">@app.get("/students")
+def get_students(
+    skip: int = 0,
+    limit: int = 10
+):
+    return students[skip:skip + limit]</code></pre>
+  <p><code>students[skip:skip + limit]</code> is normal Python <b>list slicing</b>. For <code>skip=2, limit=2</code> it becomes <code>students[2:4]</code>: the items at index 2 and 3.</p>
+  <h3>Browser output</h3>
+  <figure class="shot">
+    <img src="img/49.webp" alt="Browser: /students?skip=2&limit=2 returns Aman and Sneha; /students?skip=0&limit=3 returns Rahul, Priya and Aman" width="1400" height="687">
+    <figcaption><code>?skip=2&amp;limit=2</code> → Aman, Sneha. <code>?skip=0&amp;limit=3</code> → the first three.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/50.webp" alt="Pagination with skip and limit: skip 2 jumps over Rahul and Priya, limit 2 returns Aman and Sneha. Page 1 ?skip=0&limit=10 is students[0:10], page 2 ?skip=10&limit=10 is students[10:20], page 3 ?skip=20&limit=10 is students[20:30]" width="1400" height="696">
+    <figcaption>Formula: <b>skip = (page number − 1) × limit</b>. Like reading a book: you skip the pages you have already read.</figcaption>
+  </figure>
+  <!-- previous hand-drawn pagination SVG removed: img 50 shows the same slice -->
+  <div class="tbl"><table>
+    <tr><th>Try this</th><th>You get</th><th>Why</th></tr>
+    <tr><td><code>/students</code></td><td>All 4</td><td>Defaults: skip=0, limit=10</td></tr>
+    <tr><td><code>/students?skip=2&amp;limit=2</code></td><td>Aman, Sneha</td><td>Skip 2, then take 2</td></tr>
+    <tr><td><code>/students?skip=0&amp;limit=3</code></td><td>Rahul, Priya, Aman</td><td>First 3 records</td></tr>
+    <tr><td><code>/students?skip=3&amp;limit=10</code></td><td>Sneha</td><td>Only 1 record left after skipping 3</td></tr>
+    <tr><td><code>/students?skip=10</code></td><td><code>[]</code></td><td>Skipped past the end of the list</td></tr>
+  </table></div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customer systems (CRMs, ticketing tools) almost always paginate their APIs, often with <code>offset</code>/<code>limit</code>, the same idea as <code>skip</code>/<code>limit</code>. When you pull their data, loop page by page until you get an empty list, instead of assuming one call returns everything.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="path-and-query">
+  <h2>Path and query together, and how to tell them apart</h2>
+  <p>Both kinds can appear in the same URL, for example “the courses of student 2, but only for semester 4”:</p>
+  <div class="anatomy"><span>/students/</span><span class="a1">2</span><span>/courses</span><span class="a3">?</span><span class="a2">semester=4</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Path</b> parameter <code>student_id</code>: inside <code>{ }</code> in the route, required.</p></div>
+    <div><span class="sw a2"></span><p><b>Query</b> parameter <code>semester</code>: not in the route, optional here.</p></div>
+  </div>
+  <figure class="shot">
+    <img src="img/51.webp" alt="Path and query together: /students/2/courses?semester=4. 2 is the path parameter (which student), semester=4 is the query parameter (how to show the courses). Path first, then ?, then query." width="1400" height="452">
+    <figcaption>Path first (<code>/students/2/courses</code>), then <code>?</code>, then the query (<code>semester=4</code>).</figcaption>
+  </figure>
+  <pre><code class="language-python">@app.get("/students/{student_id}/courses")
+def get_courses(
+    student_id: int,
+    semester: int | None = None
+):
+    return {
+        "student_id": student_id,
+        "semester": semester
+    }</code></pre>
+  <figure class="shot">
+    <img src="img/52.webp" alt="VS Code: get_courses with student_id path parameter and optional semester query parameter; terminal shows GET /students/2/courses?semester=4 and GET /students/2/courses, both 200 OK" width="1400" height="823">
+    <figcaption>Tested with and without <code>?semester=4</code>.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/53.webp" alt="Browser: /students/2/courses?semester=4 returns student_id 2, semester 4; /students/2/courses returns student_id 2, semester null" width="1400" height="314">
+    <figcaption>With the query: <code>"semester": 4</code>. Without it: <code>"semester": null</code>.</figcaption>
+  </figure>
+  <p>Without <code>?semester=4</code> the value is Python <code>None</code>, which appears as <code>null</code> in JSON.</p>
+  <h3>Path vs query, side by side</h3>
+  <figure class="shot">
+    <img src="img/54.webp" alt="Path parameter vs query parameter: path answers which resource, sits inside the path, is usually required and gives one item (/students/101, /products/500, /users/25); query answers how, comes after ?, is usually optional and gives a filtered, sorted or paged list (/students?course=BCA, /products?category=laptop, /students?skip=10&limit=5)" width="1400" height="688">
+    <figcaption>Shop example: <code>/products/500</code> = “show me product 500”. <code>/products?category=laptop</code> = “show me products, but only laptops”.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th></th><th>Path parameter</th><th>Query parameter</th></tr>
+    <tr><td>Question it answers</td><td>Which resource?</td><td>How do I want the resources?</td></tr>
+    <tr><td>Where in the URL</td><td>Inside the path: <code>/students/25</code></td><td>After <code>?</code>: <code>/students?course=BCA</code></td></tr>
+    <tr><td>Usually</td><td>Required</td><td>Optional</td></tr>
+    <tr><td>Returns</td><td>One specific item</td><td>A filtered / sorted / paged list</td></tr>
+    <tr><td>In FastAPI</td><td>Name inside <code>{ }</code> in the route</td><td>Function parameter not in the route</td></tr>
+  </table></div>
+  <h3>Practice: identify the parameter type</h3>
+  <p>Answer first, then open each one to check.</p>
+  <details class="qa"><summary><code>/students/25</code></summary><p>Path (25 = which student).</p></details>
+  <details class="qa"><summary><code>/students?course=BCA</code></summary><p>Query (filter by course).</p></details>
+  <details class="qa"><summary><code>/students/25/courses/4</code></summary><p>Two path parameters (student 25, course 4).</p></details>
+  <details class="qa"><summary><code>/students?course=BCA&amp;age=21</code></summary><p>Two query parameters (two filters).</p></details>
+  <details class="qa"><summary><code>/students?skip=10&amp;limit=20</code></summary><p>Two query parameters (pagination).</p></details>
+  <details class="qa"><summary><code>/students/25/courses?semester=4</code></summary><p>Path (25) + query (semester=4).</p></details>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="project">
+  <h2>Final project: Student Search API</h2>
+  <p>Build one API that uses everything from this note. Each student has <b>id, name, age, course, city, year</b>.</p>
+  <figure class="shot">
+    <img src="img/55.webp" alt="Student Search API: seven kinds of GET request (all students, one student by path, filter, multiple filters, pagination, combined search, path + query) handled by three functions: get_students, get_student and get_student_courses" width="1400" height="807">
+    <figcaption>Only 3 functions handle all 7 kinds of requests.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+students = [
+    {"id": 1, "name": "Rahul", "age": 21, "course": "BCA",
+     "city": "Bangalore", "year": 2},
+    {"id": 2, "name": "Priya", "age": 22, "course": "BTech",
+     "city": "Delhi", "year": 3},
+    {"id": 3, "name": "Aman", "age": 20, "course": "BCA",
+     "city": "Bangalore", "year": 1},
+    {"id": 4, "name": "Sneha", "age": 21, "course": "BTech",
+     "city": "Mumbai", "year": 2},
+    {"id": 5, "name": "Karan", "age": 22, "course": "BCA",
+     "city": "Bangalore", "year": 2},
+    {"id": 6, "name": "Neha", "age": 20, "course": "BCom",
+     "city": "Delhi", "year": 1},
+    {"id": 7, "name": "Arjun", "age": 23, "course": "BTech",
+     "city": "Bangalore", "year": 4},
+    {"id": 8, "name": "Pooja", "age": 21, "course": "BCA",
+     "city": "Mumbai", "year": 2}
+]
+
+courses = {
+    1: {4: ["Python", "DBMS", "Computer Networks"]},
+    5: {4: ["Java", "Operating Systems", "Web Development"]}
+}
+
+
+@app.get("/students")
+def get_students(
+    course: str | None = None,
+    city: str | None = None,
+    year: int | None = None,
+    skip: int = 0,
+    limit: int = 10
+):
+    result = students
+
+    if course:
+        result = [s for s in result if s["course"] == course]
+    if city:
+        result = [s for s in result if s["city"] == city]
+    if year:
+        result = [s for s in result if s["year"] == year]
+
+    return result[skip:skip + limit]
+
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    for student in students:
+        if student["id"] == student_id:
+            return student
+    return {"message": "Student not found"}
+
+
+@app.get("/students/{student_id}/courses")
+def get_student_courses(student_id: int, semester: int | None = None):
+    student_courses = courses.get(student_id, {})
+
+    if semester:
+        return {
+            "student_id": student_id,
+            "semester": semester,
+            "subjects": student_courses.get(semester, [])
+        }
+
+    return {"student_id": student_id, "courses": student_courses}</code></pre></div>
+  <h3>How it works</h3>
+  <ul>
+    <li><code>get_students()</code> handles every <code>/students?...</code> request. Each filter is optional and applied only if sent. Pagination (<code>skip</code>, <code>limit</code>) is applied <b>last</b>, on the filtered result.</li>
+    <li><code>get_student()</code> uses a path parameter to return one student.</li>
+    <li><code>get_student_courses()</code> combines a path parameter (<code>student_id</code>) with an optional query parameter (<code>semester</code>). <code>courses</code> is a small dictionary: student id → semester → list of subjects.</li>
+  </ul>
+  <h3>Run it</h3>
+  <pre><code class="language-bash">uvicorn app.main:app --reload</code></pre>
+  <figure class="shot">
+    <img src="img/56.webp" alt="VS Code: the full Student Search API in main.py (get_students, get_student, get_student_courses); terminal shows six test requests, all 200 OK" width="1400" height="1665">
+    <figcaption>The finished file, and every test request answered with 200 OK.</figcaption>
+  </figure>
+  <h3>Test the endpoints</h3>
+  <p>A specific student and multiple filters:</p>
+  <figure class="shot">
+    <img src="img/57.webp" alt="Browser: /students/3 returns Aman; /students?course=BCA&city=Bangalore returns Rahul, Aman and Karan" width="1400" height="827">
+    <figcaption><code>/students/3</code> → Aman. <code>?course=BCA&amp;city=Bangalore</code> → Rahul, Aman, Karan.</figcaption>
+  </figure>
+  <p>Combined search and path + query together:</p>
+  <figure class="shot">
+    <img src="img/58.webp" alt="Browser: /students?course=BCA&year=2&city=Bangalore... returns Rahul and Karan; /students/1/courses?semester=4 returns subjects Python, DBMS, Computer Networks" width="1400" height="640">
+    <figcaption>Combined search → Rahul, Karan. <code>/students/1/courses?semester=4</code> → three subjects.</figcaption>
+  </figure>
+  <p>When nothing matches:</p>
+  <figure class="shot">
+    <img src="img/59.webp" alt="Browser: /students/20 returns message Student not found; /students?city=Pune returns an empty list" width="1400" height="314">
+    <figcaption>An unknown id gives “Student not found”; a filter with no matches gives <code>[]</code>.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Request</th><th>Result</th></tr>
+    <tr><td><code>GET /students</code></td><td>All 8 students</td></tr>
+    <tr><td><code>GET /students/3</code></td><td>Aman</td></tr>
+    <tr><td><code>GET /students?course=BCA</code></td><td>Rahul, Aman, Karan, Pooja</td></tr>
+    <tr><td><code>GET /students?course=BCA&amp;city=Bangalore</code></td><td>Rahul, Aman, Karan</td></tr>
+    <tr><td><code>GET /students?skip=0&amp;limit=5</code></td><td>First 5 students</td></tr>
+    <tr><td><code>GET /students?course=BCA&amp;year=2&amp;city=Bangalore&amp;skip=0&amp;limit=5</code></td><td>Rahul, Karan</td></tr>
+    <tr><td><code>GET /students/1/courses?semester=4</code></td><td>Python, DBMS, Computer Networks</td></tr>
+    <tr><td><code>GET /students/20</code></td><td><code>{"message": "Student not found"}</code></td></tr>
+    <tr><td><code>GET /students?city=Pune</code></td><td><code>[]</code> (nothing matches)</td></tr>
+  </table></div>
+  <p>Without <code>?semester=</code>, the same route returns the whole dictionary for that student:</p>
+  <pre class="out"><code>GET /students/1/courses
+{"student_id": 1, "courses": {"4": ["Python", "DBMS", "Computer Networks"]}}</code></pre>
+  <p>Notice that the dictionary key <code>4</code> became the string <code>"4"</code>: JSON object keys are always strings.</p>
+  <h3>Final challenge</h3>
+  <p>Without looking at the notes, build this API yourself, then explain with real requests:</p>
+  <div class="two">
+    <div class="flow v"><span class="hl">Path parameter</span><span>identifies a specific resource</span><span class="op">/students/3</span></div>
+    <div class="flow v"><span class="hl">Query parameter</span><span>filters / searches / paginates</span><span class="op">/students?course=BCA&amp;limit=5</span></div>
+  </div>
+  <h3>Try it yourself</h3>
+  <ul>
+    <li>Add an <code>age</code> filter to <code>get_students()</code> and test <code>/students?course=BTech&amp;age=21</code>.</li>
+    <li>Add a fixed route <code>GET /students/count</code> that returns the total number of students. Where must you place it, and why?</li>
+    <li>Visit <code>/students?year=two</code>. Which error do you get, and what does <code>loc</code> tell you?</li>
+    <li>Show page 2 of all students with 3 per page. What are <code>skip</code> and <code>limit</code>?</li>
+  </ul>
+  <details class="qa"><summary>Check your answers</summary>
+  <p><b>/students/count</b> must go <b>above</b> <code>/students/{student_id}</code>, or <code>count</code> is caught by the dynamic route and fails int conversion (422). <b>?year=two</b> gives 422 with <code>"loc": ["query", "year"]</code>: the bad value is in the query string, in the <code>year</code> parameter. <b>Page 2, 3 per page</b>: <code>skip=3&amp;limit=3</code> (Sneha, Karan, Neha).</p>
+  </details>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="mistakes">
+  <h2>Common mistakes and quick revision</h2>
+  <div class="tbl"><table>
+    <tr><th>What you see</th><th>Why it happens</th><th>Fix</th></tr>
+    <tr><td>Always “Student not found”</td><td>No type hint, so the id stays text (<code>"2" != 2</code>)</td><td>Write <code>student_id: int</code></td></tr>
+    <tr><td>422 with <code>"loc": ["path", ...]</code></td><td>The URL value cannot be converted (e.g. <code>abc</code>)</td><td>Send a value of the correct type</td></tr>
+    <tr><td>422 with <code>"msg": "Field required"</code></td><td>A required query parameter is missing</td><td>Send it, or give it a default (<code>= None</code>)</td></tr>
+    <tr><td><code>/students/me</code> gives a 422</td><td>The dynamic route is written above the fixed route</td><td>Move <code>/students/me</code> above <code>/students/{student_id}</code></td></tr>
+    <tr><td>Filter returns <code>[]</code></td><td>Case or spelling differs (<code>bca</code> vs <code>BCA</code>)</td><td>Send the exact value</td></tr>
+    <tr><td>Second parameter ignored</td><td>Used <code>?</code> twice: <code>?course=BCA?age=21</code></td><td>Use <code>&amp;</code>: <code>?course=BCA&amp;age=21</code></td></tr>
+    <tr><td>Path value not received</td><td>Name in <code>{ }</code> differs from the function parameter</td><td>Use the same name in both places</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong>That “second parameter ignored” bug</strong> In <code>?course=BCA?age=21</code> there is only one pair: key <code>course</code>, value <code>BCA?age=21</code>. Nothing matches that course, so you get <code>[]</code> and no error. Only the <b>first</b> <code>?</code> is special.</div>
+  <h3>Quick revision</h3>
+  <div class="tbl"><table>
+    <tr><th>Code / URL</th><th>Meaning</th></tr>
+    <tr><td><code>@app.get("/students/{student_id}")</code></td><td>Route with a path parameter</td></tr>
+    <tr><td><code>student_id: int</code></td><td>Convert to int and validate</td></tr>
+    <tr><td><code>/students/2/courses/5</code></td><td>Two path parameters</td></tr>
+    <tr><td><code>def f(course: str)</code></td><td>Required query parameter</td></tr>
+    <tr><td><code>course: str | None = None</code></td><td>Optional query parameter</td></tr>
+    <tr><td><code>limit: int = 10</code></td><td>Query parameter with a default value</td></tr>
+    <tr><td><code>/students?course=BCA&amp;age=21</code></td><td>Two query parameters joined with <code>&amp;</code></td></tr>
+    <tr><td><code>students[skip:skip + limit]</code></td><td>Pagination with list slicing</td></tr>
+    <tr><td><code>/students/2/courses?semester=4</code></td><td>Path + query together</td></tr>
+    <tr><td><code>422 Unprocessable Content</code></td><td>The data sent in the request is invalid</td></tr>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Static route</dt><dd>A route with a completely fixed path that matches only one exact URL, such as <code>/about</code>.</dd></div>
+    <div><dt>Dynamic route</dt><dd>A route whose path has a fixed part plus one or more <code>{placeholders}</code>, so one function can serve many URLs.</dd></div>
+    <div><dt>Path parameter</dt><dd>A value taken from a <code>{placeholder}</code> inside the URL path, used to identify one specific resource, e.g. 2 in <code>/students/2</code>.</dd></div>
+    <div><dt>Query parameter</dt><dd>A <code>key=value</code> pair after the <code>?</code> in a URL, used to filter, search, sort or paginate; in FastAPI, any simple-typed function parameter not named in the route.</dd></div>
+    <div><dt>Query string</dt><dd>The part of a URL after <code>?</code>, holding query parameters joined by <code>&amp;</code>.</dd></div>
+    <div><dt>Type conversion</dt><dd>FastAPI turning text from the URL into the declared type, such as <code>"2"</code> into the integer 2, based on the type hint.</dd></div>
+    <div><dt>422 Unprocessable Content</dt><dd>The status FastAPI returns when request data is missing or cannot be converted to the declared type; the body lists each problem with its <code>loc</code>.</dd></div>
+    <div><dt>loc</dt><dd>The field in a 422 error that says where the bad value was, such as <code>["path", "student_id"]</code> or <code>["query", "course"]</code>.</dd></div>
+    <div><dt>Route order</dt><dd>FastAPI checks routes top to bottom and uses the first match, so fixed paths must come before dynamic paths that could also match them.</dd></div>
+    <div><dt>Pagination</dt><dd>Returning a large list one page at a time, typically with <code>skip</code> (records to jump over) and <code>limit</code> (records to return).</dd></div>
+  </dl>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>The route is <code>/students/{student_id}</code> but the function is <code>def get_student(student_id):</code> with no type hint. <code>/students/2</code> returns “Student not found”. Why?</p>
+      <ol><li>The route is static</li><li>FastAPI drops untyped parameters</li><li><code>student_id</code> is the string <code>"2"</code>, and <code>"2" == 2</code> is False</li><li>Priya’s id is a string</li></ol>
+      <p class="why">URL values are text. Without <code>: int</code> nothing converts it, so the comparison with the integer id fails.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>/students/abc</code> return when <code>student_id: int</code>?</p>
+      <ol><li>422 with <code>loc: ["path", "student_id"]</code></li><li>404 Not Found</li><li>200 with “Student not found”</li><li>500 Internal Server Error</li></ol>
+      <p class="why">FastAPI validates before your function runs; “abc” cannot become an int, so it answers 422 and points at the path parameter.</p></div>
+    <div class="q" data-answer="4"><p>In <code>def get_students(course: str):</code> on route <code>/students</code>, what kind of parameter is <code>course</code>?</p>
+      <ol><li>Path parameter</li><li>Request body</li><li>Header</li><li>Required query parameter</li></ol>
+      <p class="why">It is not in the route’s <code>{ }</code> and has a simple type, so it is a query parameter. No default makes it required.</p></div>
+    <div class="q" data-answer="2"><p><code>/students/me</code> is defined <b>below</b> <code>/students/{student_id}</code> (int). What happens on <code>GET /students/me</code>?</p>
+      <ol><li>The <code>/students/me</code> route runs</li><li>422, because the dynamic route caught “me”</li><li>404 Not Found</li><li>Both routes run</li></ol>
+      <p class="why">Routes are checked top to bottom; “me” fits <code>{student_id}</code> first, then fails int conversion.</p></div>
+    <div class="q" data-answer="3"><p>With 4 students, what does <code>/students?skip=3&amp;limit=10</code> return?</p>
+      <ol><li>Nothing, an error</li><li>All 4 students</li><li>Only Sneha</li><li>The first 3 students</li></ol>
+      <p class="why"><code>students[3:13]</code> returns whatever exists from index 3 on: just the last student.</p></div>
+    <div class="q" data-answer="1"><p>How do you make a query parameter optional?</p>
+      <ol><li>Give it a default, e.g. <code>course: str | None = None</code></li><li>Write it as <code>Optional</code> with no default</li><li>Put it in <code>{ }</code> in the route</li><li>Name it starting with an underscore</li></ol>
+      <p class="why">A default value is what makes a parameter optional; <code>| None</code> just allows the value None.</p></div>
+    <div class="q" data-answer="4"><p>A client sends <code>/students?course=BCA?age=21</code>. What happens?</p>
+      <ol><li>Both filters apply</li><li>Only the age filter applies</li><li>422 error</li><li>One pair, <code>course="BCA?age=21"</code>, so nothing matches</li></ol>
+      <p class="why">Only the first <code>?</code> starts the query string; pairs must be joined with <code>&amp;</code>.</p></div>
+    <div class="q" data-answer="2"><p>Which URL is best for “page 2 of BCA students, 5 per page”?</p>
+      <ol><li><code>/students/BCA/2/5</code></li><li><code>/students?course=BCA&amp;skip=5&amp;limit=5</code></li><li><code>/students?course=BCA&amp;skip=2&amp;limit=5</code></li><li><code>/students/2?course=BCA</code></li></ol>
+      <p class="why">Filtering and paging a list are “how” questions, so they belong in the query; page 2 skips the first 5.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <figure class="shot">
+    <img src="img/60.webp" alt="What you can do now: explain why APIs need parameters, turn static routes into a dynamic route, create path parameters, use type hints to convert and validate, read a 422 error, use multiple path parameters, put fixed routes first, create query parameters, make parameters optional or give defaults, filter with multiple query parameters, paginate with skip and limit, combine path and query parameters" width="1400" height="622">
+    <figcaption>The final outcome: everything you can now do.</figcaption>
+  </figure>
+  <p class="final">A <b>path parameter</b> (<code>/students/2</code>) says <b>which</b> resource, a <b>query parameter</b> (<code>?course=BCA&amp;limit=5</code>) says <b>how</b> you want the resources, and FastAPI uses your <b>type hints</b> to convert both and reject bad input with a <b>422</b>.</p>
+  <p>Next up: that wraps up Python Advanced &amp; FastAPI. Continue with LLM Engineering, where the APIs you can now build start talking to large language models.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

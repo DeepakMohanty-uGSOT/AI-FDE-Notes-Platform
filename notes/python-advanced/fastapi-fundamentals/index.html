@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FastAPI Fundamentals, Setup &amp; Project Structure · Python Advanced &amp; FastAPI | AIFDE Notes</title>
+<meta name="description" content="Build and run your first FastAPI app: virtual environment, installing FastAPI and Uvicorn, the app instance, routes, JSON responses, 404s, Uvicorn options, an app package, requirements.txt and a small Student API.">
+<meta name="keywords" content="FastAPI, Uvicorn, routes, app instance, --reload, project structure, requirements.txt, Student API">
+<meta name="date" content="2026-10-06">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-advanced/fastapi-fundamentals">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>FastAPI Fundamentals, Setup &amp; Project Structure</h1>
+  <p class="byline">Build your first API server in Python: set up the project, write a route, run it with Uvicorn, see the JSON in your browser, and organise it the way real projects are organised.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what-is">
+  <h2>What is FastAPI?</h2>
+  <div class="story"><b class="lbl">The restaurant, from the kitchen side</b>In API Basics you were the customer placing orders. Now you run the restaurant. Uvicorn is the front door that is always open, FastAPI is the head waiter who reads each order and hands it to the right cook, and your Python functions are the cooks. <mark>FastAPI lets you build an API by writing normal Python functions; it handles the web plumbing for you.</mark></div>
+  <p><b>FastAPI</b> is a Python framework for building <b>APIs</b>, the way one program asks another for data. When a mobile app shows your profile, it asks an API “give me this user’s details”, and the API sends them back.</p>
+  <p><b>What problem does it solve?</b> Writing an API from scratch means handling web requests, reading URLs, converting data and handling errors yourself. FastAPI does all of that. You write ordinary functions.</p>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Frontend</h4><p>What the user sees: buttons, pages, screens.</p></div>
+    <div class="card t3 tilt-b"><h4>Backend</h4><p>The hidden part that stores data and does the work. <b>FastAPI builds the backend.</b></p></div>
+  </div>
+  <h3>How a FastAPI application works</h3>
+  <p>Every time someone uses your API, the same round trip happens:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Client sends a request</b>a browser or app asks, e.g. “give me the home page data”.</div></li>
+    <li><span class="dot">2</span><div><b>FastAPI reads the request</b>and finds the Python function that should handle it.</div></li>
+    <li><span class="dot">3</span><div><b>Your function runs</b>and returns some ordinary Python data.</div></li>
+    <li><span class="dot">4</span><div><b>FastAPI converts it to JSON</b>and sends it back as the response.</div></li>
+  </ol>
+  <p>Everything in this note is this one flow, built step by step:</p>
+  <div class="flow"><span>What is FastAPI</span><span>Project folder</span><span>venv</span><span>Install</span><span class="op">main.py</span><span>Route</span><span>Run</span><span>Test</span><span>Organise</span><span class="ok">Student API</span></div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="setup">
+  <h2>Setting up the project</h2>
+  <h3>Create the project folder</h3>
+  <p>Open the terminal in VS Code (<b>Terminal → New Terminal</b>) and run:</p>
+  <pre><code class="language-bash">mkdir fastapi-project
+cd fastapi-project</code></pre>
+  <ul>
+    <li><code>mkdir</code> = <b>make directory</b>: creates a new folder.</li>
+    <li><code>cd</code> = <b>change directory</b>: moves you inside it.</li>
+  </ul>
+  <p><code>fastapi-project/</code> is the <b>workspace</b> for the application; all files live here. Open it in VS Code with <b>File → Open Folder → fastapi-project</b> so the Explorer shows only your project.</p>
+  <h3>Create and activate a virtual environment</h3>
+  <p>As you saw in Python Project Development, a <b>virtual environment</b> is a private Python just for this project; packages installed here stay here.</p>
+  <pre><code class="language-bash">python -m venv venv</code></pre>
+  <ul>
+    <li><code>python -m venv</code> runs Python’s built-in <b>venv</b> tool.</li>
+    <li>The last <code>venv</code> is the <b>name</b> of the folder it creates (any name works; <code>venv</code> and <code>.venv</code> are both common).</li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th>Operating system</th><th>Activate</th></tr>
+    <tr><td>Windows</td><td><code>venv\Scripts\activate</code></td></tr>
+    <tr><td>Linux / macOS</td><td><code>source venv/bin/activate</code></td></tr>
+  </table></div>
+  <p><b>How do you know it worked?</b> <code>(venv)</code> appears at the start of the prompt:</p>
+  <pre class="out"><code>Before:  PS C:\Kumar_All_Data\fastapi-project&gt;
+After:   (venv) PS C:\Kumar_All_Data\fastapi-project&gt;</code></pre>
+  <div class="sticky warn"><strong>“running scripts is disabled on this system”?</strong> On Windows PowerShell, run this once, then activate again: <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></div>
+  <div class="sticky tip l"><strong>Why the venv first?</strong> So FastAPI is installed <b>inside this project</b>, not on the whole computer. Always activate the venv before installing packages or running the app.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="install">
+  <h2>Installing FastAPI and Uvicorn</h2>
+  <p>You need two packages. Install them one at a time, or together:</p>
+  <pre><code class="language-bash">pip install fastapi
+pip install uvicorn
+
+# or both at once
+pip install fastapi uvicorn</code></pre>
+  <p>pip also installs helper packages FastAPI depends on, such as <code>starlette</code> (the web toolkit underneath) and <code>pydantic</code> (data validation). That is normal.</p>
+  <div class="tbl"><table>
+    <tr><th>Package</th><th>Job</th><th>Simple meaning</th></tr>
+    <tr><td><b>FastAPI</b></td><td>Helps you <b>build</b> the API</td><td>Where you write routes and functions</td></tr>
+    <tr><td><b>Uvicorn</b></td><td><b>Runs</b> the FastAPI application</td><td>A server that waits for requests and passes them to FastAPI</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 215" role="img" aria-label="Uvicorn is the outer server listening on 127.0.0.1 port 8000; inside it sits the FastAPI app, which holds the routes and their functions">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="20" width="480" height="180" rx="16"/>
+        <rect class="box f-blue" x="150" y="95" width="330" height="90" rx="12"/>
+        <path class="lr" d="M36 145 L 143 145" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="40" y="56">Uvicorn</text>
+      <text class="ts" x="40" y="80">the server · listens on 127.0.0.1:8000</text>
+      <text class="ts" x="44" y="134">request</text>
+      <text class="t" x="168" y="120">FastAPI app</text>
+      <text class="tm" x="168" y="148">@app.get("/") → home()</text>
+      <text class="tm" x="168" y="172">@app.get("/about") → about()</text>
+    </svg></div>
+    <figcaption>Uvicorn is the door that is always open; FastAPI decides which of your functions handles each request.</figcaption>
+  </figure>
+  <h3>Verify the installation</h3>
+  <pre><code class="language-bash">pip list</code></pre>
+  <p>If <b>fastapi</b> and <b>uvicorn</b> appear in the list (alongside helpers like starlette and pydantic), you are ready to write code.</p>
+  <div class="sticky info l"><strong>Good to know</strong> FastAPI’s own docs also suggest <code>pip install "fastapi[standard]"</code>, which installs FastAPI <b>with</b> Uvicorn and a few extras in one go. Installing the two packages separately, as above, works just as well.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="first-app">
+  <h2>Your first FastAPI application</h2>
+  <p>Create a file named <code>main.py</code> inside the project folder:</p>
+  <pre><code class="language-plaintext">fastapi-project/
+│
+├── venv/
+│
+└── main.py</code></pre>
+  <p>Start with the smallest possible FastAPI application:</p>
+  <div class="codebox"><span class="cap">main.py</span><pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()</code></pre></div>
+  <p>Running <code>python main.py</code> prints <b>nothing</b>, and that’s expected. You have <b>created</b> the app, but nobody is <b>running</b> it as a server yet. That comes in a moment.</p>
+  <h3>Understand the code</h3>
+  <ul>
+    <li><code>from fastapi import FastAPI</code> brings the <code>FastAPI</code> class from the <code>fastapi</code> package into your file.</li>
+    <li><code>app = FastAPI()</code> creates the <b>application instance</b> and stores it in a variable named <code>app</code>.</li>
+  </ul>
+  <div class="sticky info"><strong>What is an application instance?</strong> <code>FastAPI</code> is like a blueprint. <code>FastAPI()</code> builds one real application from that blueprint, and <code>app</code> is that application. It will hold all your routes and settings.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="first-route">
+  <h2>Your first route</h2>
+  <p>A <b>route</b> connects a URL path (like <code>/</code>) to a Python function. <mark>When someone visits that path, the function runs and its return value becomes the response.</mark> Add these lines below <code>app = FastAPI()</code>:</p>
+  <div class="codebox"><span class="cap">main.py (complete)</span><pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Hello FastAPI"}</code></pre></div>
+  <h3>Parts of the route</h3>
+  <div class="anatomy"><span class="a1">@app</span><span class="a2">.get</span><span class="a3">("/")</span><span class="a7"> def </span><span class="a4">home()</span><span class="a7">: return </span><span class="a5">{"message": "Hello FastAPI"}</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>@app</code>: a decorator that registers the function with your application</p></div>
+    <div><span class="sw a2"></span><p><code>.get</code>: the HTTP method this route answers (GET)</p></div>
+    <div><span class="sw a3"></span><p><code>("/")</code>: the URL path (here, the home page)</p></div>
+    <div><span class="sw a4"></span><p><code>home()</code>: the function that runs for this path (any name you like)</p></div>
+    <div><span class="sw a5"></span><p>the returned dictionary, which FastAPI sends back as JSON</p></div>
+  </div>
+  <div class="flow"><span class="op">GET /</span><span>FastAPI finds the route</span><span class="op">home()</span><span>returns a dict</span><span class="ok">JSON response</span></div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="run">
+  <h2>Running the app with Uvicorn</h2>
+  <p>Make sure the venv is active, then ask <b>Uvicorn</b> to run your app:</p>
+  <pre><code class="language-bash">uvicorn main:app --reload</code></pre>
+  <pre class="out"><code>INFO:     Will watch for changes in these directories: ['C:\\Kumar_All_Data\\fastapi-project']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [12345] using WatchFiles
+INFO:     Started server process [12346]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.</code></pre>
+  <p>The important line is <b>Uvicorn running on http://127.0.0.1:8000</b>. Your API is live on your own computer.</p>
+  <h3>Understand the command</h3>
+  <div class="anatomy"><span class="a6">uvicorn </span><span class="a1">main</span><span class="a3">:</span><span class="a2">app</span><span class="a4"> --reload</span></div>
+  <div class="legend">
+    <div><span class="sw a6"></span><p><code>uvicorn</code>: start the server</p></div>
+    <div><span class="sw a1"></span><p><code>main</code>: the file <code>main.py</code> (without <code>.py</code>)</p></div>
+    <div><span class="sw a2"></span><p><code>app</code>: the variable inside it, <code>app = FastAPI()</code></p></div>
+    <div><span class="sw a4"></span><p><code>--reload</code>: restart automatically when you save a change</p></div>
+  </div>
+  <p>So <code>uvicorn main:app</code> reads as: <i>run the <code>app</code> object from the <code>main.py</code> file using Uvicorn</i>.</p>
+  <div class="notes"><div class="note"><b>127.0.0.1</b>this computer (localhost)</div><div class="note"><b>8000</b>the port</div><div class="note"><b>Ctrl+C</b>stop the server</div></div>
+  <ul>
+    <li><code>127.0.0.1</code> means <b>this computer</b>, also called <b>localhost</b>.</li>
+    <li><code>8000</code> is the <b>port</b>: like a door number on your computer where the server listens.</li>
+    <li>To stop the server, click in the terminal and press <kbd>Ctrl</kbd> + <kbd>C</kbd>.</li>
+  </ul>
+  <div class="sticky warn"><strong>Keep this terminal open</strong> while you test. Close it and the server stops, so the browser can no longer reach your API.</div>
+  <div class="sticky warn l"><strong>--reload is for development only</strong> It watches your files and restarts on every save. On a production server you run Uvicorn without it.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="test">
+  <h2>Testing your first API</h2>
+  <p>Open your browser at:</p>
+  <pre><code class="language-plaintext">http://127.0.0.1:8000/</code></pre>
+  <pre class="out"><code>{"message":"Hello FastAPI"}</code></pre>
+  <p>(Some browsers show it neatly formatted, with each key on its own line.) Now look at the terminal. Uvicorn logs one line for every request:</p>
+  <pre class="out"><code>INFO:     127.0.0.1:52344 - "GET / HTTP/1.1" 200 OK</code></pre>
+  <p><code>"GET / HTTP/1.1" 200 OK</code> means: someone asked for <code>/</code> using <b>GET</b>, and the server answered successfully (<b>200 OK</b>).</p>
+  <h3>The complete journey</h3>
+  <p>This is the most important picture of the note: everything that happened when you pressed Enter.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 252" role="img" aria-label="The browser sends GET / to Uvicorn on port 8000, Uvicorn passes it to the FastAPI app, which finds the route and calls home(); home returns a dictionary which travels back to the browser as a JSON response with 200 OK">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="50" width="140" height="95" rx="14"/>
+        <rect class="box f-grey" x="200" y="50" width="140" height="95" rx="14"/>
+        <rect class="box f-yellow" x="380" y="50" width="140" height="95" rx="14"/>
+        <rect class="box f-green" x="560" y="50" width="140" height="95" rx="14"/>
+        <path class="lr" d="M164 97 L 193 97" marker-end="url(#ahr)"/>
+        <path class="lr" d="M344 97 L 373 97" marker-end="url(#ahr)"/>
+        <path class="lr" d="M524 97 L 553 97" marker-end="url(#ahr)"/>
+        <path class="lb" d="M630 151 C 630 222, 90 222, 90 157" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tr" x="360" y="32" text-anchor="middle">request: GET /</text>
+      <text class="th" x="90" y="98" text-anchor="middle">Browser</text>
+      <text class="ts" x="90" y="124" text-anchor="middle">the client</text>
+      <text class="th" x="270" y="98" text-anchor="middle">Uvicorn</text>
+      <text class="ts" x="270" y="124" text-anchor="middle">port 8000</text>
+      <text class="t" x="450" y="94" text-anchor="middle">FastAPI app</text>
+      <text class="ts" x="450" y="120" text-anchor="middle">finds the route</text>
+      <text class="tm" x="630" y="94" text-anchor="middle">home()</text>
+      <text class="ts" x="630" y="120" text-anchor="middle">returns a dict</text>
+      <text class="tm" x="360" y="238" text-anchor="middle">{"message": "Hello FastAPI"} · 200 OK</text>
+      <text class="tb" x="360" y="180" text-anchor="middle">dict → JSON response</text>
+    </svg></div>
+    <figcaption>Browser → Uvicorn → FastAPI → your function, and the return value comes all the way back as JSON.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Free bonus: /docs</strong> Visit <code>http://127.0.0.1:8000/docs</code>. FastAPI generates interactive documentation for every route automatically, and you can try each one from there.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="app-instance">
+  <h2>The application instance, and more routes</h2>
+  <p><code>app</code> is <b>your whole API in one object</b>. Uvicorn runs it, and every route is stored inside it.</p>
+  <p>Routes are <b>registered</b> (added) to the application through <code>app</code>: <code>@app.get("/")</code> means “add this route to <code>app</code>”. Without <code>app</code>, the route has nowhere to go and Uvicorn has nothing to run.</p>
+  <p>Add two more routes to <code>main.py</code>:</p>
+  <pre><code class="language-python">@app.get("/about")
+def about():
+    return {"message": "About Page"}
+
+@app.get("/contact")
+def contact():
+    return {"message": "Contact Page"}</code></pre>
+  <p>Save the file. Because of <code>--reload</code>, Uvicorn restarts by itself. Test all three paths:</p>
+  <div class="tbl"><table>
+    <tr><th>URL</th><th>Response</th></tr>
+    <tr><td><code>http://127.0.0.1:8000/</code></td><td><code>{"message":"Hello FastAPI"}</code></td></tr>
+    <tr><td><code>http://127.0.0.1:8000/about</code></td><td><code>{"message":"About Page"}</code></td></tr>
+    <tr><td><code>http://127.0.0.1:8000/contact</code></td><td><code>{"message":"Contact Page"}</code></td></tr>
+  </table></div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="responses">
+  <h2>Exploring responses and 404s</h2>
+  <p>Change what <code>home()</code> returns, save, and refresh the browser each time.</p>
+  <div class="tbl"><table>
+    <tr><th>You return</th><th>Browser shows</th><th>What happened</th></tr>
+    <tr><td><code>return "Hello"</code></td><td><code>"Hello"</code></td><td>The text is sent as a <b>JSON string</b>, so it keeps its quotes.</td></tr>
+    <tr><td><code>return {"message": "Hello"}</code></td><td><code>{"message":"Hello"}</code></td><td>A dictionary becomes a <b>JSON object</b>. The most common response.</td></tr>
+    <tr><td><code>return {"name": "Rahul", "age": 21, "course": "BCA"}</code></td><td><code>{"name":"Rahul","age":21,"course":"BCA"}</code></td><td>Many values go in <b>one dictionary</b>. <code>21</code> stays a number; text gets quotes.</td></tr>
+  </table></div>
+  <pre><code class="language-python">@app.get("/")
+def home():
+    return {
+        "name": "Rahul",
+        "age": 21,
+        "course": "BCA"
+    }</code></pre>
+  <h3>How Python data becomes JSON</h3>
+  <div class="tbl"><table>
+    <tr><th>Python</th><th>JSON</th></tr>
+    <tr><td><code>str</code> <code>"Hello"</code></td><td>string <code>"Hello"</code></td></tr>
+    <tr><td><code>int</code> / <code>float</code> <code>21</code></td><td>number <code>21</code></td></tr>
+    <tr><td><code>True</code> / <code>False</code></td><td><code>true</code> / <code>false</code></td></tr>
+    <tr><td><code>None</code></td><td><code>null</code></td></tr>
+    <tr><td><code>list</code> <code>["a", "b"]</code></td><td>array <code>["a","b"]</code></td></tr>
+    <tr><td><code>dict</code> <code>{"k": 1}</code></td><td>object <code>{"k":1}</code></td></tr>
+  </table></div>
+  <div class="sticky tip l"><strong>You never convert to JSON yourself</strong> Return normal Python data (string, number, list, dictionary) and FastAPI does the conversion.</div>
+  <h3>Invalid routes: 404</h3>
+  <p>Visit a path that doesn’t exist:</p>
+  <pre><code class="language-plaintext">http://127.0.0.1:8000/hello</code></pre>
+  <pre class="out"><code>{"detail":"Not Found"}</code></pre>
+  <pre class="out"><code>INFO:     127.0.0.1:52344 - "GET /hello HTTP/1.1" 404 Not Found</code></pre>
+  <p>You never wrote <code>@app.get("/hello")</code>. FastAPI checks its route list, doesn’t find <code>/hello</code>, and replies with <b>404 Not Found</b>.</p>
+  <div class="sticky warn"><strong>Paths must match exactly</strong> <code>/About</code> (capital A) and <code>/about</code> are different paths. One small typo gives you a 404.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="uvicorn-options">
+  <h2>Uvicorn options: port and reload</h2>
+  <h3>Change the port</h3>
+  <p>Uvicorn uses port <b>8000</b> by default. Stop the server (<kbd>Ctrl</kbd> + <kbd>C</kbd>), then:</p>
+  <pre><code class="language-bash">uvicorn main:app --reload --port 8080</code></pre>
+  <pre class="out"><code>INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)</code></pre>
+  <p>Now open <code>http://127.0.0.1:8080/</code>. A different port is useful when 8000 is already taken by another program, or when you want to run two apps at once.</p>
+  <div class="sticky warn"><strong>Port already in use</strong> On Windows, <code>[Errno 10048] ... only one usage of each socket address ... is normally permitted</code> means another program is already using that port. (On Linux/macOS it reads <code>[Errno 98] Address already in use</code>.) Pick a different port.</div>
+  <h3>Watch --reload work</h3>
+  <p>Go back to port 8000 (<code>uvicorn main:app --reload</code>) and change the message in <code>home()</code>:</p>
+  <pre><code class="language-python">return {"message": "Hello FastAPI"}      # before
+return {"message": "Welcome to FastAPI"} # after</code></pre>
+  <p>Save (<kbd>Ctrl</kbd> + <kbd>S</kbd>) and watch the terminal. Uvicorn notices the change and restarts <b>by itself</b>:</p>
+  <pre class="out"><code>WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Started server process [12400]
+INFO:     Application startup complete.</code></pre>
+  <p>Refresh the browser and <code>{"message":"Welcome to FastAPI"}</code> appears.</p>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="structure">
+  <h2>Basic project structure</h2>
+  <p>So far everything lives in one file. Perfect for learning, but real applications have dozens of routes (users, products, orders, payments…). In one <code>main.py</code> the file becomes long and hard to manage, so <mark>we split the code into folders</mark>.</p>
+  <div class="codebox"><span class="cap">a common beginner-friendly structure</span><pre><code class="language-plaintext">fastapi-project/
+│
+├── app/                  → the application package
+│   ├── __init__.py       → marks app/ as a Python package (can be empty)
+│   ├── main.py           → creates app = FastAPI()
+│   │
+│   └── routes/           → route files, grouped by topic (later module)
+│       └── users.py
+│
+└── requirements.txt      → the package list</code></pre></div>
+  <p>For now, only understand <b>why</b> each item is there. You will put code in <code>routes/</code> in a later note.</p>
+  <h3>Move the application into the app package</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a folder</b>named <code>app</code> inside <code>fastapi-project</code>.</div></li>
+    <li><span class="dot">2</span><div><b>Add an empty <code>__init__.py</code></b>inside <code>app</code>.</div></li>
+    <li><span class="dot">3</span><div><b>Move <code>main.py</code></b>into <code>app</code>, so it becomes <code>app/main.py</code>. Its code stays exactly the same.</div></li>
+    <li><span class="dot">4</span><div><b>(Optional)</b>create <code>app/routes/users.py</code> and leave it empty for now.</div></li>
+  </ol>
+  <p>Now run the old command:</p>
+  <pre><code class="language-bash">uvicorn main:app --reload</code></pre>
+  <pre class="out"><code>ERROR:    Error loading ASGI app. Could not import module "main".</code></pre>
+  <p>Uvicorn looks for <code>main.py</code> in the project folder, but it moved into <code>app/</code>. Tell Uvicorn the new location:</p>
+  <pre><code class="language-bash">uvicorn app.main:app --reload</code></pre>
+  <p>The app runs again and <code>http://127.0.0.1:8000/</code> shows the same response.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Reading app.main:app: app is the package folder, main is the module main.py inside it, and the app after the colon is the variable app = FastAPI() inside that file">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="80" width="200" height="80" rx="14"/>
+        <rect class="box f-blue" x="260" y="80" width="200" height="80" rx="14"/>
+        <rect class="box f-green" x="500" y="80" width="200" height="80" rx="14"/>
+        <path class="ln" d="M224 120 L 253 120" marker-end="url(#ah)"/>
+        <path class="ln" d="M464 120 L 493 120" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="360" y="28" text-anchor="middle">uvicorn app.main:app --reload</text>
+      <text class="tr" x="120" y="66" text-anchor="middle">app.</text>
+      <text class="tr" x="360" y="66" text-anchor="middle">main</text>
+      <text class="tr" x="600" y="66" text-anchor="middle">:app</text>
+      <text class="th" x="120" y="118" text-anchor="middle">app/</text>
+      <text class="ts" x="120" y="144" text-anchor="middle">the package folder</text>
+      <text class="th" x="360" y="118" text-anchor="middle">main.py</text>
+      <text class="ts" x="360" y="144" text-anchor="middle">the module (file)</text>
+      <text class="tm" x="600" y="116" text-anchor="middle">app = FastAPI()</text>
+      <text class="ts" x="600" y="144" text-anchor="middle">the variable inside</text>
+      <text class="ts" x="360" y="188" text-anchor="middle">dots walk into folders · the colon picks the variable</text>
+    </svg></div>
+    <figcaption>Before the colon is a Python import path (<code>app/main.py</code> → <code>app.main</code>); after it is the object to run.</figcaption>
+  </figure>
+  <div class="sticky tip"><strong>Run from the project folder</strong> Always start Uvicorn from <code>fastapi-project</code>, not from inside <code>app</code>. The import path <code>app.main</code> only makes sense from there.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="requirements">
+  <h2>requirements.txt</h2>
+  <p>Your friend wants to run your project. How will they know which packages to install? You list them in <b>requirements.txt</b>:</p>
+  <pre><code class="language-bash">pip freeze &gt; requirements.txt</code></pre>
+  <ul>
+    <li><code>pip freeze</code> lists every package installed in the venv with its exact version.</li>
+    <li><code>&gt;</code> saves that list into a file instead of printing it.</li>
+  </ul>
+  <div class="codebox"><span class="cap">requirements.txt (part of it; your versions will differ)</span><pre><code class="language-plaintext">annotated-types==0.7.0
+anyio==4.6.2
+fastapi==0.115.6
+pydantic==2.10.3
+starlette==0.41.3
+uvicorn==0.32.1
+...</code></pre></div>
+  <p>Each line has the form <code>package==version</code>. On a new computer (or a new venv), one command installs everything:</p>
+  <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
+  <p><code>-r</code> means <b>read the package names from this file</b>.</p>
+  <div class="sticky tip l"><strong>Keep it fresh</strong> Run <code>pip freeze &gt; requirements.txt</code> again whenever you install a new package.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When you hand an API to a customer’s team or deploy it on their server, “clone, create venv, <code>pip install -r requirements.txt</code>, <code>uvicorn app.main:app</code>” should be the entire setup. If it needs more, write it in the README.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="student-api">
+  <h2>Final project: a Student API</h2>
+  <p>Build a complete small project <b>on your own</b>, from an empty folder. Final structure:</p>
+  <pre><code class="language-plaintext">fastapi-project/
+│
+├── app/
+│   ├── __init__.py
+│   └── main.py
+│
+├── venv/
+│
+└── requirements.txt</code></pre>
+  <p>The API must have these four routes:</p>
+  <div class="tbl"><table>
+    <tr><th>Route</th><th>What it returns</th></tr>
+    <tr><td><code>GET /</code></td><td>A welcome message</td></tr>
+    <tr><td><code>GET /student</code></td><td>Full student details: name, course, skills</td></tr>
+    <tr><td><code>GET /course</code></td><td>Course name and duration</td></tr>
+    <tr><td><code>GET /skills</code></td><td>List of skills</td></tr>
+  </table></div>
+  <h3>Setup commands</h3>
+  <div class="cmd"><p class="what">Windows (on Linux/macOS use <code>source venv/bin/activate</code>)</p>
+  <pre><code class="language-bash">mkdir fastapi-project
+cd fastapi-project
+python -m venv venv
+venv\Scripts\activate
+pip install fastapi uvicorn</code></pre></div>
+  <p>Then create the <code>app</code> folder with an empty <code>__init__.py</code> and this <code>main.py</code>:</p>
+  <div class="codebox"><span class="cap">app/main.py</span><pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Welcome to the Student API"}
+
+@app.get("/student")
+def student():
+    return {
+        "name": "Rahul",
+        "course": "BCA",
+        "skills": ["Python", "FastAPI", "SQL"]
+    }
+
+@app.get("/course")
+def course():
+    return {"course": "BCA", "duration": "3 Years"}
+
+@app.get("/skills")
+def skills():
+    return {"skills": ["Python", "FastAPI", "SQL"]}</code></pre></div>
+  <h3>Run and test it</h3>
+  <pre><code class="language-bash">uvicorn app.main:app --reload</code></pre>
+  <div class="tbl"><table>
+    <tr><th style="width:22%">Open (after 127.0.0.1:8000)</th><th>Browser output</th></tr>
+    <tr><td><code>/</code></td><td><code>{"message":"Welcome to the Student API"}</code></td></tr>
+    <tr><td><code>/student</code></td><td><code>{"name":"Rahul","course":"BCA","skills":["Python","FastAPI","SQL"]}</code></td></tr>
+    <tr><td><code>/course</code></td><td><code>{"course":"BCA","duration":"3 Years"}</code></td></tr>
+    <tr><td><code>/skills</code></td><td><code>{"skills":["Python","FastAPI","SQL"]}</code></td></tr>
+  </table></div>
+  <p>The Python list <code>["Python", "FastAPI", "SQL"]</code> became a <b>JSON array</b>, and the dictionary returned by <code>/student</code> became a <b>JSON object</b>.</p>
+  <h3>Save the dependencies</h3>
+  <pre><code class="language-bash">pip freeze &gt; requirements.txt</code></pre>
+  <h3>Try it yourself</h3>
+  <details class="qa"><summary>Change the student’s name to your own. Does --reload pick it up?</summary><p>Yes. Save the file, watch the terminal print “Reloading…”, then refresh <code>/student</code>.</p></details>
+  <details class="qa"><summary>Add a route GET /college that returns your college name and city.</summary><p><code>@app.get("/college")</code> above <code>def college(): return {"college": "...", "city": "..."}</code>.</p></details>
+  <details class="qa"><summary>Visit /teacher, a route you didn’t create. What status code do you get, and why?</summary><p><b>404 Not Found</b> with <code>{"detail":"Not Found"}</code>, because no route matches <code>/teacher</code>.</p></details>
+  <details class="qa"><summary>Run the app on port 9000 instead of 8000.</summary><p><code>uvicorn app.main:app --reload --port 9000</code>, then open <code>http://127.0.0.1:9000/</code>.</p></details>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="mistakes">
+  <h2>Common mistakes and quick revision</h2>
+  <div class="tbl"><table>
+    <tr><th>What you see</th><th>Why it happens</th><th>Fix</th></tr>
+    <tr><td><code>uvicorn</code> is not recognized</td><td>venv is not active, or Uvicorn is not installed</td><td>Activate the venv, then <code>pip install uvicorn</code></td></tr>
+    <tr><td><code>Could not import module "main"</code></td><td>Wrong file name, or running from the wrong folder</td><td>Check the file location. Use <code>app.main:app</code> if <code>main.py</code> is inside <code>app/</code></td></tr>
+    <tr><td><code>Attribute "application" not found</code></td><td>The name after <code>:</code> doesn’t match the variable in the file</td><td>Use the same name as in <code>app = FastAPI()</code></td></tr>
+    <tr><td><code>{"detail":"Not Found"}</code></td><td>The path doesn’t exist or has a typo</td><td>Check the spelling in <code>@app.get(...)</code></td></tr>
+    <tr><td>Browser: “This site can’t be reached”</td><td>The server is not running</td><td>Start Uvicorn again and keep the terminal open</td></tr>
+    <tr><td>Change not visible in the browser</td><td>Started without <code>--reload</code>, or file not saved</td><td>Save the file, or restart with <code>--reload</code></td></tr>
+  </table></div>
+  <h3>Quick revision</h3>
+  <div class="tbl"><table>
+    <tr><th>Command / code</th><th>Meaning</th></tr>
+    <tr><td><code>python -m venv venv</code></td><td>Create a virtual environment</td></tr>
+    <tr><td><code>venv\Scripts\activate</code></td><td>Activate it (Windows)</td></tr>
+    <tr><td><code>pip install fastapi uvicorn</code></td><td>Install FastAPI and the server</td></tr>
+    <tr><td><code>app = FastAPI()</code></td><td>Create the application instance</td></tr>
+    <tr><td><code>@app.get("/path")</code></td><td>Create a route for a GET request</td></tr>
+    <tr><td><code>uvicorn main:app --reload</code></td><td>Run <code>app</code> from <code>main.py</code>, auto-restart on save</td></tr>
+    <tr><td><code>--port 8080</code></td><td>Run on a different port</td></tr>
+    <tr><td><code>uvicorn app.main:app</code></td><td>Run <code>app</code> from <code>app/main.py</code></td></tr>
+    <tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Save the package list</td></tr>
+    <tr><td><code>pip install -r requirements.txt</code></td><td>Install all packages from the list</td></tr>
+  </table></div>
+  <div class="flow"><span>Learn just enough</span><span>Write code</span><span>Run</span><span>See the output</span><span>Understand</span><span>Change it</span><span class="ok">Build something</span></div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>FastAPI</dt><dd>A Python framework for building APIs, where each endpoint is a normal Python function and return values are sent back as JSON automatically.</dd></div>
+    <div><dt>Uvicorn</dt><dd>The server program that listens for HTTP requests on a port and passes them to a FastAPI application.</dd></div>
+    <div><dt>Backend</dt><dd>The hidden part of an application that stores data and does the work; FastAPI is used to build it.</dd></div>
+    <div><dt>Application instance</dt><dd>The object created by <code>app = FastAPI()</code>; it holds every route and setting and is what Uvicorn runs.</dd></div>
+    <div><dt>Route</dt><dd>A connection between an HTTP method plus URL path, such as <code>GET /about</code>, and the Python function that handles it.</dd></div>
+    <div><dt>Decorator (@app.get)</dt><dd>The line above a function that registers it with the app as the handler for a given method and path.</dd></div>
+    <div><dt>localhost (127.0.0.1)</dt><dd>The address that always means “this computer”, used to reach a server running on your own machine.</dd></div>
+    <div><dt>Port</dt><dd>A numbered door on a computer where a server listens; Uvicorn uses 8000 unless you pass <code>--port</code>.</dd></div>
+    <div><dt>--reload</dt><dd>A Uvicorn option for development that restarts the server automatically whenever a code file is saved.</dd></div>
+    <div><dt>404 Not Found</dt><dd>The status FastAPI returns, with <code>{"detail":"Not Found"}</code>, when no route matches the requested path.</dd></div>
+    <div><dt>app.main:app</dt><dd>Uvicorn’s target format: the import path of the module (<code>app/main.py</code>), a colon, then the name of the FastAPI variable inside it.</dd></div>
+    <div><dt>__init__.py</dt><dd>A file (often empty) that marks a folder as a Python package, so its modules can be imported with dotted paths.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>What is the job of Uvicorn?</p>
+      <ol><li>It defines the routes</li><li>It runs the app as a server and passes requests to FastAPI</li><li>It converts Python dicts to JSON</li><li>It creates the virtual environment</li></ol>
+      <p class="why">FastAPI is where you build the API; Uvicorn is the server that listens on a port and hands each request to it.</p></div>
+    <div class="q" data-answer="3"><p>You run <code>python main.py</code> on a file with only <code>app = FastAPI()</code>. What happens?</p>
+      <ol><li>A server starts on port 8000</li><li>It raises an error</li><li>Nothing is printed; the app is created but not served</li><li>The browser opens</li></ol>
+      <p class="why">Creating the app object doesn’t start a server. You need <code>uvicorn main:app</code> for that.</p></div>
+    <div class="q" data-answer="1"><p>In <code>uvicorn main:app</code>, what does the part after the colon refer to?</p>
+      <ol><li>The variable holding <code>FastAPI()</code> inside main.py</li><li>The folder name</li><li>The port</li><li>The function for the home route</li></ol>
+      <p class="why">Before the colon is the module (<code>main.py</code>); after it is the name of the FastAPI object in that module.</p></div>
+    <div class="q" data-answer="4"><p>Your route function returns <code>{"age": 21}</code>. What does the browser receive?</p>
+      <ol><li>The text <code>age=21</code></li><li>An HTML page</li><li><code>{"age": "21"}</code> with 21 as a string</li><li>A JSON object where 21 is a number</li></ol>
+      <p class="why">FastAPI converts the dict to a JSON object and keeps numbers as numbers.</p></div>
+    <div class="q" data-answer="2"><p>You visit <code>/About</code> but your route is <code>@app.get("/about")</code>. What do you get?</p>
+      <ol><li>The about page</li><li>404 with <code>{"detail":"Not Found"}</code></li><li>500 Internal Server Error</li><li>A redirect to /about</li></ol>
+      <p class="why">Paths are case-sensitive and must match exactly, so no route is found.</p></div>
+    <div class="q" data-answer="3"><p>You moved <code>main.py</code> into an <code>app/</code> package. Which command now works from the project folder?</p>
+      <ol><li><code>uvicorn main:app</code></li><li><code>uvicorn app:main</code></li><li><code>uvicorn app.main:app</code></li><li><code>uvicorn app/main.py</code></li></ol>
+      <p class="why">The module path is <code>app.main</code> (folder.file), followed by <code>:app</code> for the variable.</p></div>
+    <div class="q" data-answer="1"><p>Uvicorn says the address is already in use. What is the simplest fix?</p>
+      <ol><li>Run on another port with <code>--port 8080</code></li><li>Remove <code>--reload</code></li><li>Rename main.py</li><li>Reinstall FastAPI</li></ol>
+      <p class="why">Another program holds port 8000; choosing a free port lets your server start.</p></div>
+    <div class="q" data-answer="4"><p>You edit a route, save, and refresh, but the old response still shows. The terminal shows no “Reloading”. Most likely cause?</p>
+      <ol><li>FastAPI caches responses forever</li><li>The browser is offline</li><li>The route needs a POST</li><li>The server was started without <code>--reload</code></li></ol>
+      <p class="why">Without <code>--reload</code>, Uvicorn keeps running the old code until you restart it.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Create a <b>venv</b>, install <b>FastAPI</b> and <b>Uvicorn</b>, make <code>app = FastAPI()</code>, attach functions with <b>@app.get(...)</b>, and run <b>uvicorn app.main:app --reload</b>: every request then flows browser → Uvicorn → FastAPI → your function, and whatever you return comes back as <b>JSON</b>.</p>
+  <p>Next up: <b>Pydantic: Validating Data</b>, where you describe the exact shape of the data your API accepts and returns, and let FastAPI check it for you.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

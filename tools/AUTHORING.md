@@ -116,3 +116,39 @@ Rules:
    `python "<scratchpad>/shot.py" "<scratchpad>/shots" "notes/<module>/<note>/index.html|1280|<note>"`
    To inspect a region, crop it with PIL. Fix any overlapping or clipped text and anything that looks broken.
 3. Don't edit shared files (`assets/*`, `tools/*`, `index.html`, other modules' notes).
+
+## 6. Original screenshots and full source coverage
+
+`python tools/extract_images.py` reads the course `.docx` files in `_source/` and writes three things for every doc:
+
+- `notes/<module>/<note>/img/NN.webp`: the doc's images in document order. The Git "deep dive" doc's images go in `notes/git/git-workflows/img/`, and the github page uses `../git-workflows/img/NN.webp`.
+- `tools/images/<module>__<note>.txt`: the **complete** doc text, with headings (`#`), list items (`- `), tables (`| a | b |`) and image markers `[[IMG 07 | 07.webp | 1200x340]]` at their exact positions. This is the source of truth. It is more complete than the Drive text export the pages were first written from.
+- `tools/images/<module>__<note>.json`: the size of each image and the text right before and after it.
+
+### Placement rules (the course owner's instructions)
+
+1. **Use every image.** Open each one with the Read tool to see what it shows.
+2. **Insert these exactly as they are:** terminal and console output, program output, code-editor screenshots, browser results, tool or app UIs, official docs pages, photos, and any image carrying data, tables or results. Examples of tool and UI screenshots: AWS console, VS Code, Swagger UI, Postman, GitHub, DevTools, OpenAI tokenizer, TensorFlow Playground. Examples of official docs: LangChain, OpenAI, Python, FastAPI, Pydantic, MDN.
+3. **Explanatory drawings** are concept illustrations, infographics and flowcharts that the course author drew. You may replace one with an SVG on the page, but only if that SVG contains everything in the image. In that case leave a comment where the image was: `<!-- img 07: replaced by SVG "OSI layer stack" -->`. When in doubt, insert the image.
+4. **Placement:**
+   - Put each image at the same spot as in the source, which is the marker's position in the `.txt`.
+   - When a page shows code that the source showed as a screenshot, keep both. The text code stays copyable, and the screenshot goes right after it.
+   - Group a code screenshot and its output screenshot side by side with `<div class="shots">…</div>`.
+5. **Replace invented stand-ins.** Wherever the page has a typed-out output (`pre.out`), a mock-up SVG, or a table that was invented because the image was missing, swap in the real screenshot. Remove the stand-in when it shows the same thing, or worse, contradicts the real image. Fix any text that disagrees with what the screenshot really shows.
+6. **Markup:**
+
+   ```html
+   <figure class="shot">
+     <img src="img/03.webp" alt="What the screenshot shows, in words" width="1089" height="130">
+     <figcaption>One line saying what to notice.</figcaption>
+   </figure>
+   ```
+
+   Set `width` and `height` from the manifest. Add `class="shot sm"` for small images.
+
+### Content rules
+
+- Read the whole `.txt` and compare it with the page. Add anything missing: every paragraph, example, table row, list item and practice task.
+- Run `python tools/coverage.py <module>/<note>` and work through its list.
+  - "Images not placed" must reach **0**.
+  - Every flagged text line must either be added, or you must confirm it is already covered in other words. The checker is word-based, so rewording triggers false alarms.

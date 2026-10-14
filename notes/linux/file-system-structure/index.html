@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Linux File System Structure · Linux | AIFDE Notes</title>
+<meta name="description" content="The Linux directory tree from / downwards: what lives in /bin, /etc, /home, /var and friends, absolute vs relative paths, and navigating with pwd, cd, ls, history and the . .. ~ shortcuts.">
+<meta name="keywords" content="root directory, /etc /var /home /bin, absolute path, relative path, pwd and cd, ls options, history, hidden files">
+<meta name="date" content="2026-09-07">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/file-system-structure">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>The Linux File System Structure</h1>
+  <p class="byline">Learn the map of every Linux machine, from <code>/</code> down to your home folder, and move around it confidently with pwd, cd, ls and history.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why the file system structure exists</h2>
+  <figure class="shot"><img src="img/01.webp" alt="Side by side: without a directory structure, all files sit in one chaotic folder (hard to find files, application problems, risk of accidental deletion, security risk); with the Linux directory structure, files are organised by purpose under / into bin, boot, dev, etc, home, lib, var and more (easier to find files, simpler management, clear separation, better security)" width="1041" height="513"><figcaption>One heap of files versus a tree where every file has a home.</figcaption></figure>
+  <div class="story"><b class="lbl">The digital warehouse</b>Think of a Linux computer as a huge warehouse, like a Flipkart fulfilment centre, holding hundreds of thousands of items. If every parcel were dumped in one heap, nobody could find anything. <mark>Linux gives every file a fixed, logical shelf, so the system, apps and people always know where to look.</mark></div>
+  <p>A Linux machine holds very different kinds of files:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>System files</h4><p>The core code that keeps the operating system running.</p></div>
+    <div class="card t2 tilt-b"><h4>User files</h4><p>Your documents, pictures and downloads.</p></div>
+    <div class="card t5 tilt-a"><h4>Applications</h4><p>The software programs you install to do work.</p></div>
+    <div class="card t7 tilt-b"><h4>Configuration files</h4><p>Text settings that tell apps exactly how to behave.</p></div>
+    <div class="card t6 tilt-a"><h4>Log files</h4><p>Background records of what the computer has done, such as error reports.</p></div>
+  </div>
+  <p>Dropped into one giant messy folder, this would be a disaster:</p>
+  <div class="tbl"><table>
+    <tr><th style="width:30%">Problem</th><th>Why</th></tr>
+    <tr><td>The OS slows down or crashes</td><td>It can’t find the exact file it needs to run a command.</td></tr>
+    <tr><td>Apps break</td><td>Programs don’t know where to look for their settings and tools.</td></tr>
+    <tr><td>Security fails</td><td>Personal files sit next to critical system files, so a normal user (or a virus) could delete something the kernel needs.</td></tr>
+  </table></div>
+  <h3>The directory hierarchy</h3>
+  <figure class="shot"><img src="img/02.webp" alt="Tree diagram: the root directory / at the top branches to /bin (essential user commands), /sbin (admin tools), /etc (configuration), /home (user files, with amit and john below it), /usr (applications), /var (changing data and logs, with log below it), /dev (device files) and /tmp (temporary files)" width="1045" height="498"><figcaption>The hierarchy: every branch of the tree has one job.</figcaption></figure>
+  <p>So Linux never lets files sit wherever they like. Everything lives in a strict, predictable, <b>tree-shaped hierarchy</b> where each file has a home based on what it does: critical system files locked away in one area, user files in their own personal space, temporary files and logs in their own “record rooms”. This layout is the <mark>Linux file system structure</mark>.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what-is-fs">
+  <h2>What is a file system?</h2>
+  <p>A <b>file system</b> is the logic Linux uses to <b>store, organise and find</b> data on a disk. Without it, your data would be an unreadable blob of 1s and 0s.</p>
+  <h3>The golden rule: “everything is a file”</h3>
+  <p>Where Windows treats hardware and settings as special hidden objects, Linux handles almost everything the same way:</p>
+  <figure class="shot"><img src="img/03.webp" alt="Diagram: a document (/home/user/report.txt), an application (/usr/bin/ls), a configuration text file (/etc/ssh/sshd_config) and hardware devices (/dev/sda, /dev/input/mouse0) all point into the Linux filesystem, where everything is represented through the filesystem interface" width="1024" height="475"><figcaption>Documents, programs, settings and even devices all appear as files.</figcaption></figure>
+  <div class="grid">
+    <div class="card t2 tilt-a"><h4>Your documents?</h4><p>Files.</p></div>
+    <div class="card t1 tilt-b"><h4>Your programs?</h4><p>Files.</p></div>
+    <div class="card t7 tilt-a"><h4>System settings?</h4><p>Plain text files.</p></div>
+    <div class="card t4 tilt-b"><h4>Even hardware?</h4><p>Your mouse, keyboard and disks appear as special files (in <code>/dev</code>) that Linux reads from and writes to.</p></div>
+  </div>
+  <h3>The upside-down tree</h3>
+  <p>To sort all those files Linux uses one hierarchical tree that grows <b>upside down</b>. There are no <code>C:</code> or <code>D:</code> drives as in Windows. <mark>Everything starts from one single point: the root directory, written <code>/</code>.</mark> Every file, folder and device branches out from it.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Upside-down tree: the root / at the top branches to bin, etc, home, var, usr, dev and tmp. home branches to amit and ubuntu; var branches to log; etc contains hostname.">
+      <g class="rough">
+        <rect class="box f-yellow" x="320" y="10" width="80" height="48" rx="14"/>
+        <rect class="box f-blue" x="10" y="110" width="80" height="44" rx="10"/>
+        <rect class="box f-orange" x="110" y="110" width="80" height="44" rx="10"/>
+        <rect class="box f-green" x="210" y="110" width="90" height="44" rx="10"/>
+        <rect class="box f-purple" x="320" y="110" width="80" height="44" rx="10"/>
+        <rect class="box f-grey" x="420" y="110" width="80" height="44" rx="10"/>
+        <rect class="box f-pink" x="520" y="110" width="80" height="44" rx="10"/>
+        <rect class="box f-teal" x="620" y="110" width="90" height="44" rx="10"/>
+        <rect class="box f-card" x="160" y="226" width="80" height="40" rx="10"/>
+        <rect class="box f-card" x="255" y="226" width="90" height="40" rx="10"/>
+        <rect class="box f-card" x="360" y="226" width="70" height="40" rx="10"/>
+        <rect class="box f-card" x="40" y="226" width="100" height="40" rx="10"/>
+        <path class="ln" d="M330 58 L 54 106"/>
+        <path class="ln" d="M340 58 L 152 106"/>
+        <path class="ln" d="M352 58 L 255 106"/>
+        <path class="ln" d="M360 58 L 360 106"/>
+        <path class="ln" d="M368 58 L 460 106"/>
+        <path class="ln" d="M380 58 L 560 106"/>
+        <path class="ln" d="M390 58 L 665 106"/>
+        <path class="ln" d="M240 156 L 202 222"/>
+        <path class="ln" d="M265 156 L 298 222"/>
+        <path class="ln" d="M360 156 L 395 222"/>
+        <path class="ln" d="M140 156 L 92 222"/>
+      </g>
+      <text class="th" x="360" y="43" text-anchor="middle">/</text>
+      <text class="tm" x="50" y="137" text-anchor="middle">bin</text>
+      <text class="tm" x="150" y="137" text-anchor="middle">etc</text>
+      <text class="tm" x="255" y="137" text-anchor="middle">home</text>
+      <text class="tm" x="360" y="137" text-anchor="middle">var</text>
+      <text class="tm" x="460" y="137" text-anchor="middle">usr</text>
+      <text class="tm" x="560" y="137" text-anchor="middle">dev</text>
+      <text class="tm" x="665" y="137" text-anchor="middle">tmp</text>
+      <text class="tm" x="200" y="251" text-anchor="middle">amit</text>
+      <text class="tm" x="300" y="251" text-anchor="middle">ubuntu</text>
+      <text class="tm" x="395" y="251" text-anchor="middle">log</text>
+      <text class="tm" x="90" y="251" text-anchor="middle">hostname</text>
+      <text class="ts" x="560" y="200" text-anchor="middle">/home/ubuntu = root → home → ubuntu</text>
+      <text class="ts" x="560" y="222" text-anchor="middle">/var/log = root → var → log</text>
+    </svg></div>
+    <figcaption>One root, many branches. Every path you will ever type starts somewhere on this tree.</figcaption>
+  </figure>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="root">
+  <h2>The root directory (<code>/</code>), and the <code>/root</code> trap</h2>
+  <p>If the file system is an upside-down tree, the root directory is the <b>seed</b> everything grows from. It is the absolute top of the computer: nothing is above or outside it.</p>
+  <figure class="shot"><img src="img/04.webp" alt="Diagram: / (system root) is the top of the entire filesystem and contains /bin, /etc, /home, /var and /root; /root is the root user’s home directory inside /, holding .bashrc, .profile and .ssh. Banner: / is not equal to /root" width="1400" height="788"><figcaption><code>/</code> is the whole building. <code>/root</code> is just one locked room inside it.</figcaption></figure>
+  <div class="two">
+    <div class="card t7 tilt-a"><h4><code>/</code> · the system root</h4><p>The top level of the entire computer: the container that holds everything.</p></div>
+    <div class="card t4 tilt-b"><h4><code>/root</code> · the superuser’s home</h4><p>An ordinary folder inside <code>/</code>: the private, locked bedroom of the <b>root</b> user (the administrator). Regular users can’t enter.</p></div>
+  </div>
+  <div class="sticky warn"><strong>Never confuse <code>/</code> with <code>/root</code></strong> Deleting or misconfiguring the wrong one has very different, and very differently sized, consequences. A mistake on <code>/</code> can wipe the whole system.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="map">
+  <h2>The map of the system: critical directories</h2>
+  <p>Now let’s open the most important “rooms” in the warehouse. Each has a strict purpose.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:14%">Directory</th><th style="width:26%">Nickname</th><th>Purpose</th></tr>
+    <tr><td><code>/bin</code></td><td>User binaries (toolbelt)</td><td>Basic everyday commands such as <code>ls</code>, <code>cp</code>, <code>mv</code> for regular users.</td></tr>
+    <tr><td><code>/sbin</code></td><td>System binaries (admin toolbelt)</td><td>Powerful admin commands for configuring the system, formatting disks or rebooting.</td></tr>
+    <tr><td><code>/etc</code></td><td>Configuration</td><td>Text configuration files, the “settings menu” of Linux. No programs here.</td></tr>
+    <tr><td><code>/var</code></td><td>Variable data</td><td>Data that changes constantly: logs, caches, mail, print queues.</td></tr>
+    <tr><td><code>/home</code></td><td>User directories</td><td>A personal folder for every user, e.g. <code>/home/alex</code>.</td></tr>
+    <tr><td><code>/usr</code></td><td>User system resources</td><td>Installed software and applications, similar to “Program Files” on Windows.</td></tr>
+    <tr><td><code>/dev</code></td><td>Device files</td><td>Hardware such as mouse, keyboard and disks, represented as files.</td></tr>
+    <tr><td><code>/tmp</code></td><td>Temporary files</td><td>A scratchpad for apps; usually cleared at reboot.</td></tr>
+  </table></div>
+  <p>The next four sections go deeper into the directories you’ll use most: <code>/bin</code>, <code>/etc</code>, <code>/home</code> and <code>/var</code>.</p>
+  <div class="sticky info l"><strong>Modern twist</strong> On current Ubuntu, Debian, Fedora and RHEL, <code>/bin</code> and <code>/sbin</code> are links to <code>/usr/bin</code> and <code>/usr/sbin</code> (the “merged /usr”). The roles stay the same; the files just physically live under <code>/usr</code>.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="bin">
+  <h2><code>/bin</code> · the essential toolbelt</h2>
+  <p><b>Full form:</b> binaries. In Linux, a <b>binary</b> is simply an executable program. <code>/bin</code> is the computer’s basic toolbelt: the everyday commands you, and the OS itself, need to operate the machine.</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4><code>ls</code></h4><p>List files.</p></div>
+    <div class="card t2 tilt-b"><h4><code>cp</code></h4><p>Copy files.</p></div>
+    <div class="card t3 tilt-a"><h4><code>mv</code></h4><p>Move or rename files.</p></div>
+    <div class="card t4 tilt-b"><h4><code>rm</code></h4><p>Remove (delete) files.</p></div>
+    <div class="card t5 tilt-a"><h4><code>mkdir</code></h4><p>Make a new directory.</p></div>
+  </div>
+  <p><b>The magic behind commands:</b> <code>ls</code> feels like a magic word, but it is a real program file. The shell searches the folders in your <code>PATH</code>, finds the <code>ls</code> program in the bin directory, and runs it:</p>
+  <div class="flow"><span class="op">ls</span><span>shell searches PATH (…/bin)</span><span class="ok">runs /bin/ls</span></div>
+  <pre><code class="language-bash">ls -l /bin/ls</code></pre>
+  <pre class="out"><code>-rwxr-xr-x 1 root root 138216 Feb  8  2024 /bin/ls</code></pre>
+  <h3>Why <code>/bin</code> matters: the survival kit</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>No basic commands</b>Without it, the terminal is useless: you couldn’t even list files (<code>ls</code>) or read one (<code>cat</code>).</div></li>
+    <li><span class="dot">2</span><div><b>System failure</b>The OS uses these same commands behind the scenes to keep running.</div></li>
+    <li><span class="dot">3</span><div><b>Crucial for recovery</b>When a broken system boots into recovery mode, only the bare minimum loads. The essential tools stay available so an admin can fix things.</div></li>
+  </ol>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="etc">
+  <h2><code>/etc</code> · the settings and rulebooks</h2>
+  <p><b>Name:</b> from “et cetera” (people sometimes remember it as “editable text configuration”). If <code>/bin</code> is the toolbelt, <code>/etc</code> is the <b>control room</b>. Where Windows and macOS have a graphical Control Panel, <mark>Linux keeps every setting as a simple text file in <code>/etc</code></mark>, for the OS, your apps and background services.</p>
+  <div class="tbl"><table>
+    <tr><th style="width:26%">File</th><th style="width:22%">Nickname</th><th>Holds</th></tr>
+    <tr><td><code>/etc/passwd</code></td><td>the guestbook</td><td>The list of every user account on the machine.</td></tr>
+    <tr><td><code>/etc/hostname</code></td><td>the name tag</td><td>The machine’s name on the network.</td></tr>
+    <tr><td><code>/etc/network</code></td><td>the internet rules</td><td>Settings for connecting to networks (newer Ubuntu uses <code>/etc/netplan</code>).</td></tr>
+  </table></div>
+  <pre><code class="language-bash">cat /etc/hostname</code></pre>
+  <pre class="out"><code>ip-172-31-8-5</code></pre>
+  <p><b>In action:</b> because everything is a file, there’s no special “rename computer” button. Open <code>/etc/hostname</code>, replace the old name, save, and you’ve changed the setting.</p>
+  <h3>Why <code>/etc</code> matters: the master rulebook</h3>
+  <p>If a company lost all its employee records and rulebooks overnight, nobody would know what to do. Linux without <code>/etc</code> is the same. It controls:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>System behaviour</h4><p>How the OS boots, its time zone, and the rules it follows.</p></div>
+    <div class="card t2 tilt-b"><h4>Application behaviour</h4><p>Installed software reads its settings and preferences here.</p></div>
+    <div class="card t8 tilt-a"><h4>Network settings</h4><p>Addresses and configuration to talk to the internet and other machines.</p></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Deploying for a customer usually means editing something in <code>/etc</code>: an nginx site in <code>/etc/nginx/</code>, a service unit in <code>/etc/systemd/system/</code>, an entry in <code>/etc/hosts</code>. Always copy the file first (<code>sudo cp file file.bak</code>) before you change it.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="home">
+  <h2><code>/home</code> · the personal workspaces</h2>
+  <p>If <code>/bin</code> is the toolbelt and <code>/etc</code> the rulebook, <code>/home</code> is the <b>apartment building</b> for the people using the computer. Linux is <b>multi-user</b>, so each user gets a private folder inside <code>/home</code>. If Amit and John share a machine:</p>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 220" role="img" aria-label="/home contains two locked apartments: amit and john. amit holds file.txt. John cannot open amit's file without permission.">
+      <g class="rough">
+        <rect class="box f-green" x="190" y="10" width="140" height="48" rx="12"/>
+        <rect class="box f-blue" x="30" y="110" width="190" height="90" rx="14"/>
+        <rect class="box f-orange" x="300" y="110" width="190" height="90" rx="14"/>
+        <path class="ln" d="M240 60 L 140 104" marker-end="url(#ah)"/>
+        <path class="ln" d="M280 60 L 380 104" marker-end="url(#ah)"/>
+        <path class="lr dash" d="M296 170 L 226 170" marker-end="url(#ahr)"/>
+      </g>
+      <text class="tm" x="260" y="40" text-anchor="middle">/home</text>
+      <text class="tm" x="125" y="142" text-anchor="middle">amit/</text>
+      <text class="tm" x="125" y="176" text-anchor="middle">file.txt</text>
+      <text class="tm" x="395" y="142" text-anchor="middle">john/</text>
+      <text class="tr" x="395" y="190" text-anchor="middle">no entry</text>
+      <text class="ts" x="261" y="160" text-anchor="middle">✗</text>
+    </svg></div>
+    <figcaption>Each user gets a locked apartment. John can’t read <code>/home/amit/file.txt</code> unless Amit or root allows it.</figcaption>
+  </figure>
+  <pre class="out"><code>/home
+├── amit
+└── john</code></pre>
+  <p>Inside your own home folder (e.g. <code>/home/amit</code>) you have <b>total control</b>: no admin rights needed to create or delete things. Your documents, spreadsheets, downloads, pictures and personal app settings live here.</p>
+  <p><b>Security and ownership:</b> a file saved as <code>/home/amit/file.txt</code> belongs to Amit. John can’t open, edit or delete it unless Amit, or the root user, grants permission.</p>
+  <h3>Why <code>/home</code> matters: the privacy wall</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Stores user data safely</b>Personal files stay separate from the OS. If the OS must be reinstalled, <code>/home</code> can be kept untouched.</div></li>
+    <li><span class="dot">2</span><div><b>Keeps users separated</b>On a shared server, locked “apartment doors” stop users snooping in each other’s files.</div></li>
+    <li><span class="dot">3</span><div><b>Provides a personal workspace</b>Create folders, keep local scripts and change your settings without root’s permission, and without risking system files while cleaning up downloads.</div></li>
+  </ol>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="var">
+  <h2><code>/var</code> · the system diary</h2>
+  <p><b>Full form:</b> variable. Most files so far stay the same unless you change them. Files in <code>/var</code> grow, shrink and change <b>on their own</b> while the computer runs. It is the system’s filing cabinet of diaries.</p>
+  <div class="grid">
+    <div class="card t6 tilt-a"><h4>System logs</h4><p>The historical record of everything the computer does.</p></div>
+    <div class="card t1 tilt-b"><h4>Cache</h4><p>Temporary data apps keep so they load faster next time.</p></div>
+    <div class="card t2 tilt-a"><h4>Mail</h4><p>Incoming and outgoing email on a mail server.</p></div>
+    <div class="card t7 tilt-b"><h4>Print spools</h4><p>Documents waiting in line to be printed.</p></div>
+  </div>
+  <p>The most important folder is <code>/var/log</code>. Whenever something happens, good or bad, the system writes it down here:</p>
+  <div class="tbl"><table>
+    <tr><th>Log file (Ubuntu/Debian)</th><th>On RHEL/CentOS</th><th>What it records</th></tr>
+    <tr><td><code>/var/log/syslog</code></td><td><code>/var/log/messages</code></td><td>The master diary: general system activity, hardware events, software messages.</td></tr>
+    <tr><td><code>/var/log/auth.log</code></td><td><code>/var/log/secure</code></td><td>The security guard’s logbook: every login and password attempt, including failures.</td></tr>
+  </table></div>
+  <pre><code class="language-bash">sudo tail -n 3 /var/log/auth.log</code></pre>
+  <pre class="out"><code>Sep  7 10:02:11 ip-172-31-8-5 sshd[1180]: Accepted publickey for ubuntu from 49.36.10.22 port 51234 ssh2
+Sep  7 10:02:11 ip-172-31-8-5 sshd[1180]: pam_unix(sshd:session): session opened for user ubuntu
+Sep  7 10:05:40 ip-172-31-8-5 sudo:   ubuntu : TTY=pts/0 ; PWD=/home/ubuntu ; USER=root ; COMMAND=/usr/bin/tail -n 3 /var/log/auth.log</code></pre>
+  <h3>Why <code>/var</code> matters: the flight recorder</h3>
+  <p>Like an aircraft’s black box, <code>/var</code> doesn’t forget. When a server crashes, an app won’t start, or someone guesses passwords, the event is written down. It provides:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>System and application logs</b>A second-by-second history of what was happening right before a problem.</div></li>
+    <li><span class="dot">2</span><div><b>Runtime data</b>The live, changing data programs need right now, such as a database saving new records.</div></li>
+    <li><span class="dot">3</span><div><b>The ultimate troubleshooting tool</b>When something breaks, an admin’s first move is to open the logs in <code>/var/log</code>: the detective’s notebook.</div></li>
+  </ol>
+  <div class="sticky warn l"><strong>Full disk?</strong> Because <code>/var</code> grows by itself, runaway logs are a classic cause of a “disk full” outage. Keep an eye on it with <code>du -sh /var/log</code>.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="real-world">
+  <h2>How Linux uses the file system: real-world flows</h2>
+  <p>A map is useful; now watch the OS travel through these folders to get real work done.</p>
+  <h3>1 · Running a command (<code>ls</code>)</h3>
+  <div class="flow"><span class="op">you type ls</span><span>shell searches PATH, finds /bin/ls</span><span>kernel runs the program</span><span class="ok">file list on screen</span></div>
+  <h3>2 · Logging in</h3>
+  <div class="flow"><span class="op">username: amit</span><span>check /etc/passwd: is amit a real user?</span><span>check password hash in /etc/shadow</span><span class="ok">welcome in</span></div>
+  <p>Linux doesn’t guess. It looks the user up in the rulebook directory. (The account list is in <code>/etc/passwd</code>; the password hashes are kept in the root-only file <code>/etc/shadow</code>.)</p>
+  <h3>3 · Keeping records</h3>
+  <div class="flow"><span class="op">Wi-Fi drops for 3 s</span><span>no pop-up</span><span class="ok">line written to /var/log/…</span></div>
+  <p>The system quietly writes the exact second it happened so an admin can investigate later.</p>
+  <h3>4 · Saving a file</h3>
+  <div class="flow"><span class="op">you press Save</span><span class="skip">/bin and /etc ignored</span><span class="ok">/home/amit/report.txt</span></div>
+  <p>Your document goes straight into your personal, protected workspace.</p>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="paths">
+  <h2>Navigation and the idea of a path</h2>
+  <p>Knowing a library has a catalogue system is one thing; walking to the right shelf is another. A typical Linux system has <b>thousands of directories</b> (shelves) and <b>millions of files</b> (books), split between system areas (the engine room) and user areas (your workspace).</p>
+  <p>In a GUI you click and <i>see</i> where you are. In a terminal you are “standing in the dark”. Without navigation skills you are <b>lost</b> (can’t find your documents), <b>stuck</b> (can’t reach the folder where a program must run), <b>powerless</b> (can’t reach settings files) and <b>slow</b>. <mark>Navigation lets you move your “current position” anywhere in the tree in a split second</mark>, making you the pilot, not a passenger.</p>
+  <h3>A path is an address</h3>
+  <p>A <b>path</b> is the address of a file or folder. Like a postal address, it goes from the biggest area to the smallest:</p>
+  <div class="two">
+    <div class="flow v"><span>Country</span><span>State</span><span>City</span><span class="ok">House</span></div>
+    <div class="flow v"><span class="op">/ (root)</span><span class="op">home</span><span class="op">ubuntu</span><span class="ok">file.txt</span></div>
+  </div>
+  <p>Read the slash as “inside”: <code>/home/ubuntu</code> means “start at root, go inside <code>home</code>, then inside <code>ubuntu</code>”.</p>
+  <ul>
+    <li><b>A full path is unique.</b> Two files can share a name such as <code>notes.txt</code> as long as they live in different folders, just as two streets in different cities can have a house number 12.</li>
+    <li><b>The first slash matters.</b> A leading <code>/</code> always means root; later slashes just separate folder names.</li>
+  </ul>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="absolute-relative">
+  <h2>Absolute vs relative paths</h2>
+  <div class="two">
+    <div class="card t1 tilt-a"><h4>Absolute path · the full address</h4><p>Always starts with <code>/</code> (“ground zero”): start at the very top and follow these exact steps.</p><p><code>/home/ubuntu/Documents/file.txt</code></p><p><b>Complete</b> (every folder listed), <b>unambiguous</b> (same for every user), <b>direct</b> (no guessing).</p></div>
+    <div class="card t2 tilt-b"><h4>Relative path · local directions</h4><p>Never starts with <code>/</code>. It starts from <b>where you are standing now</b>.</p><p>From <code>/home/ubuntu</code>: <code>Documents/file.txt</code></p><p><b>Fast</b> to type, <b>efficient</b> inside a project, and <b>flexible</b>: move a whole project folder and the paths inside it still work.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Standing in /home/ubuntu. The absolute path goes all the way from / through home and ubuntu to Documents/file.txt. The relative path Documents/file.txt starts from where you stand.">
+      <g class="rough">
+        <rect class="box f-yellow" x="20" y="20" width="90" height="46" rx="12"/>
+        <rect class="box f-card" x="170" y="20" width="110" height="46" rx="12"/>
+        <rect class="box f-green" x="340" y="20" width="130" height="46" rx="12"/>
+        <rect class="box f-card" x="530" y="20" width="170" height="46" rx="12"/>
+        <path class="lr" d="M114 43 L 164 43" marker-end="url(#ahr)"/>
+        <path class="lr" d="M284 43 L 334 43" marker-end="url(#ahr)"/>
+        <path class="lr" d="M474 43 L 524 43" marker-end="url(#ahr)"/>
+        <path class="lb" d="M450 72 C 470 140, 580 140, 612 74" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="65" y="48" text-anchor="middle">/</text>
+      <text class="tm" x="225" y="48" text-anchor="middle">home</text>
+      <text class="tm" x="405" y="48" text-anchor="middle">ubuntu</text>
+      <text class="tm" x="615" y="48" text-anchor="middle">Documents/file.txt</text>
+      <text class="tr" x="20" y="205">absolute: /home/ubuntu/Documents/file.txt</text>
+      <text class="ts" x="20" y="228">works from anywhere</text>
+      <text class="tb" x="560" y="162" text-anchor="middle">relative: Documents/file.txt</text>
+      <text class="ts" x="560" y="184" text-anchor="middle">only works when you stand in /home/ubuntu</text>
+      <text class="ts" x="390" y="90" text-anchor="middle">you are here</text>
+    </svg></div>
+    <figcaption>Same file, two addresses: the full one from the root, or the short one from where you stand.</figcaption>
+  </figure>
+  <h3>The “works from anywhere” rule</h3>
+  <p>You’re deep in the record room at <code>/var/log</code> and need <code>/home/ubuntu/file.txt</code>. Because the target starts with <code>/</code>, Linux jumps straight to the root and follows the map; no walking back out folder by folder. That’s why admins love absolute paths:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>No confusion</h4><p>The computer never guesses where you are.</p></div>
+    <div class="card t2 tilt-b"><h4>Reliability</h4><p>A backup script with absolute paths works no matter which folder it runs from.</p></div>
+    <div class="card t3 tilt-a"><h4>Safety</h4><p>You won’t act on a same-named file in the wrong folder.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Feature</th><th>Absolute path</th><th>Relative path</th></tr>
+    <tr><td>Starting point</td><td>Always starts with <code>/</code></td><td>Starts with a folder or file name</td></tr>
+    <tr><td>Address type</td><td>Full location (global)</td><td>Partial location (local)</td></tr>
+    <tr><td>Reliability</td><td>Works from anywhere</td><td>Works only from your current folder</td></tr>
+    <tr><td>Typing effort</td><td>Usually longer</td><td>Shorter and faster</td></tr>
+    <tr><td>Example</td><td><code>/home/ubuntu/file.txt</code></td><td><code>file.txt</code></td></tr>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="pwd-cd">
+  <h2><code>pwd</code> and <code>cd</code>: where am I, and how do I move?</h2>
+  <h3><code>pwd</code> · your compass</h3>
+  <p><b>Print Working Directory</b> prints the <b>absolute path</b> of where you stand right now. (It’s a shell built-in; a <code>/bin/pwd</code> program also exists.)</p>
+  <pre><code class="language-bash">pwd</code></pre>
+  <figure class="shot sm"><img src="img/05.webp" alt="Terminal: pwd prints /home/ubuntu" width="535" height="165"><figcaption><code>pwd</code> prints the absolute path of where you stand.</figcaption></figure>
+  <p>The output <code>/home/ubuntu</code> is your current working directory: here, the home folder of the <code>ubuntu</code> user, the default location where that user’s personal files and data are stored.</p>
+  <div class="grid">
+    <div class="card t3 tilt-a"><h4>Confirmation</h4><p>Before deleting or moving, check you’re not in <code>/etc</code> when you thought you were in <code>/tmp</code>.</p></div>
+    <div class="card t1 tilt-b"><h4>Path finding</h4><p>Copy the exact path when a program needs it.</p></div>
+    <div class="card t2 tilt-a"><h4>Orientation</h4><p>Usually the first command after logging in to a server.</p></div>
+  </div>
+  <h3><code>cd</code> · the teleporter</h3>
+  <p><b>Change Directory</b>: the terminal’s version of double-clicking a folder. Give it an absolute path to jump anywhere:</p>
+  <pre><code class="language-bash">cd /var/log
+pwd</code></pre>
+  <figure class="shot sm"><img src="img/06.webp" alt="Terminal: from ~, cd /var/log, then pwd prints /var/log" width="604" height="172"><figcaption>The prompt changes from <code>~</code> to <code>/var/log</code>.</figcaption></figure>
+  <p>Before the command, the current directory was <code>/home/ubuntu</code> (the ubuntu user’s home). After <code>cd /var/log</code>, you have moved straight from your home folder to the system’s log directory.</p>
+  <p>Or a relative path to step into a folder right in front of you:</p>
+  <pre><code class="language-bash">pwd             # /home/ubuntu
+ls
+cd Documents/   # or: cd Documents
+pwd</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="Terminal: pwd shows /home/ubuntu; ls lists Documents, demo.txt, example.txt, hello.sh, notes.txt; cd Documents/ then pwd shows /home/ubuntu/Documents (highlighted)" width="976" height="348"><figcaption><code>Documents</code> was right in front of you, so a relative path was enough.</figcaption></figure>
+  <p><code>ls</code> shows the files (<code>demo.txt</code>, <code>example.txt</code>, <code>hello.sh</code>, <code>notes.txt</code>) and the directory (<code>Documents</code>) inside <code>/home/ubuntu</code>. Then <code>cd Documents/</code> moves into it, and the new working directory becomes <code>/home/ubuntu/Documents</code>.</p>
+  <h3>The <code>cd</code> shortcuts</h3>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="From /var/log: cd .. goes up to /var, cd ../.. goes up two levels to /, cd or cd ~ goes home to /home/ubuntu, cd - goes back to the previous directory, cd / jumps to root.">
+      <g class="rough">
+        <rect class="box f-yellow" x="300" y="150" width="120" height="48" rx="12"/>
+        <rect class="box f-card" x="300" y="20" width="120" height="44" rx="12"/>
+        <rect class="box f-card" x="60" y="80" width="120" height="44" rx="12"/>
+        <rect class="box f-green" x="540" y="80" width="160" height="44" rx="12"/>
+        <path class="ln" d="M320 146 C 250 140, 200 130, 150 128" marker-end="url(#ah)"/>
+        <path class="lr" d="M360 146 L 360 70" marker-end="url(#ahr)"/>
+        <path class="lb" d="M410 146 C 470 140, 530 130, 580 128" marker-end="url(#ahb)"/>
+        <path class="lb dash" d="M600 124 C 590 190, 500 210, 426 186" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="360" y="179" text-anchor="middle">/var/log</text>
+      <text class="tm" x="360" y="47" text-anchor="middle">/</text>
+      <text class="tm" x="120" y="107" text-anchor="middle">/var</text>
+      <text class="tm" x="620" y="107" text-anchor="middle">/home/ubuntu</text>
+      <text class="tm" x="235" y="160" text-anchor="middle">cd ..</text>
+      <text class="tm" x="348" y="110" text-anchor="end">cd / · cd ../..</text>
+      <text class="tm" x="470" y="112" text-anchor="middle">cd · cd ~</text>
+      <text class="tm" x="560" y="222" text-anchor="middle">cd - (go back)</text>
+      <text class="ts" x="360" y="224" text-anchor="middle">you are here</text>
+    </svg></div>
+    <figcaption>Teleporter buttons from <code>/var/log</code>. <code>cd -</code> returns to wherever you were before.</figcaption>
+  </figure>
+  <p>Typing long paths gets tiring, so Linux has special symbols that work like teleporter buttons.</p>
+  <h4><code>cd</code> · the “go home” button</h4>
+  <p>Lost deep in the system? Plain <code>cd</code> takes you straight back to your home directory.</p>
+  <pre><code class="language-bash">cd</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/08.webp" alt="Terminal: cd /var/log, pwd shows /var/log; then cd, and pwd shows /home/ubuntu" width="624" height="304"><figcaption><code>cd</code> alone: from <code>/var/log</code> back to <code>/home/ubuntu</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/09.webp" alt="Terminal: in /var/log, cd ~ then pwd shows /home/ubuntu" width="588" height="263"><figcaption><code>cd ~</code> does exactly the same job.</figcaption></figure>
+  </div>
+  <h4><code>cd ..</code> · the “move up” shortcut</h4>
+  <p>The double dot <code>..</code> is the <b>parent directory</b>, like the “Up” arrow in a file explorer. From <code>/home/ubuntu/Documents</code>, <code>cd ..</code> moves you up to <code>/home/ubuntu</code>.</p>
+  <pre><code class="language-bash">cd ..</code></pre>
+  <figure class="shot sm"><img src="img/10.webp" alt="Terminal: pwd shows /home/ubuntu/Documents; cd .. then pwd shows /home/ubuntu" width="724" height="298"><figcaption>One level up: from <code>Documents</code> to its parent.</figcaption></figure>
+  <h4><code>cd -</code> · the “back” button</h4>
+  <p>Jumped somewhere and forgot something in the last folder? The dash takes you back to the <b>previous directory</b>, just like a browser’s Back button. It also prints where it took you.</p>
+  <pre><code class="language-bash">cd -</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal: pwd shows /home/ubuntu; cd /var/log; cd - prints /home/ubuntu; pwd confirms /home/ubuntu" width="998" height="501"><figcaption>From <code>/var/log</code>, <code>cd -</code> returns to <code>/home/ubuntu</code>, the folder you came from.</figcaption></figure>
+  <h4><code>cd /</code> · the root jump</h4>
+  <p>To go all the way to the very start of the whole system:</p>
+  <pre><code class="language-bash">cd /</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/12.webp" alt="Terminal: from ~, cd / then pwd prints /" width="549" height="329"><figcaption>The prompt shows <code>/</code>: you are at the root.</figcaption></figure>
+    <figure class="shot"><img src="img/13.webp" alt="Terminal: after cd /, ls lists bin, boot, dev, etc, home, lib, lib64, lost+found, media, mnt, opt, proc, root, run, sbin, snap, srv, sys, tmp, usr, var and the *.usr-is-merged entries" width="1400" height="434"><figcaption><code>ls</code> at the root shows the main branches: <code>bin</code>, <code>etc</code>, <code>home</code>, <code>var</code>…</figcaption></figure>
+  </div>
+  <p><code>cd /</code> takes you to the root directory (<code>/</code>). From here you can see the main branches such as <code>bin</code>, <code>etc</code> and <code>var</code>.</p>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>Takes you to</th><th>Think of it as</th></tr>
+    <tr><td><code>cd</code> or <code>cd ~</code></td><td>Your home folder</td><td>“Go to my room”</td></tr>
+    <tr><td><code>cd ..</code></td><td>The folder above you (parent)</td><td>“Go out to the hallway”</td></tr>
+    <tr><td><code>cd -</code></td><td>The last folder you were in</td><td>“Go back” (like a browser’s Back button)</td></tr>
+    <tr><td><code>cd /</code></td><td>The root of the whole system</td><td>“Go to the front door”</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong><code>cd ..</code> vs <code>cd -</code></strong> From <code>/var/log</code>, <code>cd ..</code> goes <b>up</b> to <code>/var</code>. <code>cd -</code> goes <b>back</b> to wherever you were before (e.g. <code>/home/ubuntu</code>). And keep the space: <code>cd -</code> and <code>cd /</code>, not <code>cd-</code> or <code>cd/</code>.</div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="ls">
+  <h2><code>ls</code> · the eyes of the system</h2>
+  <p>Walking into a room with <code>cd</code> doesn’t show you what’s inside. <code>ls</code> (<b>list</b>) is <b>turning on the lights</b>: “show me the files and folders here.”</p>
+  <pre><code class="language-bash">ls</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal: ls lists Documents (blue, a folder), demo.txt, example.txt, hello.sh and notes.txt" width="931" height="165"><figcaption>The folder <code>Documents</code> is blue; plain files are white.</figcaption></figure>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Discovery</h4><p>The first thing you do in a new folder: what can I edit, which folders can I enter?</p></div>
+    <div class="card t2 tilt-b"><h4>Verification</h4><p>After creating or moving something, check it landed where it should.</p></div>
+    <div class="card t5 tilt-a"><h4>Differentiation</h4><p>Most terminals colour-code output: <b>blue</b> for folders, plain for files.</p></div>
+  </div>
+  <h3>Option flags: filters for your eyes</h3>
+  <p><b><code>ls -l</code> · the detailed view.</b> Long listing: the whole biography of each file.</p>
+  <pre><code class="language-bash">ls -l</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal: ls -l shows total 20 and long lines such as drwxrwxr-x 2 ubuntu ubuntu 4096 Feb 25 19:23 Documents and -rw-rw-r-- 1 ubuntu ubuntu 101 Feb 25 10:29 demo.txt" width="1052" height="360"><figcaption>Each line is a file’s biography: permissions, owner, size, date, name.</figcaption></figure>
+  <div class="anatomy"><span class="a1">drwxrwxr-x</span> 2 <span class="a2">ubuntu</span> ubuntu <span class="a3">4096</span> <span class="a4">Feb 25 19:23</span> <span class="a5">Documents</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><b>Type and permissions</b>: <code>d</code> = directory, <code>-</code> = file; who can read, write, run.</p></div>
+    <div><span class="sw a2"></span><p><b>Owner</b>: the user who owns it (then the group).</p></div>
+    <div><span class="sw a3"></span><p><b>Size</b> in bytes.</p></div>
+    <div><span class="sw a4"></span><p><b>Last modified</b> date and time.</p></div>
+    <div><span class="sw a5"></span><p><b>Name</b>.</p></div>
+  </div>
+  <p><b><code>ls -a</code> · the detective view.</b> Shows <b>all</b> files, including hidden ones. Any name starting with a dot (<code>.</code>) is hidden from a normal <code>ls</code>.</p>
+  <pre><code class="language-bash">ls -a</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: ls -a shows . and .. plus hidden entries .bash_history, .bash_logout, .bashrc, .cache, .config, .lesshst, .local, .profile, .ssh, .sudo_as_admin_successful, alongside Documents, demo.txt, example.txt, hello.sh, notes.txt" width="1311" height="263"><figcaption>Hidden dot-files appear only with <code>-a</code>.</figcaption></figure>
+  <p>You always see <code>.</code> (this folder) and <code>..</code> (the parent). Hidden config files like <code>.bashrc</code> live here.</p>
+  <p><b><code>ls -lh</code> · the human-friendly view.</b> <code>-l</code> shows sizes in bytes (like <code>5423872</code>); <code>-h</code> turns them into K, M, G.</p>
+  <pre><code class="language-bash">ls -lh
+ls -l</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: ls -lh shows total 20K and Documents as 4.0K; the same listing with ls -l shows total 20 and Documents as 4096" width="1036" height="578"><figcaption>Same folder: <code>-lh</code> prints <code>4.0K</code> where <code>-l</code> prints <code>4096</code>.</figcaption></figure>
+  <p><b><code>ls -R</code> · the X-ray view.</b> Recursive: lists every sub-folder’s contents too, the whole family tree at once.</p>
+  <pre><code class="language-bash">ls -R</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: ls -R lists . (Documents, demo.txt, example.txt, hello.sh, notes.txt) and then ./Documents: which is empty" width="966" height="298"><figcaption><code>-R</code> also opened <code>./Documents</code>, which is empty here.</figcaption></figure>
+  <h3>Combining options: <code>ls -lah</code></h3>
+  <p>The professionals’ favourite, combining <b>-l</b> (long), <b>-a</b> (all) and <b>-h</b> (human sizes) in one go:</p>
+  <pre><code class="language-bash">ls -lah</code></pre>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal: ls -lah shows total 64K, the . and .. entries, hidden files such as .bash_history (1.5K), .bashrc (3.7K), .profile and .ssh, and the normal files, all with human-readable sizes" width="1205" height="728"><figcaption>Long details, hidden files and readable sizes, all in one command.</figcaption></figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Speed</b>A full 360° view of the folder in one second.</div></li>
+    <li><span class="dot">2</span><div><b>Clarity</b>Hidden config files like <code>.bash_history</code> next to normal files, with readable sizes.</div></li>
+    <li><span class="dot">3</span><div><b>Troubleshooting</b>App misbehaving? Instantly check that its hidden settings file exists and its size looks right.</div></li>
+  </ol>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="history">
+  <h2><code>history</code> and the <code>!</code> shortcuts</h2>
+  <p><code>history</code> is your <b>digital logbook</b>: a numbered list of commands you have typed. Bash saves it in <code>~/.bash_history</code>, so it includes earlier sessions too.</p>
+  <pre><code class="language-bash">history</code></pre>
+  <figure class="shot sm"><img src="img/20.webp" alt="Terminal: history prints a numbered list: 1 clear, 2 cal, 3 date, 4 clear, 5 date ... 13 pwd ... 17 sudo bash, 18 clear, 19 ksh" width="574" height="729"><figcaption>Every command gets an ID number. Here, command #3 is <code>date</code>.</figcaption></figure>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Recall</h4><p>Find yesterday’s complicated command without remembering its spelling.</p></div>
+    <div class="card t2 tilt-b"><h4>Learning</h4><p>Review the steps you took to solve a problem.</p></div>
+    <div class="card t3 tilt-a"><h4>Redo</h4><p>See each command’s ID number to run it again.</p></div>
+  </div>
+  <h3>Repeating commands with <code>!</code></h3>
+  <p>The exclamation mark (<b>“bang”</b>) is Bash’s <b>history expansion</b>: it grabs a past command and runs it again. Bash first prints the command it expanded to.</p>
+  <div class="cmd"><p class="what"><code>!3</code> · run command number 3 again</p>
+  <pre><code class="language-bash">!3</code></pre></div>
+  <figure class="shot sm"><img src="img/21.webp" alt="Terminal: !3 echoes date and prints Wed Feb 25 19:38:50 UTC 2026; history below confirms entry 3 is date (arrows)" width="555" height="327"><figcaption><code>!3</code> re-ran command #3, <code>date</code>, without retyping it.</figcaption></figure>
+  <div class="cmd"><p class="what"><code>!!</code> · do the last command again</p>
+  <pre><code class="language-bash">ls
+!!</code></pre></div>
+  <figure class="shot"><img src="img/22.webp" alt="Terminal: ls lists the files; !! echoes ls and lists them again" width="937" height="285"><figcaption><code>!!</code> repeated the last command, <code>ls</code>.</figcaption></figure>
+  <p><b>Why use it?</b> Ever typed a long command and realised you forgot <code>sudo</code> (admin rights)? Instead of retyping it, just type <code>sudo !!</code>.</p>
+  <div class="cmd"><p class="what"><code>!string</code> · rerun the most recent command starting with those letters</p>
+  <pre><code class="language-bash">!ls</code></pre></div>
+  <p>Example: you ran <code>ls -lah</code> twenty minutes ago and want it again. <code>!ls</code> searches back through your history, finds the last command starting with <code>ls</code>, and runs it.</p>
+  <figure class="shot"><img src="img/23.webp" alt="Terminal: pwd, ls, date, then !ls echoes ls and lists Documents, demo.txt, example.txt, hello.sh, notes.txt" width="966" height="418"><figcaption><code>date</code> ran in between, but <code>!ls</code> skipped back to the last <code>ls</code>.</figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Shortcut</th><th>What it does</th><th>Good for</th></tr>
+    <tr><td><code>!!</code></td><td>Repeats the last command</td><td>Fixing mistakes, e.g. <code>sudo !!</code></td></tr>
+    <tr><td><code>!3</code></td><td>Repeats command #3 from history</td><td>Running a specific complex command again</td></tr>
+    <tr><td><code>!ls</code></td><td>Repeats the last command starting with <code>ls</code></td><td>Quickly seeing your files again</td></tr>
+  </table></div>
+  <div class="sticky warn l"><strong>Look before you bang</strong> <code>!rm</code> reruns your last <code>rm</code> command, whatever it deleted. On a server, prefer <kbd>↑</kbd> to see the command before running it.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="symbols">
+  <h2>Special symbols: <code>.</code>, <code>..</code> and <code>~</code></h2>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4><code>.</code> · right here</h4><p>The current directory. <code>ls .</code> is the same as <code>ls</code>. Essential for running a program in the current folder: <code>./my_program</code>.</p></div>
+    <div class="card t2 tilt-b"><h4><code>..</code> · one level up</h4><p>The parent directory. From <code>/home/ubuntu</code>, <code>cd ..</code> takes you to <code>/home</code>. Chain them: <code>cd ../..</code> goes up two levels.</p></div>
+    <div class="card t7 tilt-a"><h4><code>~</code> · home base</h4><p>Your home folder (e.g. <code>/home/ubuntu</code>). <code>cd ~</code> always takes you home; <code>ls ~/Documents</code> instead of <code>ls /home/ubuntu/Documents</code>.</p></div>
+  </div>
+  <p>Certain symbols have “magical” meanings: they are placeholders, so you don’t have to remember or type long folder names. You can spot both dots in any <code>ls -a</code> listing:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/24.webp" alt="Terminal: ls -a output with the single dot . boxed and arrowed" width="1327" height="282"><figcaption><code>.</code> is the folder you are standing in.</figcaption></figure>
+    <figure class="shot"><img src="img/25.webp" alt="Terminal: ls -a output with the double dot .. boxed and arrowed" width="1327" height="282"><figcaption><code>..</code> is the folder that contains it.</figcaption></figure>
+  </div>
+  <p>Chain the double dots to climb several levels at once:</p>
+  <pre><code class="language-bash">cd ../..
+pwd</code></pre>
+  <figure class="shot sm"><img src="img/26.webp" alt="Terminal: in /var/log, cd ../.. then pwd prints /" width="632" height="196"><figcaption>From <code>/var/log</code>, <code>cd ../..</code> climbs two levels to the root <code>/</code>.</figcaption></figure>
+  <p>And the tilde is always your home base. The prompt even shows it: after <code>cd</code> brings you home, the path part of the prompt is just <code>~</code>.</p>
+  <figure class="shot sm"><img src="img/27.webp" alt="Terminal: cd /var/log, pwd, then cd and pwd shows /home/ubuntu; an arrow points to the ~ in the prompt" width="618" height="290"><figcaption><code>~</code> in the prompt means “you are in your home folder”.</figcaption></figure>
+</section>
+
+<!-- terms -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>File system</dt><dd>The logic Linux uses to store, organise and find data on disk, arranged as one directory tree.</dd></div>
+    <div><dt>Root directory (/)</dt><dd>The single top of the Linux directory tree; every file, folder and device lives somewhere beneath it.</dd></div>
+    <div><dt>/root</dt><dd>The home directory of the root (administrator) user; just one folder inside <code>/</code>, not the top of the system.</dd></div>
+    <div><dt>/bin</dt><dd>The directory of essential user commands (binaries) such as <code>ls</code>, <code>cp</code> and <code>mv</code>.</dd></div>
+    <div><dt>/etc</dt><dd>The directory of text configuration files for the system, services and applications, e.g. <code>/etc/passwd</code> and <code>/etc/hostname</code>.</dd></div>
+    <div><dt>/home</dt><dd>The parent of every regular user’s personal folder, such as <code>/home/ubuntu</code>.</dd></div>
+    <div><dt>/var</dt><dd>The directory for constantly changing data: logs in <code>/var/log</code>, caches, mail and spools.</dd></div>
+    <div><dt>Path</dt><dd>The address of a file or folder in the tree, with folder names separated by <code>/</code>.</dd></div>
+    <div><dt>Absolute path</dt><dd>A path that starts with <code>/</code> and gives the full location from the root, so it works from anywhere.</dd></div>
+    <div><dt>Relative path</dt><dd>A path that does not start with <code>/</code> and is resolved from your current working directory.</dd></div>
+    <div><dt>Working directory</dt><dd>The folder you are currently “standing in”; shown by <code>pwd</code> and changed with <code>cd</code>.</dd></div>
+    <div><dt>Hidden file</dt><dd>A file whose name starts with a dot (e.g. <code>.bashrc</code>); shown only with <code>ls -a</code>.</dd></div>
+    <div><dt>Parent directory (..)</dt><dd>The folder that contains the current folder; <code>cd ..</code> moves up one level.</dd></div>
+    <div><dt>Tilde (~)</dt><dd>Shorthand for your home directory, such as <code>/home/ubuntu</code>.</dd></div>
+    <div><dt>History expansion (!)</dt><dd>Bash shortcuts like <code>!!</code>, <code>!3</code> and <code>!ls</code> that rerun commands from your history.</dd></div>
+  </dl>
+</section>
+
+<!-- quiz -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>What is the difference between <code>/</code> and <code>/root</code>?</p>
+      <ol><li>They are the same directory</li><li><code>/</code> is the top of the whole system; <code>/root</code> is the root user’s home folder inside it</li><li><code>/root</code> contains <code>/</code></li><li><code>/</code> is only for the root user</li></ol>
+      <p class="why"><code>/</code> holds everything. <code>/root</code> is one locked folder within it.</p></div>
+    <div class="q" data-answer="3"><p>An app on a customer server keeps crashing. Where do you look first for clues?</p>
+      <ol><li><code>/bin</code></li><li><code>/home</code></li><li><code>/var/log</code></li><li><code>/dev</code></li></ol>
+      <p class="why"><code>/var/log</code> is the system’s flight recorder: the history of what happened just before the failure.</p></div>
+    <div class="q" data-answer="1"><p>You want to change the machine’s name. Which directory holds that setting?</p>
+      <ol><li><code>/etc</code></li><li><code>/var</code></li><li><code>/tmp</code></li><li><code>/usr</code></li></ol>
+      <p class="why">Configuration lives in <code>/etc</code>; the name is in <code>/etc/hostname</code>.</p></div>
+    <div class="q" data-answer="4"><p>Which of these is a relative path?</p>
+      <ol><li><code>/home/ubuntu/notes.txt</code></li><li><code>/var/log</code></li><li><code>/</code></li><li><code>Documents/notes.txt</code></li></ol>
+      <p class="why">Relative paths don’t start with <code>/</code>; they’re resolved from your current folder.</p></div>
+    <div class="q" data-answer="2"><p>You go from <code>/home/ubuntu</code> to <code>/var/log</code>. Where does <code>cd -</code> take you?</p>
+      <ol><li><code>/var</code></li><li><code>/home/ubuntu</code></li><li><code>/</code></li><li><code>/root</code></li></ol>
+      <p class="why"><code>cd -</code> goes back to the previous directory. <code>cd ..</code> would have gone up to <code>/var</code>.</p></div>
+    <div class="q" data-answer="3"><p>You suspect a hidden <code>.env</code> file exists but <code>ls</code> doesn’t show it. Which command reveals it with readable sizes?</p>
+      <ol><li><code>ls -R</code></li><li><code>ls -l</code></li><li><code>ls -lah</code></li><li><code>ls -h</code></li></ol>
+      <p class="why"><code>-a</code> shows dot-files, <code>-l</code> the details, and <code>-h</code> human-readable sizes.</p></div>
+    <div class="q" data-answer="1"><p>Your backup script runs from different folders each night. Which paths should it use?</p>
+      <ol><li>Absolute paths</li><li>Relative paths</li><li>Only <code>~</code></li><li>Only <code>..</code></li></ol>
+      <p class="why">Absolute paths work the same no matter where the script runs from.</p></div>
+    <div class="q" data-answer="4"><p><code>apt update</code> failed with “Permission denied”. Quickest fix?</p>
+      <ol><li><code>!apt</code></li><li><code>history</code></li><li><code>cd /</code></li><li><code>sudo !!</code></li></ol>
+      <p class="why"><code>!!</code> expands to the last command, so <code>sudo !!</code> reruns it with admin rights.</p></div>
+    <div class="q" data-answer="2"><p>John tries to open <code>/home/amit/file.txt</code>. What happens by default?</p>
+      <ol><li>It opens normally</li><li>He is denied unless Amit or root grants permission</li><li>The file is deleted</li><li>Linux copies it to /home/john</li></ol>
+      <p class="why">Each user’s home is private; ownership and permissions keep other users out.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Linux keeps everything in one upside-down tree from <b>/</b>: commands in <b>/bin</b>, settings in <b>/etc</b>, people in <b>/home</b>, diaries in <b>/var</b>, and you move through it with <b>absolute</b> or <b>relative</b> paths using <b>pwd</b>, <b>cd</b>, <b>ls</b> and <b>history</b>.</p>
+  <p>Next up: <b>Files &amp; Directories</b>, where you start creating, copying, moving and deleting things on this tree.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

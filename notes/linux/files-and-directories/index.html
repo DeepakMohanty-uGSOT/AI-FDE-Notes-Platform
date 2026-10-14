@@ -52,35 +52,44 @@
 ├── config.txt
 └── script.sh</code></pre>
   <p>You could open an editor and save each one. Linux gives you a faster way: <mark><code>touch</code> creates an empty file directly from the terminal.</mark></p>
+  <pre><code class="language-bash">touch README.md</code></pre>
+  <p>This creates the file immediately.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">touch filename
 touch notes.txt     # touch = command, notes.txt = file name</code></pre></div>
-  <div class="cmd"><p class="what">Try it</p>
-  <pre><code class="language-bash">pwd                # first, check where you are
-touch file.txt     # create one empty file here
-ls                 # check that it exists</code></pre></div>
-  <pre class="out"><code>file.txt</code></pre>
+  <h3>Creating files</h3>
+  <p>First check where you are:</p>
+  <pre><code class="language-bash">pwd</code></pre>
+  <figure class="shot sm"><img src="img/01.webp" alt="Terminal: pwd prints /home/ubuntu" width="543" height="193"><figcaption>You are in your home directory, <code>/home/ubuntu</code>.</figcaption></figure>
+  <p>Create one file, then check it is there:</p>
+  <pre><code class="language-bash">touch file.txt     # instantly creates an empty file named file.txt here
+ls</code></pre>
+  <figure class="shot sm"><img src="img/02.webp" alt="Terminal: touch file.txt, then ls lists file.txt" width="660" height="228"><figcaption><code>ls</code> now lists <code>file.txt</code>.</figcaption></figure>
 
   <h3>How do you know the file is empty?</h3>
   <pre><code class="language-bash">ls -l file.txt</code></pre>
-  <pre class="out"><code>-rw-rw-r-- 1 ubuntu ubuntu 0 Sep  7 14:20 file.txt</code></pre>
-  <p>Look at the <b>0</b>. That column is the file size in bytes, so 0 means the file holds no data yet. <code>touch</code> creates the file; it does <b>not</b> write any text into it.</p>
+  <figure class="shot"><img src="img/03.webp" alt="Terminal: ls -l file.txt shows -rw-rw-r-- 1 ubuntu ubuntu 0 Sep 7 06:45 file.txt, with the 0 boxed in red" width="796" height="127"><figcaption>The boxed <b>0</b> is the size in bytes.</figcaption></figure>
+  <p>Look at the <b>0</b>. That column is the file size in bytes, so 0 means the file currently contains no data.</p>
+  <h3><code>touch</code> does not write content</h3>
+  <p>Running <code>touch file.txt</code> creates the file, but it does <b>not</b> put any text inside it.</p>
 
   <h3>Many files at once</h3>
   <pre><code class="language-bash">touch app.txt config.txt notes.txt
 ls</code></pre>
-  <pre class="out"><code>app.txt  config.txt  file.txt  notes.txt</code></pre>
-  <p>All three appear from one command, much faster than running <code>touch</code> three times.</p>
+  <figure class="shot"><img src="img/04.webp" alt="Terminal: touch app.txt config.txt notes.txt, then ls lists app.txt config.txt file.txt notes.txt" width="873" height="175"><figcaption>Three new files from one command, next to the earlier <code>file.txt</code>.</figcaption></figure>
+  <p>All three files are created together in a single command, much faster than running <code>touch</code> three separate times.</p>
 
   <h3>A file inside another directory</h3>
-  <p>To create <code>/home/ubuntu/students/notes.txt</code>, either enter the folder first or give the path directly:</p>
+  <p>Suppose you have <code>/home/ubuntu/students</code> and want to create <code>/home/ubuntu/students/notes.txt</code>. You can first enter the directory, then create the file:</p>
   <pre><code class="language-bash">cd students
 touch notes.txt
 
 # or, without moving:
 touch students/notes.txt</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: mkdir students, ls, pwd shows /home/ubuntu, cd students/, touch note.txt, ls shows note.txt; the prompt changes to ~/students" width="762" height="321"><figcaption>The prompt changes to <code>~/students</code> after <code>cd</code>, and the new file is created there (the demo names it <code>note.txt</code>).</figcaption></figure>
 
   <h3>What if the file already exists?</h3>
-  <p>Suppose <code>file.txt</code> already contains <code>Hello Linux</code>, and you run <code>touch file.txt</code> again.</p>
+  <p>Suppose <code>file.txt</code> already contains <code>Hello Linux</code>, and you run <code>touch file.txt</code> again. <code>touch</code> does not erase the content: the file still contains <code>Hello Linux</code>. Instead, it updates the file’s timestamps to the current time.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Terminal: file2.txt with Hello Linux is 12 bytes at 08:42; after touch file2.txt it is still 12 bytes but the time is 08:43, and cat still prints Hello Linux" width="862" height="285"><figcaption>Same 12 bytes and same “Hello Linux” after <code>touch</code>. Only the time changed, from 08:42 to 08:43.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 190" role="img" aria-label="touch on an existing file: the content Hello Linux stays the same, only the modified time changes to now">
       <g class="rough">
@@ -112,14 +121,25 @@ touch students/notes.txt</code></pre>
 ├── scripts/
 ├── data/
 └── images/</code></pre>
-  <div class="cmd"><p class="what">The four ways you will use mkdir</p>
-  <pre><code class="language-bash">mkdir project                   # one folder in the current location
-mkdir docs images backup        # three folders side by side
-mkdir project/src               # src inside project (project must already exist)
-mkdir -p project2/src2/main     # build the whole path, creating missing parents</code></pre></div>
-  <p>Without <code>-p</code>, <code>mkdir project/src</code> fails if <code>project</code> doesn’t exist, because Linux won’t guess that you also wanted the parent:</p>
+  <p>Linux uses the <code>mkdir</code> command to create directories.</p>
+  <h3>Creating a directory</h3>
+  <pre><code class="language-bash">mkdir project</code></pre>
+  <p>This creates a single new folder named <code>project</code> inside your current location.</p>
+  <figure class="shot sm"><img src="img/07.webp" alt="Terminal: mkdir project, then ls shows project in blue" width="627" height="123"><figcaption>Directories show up in blue in <code>ls</code>.</figcaption></figure>
+  <h3>Creating multiple directories</h3>
+  <pre><code class="language-bash">mkdir docs images backup</code></pre>
+  <p>Just like <code>touch</code>, <code>mkdir</code> can create several folders in one go: three separate, empty directories appear side by side after this single command.</p>
+  <figure class="shot"><img src="img/08.webp" alt="Terminal: mkdir docs images backup, then ls shows backup docs images project" width="763" height="120"><figcaption><code>backup</code>, <code>docs</code> and <code>images</code> join <code>project</code>.</figcaption></figure>
+  <h3>Creating nested directories</h3>
+  <pre><code class="language-bash">mkdir project/src</code></pre>
+  <p>This creates a <code>src</code> folder inside <code>project</code>, but only works if <code>project</code> already exists. If it doesn’t exist yet, Linux refuses and shows an error, because it won’t guess whether you meant to create the parent folder too:</p>
   <pre class="out"><code>mkdir: cannot create directory 'project/src': No such file or directory</code></pre>
-  <p>The <code>-p</code> (<b>parents</b>) option tells Linux: <mark>create any missing parent directories as well.</mark> It also stays quiet if the folder already exists.</p>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal: mkdir project/src succeeds because project exists; cd project/ and ls shows src" width="639" height="213"><figcaption>Here <code>project</code> already existed, so <code>src</code> was created inside it.</figcaption></figure>
+  <h3>Creating parent directories automatically</h3>
+  <p>Suppose you want to create <code>project2/src2/main</code>, but none of these directories exist. Use <code>-p</code>:</p>
+  <pre><code class="language-bash">mkdir -p project2/src2/main</code></pre>
+  <p>The <code>-p</code> (<b>parents</b>) option tells Linux: <mark>create the required parent directories as well.</mark> It also stays quiet if the folder already exists.</p>
+  <figure class="shot"><img src="img/10.webp" alt="Terminal: mkdir -p project2/src2/main; ls shows project2; inside it src2; inside that main" width="787" height="295"><figcaption>Stepping in with <code>cd</code> and <code>ls</code> shows each level was built.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="mkdir -p project2/src2/main creates project2, then src2 inside it, then main inside that">
       <g class="rough">
@@ -141,13 +161,7 @@ mkdir -p project2/src2/main     # build the whole path, creating missing parents
   </figure>
   <h3>Verify with a recursive listing</h3>
   <pre><code class="language-bash">ls -R project2</code></pre>
-  <pre class="out"><code>project2:
-src2
-
-project2/src2:
-main
-
-project2/src2/main:</code></pre>
+  <figure class="shot sm"><img src="img/11.webp" alt="Terminal: ls -R project2 lists project2: src2, project2/src2: main, and an empty project2/src2/main:" width="673" height="270"><figcaption><code>-R</code> walks every level; <code>main</code> is empty, so nothing is listed under it.</figcaption></figure>
 </section>
 
 <!-- 4 -->
@@ -159,22 +173,38 @@ project2/src2/main:</code></pre>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cp SOURCE DESTINATION
 # SOURCE      = what you want to copy
 # DESTINATION = where the copy goes / what to call it</code></pre></div>
-  <div class="cmd"><p class="what">Practical example</p>
-  <pre><code class="language-bash">touch file1.txt
-echo "This is my first file" &gt; file1.txt   # &gt; writes text into the file
-cat file1.txt                               # check the content
-cp file1.txt file2.txt                      # copy it
-ls
-cat file2.txt                               # same content in the copy</code></pre></div>
-  <pre class="out"><code>This is my first file
-file1.txt  file2.txt
-This is my first file</code></pre>
-  <div class="tbl"><table>
-    <tr><th>Goal</th><th>Command</th><th>Result</th></tr>
-    <tr><td>Copy into a folder</td><td><code>cp file1.txt documents/</code></td><td><code>documents/file1.txt</code></td></tr>
-    <tr><td>Copy and rename at once</td><td><code>cp file1.txt documents/report.txt</code></td><td><code>documents/report.txt</code></td></tr>
-    <tr><td>Copy several files</td><td><code>cp file1.txt file2.txt file3.txt documents/</code></td><td>all three inside <code>documents/</code> (last argument must be a folder)</td></tr>
-  </table></div>
+  <p>For example: <code>cp notes.txt backup.txt</code>.</p>
+  <h3>Practical example</h3>
+  <p>Let’s create a simple file first:</p>
+  <pre><code class="language-bash">touch file1.txt</code></pre>
+  <figure class="shot sm"><img src="img/12.webp" alt="Terminal: touch file1.txt, then ls shows file1.txt" width="619" height="93"><figcaption>An empty <code>file1.txt</code>.</figcaption></figure>
+  <p>Now add some content to it using <code>&gt;</code>, and check the content:</p>
+  <pre><code class="language-bash">echo "This is my first file" &gt; file1.txt   # &gt; writes text into the file
+cat file1.txt</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="Terminal: echo This is my first file > file1.txt, then cat file1.txt prints This is my first file" width="942" height="172"><figcaption>The file now has real content.</figcaption></figure>
+  <p>Now we have a file with actual content, so let’s copy it and check:</p>
+  <pre><code class="language-bash">cp file1.txt file2.txt
+ls</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal: cp file1.txt file2.txt, then ls shows file1.txt file2.txt" width="985" height="258"><figcaption>Two files now: the original and the copy.</figcaption></figure>
+  <p>Now verify that the content was copied:</p>
+  <pre><code class="language-bash">cat file2.txt</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal: cat file2.txt prints This is my first file" width="942" height="355"><figcaption>The copy holds the same text as the original.</figcaption></figure>
+
+  <h3>Copying a file into a directory</h3>
+  <p>Suppose you have <code>file1.txt</code> and a <code>documents/</code> folder, and you want a copy of <code>file1.txt</code> inside <code>documents</code>:</p>
+  <pre><code class="language-bash">cp file1.txt documents/</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: mkdir documents, cp file1.txt documents/; inside documents ls shows file1.txt (boxed), and back in home ls still shows file1.txt (boxed)" width="742" height="324"><figcaption>The copy is inside <code>documents/</code>, and the original is still in the home folder (both boxed).</figcaption></figure>
+
+  <h3>Copying and renaming at the same time</h3>
+  <p>You can also give the copied file a different name:</p>
+  <pre><code class="language-bash">cp file1.txt documents/report.txt</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: after emptying documents, cp file1.txt documents/report.txt; inside documents ls shows report.txt and cat prints This is my first file" width="844" height="286"><figcaption>The copy lands in <code>documents/</code> already named <code>report.txt</code>, with the same content.</figcaption></figure>
+
+  <h3>Copying multiple files</h3>
+  <p>Suppose you have <code>file1.txt</code>, <code>file2.txt</code>, <code>file3.txt</code> and <code>documents/</code>, and want to copy all three files into <code>documents</code>.</p>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: touch file2.txt, touch file3.txt, ls shows documents file1.txt file2.txt file3.txt" width="663" height="112"><figcaption>The starting point: three files and a folder.</figcaption></figure>
+  <pre><code class="language-bash">cp file1.txt file2.txt file3.txt documents/   # the last argument must be a folder</code></pre>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal: cp file1.txt file2.txt file3.txt documents/; ls in home still shows all files; ls inside documents shows file1.txt file2.txt file3.txt report.txt" width="988" height="163"><figcaption>All three copies are in <code>documents/</code> (next to the earlier <code>report.txt</code>), and the originals stay put.</figcaption></figure>
   <div class="sticky tip"><strong>Copying a whole folder</strong> <code>cp</code> skips directories unless you add <code>-r</code> (recursive): <code>cp -r project project_backup</code> copies the folder and everything inside it.</div>
 </section>
 
@@ -183,6 +213,8 @@ This is my first file</code></pre>
   <h2><code>mv</code> · moving and renaming</h2>
   <p>Program location: <code>/bin/mv</code>. <code>mv</code> does two jobs: <b>move</b> a file or directory somewhere else, and <b>rename</b> it. Unlike <code>cp</code>, it never makes a second copy.</p>
   <div class="story"><b class="lbl">Shifting the tiffin</b>When you move your tiffin box from the kitchen table to your bag, there is no tiffin left on the table. <mark><code>mv</code> physically relocates the item; after the move it is no longer at the original place.</mark></div>
+  <p>Think of it like physically taking something from one place and putting it somewhere else:</p>
+  <div class="flow"><span class="op">SOURCE</span><span class="ok">DESTINATION</span></div>
   <div class="codebox"><span class="cap">syntax (same pattern as cp)</span><pre><code class="language-bash">mv SOURCE DESTINATION
 # SOURCE      = the file or folder to move or rename
 # DESTINATION = where it should end up / what it should be called</code></pre></div>
@@ -196,39 +228,61 @@ This is my first file</code></pre>
 └── documents/
     └── file1.txt</code></pre>
   </div>
-  <div class="cmd"><p class="what">Try it</p>
+  <p>The file has changed its location. There is no <code>file1.txt</code> in the original location anymore.</p>
+
+  <h3>Moving files</h3>
+  <p>Let’s create a file, add some content using <code>&gt;</code>, and check it:</p>
   <pre><code class="language-bash">touch file1.txt
 echo "This is my first file" &gt; file1.txt
-mkdir documents
-ls                       # file1.txt  documents
-mv file1.txt documents/
-ls                       # documents   (file1.txt is gone from here)
-cd documents/
-ls                       # file1.txt
-cat file1.txt            # This is my first file</code></pre></div>
+ls
+cat file1.txt</code></pre>
+  <figure class="shot"><img src="img/20.webp" alt="Terminal: touch file1.txt, echo into it, ls shows file1.txt, cat prints This is my first file" width="945" height="217"><figcaption><code>file1.txt</code> exists and has content.</figcaption></figure>
+  <p>Now create a directory and check the current structure:</p>
+  <pre><code class="language-bash">mkdir documents
+ls</code></pre>
+  <figure class="shot sm"><img src="img/21.webp" alt="Terminal: mkdir documents, ls shows documents file1.txt" width="634" height="189"><figcaption>A folder and a file side by side.</figcaption></figure>
+  <p>Now move the file and check the current directory:</p>
+  <pre><code class="language-bash">mv file1.txt documents/
+ls</code></pre>
+  <figure class="shot"><img src="img/22.webp" alt="Terminal: mv file1.txt documents/, ls shows only documents" width="726" height="136"><figcaption>Only <code>documents</code> is left here.</figcaption></figure>
+  <p>The file is no longer in the current directory. Check inside <code>documents</code>, and look at its content there too:</p>
+  <pre><code class="language-bash">cd documents/
+ls
+cat file1.txt</code></pre>
+  <figure class="shot"><img src="img/23.webp" alt="Terminal: cd documents, ls shows file1.txt, cat prints This is my first file" width="757" height="219"><figcaption>The same file, with the same content, now lives in <code>documents/</code>.</figcaption></figure>
 
   <h3>Moving a directory</h3>
-  <p><code>mv</code> moves whole folders too, with no extra option needed:</p>
-  <div class="two">
-    <pre class="out"><code># before
-project/
+  <p><code>mv</code> moves whole folders too, with no extra option needed. Suppose you have:</p>
+  <pre class="out"><code>project/
 ├── app.txt
 └── config.txt
 backup/</code></pre>
-    <pre class="out"><code># after: mv project backup/
-backup/
+  <figure class="shot"><img src="img/24.webp" alt="Terminal: mkdir project backup, ls shows backup project; inside project, touch app.txt config.txt and ls shows both" width="856" height="249"><figcaption>Setting up <code>project/</code> with two files, plus an empty <code>backup/</code>.</figcaption></figure>
+  <p>You can move <code>project</code> inside <code>backup</code>:</p>
+  <pre><code class="language-bash">mv project backup/</code></pre>
+  <figure class="shot"><img src="img/25.webp" alt="Terminal: mv project backup/, ls shows only backup, and inside backup ls shows project" width="745" height="244"><figcaption><code>project</code> is gone from home and now sits inside <code>backup/</code>.</figcaption></figure>
+  <pre class="out"><code>backup/
 └── project/
     ├── app.txt
     └── config.txt</code></pre>
-  </div>
 
-  <h3>Renaming files and folders</h3>
-  <pre><code class="language-bash">mv old_name.txt new_name.txt    # same file, same content, same timestamps, new label
-mv old_project new_project      # the folder and everything inside it get the new name</code></pre>
+  <h3>Renaming files</h3>
+  <p>This is where <code>mv</code> becomes interesting. Suppose you have <code>old_name.txt</code> and want it to become <code>new_name.txt</code>:</p>
+  <pre><code class="language-bash">mv old_name.txt new_name.txt
+ls</code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: ls shows old_name.txt; after mv old_name.txt new_name.txt, ls shows new_name.txt" width="789" height="189"><figcaption>Before: <code>old_name.txt</code>. After: <code>new_name.txt</code>.</figcaption></figure>
+  <p><code>old_name.txt</code> no longer exists; it has become <code>new_name.txt</code>. Same file, same content, same timestamps, just a new label.</p>
+
+  <h3>Renaming directories</h3>
+  <p>The same idea applies to folders:</p>
+  <pre><code class="language-bash">mv old_project new_project</code></pre>
+  <p><code>old_project</code> and everything inside it is now called <code>new_project</code>. Nothing inside the folder needs to change, only the folder’s own name.</p>
 
   <h3>Move and rename in one step</h3>
-  <p>You have <code>report_draft.txt</code> and a <code>documents/</code> folder. You want it inside <code>documents</code>, renamed to <code>final_report.txt</code>:</p>
-  <pre><code class="language-bash">mv report_draft.txt documents/final_report.txt</code></pre>
+  <p>Because <code>mv</code>’s destination can include both a path and a new name, you can relocate and rename a file in a single command. You have <code>report.txt</code> and a <code>documents/</code> folder. You want it inside <code>documents</code>, renamed to <code>final_report.txt</code>:</p>
+  <pre><code class="language-bash">mv report.txt documents/final_report.txt</code></pre>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal: touch report.txt, mkdir documents, mv report.txt documents/final_report.txt; ls shows only documents, and inside it final_report.txt" width="958" height="327"><figcaption>The file leaves home and arrives in <code>documents/</code> already called <code>final_report.txt</code>.</figcaption></figure>
+  <p>One command does both jobs at once: the file leaves its current folder and arrives in <code>documents</code> already carrying its new name.</p>
 </section>
 
 <!-- 6 -->
@@ -312,16 +366,24 @@ mv old_project new_project      # the folder and everything inside it get the ne
 .
 └── file2.txt</code></pre>
   </div>
-  <div class="cmd"><p class="what">Try it</p>
+  <h3>Removing a single file</h3>
+  <p>Let’s create a file first, add some content, and check it:</p>
   <pre><code class="language-bash">touch file1.txt
 echo "This file will be removed" &gt; file1.txt
-cat file1.txt
-rm file1.txt
-ls                                  # file1.txt no longer appears</code></pre></div>
+cat file1.txt</code></pre>
+  <figure class="shot"><img src="img/28.webp" alt="Terminal: touch file1.txt, echo This file will be removed into it, cat prints the text" width="1002" height="120"><figcaption>A file with content, ready to be removed.</figcaption></figure>
+  <p>Now remove it and check:</p>
+  <pre><code class="language-bash">rm file1.txt
+ls</code></pre>
+  <figure class="shot"><img src="img/29.webp" alt="Terminal: rm file1.txt, then ls prints nothing" width="1011" height="207"><figcaption><code>ls</code> prints nothing: <code>file1.txt</code> no longer appears.</figcaption></figure>
+  <p><code>file1.txt</code> has been permanently deleted.</p>
 
-  <h3>Several files, or a pattern</h3>
+  <h3>Removing multiple files, or a pattern</h3>
   <pre><code class="language-bash">rm file1.txt file2.txt file3.txt    # all three in one go
-rm *.txt                            # every file ending in .txt in this folder</code></pre>
+ls</code></pre>
+  <figure class="shot"><img src="img/30.webp" alt="Terminal: touch file1.txt file2.txt file3.txt, ls lists them, rm file1.txt file2.txt file3.txt, ls prints nothing" width="909" height="199"><figcaption>All three files are deleted together, much faster than running <code>rm</code> three separate times.</figcaption></figure>
+  <p>Using wildcards, you can also remove files that match a pattern:</p>
+  <pre><code class="language-bash">rm *.txt                            # every file ending in .txt in this folder</code></pre>
 
   <h3>The options that change rm’s behaviour</h3>
   <div class="grid">
@@ -329,20 +391,27 @@ rm *.txt                            # every file ending in .txt in this folder</
     <div class="card t3 tilt-b"><h4><code>-f</code> · force</h4><p>Never asks and hides most errors (e.g. for missing files). Useful in scripts, where no one can answer a prompt.</p></div>
     <div class="card t4 tilt-a"><h4><code>-r</code> / <code>-R</code> · recursive</h4><p>Goes inside a directory and removes its files and subfolders, then the directory itself.</p></div>
   </div>
+  <h3>Interactive removal with <code>-i</code></h3>
+  <p>Because <code>rm</code> deletes permanently and without warning by default, it’s easy to remove the wrong file by mistake. The <code>-i</code> (interactive) option makes <code>rm</code> ask for confirmation before deleting each file:</p>
   <pre><code class="language-bash">rm -i report.txt</code></pre>
-  <pre class="out"><code>rm: remove regular file 'report.txt'? y</code></pre>
+  <p>You may see <code>rm: remove regular file 'report.txt'?</code> (or <code>regular empty file</code> when the file is empty). Typing <b>y</b> and pressing Enter confirms the deletion; anything else cancels it. This small habit is one of the easiest ways to avoid an accidental, unrecoverable mistake.</p>
+  <figure class="shot"><img src="img/31.webp" alt="Terminal: rm -i report.txt asks remove regular empty file 'report.txt'? Answer n keeps it (ls shows report.txt); answer y deletes it (ls shows nothing)" width="670" height="325"><figcaption>Answer <b>n</b>: the file stays. Answer <b>y</b>: it’s gone.</figcaption></figure>
+  <h3>Force removal with <code>-f</code></h3>
+  <p>The <code>-f</code> (force) option does the opposite of <code>-i</code>: it removes files without asking for confirmation and suppresses most error messages, even for files that don’t normally prompt.</p>
   <pre><code class="language-bash">rm -f old_file.txt      # no question, no complaint if it is missing</code></pre>
-  <p>Removing a whole directory tree:</p>
-  <div class="two">
-    <pre class="out"><code>project/
+  <figure class="shot"><img src="img/32.webp" alt="Terminal: touch old_file.txt, ls shows it, rm -f old_file.txt, ls prints nothing" width="697" height="211"><figcaption>No prompt, no message: the file is simply gone.</figcaption></figure>
+  <p>This is useful in scripts, where no one is available to answer a confirmation prompt. On the command line it also removes your last safety net, so use it deliberately, not out of habit.</p>
+  <h3>Removing directories recursively with <code>-r</code> / <code>-R</code></h3>
+  <p>The <code>-r</code> option means <b>recursive</b>. Suppose you have:</p>
+  <pre class="out"><code>project/
 ├── app.txt
 └── images/
     ├── logo.png
     └── photo.jpg</code></pre>
-    <pre><code class="language-bash">rm -r project
-# project, app.txt, images/ and both
-# pictures are all deleted</code></pre>
-  </div>
+  <p>To remove the entire <code>project</code> directory:</p>
+  <pre><code class="language-bash">rm -r project</code></pre>
+  <p>Linux goes inside the directory and removes its contents and subdirectories.</p>
+  <figure class="shot"><img src="img/33.webp" alt="Terminal: building project with app.txt and images/logo.png, images/photo.jpg; then rm -r project and ls prints nothing" width="931" height="457"><figcaption>The <code>project</code> folder, along with every file and subfolder inside it, is deleted in one command.</figcaption></figure>
   <div class="sticky tip"><strong>Make -i a habit</strong> One confirmation prompt is a small price for avoiding an unrecoverable mistake. Keep <code>-f</code> for scripts and situations where you are already certain.</div>
 </section>
 
@@ -409,10 +478,18 @@ rm *.txt                            # every file ending in .txt in this folder</
     </svg></div>
     <figcaption><code>rmdir</code> never deletes anything you forgot was inside.</figcaption>
   </figure>
-  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">rmdir DIRECTORY</code></pre></div>
+  <p>If a directory contains files or other directories, <code>rmdir</code> will not remove it.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">rmdir DIRECTORY
+rmdir documents     # removes documents only if it is empty</code></pre></div>
+  <h3>Removing an empty directory</h3>
+  <p>Suppose you have <code>temp/</code> and it contains nothing:</p>
   <pre><code class="language-bash">rmdir temp                  # temp is empty: removed, no flags needed
-ls                          # temp is gone
-rmdir docs images backup    # several empty folders at once</code></pre>
+ls                          # temp is gone</code></pre>
+  <figure class="shot"><img src="img/34.webp" alt="Terminal: temp holds file1.txt so rmdir temp/ fails with Directory not empty; after rm * inside temp, rmdir temp/ succeeds and ls prints nothing" width="832" height="438"><figcaption>First try: “Directory not empty”. After emptying <code>temp</code> with <code>rm *</code>, <code>rmdir</code> removes it.</figcaption></figure>
+  <p>Because it was empty, <code>rmdir</code> removed it without any extra flags or confirmation.</p>
+  <h3>Removing multiple empty directories</h3>
+  <p>Like <code>mkdir</code>, <code>rmdir</code> can take several directory names in a single command:</p>
+  <pre><code class="language-bash">rmdir docs images backup    # several empty folders at once</code></pre>
   <p>If one of several folders still has something in it, <code>rmdir</code> removes the empty ones and reports an error only for that one; it doesn’t stop the whole command.</p>
   <h3>Why it refuses non-empty folders</h3>
   <pre class="out"><code>project/

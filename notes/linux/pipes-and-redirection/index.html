@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pipes &amp; Redirection · Linux | AIFDE Notes</title>
+<meta name="description" content="Control where command input comes from and where output goes: stdin, stdout and stderr, the >, >> and < redirection operators, and the | pipe that connects commands.">
+<meta name="keywords" content="stdin, stdout, stderr, > redirection, >> append, < input, pipe |">
+<meta name="date" content="2026-09-07">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="linux/pipes-and-redirection">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Pipes &amp; Redirection</h1>
+  <p class="byline">Save output to files, feed files in as input, and connect commands into pipelines, by controlling where data flows.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Why control the flow of data?</h2>
+  <p>Until now, commands have mostly <b>displayed information on the terminal</b>. Run <code>ls</code> and you get:</p>
+  <figure class="shot sm"><img src="img/01.webp" alt="Terminal: ls lists app.log documents.txt notes.txt script.sh" width="654" height="136"><figcaption>The output lands on the screen, and that’s it.</figcaption></figure>
+  <p>The output appears on screen and then scrolls out of view. But you often need more. You may want to:</p>
+  <ul>
+    <li><b>save</b> output into a file,</li>
+    <li><b>add</b> new information to an existing file,</li>
+    <li><b>use a file as input</b> to a command,</li>
+    <li><b>send one command’s output</b> into another command,</li>
+    <li><b>combine</b> several small commands into one bigger task.</li>
+  </ul>
+  <div class="flow"><span>you</span><span class="op">command</span><span>output</span><span class="hl">terminal</span></div>
+  <p>That is the default path. <mark>Pipes and redirection let you change where a command’s input comes from and where its output goes.</mark></p>
+  <h3>Why data flow is needed</h3>
+  <p>Picture an administrator whose <code>ls</code> returns hundreds of names. Looking at them on the terminal may not be enough; they may want to <b>save</b> the result. Or a <code>server.log</code> with thousands of lines where they only want the lines containing <code>ERROR</code>. Instead of manually searching the file, they can connect commands:</p>
+  <div class="two">
+    <div class="flow"><span class="op">ls</span><span class="ok">files.txt</span></div>
+    <div class="flow"><span class="op">server.log</span><span class="op">grep</span><span class="ok">ERROR lines</span></div>
+  </div>
+  <p>So Linux gives us ways to control the flow of data. The four important operators in this chapter:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4><code>&gt;</code></h4><p>output → file (replace)</p></div>
+    <div class="card t2 tilt-b"><h4><code>&gt;&gt;</code></h4><p>output → file (append)</p></div>
+    <div class="card t3 tilt-a"><h4><code>&lt;</code></h4><p>file → input</p></div>
+    <div class="card t5 tilt-b"><h4><code>|</code></h4><p>command → command</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="streams">
+  <h2>The foundation: three standard streams</h2>
+  <p>Before the operators, you need to know <b>where a command normally gets information and where it sends it</b>. Every command has three channels, each with a number:</p>
+  <div class="story"><b class="lbl">The kitchen window</b>A dhaba kitchen has one hatch where orders come <b>in</b>, one counter where finished plates go <b>out</b>, and a separate bell the cook rings when something goes <b>wrong</b>. <mark>stdin is the order hatch, stdout is the serving counter, stderr is the problem bell.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Keyboard feeds stdin, stream 0, into the command. The command sends normal output on stdout, stream 1, and errors on stderr, stream 2; both go to the terminal by default">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="100" width="140" height="60" rx="12"/>
+        <rect class="box f-yellow" x="280" y="80" width="160" height="100" rx="14"/>
+        <rect class="box f-blue" x="560" y="40" width="140" height="60" rx="12"/>
+        <rect class="box f-blue" x="560" y="160" width="140" height="60" rx="12"/>
+        <path class="lb" d="M165 130 L 274 130" marker-end="url(#ahb)"/>
+        <path class="ln" d="M445 110 C 490 100, 510 75, 554 72" marker-end="url(#ah)"/>
+        <path class="lr" d="M445 150 C 490 160, 510 185, 554 188" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="90" y="138" text-anchor="middle">keyboard</text>
+      <text class="th" x="360" y="138" text-anchor="middle">command</text>
+      <text class="tb" x="220" y="116" text-anchor="middle">stdin · 0</text>
+      <text class="t" x="480" y="58" text-anchor="middle">stdout · 1</text>
+      <text class="tr" x="490" y="216" text-anchor="middle">stderr · 2</text>
+      <text class="t" x="630" y="76" text-anchor="middle">terminal</text>
+      <text class="t" x="630" y="196" text-anchor="middle">terminal</text>
+      <text class="ts" x="630" y="118" text-anchor="middle">normal output</text>
+      <text class="ts" x="630" y="238" text-anchor="middle">error messages</text>
+    </svg></div>
+    <figcaption>One way in, two separate ways out. By default both outputs land on your screen.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>Stream</th><th>Number</th><th>What it is</th><th>Default</th></tr>
+    <tr><td><b>stdin</b> (standard input)</td><td><code>0</code></td><td>where a command gets its input</td><td>keyboard</td></tr>
+    <tr><td><b>stdout</b> (standard output)</td><td><code>1</code></td><td>the normal output of a command</td><td>terminal</td></tr>
+    <tr><td><b>stderr</b> (standard error)</td><td><code>2</code></td><td>error messages</td><td>terminal</td></tr>
+  </table></div>
+
+  <h3>stdin in action</h3>
+  <p>Standard input is the normal source of input for a command, usually the keyboard. If a command asks you to type something, the flow is:</p>
+  <div class="flow"><span>keyboard</span><span class="op">stdin (0)</span><span class="ok">command</span></div>
+  <p>Example: <code>cat</code> waiting for keyboard input. Run <code>cat</code> with no file name:</p>
+  <pre><code class="language-bash">cat</code></pre>
+  <p>It waits for input. Now type <code>Hello Linux</code> and press <kbd>Enter</kbd>:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/02.webp" alt="Terminal: cat with no arguments, the cursor waits on an empty line" width="629" height="207"><figcaption><code>cat</code> is waiting on stdin.</figcaption></figure>
+    <figure class="shot"><img src="img/03.webp" alt="Terminal: after typing Hello Linux, cat prints Hello Linux a second time" width="555" height="169"><figcaption>Your line, then cat’s echo of it.</figcaption></figure>
+  </div>
+  <p><code>cat</code> received your line through <b>stdin (0)</b>, here from the keyboard, and echoed it straight back through <b>stdout (1)</b>. Press <kbd>Ctrl</kbd> + <kbd>D</kbd> to say “input finished” and exit. For beginners, remember: <mark>stdin is where a command gets its input.</mark></p>
+  <h3>stdout in action</h3>
+  <p>When a command successfully produces normal information, that is <b>standard output</b> (stdout). Normally it goes to the terminal.</p>
+  <pre><code class="language-bash">echo Hello</code></pre>
+  <figure class="shot sm"><img src="img/04.webp" alt="Terminal: echo Hello prints Hello" width="685" height="194"><figcaption>“Hello” arrives on the terminal via stdout.</figcaption></figure>
+  <p><code>echo</code> sent “Hello” through <b>stdout (1)</b>. That stream number matters the moment you want to send the output somewhere else. For beginners: stdout is the normal output produced by a command.</p>
+  <h3>stderr in action</h3>
+  <p>Commands can also produce error messages. Example: accessing a file that does not exist:</p>
+  <pre><code class="language-bash">cat nonexistent_file.txt</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: cat nonexistent_file.txt prints cat: nonexistent_file.txt: No such file or directory" width="909" height="222"><figcaption>An error message: this one travels on stderr.</figcaption></figure>
+  <p>This message travelled through <b>stderr (2)</b>, not stdout. Linux treats it as a completely separate stream, so you can handle normal output and errors independently.</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="output">
+  <h2><code>&gt;</code> · send output to a file</h2>
+  <p>Normally <code>ls</code> prints its output directly on the screen, as you saw at the start:</p>
+  <figure class="shot sm"><img src="img/01.webp" alt="Terminal: ls lists app.log documents.txt notes.txt script.sh" width="654" height="136"><figcaption>Default destination: the terminal.</figcaption></figure>
+  <p>But sometimes we don’t want the output only on the screen; we want to save it into a file. That’s where <code>&gt;</code> is useful: <mark><code>&gt;</code> changes the normal destination of the command’s output.</mark></p>
+  <div class="two">
+    <div class="flow v"><span class="op">ls</span><span>output</span><span class="hl">terminal</span></div>
+    <div class="flow v"><span class="op">ls</span><span>output</span><span class="op">&gt;</span><span class="ok">files.txt</span></div>
+  </div>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command &gt; file     # run the command and put its output into this file</code></pre></div>
+  <p><code>&gt;</code> is used to send output to a file, <b>create</b> a new file containing it, or <b>replace</b> a file’s existing content.</p>
+  <h3>Practical example</h3>
+  <p>First, check what files are in your current directory:</p>
+  <pre><code class="language-bash">ls</code></pre>
+  <figure class="shot sm"><img src="img/06.webp" alt="Terminal: ls lists app.log documents.txt notes.txt script.sh" width="649" height="106"><figcaption>Normally this list is shown only on the terminal.</figcaption></figure>
+  <p>Now suppose your teacher asks: “Save the list of files into a file called <code>files.txt</code>.”</p>
+  <pre><code class="language-bash">ls &gt; files.txt      # nothing is printed this time…
+cat files.txt       # …because it all went into the file</code></pre>
+  <p>Linux takes the output of <code>ls</code> and puts it into <code>files.txt</code>. The output is now stored in the file, and you can check it with <code>cat</code>:</p>
+  <figure class="shot sm"><img src="img/07.webp" alt="Terminal: cat files.txt prints app.log, documents.txt, files.txt, notes.txt, script.sh one per line" width="657" height="220"><figcaption>The saved list, one name per line, and it includes <code>files.txt</code> itself.</figcaption></figure>
+  <div class="sticky info l"><strong>Two small surprises</strong> <code>files.txt</code> does <b>not</b> contain the actual files; it holds the <b>names</b> (text) printed by <code>ls</code>. And it lists <code>files.txt</code> itself, because the shell creates the file before <code>ls</code> runs. (Into a file, <code>ls</code> also writes one name per line.)</div>
+  <h3>Does <code>&gt;</code> create a new file?</h3>
+  <p>Yes. If <code>files.txt</code> doesn’t already exist, <code>ls &gt; files.txt</code> makes Linux create it:</p>
+  <figure class="shot"><img src="img/08.webp" alt="Terminal: ls before shows no files.txt; after ls > files.txt, ls shows files.txt (boxed in red)" width="792" height="147"><figcaption>Before: no <code>files.txt</code>. After <code>ls &gt; files.txt</code>: there it is (boxed).</figcaption></figure>
+
+  <h3><code>&gt;</code> overwrites existing content</h3>
+  <p>This is one of the most important things to remember about <code>&gt;</code>. Suppose we create a file and check it:</p>
+  <pre><code class="language-bash">echo "Hello" &gt; message.txt
+cat message.txt</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal: echo Hello > message.txt, cat message.txt prints Hello" width="775" height="159"><figcaption><code>message.txt</code> contains <code>Hello</code>.</figcaption></figure>
+  <p>Now run <code>&gt;</code> again on the same file, and check again:</p>
+  <pre><code class="language-bash">echo "Linux" &gt; message.txt
+cat message.txt</code></pre>
+  <figure class="shot"><img src="img/10.webp" alt="Terminal: after echo Linux > message.txt, cat message.txt prints only Linux" width="775" height="243"><figcaption>Only <code>Linux</code> is left.</figcaption></figure>
+  <p>Where did <code>Hello</code> go? It was replaced. The second <code>&gt;</code> didn’t add “Linux” after it; it <b>overwrote</b> the existing content. Remember: <code>&gt;</code> creates a file if needed, but if the file already contains data, the old content is replaced.</p>
+  <div class="sticky warn"><strong>One character, all data gone</strong> <code>&gt;</code> empties the file before the command even starts. Typing <code>&gt;</code> when you meant <code>&gt;&gt;</code> on an important log or config wipes it. Bash’s <code>set -o noclobber</code> makes <code>&gt;</code> refuse to overwrite existing files.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="append">
+  <h2><code>&gt;&gt;</code> · append to a file</h2>
+  <p>Often you want to <b>keep</b> the old information and <b>add</b> new information after it. A log is the perfect example: after <code>Server started</code>, a <code>User logged in</code> event happens, and you want both lines.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command &gt;&gt; file    # run the command and add its output to the END of this file</code></pre></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="With >, message.txt containing Hello becomes just Linux. With >>, app.log containing Server started gets User logged in added at the end">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="20" width="330" height="180" rx="14"/>
+        <rect class="box f-green" x="370" y="20" width="330" height="180" rx="14"/>
+        <rect class="box f-card" x="40" y="90" width="110" height="70" rx="8"/>
+        <rect class="box f-card" x="220" y="90" width="110" height="70" rx="8"/>
+        <rect class="box f-card" x="390" y="90" width="120" height="70" rx="8"/>
+        <rect class="box f-card" x="560" y="90" width="125" height="70" rx="8"/>
+        <path class="lr" d="M155 125 L 214 125" marker-end="url(#ahr)"/>
+        <path class="lb" d="M515 125 L 554 125" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="185" y="52" text-anchor="middle">echo "Linux" &gt; f</text>
+      <text class="tm" x="95" y="130" text-anchor="middle">Hello</text>
+      <text class="tm" x="275" y="130" text-anchor="middle">Linux</text>
+      <text class="tr" x="185" y="186" text-anchor="middle">replaced</text>
+      <text class="tm" x="535" y="52" text-anchor="middle">echo "User…" &gt;&gt; f</text>
+      <text class="ts" x="450" y="130" text-anchor="middle">Server started</text>
+      <text class="ts" x="622" y="118" text-anchor="middle">Server started</text>
+      <text class="ts" x="622" y="142" text-anchor="middle">User logged in</text>
+      <text class="tb" x="535" y="186" text-anchor="middle">added at the end</text>
+    </svg></div>
+    <figcaption><code>&gt;</code> starts the file over; <code>&gt;&gt;</code> writes after what’s already there.</figcaption>
+  </figure>
+  <p>For example: <code>echo "User logged in" &gt;&gt; app.log</code>.</p>
+  <h3>Practical example: build a log step by step</h3>
+  <p>Imagine you are a student learning how log files work. Create the file, write the first entry with <code>&gt;</code> (it is the first entry), then a user logs in: you must keep <code>Server started</code>, so use <code>&gt;&gt;</code>:</p>
+  <pre><code class="language-bash">touch app.log
+echo "Server started" &gt; app.log         # first entry: &gt; is fine
+echo "User logged in" &gt;&gt; app.log        # keep the old line, add a new one
+cat app.log</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal: touch app.log, echo Server started > app.log, echo User logged in >> app.log, cat app.log prints both lines" width="835" height="211"><figcaption>The old content is still there, with the new line below it.</figcaption></figure>
+  <p>Another event happens: the backup is completed.</p>
+  <pre><code class="language-bash">echo "Backup completed" &gt;&gt; app.log
+cat app.log</code></pre>
+  <figure class="shot"><img src="img/12.webp" alt="Terminal: echo Backup completed >> app.log, cat app.log prints Server started, User logged in, Backup completed" width="883" height="175"><figcaption>Three lines, in the order they were added.</figcaption></figure>
+  <p>Every <code>&gt;&gt;</code> adds the new information at the end, and the old content stays.</p>
+  <h3>And if the file doesn’t exist?</h3>
+  <p><code>&gt;&gt;</code> can also create the file, just like <code>&gt;</code>:</p>
+  <pre><code class="language-bash">echo "First entry" &gt;&gt; new.log
+ls</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="Terminal: ls before has no new.log; after echo First entry >> new.log, ls lists new.log" width="1122" height="178"><figcaption><code>new.log</code> appears in the second listing.</figcaption></figure>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="input">
+  <h2><code>&lt;</code> · take input from a file</h2>
+  <p>Now the <b>opposite direction</b>. <code>&gt;</code> and <code>&gt;&gt;</code> send output <i>to</i> a file. <code>&lt;</code> takes information <i>from</i> a file and gives it to a command as <b>standard input</b>, so you don’t have to type it again.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command &lt; file     # run the command and take its input from this file</code></pre></div>
+  <p>With <code>app.log</code> from above (Server started / User logged in / Backup completed):</p>
+  <p>Normally, we can tell <code>cat</code> to read the file directly. Now use <code>&lt;</code> instead:</p>
+  <pre><code class="language-bash">cat app.log
+cat &lt; app.log</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/14.webp" alt="Terminal: cat app.log prints Server started, User logged in, Backup completed" width="624" height="157"><figcaption><code>cat app.log</code></figcaption></figure>
+    <figure class="shot"><img src="img/15.webp" alt="Terminal: cat < app.log prints the same three lines" width="580" height="148"><figcaption><code>cat &lt; app.log</code>: the same three lines.</figcaption></figure>
+  </div>
+  <p>Same result, so why bother? The point is <b>where <code>cat</code> gets its input from</b>.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Three routes: cat app.log, the file is an argument and cat opens it itself; plain cat, keyboard goes into stdin; cat less-than app.log, the shell connects the file to stdin instead of the keyboard">
+      <g class="rough">
+        <rect class="box f-grey" x="20" y="20" width="150" height="54" rx="12"/>
+        <rect class="box f-grey" x="20" y="108" width="150" height="54" rx="12"/>
+        <rect class="box f-green" x="20" y="196" width="150" height="54" rx="12"/>
+        <rect class="box f-blue" x="300" y="150" width="120" height="54" rx="12"/>
+        <rect class="box f-yellow" x="550" y="90" width="140" height="80" rx="14"/>
+        <path class="ln dash" d="M175 47 C 350 40, 480 60, 555 92" marker-end="url(#ah)"/>
+        <path class="lb" d="M175 135 L 294 165" marker-end="url(#ahb)"/>
+        <path class="lb" d="M175 223 L 294 190" marker-end="url(#ahb)"/>
+        <path class="lb" d="M425 177 L 544 145" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="95" y="52" text-anchor="middle">app.log</text>
+      <text class="th" x="95" y="142" text-anchor="middle">keyboard</text>
+      <text class="tm" x="95" y="228" text-anchor="middle">app.log</text>
+      <text class="th" x="360" y="186" text-anchor="middle">stdin</text>
+      <text class="th" x="620" y="138" text-anchor="middle">cat</text>
+      <text class="ts" x="370" y="30" text-anchor="middle">cat app.log: file name is an argument,</text>
+      <text class="ts" x="370" y="80" text-anchor="middle">cat opens the file itself</text>
+      <text class="ts" x="215" y="126">plain cat</text>
+      <text class="tr" x="215" y="246">cat &lt; app.log</text>
+    </svg></div>
+    <figcaption>With <code>&lt;</code>, the file simply takes the keyboard’s place on stdin.</figcaption>
+  </figure>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b><code>cat app.log</code></b><code>app.log</code> is a <b>file argument</b>. cat opens and reads the file itself, then prints it. <span class="tag">app.log → cat → terminal</span></div></li>
+    <li><span class="dot">2</span><div><b><code>cat</code> alone</b>cat reads what you type: <span class="tag">keyboard → stdin → cat</span></div></li>
+    <li><span class="dot">3</span><div><b><code>cat &lt; app.log</code></b>The shell connects the file to stdin, so <span class="tag">file → stdin → cat → terminal</span>. cat never even sees a file name.</div></li>
+  </ol>
+  <p><mark>Instead of keyboard → stdin → command, <code>&lt;</code> gives you file → stdin → command.</mark> That is the main idea. In real life: a program that normally asks you to type answers can be fed a prepared input file, so you don’t type the same information again and again.</p>
+  <div class="sticky tip"><strong>Where &lt; is truly needed</strong> Some commands read <b>only</b> from stdin, like <code>tr</code> from the Text Filters note: <code>tr 'a-z' 'A-Z' &lt; names.txt</code>. Also, <code>wc -l &lt; app.log</code> prints just the number, with no file name.</div>
+  <h3>Compare <code>&gt;</code> and <code>&lt;</code></h3>
+  <div class="two">
+    <div class="flow v"><span class="op">command</span><span>output</span><span class="op">&gt;</span><span class="ok">file</span></div>
+    <div class="flow v"><span class="ok">file</span><span class="op">&lt;</span><span>input</span><span class="op">command</span></div>
+  </div>
+  <p>The arrow points the way the data flows: <b>output goes TO the file</b> with <code>&gt;</code>; <b>input comes FROM the file</b> with <code>&lt;</code>.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="pipe">
+  <h2><code>|</code> · the pipe</h2>
+  <p>One of the most useful ideas in Linux. So far:</p>
+  <div class="tbl"><table>
+    <tr><th>Operator</th><th>Connects</th></tr>
+    <tr><td><code>&gt;</code></td><td>command → file</td></tr>
+    <tr><td><code>&gt;&gt;</code></td><td>command → file (add)</td></tr>
+    <tr><td><code>&lt;</code></td><td>file → command</td></tr>
+    <tr><td><code>|</code></td><td><b>command → command</b></td></tr>
+  </table></div>
+  <div class="story"><b class="lbl">The factory conveyor</b>In a biscuit factory, one machine bakes, a conveyor belt carries the biscuits straight to the packing machine, and nobody stacks them in a storeroom in between. <mark>A pipe is that conveyor: the stdout of one command becomes the stdin of the next.</mark></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="ls produces all filenames, a pipe carries them like a conveyor belt to grep .txt, which outputs only matching filenames to the terminal">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="50" width="140" height="80" rx="14"/>
+        <rect class="box f-yellow" x="340" y="50" width="160" height="80" rx="14"/>
+        <rect class="box f-green" x="580" y="50" width="120" height="80" rx="14"/>
+        <path class="ln" d="M170 150 L 330 150"/>
+        <path class="ln" d="M170 166 L 330 166"/>
+        <circle class="box f-grey" cx="185" cy="158" r="8"/>
+        <circle class="box f-grey" cx="315" cy="158" r="8"/>
+        <rect class="box f-card" x="195" y="128" width="26" height="20" rx="3"/>
+        <rect class="box f-card" x="237" y="128" width="26" height="20" rx="3"/>
+        <rect class="box f-card" x="279" y="128" width="26" height="20" rx="3"/>
+        <path class="lr" d="M165 90 L 334 90" marker-end="url(#ahr)"/>
+        <path class="lb" d="M505 90 L 574 90" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="90" y="96" text-anchor="middle">ls</text>
+      <text class="tm" x="420" y="96" text-anchor="middle">grep ".txt"</text>
+      <text class="t" x="640" y="96" text-anchor="middle">terminal</text>
+      <text class="tr" x="250" y="76" text-anchor="middle">the pipe |</text>
+      <text class="ts" x="90" y="152" text-anchor="middle">all filenames</text>
+      <text class="ts" x="250" y="196" text-anchor="middle">stdout of ls → stdin of grep</text>
+      <text class="ts" x="420" y="152" text-anchor="middle">keeps .txt lines</text>
+      <text class="ts" x="640" y="152" text-anchor="middle">only matches</text>
+    </svg></div>
+    <figcaption>No temporary file in between: the data flows straight from one command into the next.</figcaption>
+  </figure>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 | command2    # take the output of command1 and give it as input to command2</code></pre></div>
+  <p>Without a pipe you would have to do it in three steps: run <code>ls</code>, save the output in a temporary file, let another command read that file. The pipe connects them directly:</p>
+  <div class="two">
+    <div class="flow v"><span class="op">ls</span><span class="skip">save to temp file</span><span class="op">command reads the file</span></div>
+    <div class="flow v"><span class="op">ls</span><span class="op">|</span><span class="ok">another command</span></div>
+  </div>
+  <p>This direct connection is called a <b>pipe</b>.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="pipe-practice">
+  <h2>Practise: show only the <code>.txt</code> files</h2>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a practice folder</b><code>mkdir pipe_practice</code> then <code>cd pipe_practice</code></div></li>
+    <li><span class="dot">2</span><div><b>Create different types of files</b>see the commands below</div></li>
+    <li><span class="dot">3</span><div><b>The problem</b>“Show me only the .txt files.” Plain <code>ls</code> shows everything.</div></li>
+    <li><span class="dot">4</span><div><b>Try grep on its own</b>to see what it does with typed input</div></li>
+    <li><span class="dot">5</span><div><b>Connect ls and grep</b>with a pipe</div></li>
+  </ol>
+  <div class="cmd"><p class="what">Steps 1–3</p>
+  <pre><code class="language-bash">mkdir pipe_practice
+cd pipe_practice
+touch notes.txt
+touch assignment.txt
+touch program.c
+touch app.log
+touch server.log
+touch student.pdf
+ls</code></pre></div>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal in ~/pipe_practice: ls lists app.log assignment.txt notes.txt program.c server.log student.pdf" width="993" height="60"><figcaption>Six files of different types.</figcaption></figure>
+  <p>Plain <code>ls</code> gives you everything, but we only want <code>assignment.txt</code> and <code>notes.txt</code>. So we need another command to <b>filter</b> the output of <code>ls</code>: <code>grep</code>.</p>
+  <h3>Step 4: grep on its own reads stdin</h3>
+  <p>Before using the pipe, see what <code>grep</code> does. Run <code>grep ".txt"</code> with no file name. The command is now waiting for input. Type these four lines, then press <kbd>Ctrl</kbd> + <kbd>D</kbd>:</p>
+  <pre class="out"><code>assignment.txt
+program.c
+notes.txt
+app.log</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: grep .txt waiting for typed input; the typed lines are mixed with grep's matches, shown with .txt highlighted in red, right after assignment.txt and notes.txt" width="828" height="195"><figcaption>grep answers line by line: each typed line containing <code>.txt</code> is printed again at once (the copy with red <code>.txt</code>), so its output gets mixed in with your typing.</figcaption></figure>
+  <p>grep read your typed lines from stdin and printed only the ones containing <code>.txt</code>. It doesn’t wait for <kbd>Ctrl</kbd> + <kbd>D</kbd> to answer; that key only tells it the input is finished.</p>
+  <h3>Step 5: connect <code>ls</code> and <code>grep</code></h3>
+  <p>We already know <code>ls</code> produces the list of filenames, and <code>grep ".txt"</code> can filter input. So connect them using <code>|</code> and let <code>ls</code> do the typing:</p>
+  <pre><code class="language-bash">ls | grep ".txt"</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: ls | grep .txt prints assignment.txt and notes.txt with .txt highlighted in red" width="811" height="139"><figcaption>Only the two <code>.txt</code> files come through.</figcaption></figure>
+  <p>The complete data flow:</p>
+  <div class="flow"><span class="op">ls</span><span>all filenames</span><span class="op">|</span><span class="op">grep ".txt"</span><span>matching filenames</span><span class="ok">terminal</span></div>
+  <div class="sticky warn l"><strong>The dot is a wildcard in grep</strong> In a grep pattern, <code>.</code> means “any character”, so <code>".txt"</code> would also match a name like <code>mytxtfile</code>. For a strict match write <code>grep '\.txt$'</code>: a real dot, then txt at the end of the line.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Pipes are how you interrogate a customer’s system in seconds: <code>ps aux | grep python</code> (is the app running?), <code>grep ERROR app.log | wc -l</code> (how many errors?), <code>journalctl -u app | tail -n 50 &gt; debug.txt</code> (grab the latest logs to share with the team).</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="stderr-redirect">
+  <h2>Redirecting errors: <code>2&gt;</code></h2>
+  <p>Remember that errors travel on their own stream, number 2. <code>&gt;</code> on its own is short for <code>1&gt;</code>, so it only captures stdout; error messages still reach your screen. Put the stream number in front to redirect stderr:</p>
+  <div class="tbl"><table>
+    <tr><th>Form</th><th>Effect</th></tr>
+    <tr><td><code>cmd &gt; out.txt</code></td><td>stdout to the file, errors still on screen</td></tr>
+    <tr><td><code>cmd 2&gt; errors.txt</code></td><td>only errors to the file</td></tr>
+    <tr><td><code>cmd &gt; out.txt 2&gt;&amp;1</code></td><td>both streams into the same file</td></tr>
+    <tr><td><code>cmd 2&gt; /dev/null</code></td><td>throw errors away (<code>/dev/null</code> discards everything written to it)</td></tr>
+  </table></div>
+  <pre><code class="language-bash">cat app.log nonexistent_file.txt &gt; out.txt 2&gt; errors.txt
+cat out.txt        # the contents of app.log
+cat errors.txt     # cat: nonexistent_file.txt: No such file or directory</code></pre>
+  <div class="sticky info"><strong>Pipes carry stdout only</strong> <code>cmd | grep x</code> filters normal output; error messages bypass the pipe and print directly. Use <code>cmd 2&gt;&amp;1 | grep x</code> to search both.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Redirection</dt><dd>Changing where a command reads input from or writes output to, using operators like &gt;, &gt;&gt; and &lt;.</dd></div>
+    <div><dt>stdin (0)</dt><dd>Standard input: the stream a command reads input from. The keyboard by default.</dd></div>
+    <div><dt>stdout (1)</dt><dd>Standard output: the stream carrying a command’s normal output. The terminal by default.</dd></div>
+    <div><dt>stderr (2)</dt><dd>Standard error: a separate stream for error messages, so they can be handled apart from normal output.</dd></div>
+    <div><dt>&gt; (output redirection)</dt><dd>Sends stdout into a file, creating the file if needed and replacing any existing content.</dd></div>
+    <div><dt>&gt;&gt; (append)</dt><dd>Adds stdout to the end of a file, keeping existing content; creates the file if it doesn’t exist.</dd></div>
+    <div><dt>&lt; (input redirection)</dt><dd>Feeds a file’s contents to a command through stdin, in place of the keyboard.</dd></div>
+    <div><dt>Pipe (|)</dt><dd>Connects the stdout of one command directly to the stdin of the next, with no temporary file.</dd></div>
+    <div><dt>2&gt;</dt><dd>Redirects stderr (stream 2) to a file; <code>2&gt;&amp;1</code> sends stderr wherever stdout is going.</dd></div>
+    <div><dt>/dev/null</dt><dd>A special file that discards anything written to it; used to silence unwanted output.</dd></div>
+  </dl>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p><code>notes.txt</code> contains “Hello”. After <code>echo "Linux" &gt; notes.txt</code>, what does it contain?</p>
+      <ol><li>Hello, then Linux</li><li>Only Linux</li><li>Only Hello</li><li>Nothing</li></ol>
+      <p class="why"><code>&gt;</code> replaces the file’s content. Use <code>&gt;&gt;</code> to append.</p></div>
+    <div class="q" data-answer="3"><p>Which stream number belongs to error messages?</p>
+      <ol><li>0</li><li>1</li><li>2</li><li>3</li></ol>
+      <p class="why">0 = stdin, 1 = stdout, 2 = stderr.</p></div>
+    <div class="q" data-answer="1"><p>You want to add a new line to the end of <code>app.log</code> without losing anything. Which operator?</p>
+      <ol><li><code>&gt;&gt;</code></li><li><code>&gt;</code></li><li><code>&lt;</code></li><li><code>|</code></li></ol>
+      <p class="why"><code>&gt;&gt;</code> appends to the end and keeps existing content.</p></div>
+    <div class="q" data-answer="4"><p>What is different about <code>cat &lt; app.log</code> compared with <code>cat app.log</code>?</p>
+      <ol><li>It prints the file backwards</li><li>It changes app.log</li><li>It prints only the first line</li><li>The file arrives through stdin instead of as a file argument</li></ol>
+      <p class="why">The output looks the same, but with <code>&lt;</code> the shell connects the file to cat’s stdin.</p></div>
+    <div class="q" data-answer="2"><p>What does <code>ls | grep ".txt"</code> do?</p>
+      <ol><li>Saves the file list into .txt</li><li>Sends the output of ls into grep, which prints only lines containing .txt</li><li>Searches inside every .txt file</li><li>Runs grep first, then ls</li></ol>
+      <p class="why">The pipe makes ls’s stdout become grep’s stdin; grep filters the names.</p></div>
+    <div class="q" data-answer="3"><p>You run <code>cat missing.txt &gt; out.txt</code>. Where does the “No such file” message go?</p>
+      <ol><li>Into out.txt</li><li>Nowhere; it is lost</li><li>To the terminal, because it is on stderr</li><li>Into missing.txt</li></ol>
+      <p class="why"><code>&gt;</code> only redirects stdout (1). Errors travel on stderr (2), which still goes to the screen.</p></div>
+    <div class="q" data-answer="1"><p>Which line counts how many lines in <code>server.log</code> contain ERROR?</p>
+      <ol><li><code>grep ERROR server.log | wc -l</code></li><li><code>wc -l ERROR &gt; server.log</code></li><li><code>grep ERROR &lt; wc -l</code></li><li><code>server.log | grep ERROR | wc</code></li></ol>
+      <p class="why">grep picks the matching lines, the pipe passes them on, and <code>wc -l</code> counts them. (Option 2 would overwrite the log!)</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Every command reads <b>stdin (0)</b> and writes <b>stdout (1)</b> and <b>stderr (2)</b>; <b>&gt;</b> saves output to a file (replacing it), <b>&gt;&gt;</b> appends, <b>&lt;</b> feeds a file in as input, and <b>|</b> joins commands into a pipeline.</p>
+  <p>Next up: Command Chaining, where <code>;</code>, <code>&amp;&amp;</code> and <code>||</code> decide whether the next command should run at all.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

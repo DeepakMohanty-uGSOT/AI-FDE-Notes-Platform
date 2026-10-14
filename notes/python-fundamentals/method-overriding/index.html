@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Method Overriding · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Let a child class replace or extend a parent's method, see why Python has no method overloading (and what to use instead), and work out the Method Resolution Order (MRO) for multiple inheritance.">
+<meta name="keywords" content="method overriding, super().method(), replace vs extend, method overloading, default arguments, MRO, multiple inheritance">
+<meta name="date" content="2026-10-01">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/method-overriding">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Method Overriding</h1>
+  <p class="byline">Give a child class its own version of a parent’s method, keep the parent’s work when you need it with <code>super()</code>, and predict exactly which method Python runs when a class has several parents.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="what">
+  <h2>What is method overriding?</h2>
+  <div class="story"><b class="lbl">Ghar ka khana</b>Every home in India makes dal. Same dish name, but your mother’s dal tastes different from your neighbour’s. Nobody renames it “mom_dal”; it’s still dal, made her way. <mark>Overriding means a child class keeps the same method name but does the job its own way.</mark></div>
+  <p>In the Inheritance note, a child’s <code>__init__()</code> <b>replaced</b> the parent’s. That is method overriding, and now we learn it properly.</p>
+  <p>When a child class defines a method with the <b>same name and same parameters</b> as a method in its parent, the child’s version is used for child objects. This is <b>method overriding</b>.</p>
+  <div class="grid two">
+    <div class="card t1 tilt-a"><h4>Overridden method</h4><p>The <b>parent’s</b> original version.</p></div>
+    <div class="card t3 tilt-b"><h4>Overriding method</h4><p>The <b>child’s</b> new version with the same name.</p></div>
+  </div>
+  <h3>Why we need it</h3>
+  <p>Inheritance gives the child <b>all</b> the parent’s methods, but sometimes the parent’s way doesn’t suit the child. An Animal makes “some sound”, but a Dog <b>barks</b> and a Cat <b>meows</b>. We keep the <b>same method name</b> for the same action, let each child do it its own way, and never need to change the parent or invent names like <code>dog_sound()</code>.</p>
+  <h3>The problem without overriding</h3>
+  <pre><code class="language-python">class Animal:
+    def sound(self):
+        print("Animal makes a sound")
+
+class Dog(Animal):
+    pass
+
+d = Dog()
+d.sound()</code></pre>
+  <pre class="out"><code>Animal makes a sound</code></pre>
+  <p>The dog inherits the general sound, which is not correct for a dog.</p>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="override">
+  <h2>Overriding a parent method</h2>
+  <p>To override, simply write a method with the <b>same name</b> inside the child class:</p>
+  <pre><code class="language-python">class Animal:
+    def sound(self):
+        print("Animal makes a sound")
+
+
+class Dog(Animal):
+    def sound(self):              # overrides Animal.sound()
+        print("Dog barks")
+
+
+class Cat(Animal):
+    def sound(self):              # overrides Animal.sound()
+        print("Cat meows")
+
+
+a = Animal()
+d = Dog()
+c = Cat()
+
+a.sound()
+d.sound()
+c.sound()</code></pre>
+  <pre class="out"><code>Animal makes a sound
+Dog barks
+Cat meows</code></pre>
+  <ul>
+    <li><code>Dog</code> and <code>Cat</code> both define <code>sound()</code>, the same name as in <code>Animal</code>.</li>
+    <li>For a <code>Dog</code> object, Python finds <code>sound()</code> in <code>Dog</code> first, so the dog version runs.</li>
+    <li>The parent is <b>not changed</b>: an <code>Animal</code> object still prints “Animal makes a sound”.</li>
+  </ul>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="d.sound() first looks in the Dog class, finds sound there and stops; the Animal class version is never reached. a.sound() looks in Animal directly.">
+      <g class="rough">
+        <rect class="box f-blue" x="20" y="90" width="140" height="50" rx="12"/>
+        <rect class="box f-orange" x="250" y="80" width="200" height="70" rx="14"/>
+        <rect class="box f-grey dash" x="530" y="80" width="170" height="70" rx="14"/>
+        <path class="lr" d="M164 115 L 243 115" marker-end="url(#ahr)"/>
+        <path class="ln dash" d="M455 115 L 523 115" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="90" y="120" text-anchor="middle">d.sound()</text>
+      <text class="t" x="350" y="108" text-anchor="middle">Dog class</text>
+      <text class="tm" x="350" y="134" text-anchor="middle">sound() ✓</text>
+      <text class="t" x="615" y="108" text-anchor="middle">Animal class</text>
+      <text class="tm" x="615" y="134" text-anchor="middle">sound()</text>
+      <text class="tr" x="204" y="100" text-anchor="middle">1</text>
+      <text class="tr" x="350" y="60" text-anchor="middle">found here → stop</text>
+      <text class="ts" x="615" y="60" text-anchor="middle">never reached</text>
+      <text class="ts" x="350" y="190" text-anchor="middle">the object’s own class is always searched first</text>
+    </svg></div>
+    <figcaption>Python searches the object’s own class first, then its parent. The first match wins.</figcaption>
+  </figure>
+  <p>Real-world version: UPI and card payments each process a payment their own way.</p>
+  <pre><code class="language-python">class Payment:
+    def pay(self):
+        print("Processing the payment")
+
+
+class UPIPayment(Payment):
+    def pay(self):               # overrides Payment.pay()
+        print("Paying through UPI")
+
+
+class CardPayment(Payment):
+    def pay(self):               # overrides Payment.pay()
+        print("Paying with a debit card")
+
+
+p = Payment()
+u = UPIPayment()
+c = CardPayment()
+
+p.pay()
+u.pay()
+c.pay()</code></pre>
+  <pre class="out"><code>Processing the payment
+Paying through UPI
+Paying with a debit card</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> This is how you plug customer-specific behaviour into shared code. A base <code>LLMClient</code> defines <code>generate()</code>; <code>OpenAIClient</code> and <code>AnthropicClient</code> override it. The rest of the app just calls <code>client.generate(...)</code> and never cares which one it got.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="some-methods">
+  <h2>Overriding only some methods</h2>
+  <p>Python always searches the <b>object’s own class first</b>, and only then the parent; the search <b>stops</b> at the first match. So a child can override <b>some</b> methods and inherit the <b>rest</b> unchanged.</p>
+  <pre><code class="language-python">class Vehicle:
+    def start(self):
+        print("Vehicle starts")
+
+    def stop(self):
+        print("Vehicle stops")
+
+
+class Car(Vehicle):
+    def start(self):              # overridden
+        print("Car starts with a key")
+
+
+car = Car()
+car.start()
+car.stop()</code></pre>
+  <pre class="out"><code>Car starts with a key
+Vehicle stops</code></pre>
+  <div class="flow"><span class="op">car.start()</span><span class="ok">found in Car</span><span class="op">car.stop()</span><span class="skip">not in Car</span><span class="ok">found in Vehicle</span></div>
+  <p>Real-world version: an electric car charges instead of filling petrol, but drives like any car.</p>
+  <pre><code class="language-python">class Car:
+    def refuel(self):
+        print("Filling petrol")
+
+    def drive(self):
+        print("Car is driving")
+
+
+class ElectricCar(Car):
+    def refuel(self):            # overridden
+        print("Charging the battery")
+
+
+ev = ElectricCar()
+ev.refuel()
+ev.drive()</code></pre>
+  <pre class="out"><code>Charging the battery
+Car is driving</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="constructor">
+  <h2>Overriding the constructor</h2>
+  <p><code>__init__()</code> is a method too, so it can be overridden. You saw this in the Inheritance note (Constructors in inheritance, case 3):</p>
+  <pre><code class="language-python">class Parent:
+    def __init__(self):
+        print("Parent constructor is called")
+
+class Child(Parent):
+    def __init__(self):
+        print("Child constructor is called")
+
+c = Child()</code></pre>
+  <pre class="out"><code>Child constructor is called</code></pre>
+  <p>Only the child constructor runs, because it <b>overrides</b> the parent’s.</p>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="extend">
+  <h2>Extending a parent method with <code>super().method()</code></h2>
+  <p>Sometimes you don’t want to <b>replace</b> the parent’s method completely; you want to <b>keep</b> its work and <b>add</b> more. Call the parent’s version with <code>super().method_name()</code> inside the overriding method.</p>
+  <pre><code class="language-python">class Employee:
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+
+    def show_details(self):
+        print("Name:", self.name)
+        print("Salary:", self.salary)
+
+
+class Manager(Employee):
+    def __init__(self, name, salary, team_size):
+        super().__init__(name, salary)
+        self.team_size = team_size
+
+    def show_details(self):           # overrides and extends
+        super().show_details()        # parent's work first
+        print("Team Size:", self.team_size)
+
+
+m = Manager("Ravi", 80000, 5)
+m.show_details()</code></pre>
+  <pre class="out"><code>Name: Ravi
+Salary: 80000
+Team Size: 5</code></pre>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Manager.show_details calls super().show_details, which runs Employee.show_details to print name and salary, then control returns and Manager prints the team size">
+      <g class="rough">
+        <rect class="box f-orange" x="20" y="45" width="320" height="140" rx="14"/>
+        <rect class="box f-green" x="420" y="45" width="280" height="100" rx="14"/>
+        <path class="lr" d="M318 82 L 412 82" marker-end="url(#ahr)"/>
+        <path class="lb" d="M414 128 L 322 128" marker-end="url(#ahb)"/>
+      </g>
+      <text class="tm" x="180" y="32" text-anchor="middle">Manager.show_details()</text>
+      <text class="tm" x="560" y="32" text-anchor="middle">Employee.show_details()</text>
+      <text class="tm" x="38" y="87">super().show_details()</text>
+      <text class="tm" x="38" y="133">print("Team Size:"…)</text>
+      <text class="tm" x="440" y="87">print("Name:"…)</text>
+      <text class="tm" x="440" y="125">print("Salary:"…)</text>
+      <text class="tr" x="366" y="70" text-anchor="middle">1</text>
+      <text class="tb" x="366" y="152" text-anchor="middle">2</text>
+      <text class="ts" x="180" y="170" text-anchor="middle">parent’s work, then the extra line</text>
+    </svg></div>
+    <figcaption>Extend = run the parent’s version via <code>super()</code>, then add your own.</figcaption>
+  </figure>
+  <p><code>Manager</code> overrides <code>show_details()</code>. <code>super().show_details()</code> first runs the parent’s version (name and salary), then the child adds its own line. <code>super().__init__(name, salary)</code> does the same thing for the constructor. Real-world version: a premium customer’s bill shows the normal details plus loyalty points.</p>
+  <pre><code class="language-python">class Customer:
+    def __init__(self, name, bill_amount):
+        self.name = name
+        self.bill_amount = bill_amount
+
+    def show_bill(self):
+        print("Customer:", self.name)
+        print("Bill Amount:", self.bill_amount)
+
+
+class PremiumCustomer(Customer):
+    def __init__(self, name, bill_amount, points):
+        super().__init__(name, bill_amount)
+        self.points = points
+
+    def show_bill(self):              # overrides and extends
+        super().show_bill()           # parent's work first
+        print("Loyalty Points Earned:", self.points)
+
+
+pc = PremiumCustomer("Anjali", 2400, 120)
+pc.show_bill()</code></pre>
+  <pre class="out"><code>Customer: Anjali
+Bill Amount: 2400
+Loyalty Points Earned: 120</code></pre>
+  <h3>Replace vs extend</h3>
+  <div class="grid two">
+    <div class="card t4 tilt-a"><h4>Replace</h4><p>Write the method again <b>without</b> <code>super()</code>. The parent’s version does not run. (Dog’s <code>sound()</code>.)</p></div>
+    <div class="card t2 tilt-b"><h4>Extend</h4><p>Call <code>super().method()</code> <b>inside</b> it. The parent’s version runs, plus your new code. (Manager’s <code>show_details()</code>.)</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="overloading">
+  <h2>Overriding vs overloading</h2>
+  <p>The names sound alike but mean different things. <b>Overloading</b> means the <b>same method name with different parameters in the same class</b>. Python does <b>not</b> support it: if one class has two methods with the same name, only the <b>last one</b> is kept, just like constructor overloading in Part 2.</p>
+  <pre><code class="language-python">class Calculator:
+    def add(self, a, b):
+        return a + b
+
+    def add(self, a, b, c):          # replaces the first add()
+        return a + b + c
+
+
+calc = Calculator()
+print(calc.add(1, 2, 3))
+print(calc.add(1, 2))                # ERROR</code></pre>
+  <pre class="out"><code>6
+Traceback (most recent call last):
+  ...
+TypeError: Calculator.add() missing 1 required positional argument: 'c'</code></pre>
+  <h3>The Python way: default arguments</h3>
+  <p>To call one method with different numbers of values, give a parameter a <b>default value</b>:</p>
+  <pre><code class="language-python">class Calculator:
+    def add(self, a, b, c=0):
+        return a + b + c
+
+
+calc = Calculator()
+print(calc.add(1, 2))
+print(calc.add(1, 2, 3))</code></pre>
+  <pre class="out"><code>3
+6</code></pre>
+  <p>Real-world version: an order total where the delivery charge is optional.</p>
+  <pre><code class="language-python">class OrderCalculator:
+    def total(self, food_price, tax, delivery_charge=0):
+        return food_price + tax + delivery_charge
+
+
+calc = OrderCalculator()
+print(calc.total(400, 20))
+print(calc.total(400, 20, 40))</code></pre>
+  <pre class="out"><code>420
+460</code></pre>
+  <h3>Key differences</h3>
+  <div class="tbl"><table>
+    <tr><th></th><th>Method overriding</th><th>Method overloading</th></tr>
+    <tr><td>Where</td><td>Parent and child classes</td><td>The same class</td></tr>
+    <tr><td>Method signature</td><td>Same name, same parameters</td><td>Same name, different parameters</td></tr>
+    <tr><td>Needs inheritance?</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Supported in Python?</td><td>Yes: the child’s version wins</td><td>No: the last definition replaces earlier ones</td></tr>
+    <tr><td>Python alternative</td><td>—</td><td>Default arguments</td></tr>
+  </table></div>
+  <div class="sticky tip l"><strong>Key points</strong> Overriding = same name in parent and child; the child’s version wins. A child can <b>replace</b> a method or <b>extend</b> it with <code>super().method()</code>. <code>__init__()</code> can be overridden too. Python has no overloading; use default arguments.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="mro-problem">
+  <h2>The MRO problem: a toy family</h2>
+  <p>So far each child had one parent. But with <b>two or more parents</b> (multiple or hybrid inheritance) that each override the <b>same method</b>, which version runs? Python answers with the <b>Method Resolution Order (MRO)</b>.</p>
+  <div class="story"><b class="lbl">Soft or plastic?</b>Some toys are soft (teddy bears), some are plastic (toy cars), and some special toys are both. Ask “Is this toy soft or plastic?” and you hesitate. <mark>Python faces the same confusion when a class has more than one parent with the same method.</mark></div>
+  <ul>
+    <li><b>Toy</b> represents all toys.</li>
+    <li><b>SoftToy</b> and <b>PlasticToy</b> are both types of Toy, and both <b>override</b> <code>play()</code>.</li>
+    <li><b>KidsToy</b> has the qualities of both.</li>
+  </ul>
+  <pre><code class="language-python">class Toy:
+    def play(self):
+        print("This is a toy")
+
+
+class SoftToy(Toy):
+    def play(self):
+        print("This is a soft toy")
+
+
+class PlasticToy(Toy):
+    def play(self):
+        print("This is a plastic toy")
+
+
+class KidsToy(SoftToy, PlasticToy):
+    pass</code></pre>
+  <h3>The big question</h3>
+  <pre><code class="language-python">k = KidsToy()
+k.play()</code></pre>
+  <p><code>play()</code> exists in SoftToy, PlasticToy and Toy. Python can’t choose randomly, because programs must be <b>predictable</b>. This confusion is called <b>method ambiguity</b>, and it can cause bugs that are very hard to find.</p>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="mro">
+  <h2>What MRO is, and how to work it out</h2>
+  <p><mark>MRO is a fixed search order.</mark> When a method is called, Python checks the classes in this order and <b>stops at the first match</b>. It never jumps randomly between classes. Two rules give you the order:</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Left to right</b>Follow the parent order the programmer wrote. In <code>class KidsToy(SoftToy, PlasticToy)</code>, SoftToy is the <b>left</b> parent and PlasticToy the <b>right</b> parent.</div></li>
+    <li><span class="dot">2</span><div><b>Depth first, but a shared parent waits</b>Go up one family line before moving to the next, <b>except</b> that a parent shared by several children is checked only after <b>all</b> of those children. No class is checked twice.</div></li>
+  </ol>
+  <div class="sticky warn"><strong>About “DLR”</strong> You may see MRO summarised as “DLR: Depth first, Left to Right”. That is a handy memory aid, but plain depth-first would visit Toy straight after SoftToy, which Python does <b>not</b> do. Python 3 uses an algorithm called <b>C3 linearisation</b>; rule 2’s “shared parent waits” is what makes it differ. When unsure, ask Python with <code>ClassName.mro()</code>.</div>
+  <h3>Simple classes first</h3>
+  <p>Every class ultimately inherits from <code>object</code>, Python’s root class.</p>
+  <pre><code class="language-python">print(Toy.mro())
+print(SoftToy.mro())
+print(PlasticToy.mro())</code></pre>
+  <pre class="out"><code>[&lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]
+[&lt;class '__main__.SoftToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]
+[&lt;class '__main__.PlasticToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]</code></pre>
+  <p>Toy → object; SoftToy → Toy → object; PlasticToy → Toy → object. Simple inheritance gives a simple order.</p>
+  <h3>KidsToy, step by step (most important)</h3>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>KidsToy</b>Start with the class itself.</div></li>
+    <li><span class="dot">2</span><div><b>SoftToy</b>Go to the left parent first.</div></li>
+    <li><span class="dot">3</span><div><b>PlasticToy</b>Toy is also PlasticToy’s parent, so it must wait: check PlasticToy before Toy.</div></li>
+    <li><span class="dot">4</span><div><b>Toy, then object</b>Now that all its children are done, the shared parent, then the root.</div></li>
+  </ol>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Toy family diamond. Toy at the top, SoftToy on the left and PlasticToy on the right, KidsToy at the bottom. Search order: 1 KidsToy, 2 SoftToy, 3 PlasticToy, 4 Toy, 5 object.">
+      <g class="rough">
+        <rect class="box f-grey dash" x="300" y="4" width="120" height="30" rx="10"/>
+        <rect class="box f-green" x="290" y="66" width="140" height="46" rx="12"/>
+        <rect class="box f-blue" x="90" y="140" width="170" height="46" rx="12"/>
+        <rect class="box f-blue" x="460" y="140" width="170" height="46" rx="12"/>
+        <rect class="box f-orange" x="270" y="212" width="180" height="46" rx="12"/>
+        <path class="lr" d="M310 210 L 210 191" marker-end="url(#ahr)"/>
+        <path class="lr" d="M410 210 L 510 191" marker-end="url(#ahr)"/>
+        <path class="lr" d="M200 137 L 300 115" marker-end="url(#ahr)"/>
+        <path class="lr" d="M520 137 L 420 115" marker-end="url(#ahr)"/>
+        <path class="ln" d="M360 64 L 360 40" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="360" y="24" text-anchor="middle">object</text>
+      <text class="tm" x="360" y="94" text-anchor="middle">Toy</text>
+      <text class="tm" x="175" y="168" text-anchor="middle">SoftToy</text>
+      <text class="tm" x="545" y="168" text-anchor="middle">PlasticToy</text>
+      <text class="tm" x="360" y="240" text-anchor="middle">KidsToy</text>
+      <text class="th" x="250" y="245" text-anchor="middle">1</text>
+      <text class="th" x="70" y="172" text-anchor="middle">2</text>
+      <text class="th" x="650" y="172" text-anchor="middle">3</text>
+      <text class="th" x="455" y="98" text-anchor="middle">4</text>
+      <text class="th" x="440" y="30" text-anchor="middle">5</text>
+    </svg></div>
+    <figcaption>KidsToy → SoftToy → PlasticToy → Toy → object. Toy waits until both of its children have been checked.</figcaption>
+  </figure>
+  <pre><code class="language-python">print(KidsToy.mro())</code></pre>
+  <pre class="out"><code>[&lt;class '__main__.KidsToy'&gt;, &lt;class '__main__.SoftToy'&gt;, &lt;class '__main__.PlasticToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]</code></pre>
+  <p>Python’s own output matches the order we worked out by hand. For a given class definition, this order is fixed.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="mro-call">
+  <h2>Following the method call</h2>
+  <p>For <code>k.play()</code>, Python checks <code>KidsToy</code> (no <code>play()</code>), then <code>SoftToy</code> (has <code>play()</code>), and <b>stops searching</b>.</p>
+  <pre><code class="language-python">class Toy:
+    def play(self):
+        print("This is a toy")
+
+
+class SoftToy(Toy):
+    def play(self):
+        print("This is a soft toy")
+
+
+class PlasticToy(Toy):
+    def play(self):
+        print("This is a plastic toy")
+
+
+class KidsToy(SoftToy, PlasticToy):
+    pass
+
+
+k = KidsToy()
+k.play()</code></pre>
+  <pre class="out"><code>This is a soft toy</code></pre>
+  <div class="flow"><span class="skip">KidsToy · no play()</span><span class="ok">SoftToy · play() found, stop</span><span class="skip">PlasticToy</span><span class="skip">Toy</span></div>
+  <p>Real-world version: HD and subtitled videos both override <code>play()</code>, and a premium video inherits from both.</p>
+  <pre><code class="language-python">class Video:
+    def play(self):
+        print("Playing the video")
+
+
+class HDVideo(Video):
+    def play(self):
+        print("Playing the video in HD")
+
+
+class SubtitledVideo(Video):
+    def play(self):
+        print("Playing the video with subtitles")
+
+
+class PremiumVideo(HDVideo, SubtitledVideo):
+    pass
+
+
+print(PremiumVideo.mro())
+
+v = PremiumVideo()
+v.play()</code></pre>
+  <pre class="out"><code>[&lt;class '__main__.PremiumVideo'&gt;, &lt;class '__main__.HDVideo'&gt;, &lt;class '__main__.SubtitledVideo'&gt;, &lt;class '__main__.Video'&gt;, &lt;class 'object'&gt;]
+Playing the video in HD</code></pre>
+  <p>One more: in a food delivery app, express and scheduled orders both change the delivery time of a normal order.</p>
+  <pre><code class="language-python">class Order:
+    def delivery_time(self):
+        print("Delivery in 60 minutes")
+
+
+class ExpressOrder(Order):
+    def delivery_time(self):
+        print("Delivery in 20 minutes")
+
+
+class ScheduledOrder(Order):
+    def delivery_time(self):
+        print("Delivery at the scheduled time")
+
+
+class ScheduledExpressOrder(ExpressOrder, ScheduledOrder):
+    pass
+
+
+print(ScheduledExpressOrder.mro())
+
+order = ScheduledExpressOrder()
+order.delivery_time()</code></pre>
+  <pre class="out"><code>[&lt;class '__main__.ScheduledExpressOrder'&gt;, &lt;class '__main__.ExpressOrder'&gt;, &lt;class '__main__.ScheduledOrder'&gt;, &lt;class '__main__.Order'&gt;, &lt;class 'object'&gt;]
+Delivery in 20 minutes</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When a customer’s class “ignores” a method you just changed, it’s almost always the MRO: another parent earlier in the order defines the same name. Print <code>TheClass.mro()</code> before you start guessing.</div>
+  <h3>Key takeaways</h3>
+  <ul>
+    <li>Multiple and hybrid inheritance create <b>several paths</b> to a method.</li>
+    <li>MRO gives Python <b>one fixed order</b>, so it always behaves predictably.</li>
+    <li>Left to right, depth first, with a shared parent waiting for all its children. <b>Parent order matters.</b></li>
+    <li><b>Tip:</b> work out the order by hand first, then verify it with <code>ClassName.mro()</code>.</li>
+  </ul>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Method overriding</dt><dd>A child class defining a method with the same name and parameters as a parent method, so the child’s version runs for child objects.</dd></div>
+    <div><dt>Overridden method</dt><dd>The parent class’s original version of a method that a child has redefined.</dd></div>
+    <div><dt>Overriding method</dt><dd>The child class’s new version of a method that replaces or extends the parent’s.</dd></div>
+    <div><dt>super().method()</dt><dd>A call inside a child method that runs the parent’s version of a method, used to extend rather than fully replace it.</dd></div>
+    <div><dt>Replace vs extend</dt><dd>Replacing rewrites a method without calling the parent; extending calls <code>super().method()</code> and then adds new code.</dd></div>
+    <div><dt>Method overloading</dt><dd>Several methods with the same name but different parameters in one class. Python doesn’t support it: the last definition wins.</dd></div>
+    <div><dt>Default argument</dt><dd>A parameter with a preset value, e.g. <code>c=0</code>, so one method can be called with fewer arguments; Python’s alternative to overloading.</dd></div>
+    <div><dt>Method ambiguity</dt><dd>The uncertainty about which version of a method should run when several parent classes define it.</dd></div>
+    <div><dt>Method Resolution Order (MRO)</dt><dd>The fixed order in which Python searches a class and its ancestors for a method; shown by <code>ClassName.mro()</code>.</dd></div>
+    <div><dt>C3 linearisation</dt><dd>The algorithm Python 3 uses to compute the MRO: left to right, depth first, with a shared parent placed after all of its children.</dd></div>
+    <div><dt>object</dt><dd>Python’s root class; every class inherits from it, so it is always last in the MRO.</dd></div>
+  </dl>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p><code>Dog(Animal)</code> defines its own <code>sound()</code>. What does <code>Animal().sound()</code> print now?</p>
+      <ol><li>The dog’s sound</li><li>The animal’s original sound</li><li>Both sounds</li><li>An error</li></ol>
+      <p class="why">Overriding changes behaviour only for child objects. The parent class is untouched.</p></div>
+    <div class="q" data-answer="3"><p><code>Car(Vehicle)</code> overrides <code>start()</code> but not <code>stop()</code>. What does <code>Car().stop()</code> run?</p>
+      <ol><li>Nothing</li><li>Car’s stop()</li><li>Vehicle’s stop()</li><li>An AttributeError</li></ol>
+      <p class="why">Python checks Car first, doesn’t find <code>stop()</code>, and continues to the parent.</p></div>
+    <div class="q" data-answer="1"><p>You want Manager’s <code>show_details()</code> to print everything Employee’s prints, plus the team size. What do you write first inside it?</p>
+      <ol><li><code>super().show_details()</code></li><li><code>Employee()</code></li><li><code>self.show_details()</code></li><li><code>super().__init__()</code></li></ol>
+      <p class="why">That runs the parent’s version (extend). <code>self.show_details()</code> would call Manager’s own method again, forever.</p></div>
+    <div class="q" data-answer="4"><p>A class defines <code>add(self, a, b)</code> then <code>add(self, a, b, c)</code>. What does <code>add(1, 2)</code> do?</p>
+      <ol><li>Returns 3 using the first add</li><li>Returns 3 using the second add</li><li>Picks the matching version automatically</li><li>Raises TypeError: missing argument 'c'</li></ol>
+      <p class="why">Python has no overloading. The second definition replaced the first.</p></div>
+    <div class="q" data-answer="2"><p>What is the Pythonic way to let one method accept 2 or 3 numbers?</p>
+      <ol><li>Write two methods with the same name</li><li>Give the third parameter a default, e.g. <code>c=0</code></li><li>Use two classes</li><li>Use a global variable</li></ol>
+      <p class="why">Default arguments let callers leave out optional values.</p></div>
+    <div class="q" data-answer="3"><p>For <code>class KidsToy(SoftToy, PlasticToy)</code>, both inheriting from Toy, what is the MRO?</p>
+      <ol><li>KidsToy, SoftToy, Toy, PlasticToy, object</li><li>KidsToy, PlasticToy, SoftToy, Toy, object</li><li>KidsToy, SoftToy, PlasticToy, Toy, object</li><li>KidsToy, Toy, SoftToy, PlasticToy, object</li></ol>
+      <p class="why">Left parent first; the shared parent Toy waits until both its children are checked.</p></div>
+    <div class="q" data-answer="1"><p>How do you see the exact order Python will search for a class <code>C</code>?</p>
+      <ol><li><code>C.mro()</code></li><li><code>C.order()</code></li><li><code>super(C)</code></li><li><code>type(C)</code></li></ol>
+      <p class="why"><code>mro()</code> returns the list of classes in search order.</p></div>
+    <div class="q" data-answer="4"><p>Why does Python need an MRO at all?</p>
+      <ol><li>To make methods run faster</li><li>To stop classes from having parents</li><li>To allow overloading</li><li>To pick one predictable method when several parents define it</li></ol>
+      <p class="why">Without a fixed order, multiple inheritance would be ambiguous and unpredictable.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>Overriding</b> lets a child give a parent’s method its own behaviour, either <b>replacing</b> it or <b>extending</b> it with <b>super().method()</b>; Python has no <b>overloading</b> (use default arguments), and with several parents the <b>MRO</b> decides, in one fixed order, which method runs.</p>
+  <p>Next up: that completes Python Fundamentals. Continue with the Python Advanced &amp; FastAPI module, starting with Python Project Development, where you’ll organise these classes into real project structure.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

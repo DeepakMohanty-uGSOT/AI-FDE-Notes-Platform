@@ -44,7 +44,8 @@
    "status": "published",
    "notes": [
     "fde-role",
-    "fde-responsibilities"
+    "fde-responsibilities",
+    "fde-mindset"
    ]
   },
   {
@@ -60,10 +61,12 @@
     "linux-architecture",
     "environment-setup",
     "terminal-and-shell",
+    "file-system-structure",
     "files-and-directories",
     "reading-files",
     "searching-files",
     "text-filters",
+    "pipes-and-redirection",
     "command-chaining"
    ]
   },
@@ -78,6 +81,7 @@
    "notes": [
     "physical-connectivity",
     "device-identification-protocols",
+    "osi-model",
     "ip-address-fundamentals",
     "subnetting-cidr"
    ]
@@ -92,7 +96,9 @@
    "status": "published",
    "notes": [
     "version-control",
-    "git-fundamentals"
+    "git-fundamentals",
+    "git-workflows",
+    "github"
    ]
   },
   {
@@ -106,7 +112,8 @@
    "notes": [
     "html-syntax-structure",
     "common-html-elements",
-    "html-lists-images"
+    "html-lists-images",
+    "forms-and-inputs"
    ]
   },
   {
@@ -120,11 +127,16 @@
    "notes": [
     "python-basics-1",
     "python-basics-2",
+    "control-flow",
+    "data-structures",
     "functions",
     "modules-packages",
+    "working-with-data",
+    "error-handling",
     "oops-1",
     "oops-2",
-    "inheritance"
+    "inheritance",
+    "method-overriding"
    ]
   },
   {
@@ -138,8 +150,10 @@
    "notes": [
     "project-development",
     "api-basics",
+    "fastapi-fundamentals",
     "pydantic",
-    "path-operations-http-methods"
+    "path-operations-http-methods",
+    "path-query-parameters"
    ]
   },
   {
@@ -179,8 +193,10 @@
    "icon": "✍️",
    "title": "Prompt & Context Engineering",
    "summary": "Writing instructions models follow: prompt patterns, structure, examples, and engineering the whole context window the model sees.",
-   "status": "soon",
-   "notes": []
+   "status": "published",
+   "notes": [
+    "prompt-context-engineering"
+   ]
   },
   {
    "slug": "langchain",
@@ -201,8 +217,10 @@
    "icon": "⚖️",
    "title": "Model Selection",
    "summary": "Choosing the right model for the job: capability, latency, cost, context length, open vs closed models and how to evaluate the trade-offs.",
-   "status": "soon",
-   "notes": []
+   "status": "published",
+   "notes": [
+    "model-selection"
+   ]
   },
   {
    "slug": "rag",
@@ -336,8 +354,8 @@
     "implementation engineer",
     "system integration"
    ],
-   "readMinutes": 28,
-   "words": 5317,
+   "readMinutes": 29,
+   "words": 5536,
    "sections": [
     {
      "id": "what",
@@ -429,7 +447,7 @@
     "business value"
    ],
    "readMinutes": 35,
-   "words": 6683,
+   "words": 6721,
    "sections": [
     {
      "id": "abc-insurance",
@@ -506,6 +524,79 @@
    "drive": "1fSVD2ip6mPCzutUbG3MK3TkNeT6Sg44SLMVTvh4wxuI"
   },
   {
+   "id": "fde/fde-mindset",
+   "module": "fde",
+   "slug": "fde-mindset",
+   "order": 3,
+   "title": "The FDE Mindset",
+   "summary": "The seven habits of thinking that make a Forward Deployed Engineer effective: ownership, handling ambiguity, speed, technical depth, business understanding, customer empathy and bias toward action.",
+   "topics": [
+    "ownership",
+    "ambiguity",
+    "speed",
+    "technical depth",
+    "business understanding",
+    "customer empathy",
+    "bias toward action"
+   ],
+   "readMinutes": 15,
+   "words": 2906,
+   "sections": [
+    {
+     "id": "overview",
+     "title": "Seven habits of thinking"
+    },
+    {
+     "id": "ownership",
+     "title": "1 · Ownership"
+    },
+    {
+     "id": "ambiguity",
+     "title": "2 · Handling ambiguity"
+    },
+    {
+     "id": "speed",
+     "title": "3 · Speed"
+    },
+    {
+     "id": "technical-depth",
+     "title": "4 · Technical depth"
+    },
+    {
+     "id": "business",
+     "title": "5 · Business understanding"
+    },
+    {
+     "id": "empathy",
+     "title": "6 · Customer empathy"
+    },
+    {
+     "id": "action",
+     "title": "7 · Bias toward action"
+    },
+    {
+     "id": "together",
+     "title": "The seven habits together"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 9,
+   "date": "2026-09-18",
+   "drive": "14BNgyeU4FPTphWr5jpL3LKycj1GnQol_8lJubgVIIs4"
+  },
+  {
    "id": "linux/intro-unix-linux",
    "module": "linux",
    "slug": "intro-unix-linux",
@@ -523,7 +614,7 @@
     "RHEL"
    ],
    "readMinutes": 19,
-   "words": 3546,
+   "words": 3645,
    "sections": [
     {
      "id": "everywhere",
@@ -604,7 +695,7 @@
     "hardware layer"
    ],
    "readMinutes": 17,
-   "words": 3218,
+   "words": 3246,
    "sections": [
     {
      "id": "why",
@@ -837,6 +928,104 @@
    "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg"
   },
   {
+   "id": "linux/file-system-structure",
+   "module": "linux",
+   "slug": "file-system-structure",
+   "order": 5,
+   "title": "The Linux File System Structure",
+   "summary": "The Linux directory tree from / downwards: what lives in /bin, /etc, /home, /var and friends, absolute vs relative paths, and navigating with pwd, cd, ls, history and the . .. ~ shortcuts.",
+   "topics": [
+    "root directory",
+    "/etc /var /home /bin",
+    "absolute path",
+    "relative path",
+    "pwd and cd",
+    "ls options",
+    "history",
+    "hidden files"
+   ],
+   "readMinutes": 23,
+   "words": 4308,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why the file system structure exists"
+    },
+    {
+     "id": "what-is-fs",
+     "title": "What is a file system?"
+    },
+    {
+     "id": "root",
+     "title": "The root directory (/), and the /root trap"
+    },
+    {
+     "id": "map",
+     "title": "The map of the system: critical directories"
+    },
+    {
+     "id": "bin",
+     "title": "/bin · the essential toolbelt"
+    },
+    {
+     "id": "etc",
+     "title": "/etc · the settings and rulebooks"
+    },
+    {
+     "id": "home",
+     "title": "/home · the personal workspaces"
+    },
+    {
+     "id": "var",
+     "title": "/var · the system diary"
+    },
+    {
+     "id": "real-world",
+     "title": "How Linux uses the file system: real-world flows"
+    },
+    {
+     "id": "paths",
+     "title": "Navigation and the idea of a path"
+    },
+    {
+     "id": "absolute-relative",
+     "title": "Absolute vs relative paths"
+    },
+    {
+     "id": "pwd-cd",
+     "title": "pwd and cd: where am I, and how do I move?"
+    },
+    {
+     "id": "ls",
+     "title": "ls · the eyes of the system"
+    },
+    {
+     "id": "history",
+     "title": "history and the ! shortcuts"
+    },
+    {
+     "id": "symbols",
+     "title": "Special symbols: ., .. and ~"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-07",
+   "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo"
+  },
+  {
    "id": "linux/files-and-directories",
    "module": "linux",
    "slug": "files-and-directories",
@@ -853,8 +1042,8 @@
     "safe deletion",
     "renaming"
    ],
-   "readMinutes": 13,
-   "words": 2539,
+   "readMinutes": 18,
+   "words": 3426,
    "sections": [
     {
      "id": "recap",
@@ -996,8 +1185,8 @@
     "wildcards",
     "case sensitivity"
    ],
-   "readMinutes": 12,
-   "words": 2215,
+   "readMinutes": 16,
+   "words": 2951,
    "sections": [
     {
      "id": "why",
@@ -1139,6 +1328,75 @@
    "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg"
   },
   {
+   "id": "linux/pipes-and-redirection",
+   "module": "linux",
+   "slug": "pipes-and-redirection",
+   "order": 10,
+   "title": "Pipes & Redirection",
+   "summary": "Control where command input comes from and where output goes: stdin, stdout and stderr, the >, >> and < redirection operators, and the | pipe that connects commands.",
+   "topics": [
+    "stdin",
+    "stdout",
+    "stderr",
+    "> redirection",
+    ">> append",
+    "< input",
+    "pipe |"
+   ],
+   "readMinutes": 15,
+   "words": 2771,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why control the flow of data?"
+    },
+    {
+     "id": "streams",
+     "title": "The foundation: three standard streams"
+    },
+    {
+     "id": "output",
+     "title": "> · send output to a file"
+    },
+    {
+     "id": "append",
+     "title": ">> · append to a file"
+    },
+    {
+     "id": "input",
+     "title": "< · take input from a file"
+    },
+    {
+     "id": "pipe",
+     "title": "| · the pipe"
+    },
+    {
+     "id": "pipe-practice",
+     "title": "Practise: show only the .txt files"
+    },
+    {
+     "id": "stderr-redirect",
+     "title": "Redirecting errors: 2>"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 7,
+   "terms": 10,
+   "date": "2026-09-07",
+   "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk"
+  },
+  {
    "id": "linux/command-chaining",
    "module": "linux",
    "slug": "command-chaining",
@@ -1153,8 +1411,8 @@
     "combining chains",
     "workflows"
    ],
-   "readMinutes": 6,
-   "words": 1225,
+   "readMinutes": 7,
+   "words": 1249,
    "sections": [
     {
      "id": "why",
@@ -1223,8 +1481,8 @@
     "LAN vs WAN",
     "Internet vs Web"
    ],
-   "readMinutes": 23,
-   "words": 4290,
+   "readMinutes": 26,
+   "words": 4920,
    "sections": [
     {
      "id": "before-networks",
@@ -1305,8 +1563,8 @@
     "DNS",
     "DHCP"
    ],
-   "readMinutes": 17,
-   "words": 3281,
+   "readMinutes": 20,
+   "words": 3782,
    "sections": [
     {
      "id": "identity",
@@ -1373,6 +1631,91 @@
    "terms": 13,
    "date": "2026-09-09",
    "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU"
+  },
+  {
+   "id": "networking/osi-model",
+   "module": "networking",
+   "slug": "osi-model",
+   "order": 3,
+   "title": "OSI Model & Data Communication",
+   "summary": "Why networking is split into layers, the seven OSI layers told through one report travelling from Bengaluru to Bhubaneswar, encapsulation and data units, and what really happens when you open a website.",
+   "topics": [
+    "OSI model",
+    "seven layers",
+    "layering",
+    "encapsulation",
+    "decapsulation",
+    "segment packet frame bits",
+    "opening a website"
+   ],
+   "readMinutes": 20,
+   "words": 3828,
+   "sections": [
+    {
+     "id": "why-layers",
+     "title": "Why networking needs layers"
+    },
+    {
+     "id": "osi",
+     "title": "The OSI model: seven layers"
+    },
+    {
+     "id": "story-setup",
+     "title": "The story: a report from Bengaluru to Bhubaneswar"
+    },
+    {
+     "id": "upper-layers",
+     "title": "Layers 7, 6, 5: application, presentation, session"
+    },
+    {
+     "id": "transport",
+     "title": "Layer 4 · Transport: the heart"
+    },
+    {
+     "id": "network",
+     "title": "Layer 3 · Network: addressing and routing"
+    },
+    {
+     "id": "data-link",
+     "title": "Layer 2 · Data Link: frames and the next hop"
+    },
+    {
+     "id": "physical",
+     "title": "Layer 1 · Physical: bits become signals"
+    },
+    {
+     "id": "receiver",
+     "title": "The receiving side: back up the stack"
+    },
+    {
+     "id": "encapsulation",
+     "title": "Encapsulation, decapsulation and data units"
+    },
+    {
+     "id": "website-journey",
+     "title": "The complete journey: opening a website"
+    },
+    {
+     "id": "series-recap",
+     "title": "The whole series in one map"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 14,
+   "date": "2026-09-09",
+   "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk"
   },
   {
    "id": "networking/ip-address-fundamentals",
@@ -1596,7 +1939,7 @@
     "git help"
    ],
    "readMinutes": 12,
-   "words": 2257,
+   "words": 2293,
    "sections": [
     {
      "id": "what",
@@ -1670,8 +2013,8 @@
     "remotes",
     "tags"
    ],
-   "readMinutes": 21,
-   "words": 3984,
+   "readMinutes": 22,
+   "words": 4142,
    "sections": [
     {
      "id": "why-git",
@@ -1740,6 +2083,161 @@
    "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU"
   },
   {
+   "id": "git/git-workflows",
+   "module": "git",
+   "slug": "git-workflows",
+   "order": 3,
+   "title": "Git in Real Projects & .gitignore",
+   "summary": "Put Git to work in real situations: start a brand-new project, add Git to an existing one, and join a teammate's project with clone, branch, commit, pull and push. Plus why .gitignore matters, with ready-to-use sample files.",
+   "topics": [
+    "new project with git",
+    "existing project",
+    "git clone workflow",
+    "feature branch",
+    ".gitignore",
+    "ignore patterns",
+    "secrets in git"
+   ],
+   "readMinutes": 14,
+   "words": 2570,
+   "sections": [
+    {
+     "id": "three-ways",
+     "title": "Three ways you meet Git"
+    },
+    {
+     "id": "new-project",
+     "title": "Using Git in a brand-new project"
+    },
+    {
+     "id": "existing-project",
+     "title": "Using Git in an existing project"
+    },
+    {
+     "id": "joining",
+     "title": "Joining an existing Git project"
+    },
+    {
+     "id": "gitignore-what",
+     "title": "What .gitignore does"
+    },
+    {
+     "id": "gitignore-why",
+     "title": "Why .gitignore matters"
+    },
+    {
+     "id": "gitignore-samples",
+     "title": "Pattern rules and sample .gitignore files"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 9,
+   "date": "2026-10-13",
+   "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo"
+  },
+  {
+   "id": "git/github",
+   "module": "git",
+   "slug": "github",
+   "order": 4,
+   "title": "GitHub, Pull Requests & GitHub Desktop",
+   "summary": "What GitHub is and why teams use it: set up an account, link it to VS Code, create a repo and push code, fork projects, open pull requests, resolve merge conflicts, host a site on GitHub Pages, compare alternatives, and use GitHub Desktop.",
+   "topics": [
+    "GitHub",
+    "pull request",
+    "fork and upstream",
+    "merge conflicts",
+    "GitHub Pages",
+    "git remote add origin",
+    "GitHub Desktop",
+    "GitLab and Bitbucket"
+   ],
+   "readMinutes": 21,
+   "words": 4019,
+   "sections": [
+    {
+     "id": "what-is-github",
+     "title": "What GitHub is"
+    },
+    {
+     "id": "why-github",
+     "title": "Why use GitHub?"
+    },
+    {
+     "id": "account",
+     "title": "Setting up a GitHub account"
+    },
+    {
+     "id": "vscode",
+     "title": "Linking your GitHub account with VS Code"
+    },
+    {
+     "id": "create-repo",
+     "title": "Creating a repository on GitHub"
+    },
+    {
+     "id": "push",
+     "title": "Pushing code to GitHub"
+    },
+    {
+     "id": "fork",
+     "title": "Forking an existing repository"
+    },
+    {
+     "id": "pull-requests",
+     "title": "Pull requests (and merge requests)"
+    },
+    {
+     "id": "conflicts",
+     "title": "Handling merge conflicts"
+    },
+    {
+     "id": "pages",
+     "title": "Hosting a website on GitHub Pages"
+    },
+    {
+     "id": "alternatives",
+     "title": "Alternatives to GitHub"
+    },
+    {
+     "id": "desktop-install",
+     "title": "GitHub Desktop: what it is and how to install it"
+    },
+    {
+     "id": "desktop-use",
+     "title": "How to use GitHub Desktop"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 12,
+   "date": "2026-10-13",
+   "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo"
+  },
+  {
    "id": "web/html-syntax-structure",
    "module": "web",
    "slug": "html-syntax-structure",
@@ -1756,8 +2254,8 @@
     "meta tags",
     "block vs inline"
    ],
-   "readMinutes": 18,
-   "words": 3471,
+   "readMinutes": 19,
+   "words": 3692,
    "sections": [
     {
      "id": "why-html",
@@ -1932,8 +2430,8 @@
     "anchor tag",
     "href and target"
    ],
-   "readMinutes": 16,
-   "words": 3086,
+   "readMinutes": 17,
+   "words": 3145,
    "sections": [
     {
      "id": "lists",
@@ -2002,6 +2500,96 @@
    "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg"
   },
   {
+   "id": "web/forms-and-inputs",
+   "module": "web",
+   "slug": "forms-and-inputs",
+   "order": 4,
+   "title": "Forms and Inputs",
+   "summary": "How HTML forms collect information: the form tag with action, target and enctype, text and choice controls, id, name and value, buttons, labels, fieldsets, and built-in validation rules.",
+   "topics": [
+    "form tag",
+    "input types",
+    "name and value",
+    "radio and checkbox",
+    "select dropdown",
+    "label for id",
+    "fieldset legend",
+    "form validation"
+   ],
+   "readMinutes": 22,
+   "words": 4120,
+   "sections": [
+    {
+     "id": "real-forms",
+     "title": "Forms you already use every day"
+    },
+    {
+     "id": "submission",
+     "title": "How form submission works"
+    },
+    {
+     "id": "form-tag",
+     "title": "The <form> tag: the master envelope"
+    },
+    {
+     "id": "form-attributes",
+     "title": "More form attributes: target and enctype"
+    },
+    {
+     "id": "text-controls",
+     "title": "Text takers: the “fill in the blank” crew"
+    },
+    {
+     "id": "id-value-name",
+     "title": "The three key attributes: id, value, name"
+    },
+    {
+     "id": "choice-controls",
+     "title": "Choice makers: radio, checkbox, select"
+    },
+    {
+     "id": "buttons",
+     "title": "The “do something” buttons"
+    },
+    {
+     "id": "labels",
+     "title": "The <label> tag: the leash"
+    },
+    {
+     "id": "fieldset",
+     "title": "Grouping with <fieldset> and <legend>"
+    },
+    {
+     "id": "validation-why",
+     "title": "Form validation: the bouncer"
+    },
+    {
+     "id": "validation-rules",
+     "title": "Validation attributes"
+    },
+    {
+     "id": "full-example",
+     "title": "Putting it together: a strict form"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-21",
+   "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw"
+  },
+  {
    "id": "python-fundamentals/python-basics-1",
    "module": "python-fundamentals",
    "slug": "python-basics-1",
@@ -2017,8 +2605,8 @@
     "type conversion",
     "input()"
    ],
-   "readMinutes": 22,
-   "words": 4131,
+   "readMinutes": 24,
+   "words": 4615,
    "sections": [
     {
      "id": "what-is-python",
@@ -2070,7 +2658,7 @@
     },
     {
      "id": "recap",
-     "title": "Part 1 at a glance"
+     "title": "Summary: what you learned in this part"
     },
     {
      "id": "terms",
@@ -2107,12 +2695,12 @@
     "None",
     "common errors"
    ],
-   "readMinutes": 30,
-   "words": 5719,
+   "readMinutes": 31,
+   "words": 5824,
    "sections": [
     {
      "id": "recap",
-     "title": "Where Part 1 left off"
+     "title": "Quick recap of Part 1"
     },
     {
      "id": "arithmetic",
@@ -2183,6 +2771,182 @@
    "terms": 15,
    "date": "2026-09-28",
    "drive": "13KTAdv_l_-_d1IYOFAC9DSi_pGXfNs-f02ynSL40qo0"
+  },
+  {
+   "id": "python-fundamentals/control-flow",
+   "module": "python-fundamentals",
+   "slug": "control-flow",
+   "order": 3,
+   "title": "Control Flow",
+   "summary": "Teach Python to decide and repeat: if, else, elif, logical conditions, nested ifs, indentation, for and while loops, break, continue, pass, range() and enumerate(), with traced examples.",
+   "topics": [
+    "if elif else",
+    "nested if",
+    "for loop",
+    "while loop",
+    "break and continue",
+    "pass",
+    "range()",
+    "enumerate()"
+   ],
+   "readMinutes": 33,
+   "words": 6194,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Can Python make a decision?"
+    },
+    {
+     "id": "what-is-control-flow",
+     "title": "What is control flow?"
+    },
+    {
+     "id": "if",
+     "title": "The if statement"
+    },
+    {
+     "id": "if-else",
+     "title": "The if…else statement"
+    },
+    {
+     "id": "elif",
+     "title": "More than two outcomes: if…elif…else"
+    },
+    {
+     "id": "logical",
+     "title": "Combining conditions with and, or, not"
+    },
+    {
+     "id": "nested-if",
+     "title": "Nested conditions: a decision inside a decision"
+    },
+    {
+     "id": "indentation",
+     "title": "Indentation decides what belongs where"
+    },
+    {
+     "id": "for",
+     "title": "for loops: once for each item"
+    },
+    {
+     "id": "while",
+     "title": "while loops: repeat as long as a condition holds"
+    },
+    {
+     "id": "break-continue",
+     "title": "break and continue"
+    },
+    {
+     "id": "pass",
+     "title": "pass: a placeholder that does nothing"
+    },
+    {
+     "id": "range",
+     "title": "range(): a sequence of numbers"
+    },
+    {
+     "id": "enumerate",
+     "title": "enumerate(): index and value together"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 16,
+   "date": "2026-09-22",
+   "drive": "1I6OxMXLj5mBPNkdwYtCWImRqMSyoYPQUlAjpC8ldipQ"
+  },
+  {
+   "id": "python-fundamentals/data-structures",
+   "module": "python-fundamentals",
+   "slug": "data-structures",
+   "order": 4,
+   "title": "Data Structures",
+   "summary": "Store many values together: lists, tuples, dictionaries and sets, how they differ, nesting them, slicing, and building new collections with list and dictionary comprehensions.",
+   "topics": [
+    "list",
+    "tuple",
+    "dictionary",
+    "set",
+    "nested data",
+    "slicing",
+    "list comprehension",
+    "dict comprehension"
+   ],
+   "readMinutes": 31,
+   "words": 5805,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why one variable per value stops working"
+    },
+    {
+     "id": "lists",
+     "title": "Lists: creating and reading them"
+    },
+    {
+     "id": "list-methods",
+     "title": "Growing, shrinking and searching a list"
+    },
+    {
+     "id": "tuples",
+     "title": "Tuples: collections that can’t be changed"
+    },
+    {
+     "id": "dictionaries",
+     "title": "Dictionaries: look things up by name"
+    },
+    {
+     "id": "sets",
+     "title": "Sets: unique values only"
+    },
+    {
+     "id": "compare",
+     "title": "List vs tuple vs set vs dictionary"
+    },
+    {
+     "id": "nested",
+     "title": "Nested data structures"
+    },
+    {
+     "id": "slicing",
+     "title": "Slicing lists"
+    },
+    {
+     "id": "list-comprehensions",
+     "title": "List comprehensions"
+    },
+    {
+     "id": "dict-comprehensions",
+     "title": "Dictionary comprehensions, and when to use comprehensions"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-23",
+   "drive": "1sQupZ4jdcaeK6XvH1MdJIo6piYmkfGqQO_8kdFwxBYQ"
   },
   {
    "id": "python-fundamentals/functions",
@@ -2291,8 +3055,8 @@
     "pip",
     "__name__"
    ],
-   "readMinutes": 20,
-   "words": 3810,
+   "readMinutes": 22,
+   "words": 4186,
    "sections": [
     {
      "id": "why",
@@ -2357,6 +3121,169 @@
    "drive": "17U9tbVrW3HZ6byDiGrY_5G25HaTWt7Hf1FIMsQzLIW8"
   },
   {
+   "id": "python-fundamentals/working-with-data",
+   "module": "python-fundamentals",
+   "slug": "working-with-data",
+   "order": 7,
+   "title": "Working with Data",
+   "summary": "Make data outlive your program: persistent vs temporary data, .txt/.csv/.json formats, open() and file modes, reading and writing text files, with open(), the json module and the csv module.",
+   "topics": [
+    "files",
+    "open()",
+    "file modes",
+    "with open",
+    "read and write",
+    "json",
+    "csv",
+    "persistent data"
+   ],
+   "readMinutes": 27,
+   "words": 5147,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why store data outside the code?"
+    },
+    {
+     "id": "persistent",
+     "title": "Persistent data vs temporary data"
+    },
+    {
+     "id": "formats",
+     "title": "Common data file formats"
+    },
+    {
+     "id": "reading",
+     "title": "Opening and reading files"
+    },
+    {
+     "id": "writing",
+     "title": "Writing, appending and closing"
+    },
+    {
+     "id": "modes",
+     "title": "File modes"
+    },
+    {
+     "id": "with",
+     "title": "Using with open()"
+    },
+    {
+     "id": "json",
+     "title": "JSON files"
+    },
+    {
+     "id": "csv",
+     "title": "CSV files (basics)"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-28",
+   "drive": "1F5jA2ESuLMAyz1mX4L6nz8zjw5RajM_lmkCo5ZWGYcI"
+  },
+  {
+   "id": "python-fundamentals/error-handling",
+   "module": "python-fundamentals",
+   "slug": "error-handling",
+   "order": 8,
+   "title": "Error Handling",
+   "summary": "Stop programs from crashing on bad input and missing files: syntax vs runtime errors, reading tracebacks, try/except, specific and multiple exceptions, common built-in exceptions, else and finally, and raising your own exceptions for validation.",
+   "topics": [
+    "exceptions",
+    "traceback",
+    "try except",
+    "ValueError",
+    "else finally",
+    "raise",
+    "validation"
+   ],
+   "readMinutes": 27,
+   "words": 5036,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why error handling?"
+    },
+    {
+     "id": "what",
+     "title": "What is an error / exception?"
+    },
+    {
+     "id": "impact",
+     "title": "Runtime errors and their impact"
+    },
+    {
+     "id": "unexpected",
+     "title": "Expect the unexpected"
+    },
+    {
+     "id": "graceful",
+     "title": "Graceful error handling"
+    },
+    {
+     "id": "try-except",
+     "title": "try / except"
+    },
+    {
+     "id": "specific",
+     "title": "Handling specific exceptions"
+    },
+    {
+     "id": "multiple",
+     "title": "Handling multiple exception types"
+    },
+    {
+     "id": "common",
+     "title": "Common built-in exceptions"
+    },
+    {
+     "id": "choosing",
+     "title": "Choosing what to catch"
+    },
+    {
+     "id": "else-finally",
+     "title": "else and finally"
+    },
+    {
+     "id": "raise",
+     "title": "Raising exceptions"
+    },
+    {
+     "id": "glance",
+     "title": "Error handling at a glance"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 13,
+   "date": "2026-09-30",
+   "drive": "1CyJYI0gbHvAy9WyBsVcwABN6as7MZAemhZhBV5bTBt8"
+  },
+  {
    "id": "python-fundamentals/oops-1",
    "module": "python-fundamentals",
    "slug": "oops-1",
@@ -2372,8 +3299,8 @@
     "reference variable",
     "self"
    ],
-   "readMinutes": 20,
-   "words": 3821,
+   "readMinutes": 26,
+   "words": 5022,
    "sections": [
     {
      "id": "paradigms",
@@ -2622,6 +3549,79 @@
    "drive": "1GbVsqWjm3Ak-YRz05HjuZGktbfrgwld-lBnSJAZ23uo"
   },
   {
+   "id": "python-fundamentals/method-overriding",
+   "module": "python-fundamentals",
+   "slug": "method-overriding",
+   "order": 12,
+   "title": "Method Overriding",
+   "summary": "Let a child class replace or extend a parent's method, see why Python has no method overloading (and what to use instead), and work out the Method Resolution Order (MRO) for multiple inheritance.",
+   "topics": [
+    "method overriding",
+    "super().method()",
+    "replace vs extend",
+    "method overloading",
+    "default arguments",
+    "MRO",
+    "multiple inheritance"
+   ],
+   "readMinutes": 14,
+   "words": 2622,
+   "sections": [
+    {
+     "id": "what",
+     "title": "What is method overriding?"
+    },
+    {
+     "id": "override",
+     "title": "Overriding a parent method"
+    },
+    {
+     "id": "some-methods",
+     "title": "Overriding only some methods"
+    },
+    {
+     "id": "constructor",
+     "title": "Overriding the constructor"
+    },
+    {
+     "id": "extend",
+     "title": "Extending a parent method with super().method()"
+    },
+    {
+     "id": "overloading",
+     "title": "Overriding vs overloading"
+    },
+    {
+     "id": "mro-problem",
+     "title": "The MRO problem: a toy family"
+    },
+    {
+     "id": "mro",
+     "title": "What MRO is, and how to work it out"
+    },
+    {
+     "id": "mro-call",
+     "title": "Following the method call"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 11,
+   "date": "2026-10-01",
+   "drive": "1n4dNRRq8GBblKKcKyMdI07OsE5MHis-eiifm2tukPQg"
+  },
+  {
    "id": "python-advanced/project-development",
    "module": "python-advanced",
    "slug": "project-development",
@@ -2732,8 +3732,8 @@
     "status codes",
     "error handling"
    ],
-   "readMinutes": 28,
-   "words": 5332,
+   "readMinutes": 29,
+   "words": 5571,
    "sections": [
     {
      "id": "why",
@@ -2804,6 +3804,100 @@
    "terms": 15,
    "date": "2026-10-01",
    "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM"
+  },
+  {
+   "id": "python-advanced/fastapi-fundamentals",
+   "module": "python-advanced",
+   "slug": "fastapi-fundamentals",
+   "order": 3,
+   "title": "FastAPI Fundamentals, Setup & Project Structure",
+   "summary": "Build and run your first FastAPI app: virtual environment, installing FastAPI and Uvicorn, the app instance, routes, JSON responses, 404s, Uvicorn options, an app package, requirements.txt and a small Student API.",
+   "topics": [
+    "FastAPI",
+    "Uvicorn",
+    "routes",
+    "app instance",
+    "--reload",
+    "project structure",
+    "requirements.txt",
+    "Student API"
+   ],
+   "readMinutes": 18,
+   "words": 3414,
+   "sections": [
+    {
+     "id": "what-is",
+     "title": "What is FastAPI?"
+    },
+    {
+     "id": "setup",
+     "title": "Setting up the project"
+    },
+    {
+     "id": "install",
+     "title": "Installing FastAPI and Uvicorn"
+    },
+    {
+     "id": "first-app",
+     "title": "Your first FastAPI application"
+    },
+    {
+     "id": "first-route",
+     "title": "Your first route"
+    },
+    {
+     "id": "run",
+     "title": "Running the app with Uvicorn"
+    },
+    {
+     "id": "test",
+     "title": "Testing your first API"
+    },
+    {
+     "id": "app-instance",
+     "title": "The application instance, and more routes"
+    },
+    {
+     "id": "responses",
+     "title": "Exploring responses and 404s"
+    },
+    {
+     "id": "uvicorn-options",
+     "title": "Uvicorn options: port and reload"
+    },
+    {
+     "id": "structure",
+     "title": "Basic project structure"
+    },
+    {
+     "id": "requirements",
+     "title": "requirements.txt"
+    },
+    {
+     "id": "student-api",
+     "title": "Final project: a Student API"
+    },
+    {
+     "id": "mistakes",
+     "title": "Common mistakes and quick revision"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 12,
+   "date": "2026-10-06",
+   "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA"
   },
   {
    "id": "python-advanced/pydantic",
@@ -2915,8 +4009,8 @@
     "PUT vs PATCH",
     "405 Method Not Allowed"
    ],
-   "readMinutes": 21,
-   "words": 4057,
+   "readMinutes": 24,
+   "words": 4506,
    "sections": [
     {
      "id": "path-operation",
@@ -2975,6 +4069,10 @@
      "title": "Common mistakes and fixes"
     },
     {
+     "id": "revision",
+     "title": "Quick revision"
+    },
+    {
      "id": "terms",
      "title": "Key terms"
     },
@@ -2993,6 +4091,88 @@
    "drive": "1QpNGo32aynyfTHiTlcvUIJQsI3U5jPqtN0Y7aDY_X40"
   },
   {
+   "id": "python-advanced/path-query-parameters",
+   "module": "python-advanced",
+   "slug": "path-query-parameters",
+   "order": 6,
+   "title": "Path & Query Parameters",
+   "summary": "Make FastAPI routes dynamic: path parameters pick one item, query parameters filter, sort and paginate a list. Type conversion, 422 errors, route order, optional values, skip and limit, and a Student Search API.",
+   "topics": [
+    "path parameters",
+    "query parameters",
+    "dynamic routes",
+    "type conversion",
+    "422 error",
+    "route order",
+    "pagination",
+    "skip and limit"
+   ],
+   "readMinutes": 26,
+   "words": 4871,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why do APIs need parameters?"
+    },
+    {
+     "id": "path-params",
+     "title": "Path parameters: pick one specific item"
+    },
+    {
+     "id": "conversion",
+     "title": "Type conversion and validation"
+    },
+    {
+     "id": "multiple-path",
+     "title": "Multiple path parameters and route order"
+    },
+    {
+     "id": "query-params",
+     "title": "Query parameters: how you want the list"
+    },
+    {
+     "id": "filtering",
+     "title": "Filtering, optional parameters and defaults"
+    },
+    {
+     "id": "multiple-query",
+     "title": "Multiple query parameters"
+    },
+    {
+     "id": "pagination",
+     "title": "Pagination with skip and limit"
+    },
+    {
+     "id": "path-and-query",
+     "title": "Path and query together, and how to tell them apart"
+    },
+    {
+     "id": "project",
+     "title": "Final project: Student Search API"
+    },
+    {
+     "id": "mistakes",
+     "title": "Common mistakes and quick revision"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 10,
+   "date": "2026-10-09",
+   "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E"
+  },
+  {
    "id": "llm-engineering/llm-engineering",
    "module": "llm-engineering",
    "slug": "llm-engineering",
@@ -3009,8 +4189,8 @@
     "inference cost",
     "open vs proprietary models"
    ],
-   "readMinutes": 46,
-   "words": 8828,
+   "readMinutes": 50,
+   "words": 9491,
    "sections": [
     {
      "id": "what-is-llm",
@@ -3093,6 +4273,108 @@
    "terms": 15,
    "date": "2026-10-06",
    "drive": "1vQPVegWYDtmeN406pMejn7heef2TISDaKRfdduFO4Yo"
+  },
+  {
+   "id": "prompt-context/prompt-context-engineering",
+   "module": "prompt-context",
+   "slug": "prompt-context-engineering",
+   "order": 1,
+   "title": "Prompt & Context Engineering",
+   "summary": "Write prompts models follow and assemble the context they need: prompt anatomy, system vs user prompts, zero/one/few-shot and chain-of-thought, RACE, CO-STAR, RTCE and ReAct, structured JSON output, testing, versioning and prompt injection.",
+   "topics": [
+    "prompt anatomy",
+    "system prompt",
+    "few-shot",
+    "chain-of-thought",
+    "prompt frameworks",
+    "context engineering",
+    "structured output",
+    "prompt injection"
+   ],
+   "readMinutes": 35,
+   "words": 6620,
+   "sections": [
+    {
+     "id": "what-is-prompt",
+     "title": "What is a prompt, and why engineer it?"
+    },
+    {
+     "id": "anatomy",
+     "title": "The anatomy of a good prompt"
+    },
+    {
+     "id": "good-vs-poor",
+     "title": "Good prompt vs poor prompt"
+    },
+    {
+     "id": "structure",
+     "title": "Prompt structure and instructions"
+    },
+    {
+     "id": "system-user",
+     "title": "System prompts vs user prompts"
+    },
+    {
+     "id": "shots",
+     "title": "Zero-shot, one-shot and few-shot prompting"
+    },
+    {
+     "id": "cot",
+     "title": "Chain-of-thought and ELI5 prompting"
+    },
+    {
+     "id": "frameworks",
+     "title": "Prompting frameworks: RACE, CO-STAR and RTCE"
+    },
+    {
+     "id": "react",
+     "title": "ReAct: reason, act, observe"
+    },
+    {
+     "id": "context",
+     "title": "Context engineering fundamentals"
+    },
+    {
+     "id": "building-context",
+     "title": "Building effective context"
+    },
+    {
+     "id": "output",
+     "title": "Output control and structured outputs"
+    },
+    {
+     "id": "testing",
+     "title": "Testing prompts and context"
+    },
+    {
+     "id": "optimization",
+     "title": "Prompt optimization and engineering practices"
+    },
+    {
+     "id": "security",
+     "title": "Basic prompt security: prompt injection"
+    },
+    {
+     "id": "practice",
+     "title": "End-to-end practice: a weekly study plan"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 10,
+   "terms": 14,
+   "date": "2026-10-08",
+   "drive": "1BSR8p--HS3l0pHNNGYqbsq7_xXmq1uj6aGiUaE-xXtQ"
   },
   {
    "id": "langchain/langchain-fundamentals",
@@ -3195,7 +4477,108 @@
    "terms": 15,
    "date": "2026-10-08",
    "drive": "1Gwg9eLyT_BqdSiODfRPQI4xUt1V3yAifC5iuRVjs-GQ"
+  },
+  {
+   "id": "model-selection/model-selection",
+   "module": "model-selection",
+   "slug": "model-selection",
+   "order": 1,
+   "title": "Model Selection",
+   "summary": "How to choose the right AI model for a task: define requirements, weigh quality, cost, latency, context window, privacy and deployment, test candidates fairly, read trade-offs, and make an evidence-based recommendation.",
+   "topics": [
+    "model selection",
+    "model evaluation",
+    "cost vs latency",
+    "context window",
+    "hosted vs open-weight",
+    "benchmarks",
+    "decision matrix"
+   ],
+   "readMinutes": 30,
+   "words": 5637,
+   "sections": [
+    {
+     "id": "what-is",
+     "title": "What is model selection?"
+    },
+    {
+     "id": "why-matters",
+     "title": "Why model selection matters"
+    },
+    {
+     "id": "selection-vs-evaluation",
+     "title": "Model selection vs model evaluation"
+    },
+    {
+     "id": "requirements",
+     "title": "Understanding model requirements"
+    },
+    {
+     "id": "constraints",
+     "title": "Quality targets and practical constraints"
+    },
+    {
+     "id": "quality-cost",
+     "title": "Key factors: output quality and cost"
+    },
+    {
+     "id": "latency-context",
+     "title": "Key factors: latency and context window"
+    },
+    {
+     "id": "other-factors",
+     "title": "Key factors: privacy, reliability, integration and deployment"
+    },
+    {
+     "id": "candidates-tests",
+     "title": "Shortlisting candidates and preparing test cases"
+    },
+    {
+     "id": "metrics",
+     "title": "Evaluation criteria, metrics and output quality"
+    },
+    {
+     "id": "cost-time-edge",
+     "title": "Cost, response time, consistency and edge cases"
+    },
+    {
+     "id": "trade-offs",
+     "title": "Trade-offs, benchmarks and leaderboards"
+    },
+    {
+     "id": "small-vs-capable",
+     "title": "Smaller vs more capable models"
+    },
+    {
+     "id": "hosted-vs-open",
+     "title": "Hosted models vs open-weight models"
+    },
+    {
+     "id": "matching-decision",
+     "title": "Matching models to requirements and deciding with evidence"
+    },
+    {
+     "id": "practical",
+     "title": "Practical exercise: choosing a model end to end"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 15,
+   "date": "2026-10-13",
+   "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I"
   }
  ],
- "built": "2026-10-13T12:27:53"
+ "built": "2026-10-13T22:31:07"
 }

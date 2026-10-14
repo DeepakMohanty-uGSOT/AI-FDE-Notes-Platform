@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Git in Real Projects &amp; .gitignore · Git &amp; GitHub | AIFDE Notes</title>
+<meta name="description" content="Put Git to work in real situations: start a brand-new project, add Git to an existing one, and join a teammate's project with clone, branch, commit, pull and push. Plus why .gitignore matters, with ready-to-use sample files.">
+<meta name="keywords" content="new project with git, existing project, git clone workflow, feature branch, .gitignore, ignore patterns, secrets in git">
+<meta name="date" content="2026-10-13">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="git/git-workflows">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Git in Real Projects &amp; .gitignore</h1>
+  <p class="byline">Use Git the way you will on the job: start a new project, put an existing one under version control, join a teammate’s project, and keep junk and secrets out with <code>.gitignore</code>.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="three-ways">
+  <h2>Three ways you meet Git</h2>
+  <div class="story"><b class="lbl">The family photo album</b>Sometimes you buy a fresh album for a new trip. Sometimes you find a shoebox of old photos and finally put them into an album. And sometimes your cousin hands you the family album and asks you to add this year’s pictures. <mark>Git projects start the same three ways: brand new, already existing, or someone else’s that you join.</mark></div>
+  <p>In <a href="../git-fundamentals/index.html">Git Fundamentals</a> you learned each command on its own. This note strings them together into the real workflows you will repeat every week.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Three starting points: a brand-new project uses mkdir and git init, an existing project uses cd and git init, joining a project uses git clone. All three then follow the same loop of git add, git commit, repeat">
+      <g class="rough">
+        <rect class="box f-green" x="20" y="20" width="210" height="110" rx="14"/>
+        <rect class="box f-blue" x="255" y="20" width="210" height="110" rx="14"/>
+        <rect class="box f-purple" x="490" y="20" width="210" height="110" rx="14"/>
+        <rect class="box f-yellow" x="160" y="172" width="400" height="52" rx="14"/>
+        <path class="ln" d="M125 134 L 245 168" marker-end="url(#ah)"/>
+        <path class="ln" d="M360 134 L 360 166" marker-end="url(#ah)"/>
+        <path class="ln" d="M595 134 L 475 168" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="125" y="60" text-anchor="middle">Brand new</text>
+      <text class="tm" x="125" y="90" text-anchor="middle">mkdir + git init</text>
+      <text class="ts" x="125" y="114" text-anchor="middle">empty folder</text>
+      <text class="th" x="360" y="60" text-anchor="middle">Existing</text>
+      <text class="tm" x="360" y="90" text-anchor="middle">cd + git init</text>
+      <text class="ts" x="360" y="114" text-anchor="middle">code, no history yet</text>
+      <text class="th" x="595" y="60" text-anchor="middle">Joining</text>
+      <text class="tm" x="595" y="90" text-anchor="middle">git clone</text>
+      <text class="ts" x="595" y="114" text-anchor="middle">someone else’s repo</text>
+      <text class="t" x="360" y="204" text-anchor="middle">git add .  →  git commit  →  repeat</text>
+    </svg></div>
+    <figcaption>Only the first step differs. After that, every project runs the same add-and-commit loop.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Before you start</strong> Make sure Git is installed and configured on your system (<code>git --version</code>, plus <code>user.name</code> and <code>user.email</code> set with <code>git config</code>). The next note shows the setup step by step.</div>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="new-project">
+  <h2>Using Git in a brand-new project</h2>
+  <p>Starting from scratch means you set up version control on day one: create the folder, create a repository, then commit as you go so the project’s whole history is recorded.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Create a project folder</b>Make it in File Explorer (Windows) or Finder (Mac), or from the terminal. <span class="tag">→ mkdir, cd</span></div></li>
+    <li><span class="dot">2</span><div><b>Initialise the local repository</b>Run <code>git init</code> inside the folder. Git creates a hidden <code>.git</code> folder that stores all history. <span class="tag">→ git init</span></div></li>
+    <li><span class="dot">3</span><div><b>Create files and write some code</b>Here, a small Java program.</div></li>
+    <li><span class="dot">4</span><div><b>Check, stage and commit</b>Look with <code>git status</code>, stage with <code>git add</code>, save with <code>git commit</code>. <span class="tag">→ repeat as you work</span></div></li>
+  </ol>
+
+  <h3>1 · Create the project directory</h3>
+  <pre><code class="language-bash"># create a folder "project_java"
+mkdir project_java
+
+# move into the project folder
+cd project_java</code></pre>
+
+  <h3>2 · Initialise the local Git repository</h3>
+  <pre><code class="language-bash"># initialise git
+git init</code></pre>
+  <pre class="out"><code>Initialized empty Git repository in /home/you/project_java/.git/</code></pre>
+
+  <h3>3 · Create a file and write some code</h3>
+  <div class="codebox"><span class="cap">MyFirstProgram.java</span><pre><code class="language-java">class MyFirstProgram {
+    public static void main(String[] args) {
+        System.out.println("Hello, World");
+    }
+}</code></pre></div>
+
+  <h3>4 · Check status, then stage and commit</h3>
+  <p>Before staging, it is good practice to run <code>git status</code> and see what Git currently knows about:</p>
+  <pre><code class="language-bash">git status</code></pre>
+  <pre class="out"><code>On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        MyFirstProgram.java
+
+nothing added to commit but untracked files present (use "git add" to track)</code></pre>
+  <p>The new file is <b>untracked</b>. Stage it and make your first commit:</p>
+  <pre><code class="language-bash"># stage everything in the folder
+git add .
+
+# commit with a message
+git commit -m "initial commit"</code></pre>
+  <p>From here, you <mark>keep working, staging with <code>git add</code> and committing with <code>git commit</code></mark>. Use <code>git log</code> any time to see the commit history:</p>
+  <pre><code class="language-bash"># view commit history
+git log</code></pre>
+  <pre class="out"><code>commit 3f2a9c1d8e7b6a5f4e3d2c1b0a9f8e7d6c5b4a39 (HEAD -&gt; main)
+Author: Your Name &lt;you@example.com&gt;
+Date:   Tue Oct 13 10:15:42 2026 +0530
+
+    initial commit</code></pre>
+  <div class="sticky tip"><strong>master or main?</strong> Older Git versions name the first branch <code>master</code>; newer setups use <code>main</code>. Your <code>git status</code> shows whichever your Git uses. Set your default once with <code>git config --global init.defaultBranch main</code>.</div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="existing-project">
+  <h2>Using Git in an existing project</h2>
+  <p>Suppose you already have a project, say an online shop in a folder called <code>Ecom</code>, and it has never used version control. You can add Git at any time; your files stay exactly where they are.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Go to the project root directory</b>The top-level folder that contains everything. <span class="tag">→ cd Ecom</span></div></li>
+    <li><span class="dot">2</span><div><b>Initialise the repository</b>Creates the <code>.git</code> folder inside <code>Ecom</code>. <span class="tag">→ git init</span></div></li>
+    <li><span class="dot">3</span><div><b>Stage and commit all project files</b>Your first commit captures the project as it is today. <span class="tag">→ git add . · git commit</span></div></li>
+  </ol>
+  <pre><code class="language-bash"># 1. suppose the project root directory is "Ecom"
+cd Ecom
+
+# 2. initialise git (creates the .git repository)
+git init
+
+# 3. stage all files, then commit them with a message
+git add .
+git commit -m "initial commit"</code></pre>
+  <p>After that, repeat step 3 as you work: stage and commit with a <b>meaningful</b> message each time.</p>
+  <div class="sticky warn l"><strong>Write the .gitignore first</strong> In an old project, <code>git add .</code> grabs everything: <code>node_modules</code>, build output, log files and even a <code>.env</code> full of passwords. Create a <a href="#gitignore-what"><code>.gitignore</code></a> <b>before</b> your first <code>git add .</code>, and check <code>git status</code> before committing.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="joining">
+  <h2>Joining an existing Git project</h2>
+  <p>Imagine your friend has invited you to contribute to their Git project. Their repository lives on a hosting platform, and you need a copy on your laptop, a branch of your own, and a way to send your work back.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="The GitHub repo is cloned to your laptop's main branch. You create the branch feat/hero-section, edit, add and commit there, git pull to get the latest work, then git push the branch back to GitHub">
+      <g class="rough">
+        <rect class="box f-purple" x="230" y="20" width="260" height="66" rx="14"/>
+        <rect class="box f-blue" x="60" y="180" width="220" height="70" rx="14"/>
+        <rect class="box f-green" x="440" y="180" width="220" height="70" rx="14"/>
+        <path class="ln" d="M270 90 L 190 174" marker-end="url(#ah)"/>
+        <path class="ln" d="M284 215 L 434 215" marker-end="url(#ah)"/>
+        <path class="lr" d="M500 176 L 432 92" marker-end="url(#ahr)"/>
+        <path class="lb dash" d="M482 90 L 568 174" marker-end="url(#ahb)"/>
+      </g>
+      <text class="th" x="360" y="52" text-anchor="middle">GitHub repo</text>
+      <text class="ts" x="360" y="76" text-anchor="middle">the shared project (origin)</text>
+      <text class="tm" x="170" y="212" text-anchor="middle">main</text>
+      <text class="ts" x="170" y="236" text-anchor="middle">your cloned copy</text>
+      <text class="tm" x="550" y="212" text-anchor="middle">feat/hero-section</text>
+      <text class="ts" x="550" y="236" text-anchor="middle">edit · add · commit</text>
+      <text class="tb" x="212" y="134" text-anchor="end">git clone</text>
+      <text class="tr" x="452" y="150" text-anchor="end">git push</text>
+      <text class="tb" x="545" y="128">git pull</text>
+      <text class="ts" x="360" y="276" text-anchor="middle">git branch + git checkout</text>
+    </svg></div>
+    <figcaption>Clone once, work on your own branch, pull the latest, then push your branch so the owners can review and merge it.</figcaption>
+  </figure>
+
+  <h3>1 · Get the project URL</h3>
+  <p>Get the URL of the existing repository from its hosting platform, such as GitHub, GitLab or Bitbucket.</p>
+  <div class="sticky info"><strong>GitHub, GitLab and Bitbucket</strong> are popular web platforms that <b>host Git repositories</b>. They add collaboration, review and project-management tools on top of Git. The <a href="../github/index.html">next note</a> covers GitHub in depth.</div>
+  <pre class="out"><code># a GitHub repository URL looks like
+https://github.com/&lt;owner&gt;/&lt;projectFolder&gt;.git</code></pre>
+
+  <h3>2 · Clone the repository</h3>
+  <pre><code class="language-bash"># clone the repository
+git clone &lt;projectGitURL&gt;</code></pre>
+
+  <h3>3 · Move into the project directory</h3>
+  <pre><code class="language-bash">cd &lt;projectFolderName&gt;</code></pre>
+
+  <h3>4 · Create and switch to a new branch</h3>
+  <pre><code class="language-bash"># make sure you are on the main branch first
+git checkout main
+
+# create a new branch
+git branch feat/hero-section
+
+# switch to the newly created branch
+git checkout feat/hero-section</code></pre>
+  <p>The shortcut <code>git checkout -b feat/hero-section</code> (or <code>git switch -c feat/hero-section</code>) does both in one step.</p>
+
+  <h3>5 · Work</h3>
+  <p>Make your changes: add features, fix bugs, improve the code.</p>
+
+  <h3>6 · Stage and commit</h3>
+  <pre><code class="language-bash"># stage
+git add .
+
+# commit
+git commit -m "fix: hero icon fix"</code></pre>
+
+  <h3>7 · Pull (optional, but a good habit)</h3>
+  <p>Before pushing, pull the latest changes from the remote repository. <mark>Pulling first means you are working on the latest code and helps you catch conflicts on your laptop instead of on the server.</mark></p>
+  <pre><code class="language-bash"># bring in the latest main and merge it into your branch
+git pull origin main</code></pre>
+
+  <h3>8 · Push</h3>
+  <p>Now send your commits to the remote repository. The very first push of a new branch must tell Git where the branch should go:</p>
+  <pre><code class="language-bash"># first push of this branch: create it on origin and remember the link
+git push -u origin feat/hero-section
+
+# every later push from this branch
+git push</code></pre>
+  <p>Once your commits are pushed, it is up to the project owners to review and <b>merge</b> your branch, usually through a <a href="../github/index.html#pull-requests">pull request</a>.</p>
+  <div class="flow"><span class="op">git clone</span><span class="op">git checkout -b</span><span>work</span><span class="op">git add</span><span class="op">git commit</span><span class="op">git pull</span><span class="ok">git push</span></div>
+  <div class="sticky warn l"><strong>“has no upstream branch”</strong> A plain <code>git push</code> on a brand-new branch fails with <i>fatal: The current branch feat/hero-section has no upstream branch</i>. Use <code>git push -u origin &lt;branch&gt;</code> once; after that, plain <code>git push</code> works.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer engagement you usually join <i>their</i> repository. Never commit straight to <code>main</code>: work on a branch named for the task (<code>feat/…</code>, <code>fix/…</code>), pull often, and let their team review before it merges. It builds trust fast.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="gitignore-what">
+  <h2>What .gitignore does</h2>
+  <div class="story"><b class="lbl">The suitcase list</b>Packing for a trip, you don’t carry the dustbin, yesterday’s newspaper or the house keys you must leave with your neighbour. You keep a “don’t pack” list on the fridge. <mark><code>.gitignore</code> is Git’s “don’t pack” list: files that may sit in your folder but must never go into the repository.</mark></div>
+  <p>The <code>.gitignore</code> file is a plain-text <b>configuration file</b> in your repository that lists files, folders or patterns Git should ignore when tracking changes. Git reads it to decide which files should <b>not</b> be included in version control, even though they are present in the project folder.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="The project folder holds src/app.js, index.html, .env, node_modules/, build/ and debug.log. They pass through the .gitignore filter: Git tracks src/app.js and index.html, and ignores .env, node_modules/, build/ and debug.log">
+      <g class="rough">
+        <rect class="box f-card" x="20" y="20" width="200" height="220" rx="14"/>
+        <rect class="box f-yellow" x="268" y="90" width="150" height="80" rx="14"/>
+        <rect class="box f-green" x="480" y="20" width="220" height="100" rx="14"/>
+        <rect class="box f-orange" x="480" y="140" width="220" height="100" rx="14"/>
+        <path class="ln" d="M224 130 L 262 130" marker-end="url(#ah)"/>
+        <path class="lb" d="M422 112 L 474 76" marker-end="url(#ahb)"/>
+        <path class="lr dash" d="M422 150 L 474 186" marker-end="url(#ahr)"/>
+      </g>
+      <text class="ts" x="120" y="46" text-anchor="middle">project folder</text>
+      <text class="tm" x="44" y="80">src/app.js</text>
+      <text class="tm" x="44" y="108">index.html</text>
+      <text class="tm" x="44" y="136">.env</text>
+      <text class="tm" x="44" y="164">node_modules/</text>
+      <text class="tm" x="44" y="192">build/</text>
+      <text class="tm" x="44" y="220">debug.log</text>
+      <text class="tm" x="343" y="128" text-anchor="middle">.gitignore</text>
+      <text class="ts" x="343" y="152" text-anchor="middle">the filter</text>
+      <text class="th" x="590" y="54" text-anchor="middle">Git tracks</text>
+      <text class="tm" x="590" y="82" text-anchor="middle">src/app.js</text>
+      <text class="tm" x="590" y="104" text-anchor="middle">index.html</text>
+      <text class="th" x="590" y="174" text-anchor="middle">Git ignores</text>
+      <text class="tm" x="590" y="202" text-anchor="middle">.env · node_modules/</text>
+      <text class="tm" x="590" y="224" text-anchor="middle">build/ · debug.log</text>
+    </svg></div>
+    <figcaption>Everything stays on your disk. <code>.gitignore</code> only decides what Git is allowed to track.</figcaption>
+  </figure>
+  <h3>Two tiny examples</h3>
+  <div class="two">
+    <div class="codebox"><span class="cap">.gitignore · one file</span><pre><code class="language-plaintext"># ignore a specific file
+.env</code></pre></div>
+    <div class="codebox"><span class="cap">.gitignore · several entries</span><pre><code class="language-plaintext"># ignore multiple files and folders
+node_modules
+build/</code></pre></div>
+  </div>
+  <p>Put the file in the <b>root</b> of the repository, named exactly <code>.gitignore</code> (with the leading dot, no extension), and commit it so everyone on the team shares the same rules.</p>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="gitignore-why">
+  <h2>Why .gitignore matters</h2>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>1 · No versioning of unnecessary files</h4><p>Compiled binaries, log files and temporary files are created during development. They are not needed in version control and can be large. Ignoring them avoids storing useless versions and <b>saves space</b>.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · A cleaner repository</h4><p>With non-essential files left out, the repo stays focused on <b>source code and configuration</b>, so it is easier to navigate and manage.</p></div>
+    <div class="card t4 tilt-a"><h4>3 · No leaked secrets</h4><p>It helps stop sensitive data such as <b>API keys, passwords</b> and other confidential information from being accidentally committed and shared.</p></div>
+    <div class="card t5 tilt-b"><h4>4 · Consistency across platforms</h4><p>Each OS and IDE creates its own files (<code>.DS_Store</code>, <code>Thumbs.db</code>, <code>.idea/</code>). Ignoring them keeps the repo the same for developers on <b>different machines</b>.</p></div>
+    <div class="card t3 tilt-a"><h4>5 · Better performance</h4><p>Leaving out large or numerous files makes Git operations such as <b>clone, pull, push and branching</b> faster.</p></div>
+  </div>
+  <div class="sticky warn l"><strong>.gitignore does not untrack files</strong> It only affects files Git is <i>not already tracking</i>. If you committed <code>.env</code> before adding it to <code>.gitignore</code>, stop tracking it with <code>git rm --cached .env</code> and commit. The file stays on your disk.</div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> A customer’s API key pushed to a repo is a security incident, even if you delete it in the next commit: it is still in the history. If it happens, <b>rotate the key immediately</b>, then clean up. Keep secrets in <code>.env</code>, ignore it, and commit a <code>.env.example</code> with blank values instead.</div>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="gitignore-samples">
+  <h2>Pattern rules and sample .gitignore files</h2>
+  <h3>How patterns work</h3>
+  <div class="tbl"><table>
+    <tr><th style="width:30%">Pattern</th><th>What it ignores</th></tr>
+    <tr><td><code># comment</code></td><td>Nothing. Lines starting with <code>#</code> are comments.</td></tr>
+    <tr><td><code>.env</code></td><td>Any file or folder named <code>.env</code>, at any depth.</td></tr>
+    <tr><td><code>build/</code></td><td>Folders named <code>build</code> (the trailing <code>/</code> means “folder only”).</td></tr>
+    <tr><td><code>*.log</code></td><td>Every file ending in <code>.log</code>. <code>*</code> matches any characters.</td></tr>
+    <tr><td><code>/config.local</code></td><td>Only <code>config.local</code> in the repository root (leading <code>/</code>).</td></tr>
+    <tr><td><code>**/temp</code></td><td><code>temp</code> in any folder, however deep.</td></tr>
+    <tr><td><code>!keep.log</code></td><td>An exception: <b>do</b> track <code>keep.log</code>, even though <code>*.log</code> is ignored.</td></tr>
+  </table></div>
+
+  <h3>Sample files</h3>
+  <div class="codebox"><span class="cap">.gitignore · Node.js / web project</span><pre><code class="language-plaintext"># dependencies (reinstall with npm install)
+node_modules/
+
+# build output
+dist/
+build/
+
+# environment variables and secrets
+.env
+.env.local
+
+# logs
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/</code></pre></div>
+  <div class="codebox"><span class="cap">.gitignore · Python project</span><pre><code class="language-plaintext"># bytecode and caches
+__pycache__/
+*.pyc
+
+# virtual environment
+venv/
+.venv/
+
+# secrets
+.env
+
+# test and tool caches
+.pytest_cache/
+
+# notebooks checkpoints
+.ipynb_checkpoints/</code></pre></div>
+  <div class="codebox"><span class="cap">.gitignore · Java project</span><pre><code class="language-plaintext"># compiled classes and packages
+*.class
+*.jar
+target/
+out/
+
+# IDE files
+.idea/
+*.iml
+
+# logs
+*.log</code></pre></div>
+  <div class="sticky tip"><strong>Don’t write it from memory</strong> GitHub can add a ready-made <code>.gitignore</code> for your language when you create a repository, and the <code>github/gitignore</code> repository has templates for almost every stack. Start from one and edit it.</div>
+  <div class="cmd"><p class="what">Check that a file is really ignored</p>
+  <pre><code class="language-bash">git check-ignore -v .env      # prints the .gitignore line that matches
+git status --ignored          # lists ignored files too</code></pre></div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>git init</dt><dd>Turns the current folder into a Git repository by creating a hidden <code>.git</code> folder that stores the project’s history.</dd></div>
+    <div><dt>Project root</dt><dd>The top-level folder of a project, where <code>.git</code> and <code>.gitignore</code> live.</dd></div>
+    <div><dt>Untracked file</dt><dd>A file in the project folder that Git has never been told to track; it appears under “Untracked files” in <code>git status</code>.</dd></div>
+    <div><dt>git clone</dt><dd>Copies a remote repository, with all files, history and branches, onto your machine and sets up a remote named <code>origin</code>.</dd></div>
+    <div><dt>Feature branch</dt><dd>A branch created for one task, such as <code>feat/hero-section</code>, so the work stays separate from <code>main</code> until it is reviewed and merged.</dd></div>
+    <div><dt>Upstream branch (tracking)</dt><dd>The remote branch a local branch is linked to, set with <code>git push -u</code>, so plain <code>git push</code> and <code>git pull</code> know where to go.</dd></div>
+    <div><dt>.gitignore</dt><dd>A text file in the repository listing files, folders and patterns that Git should not track, such as dependencies, build output, logs and secrets.</dd></div>
+    <div><dt>Ignore pattern</dt><dd>A line in <code>.gitignore</code> such as <code>*.log</code>, <code>build/</code> or <code>!keep.log</code> that matches files to ignore or, with <code>!</code>, to re-include.</dd></div>
+    <div><dt>git rm --cached</dt><dd>Stops Git tracking a file that was already committed, while leaving the file on disk. Used when you ignore a file too late.</dd></div>
+  </dl>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>You have an old project folder with no version control. What is the first Git command to run inside its root?</p>
+      <ol><li><code>git clone</code></li><li><code>git init</code></li><li><code>git push</code></li><li><code>git commit</code></li></ol>
+      <p class="why"><code>git init</code> creates the <code>.git</code> repository in an existing folder. <code>git clone</code> is for copying a repository that already exists somewhere else.</p></div>
+    <div class="q" data-answer="3"><p>Right after creating <code>MyFirstProgram.java</code> in a new repo, how does <code>git status</code> describe it?</p>
+      <ol><li>Staged</li><li>Committed</li><li>Untracked</li><li>Ignored</li></ol>
+      <p class="why">Git has never been told about the file, so it is untracked until you <code>git add</code> it.</p></div>
+    <div class="q" data-answer="4"><p>Your friend invites you to their repo. Which order is right?</p>
+      <ol><li>push → clone → branch → commit</li><li>branch → clone → push → commit</li><li>clone → commit on main → push to main</li><li>clone → branch → commit → pull → push</li></ol>
+      <p class="why">Copy the project, work on your own branch, commit, bring in the latest changes, then push your branch for review.</p></div>
+    <div class="q" data-answer="1"><p>You run <code>git push</code> on a brand-new local branch and get “has no upstream branch”. What fixes it?</p>
+      <ol><li><code>git push -u origin &lt;branch&gt;</code></li><li><code>git init</code> again</li><li>Deleting the branch</li><li><code>git commit --amend</code></li></ol>
+      <p class="why">The remote doesn’t know the branch yet. <code>-u origin &lt;branch&gt;</code> creates it there and links the two, so later pushes need no arguments.</p></div>
+    <div class="q" data-answer="2"><p>Why pull before you push?</p>
+      <ol><li>Pushing is impossible without a pull</li><li>To work on the latest code and resolve conflicts locally first</li><li>Pull deletes old branches</li><li>Pull creates the .gitignore</li></ol>
+      <p class="why">Pulling brings in teammates’ commits so any clash is found and fixed on your machine before you push.</p></div>
+    <div class="q" data-answer="3"><p>You added <code>.env</code> to <code>.gitignore</code>, but Git still shows changes to it. Why?</p>
+      <ol><li>The file name needs a <code>*</code></li><li><code>.gitignore</code> only works after a push</li><li>It was already tracked before it was ignored</li><li>Hidden files cannot be ignored</li></ol>
+      <p class="why"><code>.gitignore</code> only affects untracked files. Run <code>git rm --cached .env</code> and commit to stop tracking it.</p></div>
+    <div class="q" data-answer="4"><p>Which line ignores every log file but keeps <code>keep.log</code>?</p>
+      <ol><li><code>log/</code> then <code>keep.log</code></li><li><code>*.log</code> then <code>#keep.log</code></li><li><code>/*.log</code> only</li><li><code>*.log</code> then <code>!keep.log</code></li></ol>
+      <p class="why"><code>*.log</code> ignores all log files and <code>!keep.log</code> adds an exception. A <code>#</code> line is just a comment.</p></div>
+    <div class="q" data-answer="1"><p>Which is <b>not</b> a reason to use <code>.gitignore</code>?</p>
+      <ol><li>To delete files from your disk</li><li>To keep API keys out of the repository</li><li>To speed up clone and push</li><li>To avoid OS and IDE clutter like <code>.DS_Store</code></li></ol>
+      <p class="why">Ignored files stay on your disk. <code>.gitignore</code> only controls what Git tracks.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">Start a project with <b>git init</b> (new or existing) or <b>git clone</b> (joining), then loop through <b>branch, add, commit, pull, push</b>, and keep dependencies, build output, logs and <b>secrets</b> out of history with a <b>.gitignore</b> written before your first commit.</p>
+  <p>Next up: GitHub, Pull Requests &amp; GitHub Desktop, where your pushed branch becomes a pull request that the team reviews and merges.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -36,7 +36,11 @@
 └── downloads/
     ├── images/
     └── files/</code></pre>
-  <p>After a while you forget <b>where a particular file is</b>, or <b>which file contains a particular piece of information</b>. Those are two different searches.</p>
+  <p>After a while you forget <b>where a particular file is</b>, or <b>which file contains a particular piece of information</b>. When we say “search”, we can actually mean these two different things:</p>
+  <ol>
+    <li><b>Searching for a file or directory:</b> you know what the file is called, but not where it is (“Where is <code>report.txt</code>?”). Think: <i>where is the file?</i> → <code>find</code>.</li>
+    <li><b>Searching for content inside files:</b> you know what information you are looking for, but not which file contains it (“Which file contains the word ERROR?”). Think: <i>what is inside the file?</i> → <code>grep</code>.</li>
+  </ol>
   <div class="story"><b class="lbl">The big library</b>“Where is the book <i>Wings of Fire</i>?” is a question for the library catalogue: it tells you the shelf. “Which book mentions Pokhran?” is a different question: you have to look <i>inside</i> the books. <mark><code>find</code> is the catalogue (where is the file?); <code>grep</code> reads the pages (which file has this text?).</mark></div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Searching splits into two: find a file or directory, answering where is it, using find; or find text inside files, answering which file has it, using grep">
@@ -83,6 +87,7 @@
     └── report.txt</code></pre>
   <p>To locate <code>report.txt</code> by hand you would run <code>ls /home/ubuntu/</code>, <code>ls /home/ubuntu/documents/</code>, <code>ls /home/ubuntu/projects/</code>, <code>ls /home/ubuntu/backup/</code>… That gets painful fast. <code>find</code> walks the whole directory hierarchy for you.</p>
   <div class="flow"><span>large directory tree</span><span class="op">find</span><span>visits every folder</span><span class="ok">prints matching items</span></div>
+  <p>So <code>find</code> exists to help you:</p>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>Walks hierarchies</h4><p>Goes into every subfolder below the starting point.</p></div>
     <div class="card t2 tilt-b"><h4>Locates items</h4><p>Prints the path of every file or directory that matches.</p></div>
@@ -101,37 +106,49 @@
 <!-- 3 -->
 <section class="ch" id="find-name">
   <h2>Search by name</h2>
-  <p>Suppose your current directory is <code>/home/ubuntu/project</code>:</p>
+  <p>If you want to find a file but don’t know exactly where it is, search from your current directory:</p>
+  <div class="anatomy"><span class="a1">find</span> <span class="a2">.</span> <span class="a3">-name</span> <span class="a4">"file.txt"</span></div>
+  <div class="legend">
+    <div><span class="sw a1"></span><p><code>find</code>: searches for files and directories</p></div>
+    <div><span class="sw a2"></span><p><code>.</code>: start searching from the current directory</p></div>
+    <div><span class="sw a3"></span><p><code>-name</code>: search based on the name</p></div>
+    <div><span class="sw a4"></span><p><code>"file.txt"</code>: the file name we are looking for</p></div>
+  </div>
+  <p><b>Practical example.</b> Suppose your home directory holds a <code>project</code> folder like this:</p>
   <pre class="out"><code>project/
 ├── file.txt
 ├── notes.txt
 └── documents/
     └── file.txt</code></pre>
-  <pre><code class="language-bash">pwd                       # /home/ubuntu/project
+  <figure class="shot"><img src="img/01.webp" alt="Terminal: ls shows project; inside project ls shows documents, file.txt, notes.txt; inside documents ls shows file.txt" width="703" height="280"><figcaption>The test folder, explored with <code>cd</code> and <code>ls</code>: two copies of <code>file.txt</code>, one inside <code>documents/</code>.</figcaption></figure>
+  <p>First, check where you are, then search:</p>
+  <pre><code class="language-bash">pwd
 find . -name "file.txt"</code></pre>
-  <pre class="out"><code>./file.txt
-./documents/file.txt</code></pre>
-  <p>Each result starts with <code>./</code> because you started the search at <code>.</code>, which here stands for <code>/home/ubuntu/project</code>. Notice that <code>find</code> found the copy inside <code>documents/</code> too.</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/02.webp" alt="Terminal: pwd prints /home/ubuntu" width="610" height="148"><figcaption><code>pwd</code>: you are in <code>/home/ubuntu</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/03.webp" alt="Terminal: find . -name file.txt prints ./project/file.txt and ./project/documents/file.txt" width="721" height="124"><figcaption>Both copies are found, at any depth.</figcaption></figure>
+  </div>
+  <p>Here <code>.</code> stands for <code>/home/ubuntu</code>, so every result starts with <code>./</code> followed by the path below it: <code>./project/file.txt</code> and <code>./project/documents/file.txt</code>. Notice that <code>find</code> went inside <code>documents/</code> on its own.</p>
   <figure>
-    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="find starts at dot, visits file.txt (match), notes.txt (no), documents folder, then documents/file.txt (match)">
+    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="find starts at dot (home), visits project/file.txt (match), project/notes.txt (no), project/documents folder, then documents/file.txt (match)">
       <g class="rough">
         <rect class="box f-yellow" x="20" y="90" width="110" height="50" rx="12"/>
-        <rect class="box f-green" x="220" y="16" width="170" height="44" rx="10"/>
-        <rect class="box f-grey" x="220" y="92" width="170" height="44" rx="10"/>
-        <rect class="box f-blue" x="220" y="168" width="170" height="44" rx="10"/>
+        <rect class="box f-green" x="196" y="16" width="190" height="44" rx="10"/>
+        <rect class="box f-grey" x="196" y="92" width="190" height="44" rx="10"/>
+        <rect class="box f-blue" x="196" y="168" width="190" height="44" rx="10"/>
         <rect class="box f-green" x="490" y="168" width="200" height="44" rx="10"/>
-        <path class="ln" d="M135 105 C 170 80, 185 45, 214 40" marker-end="url(#ah)"/>
-        <path class="ln" d="M135 115 L 214 114" marker-end="url(#ah)"/>
-        <path class="ln" d="M135 125 C 170 150, 185 185, 214 188" marker-end="url(#ah)"/>
-        <path class="ln" d="M395 190 L 484 190" marker-end="url(#ah)"/>
+        <path class="ln" d="M135 105 C 160 80, 166 45, 190 40" marker-end="url(#ah)"/>
+        <path class="ln" d="M135 115 L 190 114" marker-end="url(#ah)"/>
+        <path class="ln" d="M135 125 C 160 150, 166 185, 190 188" marker-end="url(#ah)"/>
+        <path class="ln" d="M391 190 L 484 190" marker-end="url(#ah)"/>
       </g>
       <text class="tm" x="75" y="120" text-anchor="middle">.</text>
-      <text class="ts" x="75" y="160" text-anchor="middle">start here</text>
-      <text class="tm" x="305" y="43" text-anchor="middle">file.txt</text>
-      <text class="tb" x="410" y="44">✓ match</text>
-      <text class="tm" x="305" y="119" text-anchor="middle">notes.txt</text>
-      <text class="ts" x="410" y="119">✗ name differs</text>
-      <text class="tm" x="305" y="195" text-anchor="middle">documents/</text>
+      <text class="ts" x="75" y="160" text-anchor="middle">start here (~)</text>
+      <text class="tm" x="291" y="43" text-anchor="middle">project/file.txt</text>
+      <text class="tb" x="400" y="44">✓ match</text>
+      <text class="tm" x="291" y="119" text-anchor="middle">project/notes.txt</text>
+      <text class="ts" x="400" y="119">✗ name differs</text>
+      <text class="tm" x="291" y="195" text-anchor="middle">project/documents/</text>
       <text class="tm" x="590" y="195" text-anchor="middle">file.txt</text>
       <text class="tb" x="590" y="152" text-anchor="middle">✓ match</text>
     </svg></div>
@@ -139,34 +156,44 @@ find . -name "file.txt"</code></pre>
   </figure>
 
   <h3>All files with an extension</h3>
+  <p>Sometimes you don’t want one specific file but <b>all</b> files with a particular extension, for example every <code>.txt</code> file:</p>
   <pre><code class="language-bash">find . -name "*.txt"     # * = anything, then .txt</code></pre>
-  <p>The <code>*</code> wildcard means “any characters”, so the pattern matches every name ending in <code>.txt</code> at any depth below the current directory.</p>
+  <div class="legend">
+    <div><span class="sw a2"></span><p><code>.</code>: start from the current directory</p></div>
+    <div><span class="sw a4"></span><p><code>"*.txt"</code>: file name pattern (anything + <code>.txt</code>)</p></div>
+  </div>
+  <figure class="shot"><img src="img/04.webp" alt="Terminal: find . -name *.txt prints ./project/notes.txt, ./project/file.txt and ./project/documents/file.txt" width="715" height="168"><figcaption>Every name ending in <code>.txt</code>, at any depth.</figcaption></figure>
+  <p>The <code>*</code> wildcard means “any characters”, so the pattern matches every name ending in <code>.txt</code> below the current directory.</p>
   <div class="sticky warn l"><strong>Quote the pattern</strong> Always write <code>"*.txt"</code> in quotes. Without them, the shell may expand <code>*.txt</code> to the files in the <i>current</i> folder before <code>find</code> even runs, and you get wrong results or an error.</div>
 </section>
 
 <!-- 4 -->
 <section class="ch" id="find-iname">
   <h2>Case-insensitive search with <code>-iname</code></h2>
-  <p>Linux file names are <b>case-sensitive</b>: <code>file.txt</code>, <code>File.txt</code> and <code>FILE.TXT</code> are three different names. Given:</p>
-  <pre class="out"><code>notes.txt
-report.txt
-README.TXT</code></pre>
-  <div class="two">
-    <div><pre><code class="language-bash">find . -name "*.txt"</code></pre>
-    <pre class="out"><code>./notes.txt
-./report.txt</code></pre></div>
-    <div><pre><code class="language-bash">find . -iname "*.txt"</code></pre>
-    <pre class="out"><code>./notes.txt
-./report.txt
-./README.TXT</code></pre></div>
-  </div>
-  <p><code>README.TXT</code> is skipped by <code>-name</code> because its extension is uppercase. <mark><code>-iname</code> ignores upper and lower case.</mark></p>
+  <p>Linux file names are <b>case-sensitive</b>: <code>file.txt</code>, <code>File.txt</code> and <code>FILE.TXT</code> are three different names. So <code>find . -name "*.txt"</code> normally matches lowercase <code>.txt</code>, but not <code>.TXT</code>. In this example the folder holds:</p>
+  <pre class="out"><code>README.TXT
+file.txt
+report.txt</code></pre>
+  <pre><code class="language-bash">find . -name "*.txt"</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: ls shows README.TXT file.txt report.txt; find . -name *.txt prints only ./report.txt and ./file.txt" width="712" height="196"><figcaption><code>README.TXT</code> is missing from the result.</figcaption></figure>
+  <p><code>README.TXT</code> is not matched because its extension uses uppercase letters.</p>
+  <p>If you don’t care about uppercase or lowercase, use <code>-iname</code>:</p>
+  <pre><code class="language-bash">find . -iname "*.txt"</code></pre>
+  <figure class="shot"><img src="img/06.webp" alt="Terminal: find . -iname *.txt prints ./report.txt, ./file.txt and ./README.TXT" width="750" height="156"><figcaption>Now all three appear, including <code>./README.TXT</code>.</figcaption></figure>
+  <p><mark><code>-iname</code> ignores upper and lower case.</mark></p>
 </section>
 
 <!-- 5 -->
 <section class="ch" id="find-type">
   <h2>Only files, or only directories: <code>-type</code></h2>
-  <p>By default <code>find</code> returns both files and directories. <code>-type</code> narrows it: <code>f</code> = regular <b>file</b>, <code>d</code> = <b>directory</b>.</p>
+  <p>By default <code>find</code> returns both files and directories. Sometimes you want files only. <code>-type</code> narrows it down:</p>
+  <div class="anatomy"><span class="a1">find</span> <span class="a2">.</span> <span class="a3">-type</span> <span class="a4">f</span></div>
+  <div class="legend">
+    <div><span class="sw a2"></span><p><code>.</code>: start searching from the current directory</p></div>
+    <div><span class="sw a3"></span><p><code>-type</code>: what type of item to search for</p></div>
+    <div><span class="sw a4"></span><p><code>f</code> = regular <b>file</b> (use <code>d</code> for <b>directory</b>)</p></div>
+  </div>
+  <p><b>Practical example.</b> Suppose you have:</p>
   <pre class="out"><code>project/
 ├── notes.txt
 ├── report.pdf
@@ -174,77 +201,78 @@ README.TXT</code></pre>
 │   ├── app.log
 │   └── error.log
 └── documents/</code></pre>
-  <div class="two">
-    <div><pre><code class="language-bash">find . -type f      # files only</code></pre>
-    <pre class="out"><code>./notes.txt
-./report.pdf
-./logs/app.log
-./logs/error.log</code></pre></div>
-    <div><pre><code class="language-bash">find . -type d      # directories only</code></pre>
-    <pre class="out"><code>.
-./logs
-./documents</code></pre></div>
-  </div>
-  <p>With <code>-type f</code>, the folders <code>./logs</code> and <code>./documents</code> are <b>not</b> displayed. With <code>-type d</code>, even the starting point <code>.</code> is listed, because it is a directory too.</p>
+  <figure class="shot"><img src="img/07.webp" alt="Terminal: project contains documents, logs, notes.txt, report.pdf; logs contains app.log and error.log" width="661" height="285"><figcaption>The <code>project</code> folder used in this example.</figcaption></figure>
+  <pre><code class="language-bash">find . -type f      # files only</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="Terminal: find . -type f lists project files plus hidden home files such as ./.ssh/authorized_keys, ./.bashrc, ./.profile, ./.bash_logout" width="586" height="336"><figcaption>Only files. Hidden files in the home folder (<code>.bashrc</code>, <code>.profile</code>…) show up too.</figcaption></figure>
+  <p>Notice that directories such as <code>./project/logs</code> and <code>./project/documents</code> are <b>not</b> displayed. Because the search started in the home directory, hidden files such as <code>./.bashrc</code> and <code>./.ssh/authorized_keys</code> are listed as well: <code>find</code> does not skip names starting with a dot.</p>
+  <h3>Only directories</h3>
+  <p>If you want to find directories only, use <code>d</code> (directory):</p>
+  <pre><code class="language-bash">find . -type d</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal: find . -type d lists ., ./project, ./project/documents, ./project/logs, ./.ssh, ./.cache" width="631" height="241"><figcaption>Only directories, starting with <code>.</code> itself.</figcaption></figure>
+  <p>Even the starting point <code>.</code> is listed, because it is a directory too.</p>
 
   <h3>Combine name and type</h3>
-  <p>Conditions stack up, and an item must pass <b>all</b> of them. “Only files whose names end with <code>.log</code>”:</p>
+  <p>You can combine several conditions, and an item must pass <b>all</b> of them. Suppose you want only files whose names end with <code>.log</code>:</p>
   <div class="anatomy"><span class="a1">find</span> <span class="a2">.</span> <span class="a3">-type f</span> <span class="a4">-name "*.log"</span></div>
   <div class="legend">
     <div><span class="sw a2"></span><p>start from the current directory</p></div>
-    <div><span class="sw a3"></span><p>condition 1: must be a regular file</p></div>
-    <div><span class="sw a4"></span><p>condition 2: its name must end with .log</p></div>
+    <div><span class="sw a3"></span><p>condition 1: <code>-type f</code> → must be a file</p></div>
+    <div><span class="sw a4"></span><p>condition 2: <code>-name "*.log"</code> → its name must end with .log</p></div>
   </div>
-  <div class="two">
-    <pre class="out"><code>project/
+  <p><b>Practical example.</b> Suppose you have:</p>
+  <pre class="out"><code>project/
 ├── notes.txt
 ├── app.log
 ├── report.pdf
-├── logs/
-│   ├── server.log
-│   └── error.log
-└── documents/</code></pre>
-    <div><pre><code class="language-bash">find . -type f -name "*.log"</code></pre>
-    <pre class="out"><code>./app.log
-./logs/server.log
-./logs/error.log</code></pre></div>
-  </div>
+└── logs/
+    ├── server.log
+    └── error.log</code></pre>
+  <figure class="shot"><img src="img/10.webp" alt="Terminal: project contains app.log, logs, notes.txt, report.pdf; logs contains error.log and server.log" width="624" height="277"><figcaption>The folder for this example.</figcaption></figure>
+  <pre><code class="language-bash">find . -type f -name "*.log"</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal: find . -type f -name *.log prints ./project/app.log, ./project/logs/error.log, ./project/logs/server.log" width="801" height="184"><figcaption>Only files, and only those ending in <code>.log</code>. The <code>logs</code> folder itself is not listed.</figcaption></figure>
 </section>
 
 <!-- 6 -->
 <section class="ch" id="find-size-time">
   <h2>Search by size and by time</h2>
-  <p><code>find</code> can also test how big a file is and when it was last changed. A <code>+</code> means “more than”, a <code>-</code> means “less than”.</p>
+  <p><code>find</code> can also test how big a file is and, using the file’s timestamps, when it was last changed. A <code>+</code> means “more than”, a <code>-</code> means “less than”.</p>
   <div class="tbl"><table>
     <tr><th>Command</th><th>Finds</th></tr>
     <tr><td><code>find . -size +10M</code></td><td>files larger than 10 MB (units: <code>k</code>, <code>M</code>, <code>G</code>)</td></tr>
     <tr><td><code>find . -mtime -1</code></td><td>files modified within the last day (24 hours)</td></tr>
     <tr><td><code>find . -mmin -30</code></td><td>files modified within the last 30 minutes</td></tr>
   </table></div>
+  <figure class="shot"><img src="img/12.webp" alt="Terminal: find . -mmin -30 lists ., ./project and all files and folders under project changed in the last 30 minutes" width="631" height="295"><figcaption><code>-mmin -30</code>: everything just created for this lesson, folders included (add <code>-type f</code> for files only).</figcaption></figure>
   <div class="sticky fde"><strong>In the field (FDE)</strong> “The disk is full!” is a classic customer call. <code>find / -type f -size +500M 2&gt;/dev/null</code> lists the giant files, and <code>find /var/log -mmin -30</code> shows which logs are being written right now, i.e. where to look first after an incident.</div>
 </section>
 
 <!-- 7 -->
 <section class="ch" id="grep">
   <h2><code>grep</code> · search inside files</h2>
-  <p><code>app.log</code> has 10,000 lines and you want the ones mentioning <code>ERROR</code>. Reading them all would take ages. Instead:</p>
+  <p>Suppose you have a large log file, <code>app.log</code>, with 10,000 lines (Line 1, Line 2 … Line 5000 … Line 10000), and you want the ones mentioning <code>ERROR</code>. Reading all 10,000 lines manually would take a lot of time. Instead:</p>
   <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
-  <p><mark><code>grep</code> reads the file and prints only the lines that contain the matching text.</mark></p>
+  <p><mark><code>grep</code> searches through the file and displays the lines containing the matching text.</mark></p>
   <div class="anatomy"><span class="a1">grep</span> <span class="a2">"pattern"</span> <span class="a3">file</span></div>
   <div class="legend">
     <div><span class="sw a2"></span><p>the text (or pattern) to search for</p></div>
     <div><span class="sw a3"></span><p>the file to search in</p></div>
   </div>
   <h3>Search for a word in a file</h3>
+  <p>Suppose you have a configuration file, <code>config.txt</code>, with this content:</p>
   <div class="codebox"><span class="cap">config.txt</span><pre><code class="language-plaintext">server=web01
 port=8080
 server=database01
 timeout=30</code></pre></div>
+  <p>You want to find the lines containing <code>server</code>:</p>
   <pre><code class="language-bash">grep "server" config.txt</code></pre>
-  <pre class="out"><code>server=web01
-server=database01</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="Terminal: cat config.txt shows four lines; grep server config.txt prints server=web01 and server=database01 with server highlighted in red" width="757" height="271"><figcaption>grep searched the contents of <code>config.txt</code> and displayed the two matching lines.</figcaption></figure>
 
   <h3>grep returns whole lines, not just the word</h3>
+  <p>Suppose <code>app.log</code> contains:</p>
+  <div class="codebox"><span class="cap">app.log</span><pre><code class="language-plaintext">INFO: Server started
+ERROR: Database failed
+INFO: User logged in
+ERROR: Connection timeout</code></pre></div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Four lines of app.log go through grep ERROR; only the two lines containing ERROR come out, printed in full">
       <g class="rough">
@@ -267,29 +295,35 @@ server=database01</code></pre>
     <figcaption>grep is a sieve for lines: matching lines pass through whole, the rest are dropped.</figcaption>
   </figure>
   <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
-  <pre class="out"><code>ERROR: Database failed
-ERROR: Connection timeout</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal: grep ERROR app.log prints ERROR: Database failed and ERROR: Connection timeout" width="681" height="118"><figcaption>The whole line is printed; the matched word is highlighted.</figcaption></figure>
 </section>
 
 <!-- 8 -->
 <section class="ch" id="grep-options">
   <h2>Case, line numbers and multiple files</h2>
   <h3>Case sensitivity and <code>-i</code></h3>
-  <p>Like file names, <code>grep</code> is <b>case-sensitive</b> by default. Suppose <code>app.log</code> contains <code>Server started</code>, <code>server stopped</code> and <code>SERVER restarted</code>:</p>
-  <div class="two">
-    <div><pre><code class="language-bash">grep "server" app.log</code></pre>
-    <pre class="out"><code>server stopped</code></pre></div>
-    <div><pre><code class="language-bash">grep -i "server" app.log</code></pre>
-    <pre class="out"><code>Server started
+  <p>Like file names, <code>grep</code> is <b>case-sensitive</b> by default. Suppose <code>app.log</code> now also contains these lines (added below the four from before):</p>
+  <pre class="out"><code>Server started
 server stopped
-SERVER restarted</code></pre></div>
-  </div>
+SERVER restarted</code></pre>
+  <pre><code class="language-bash">grep "server" app.log</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal: cat app.log shows 7 lines; grep server app.log prints only server stopped" width="682" height="325"><figcaption>Only the all-lowercase <code>server stopped</code> matches.</figcaption></figure>
+  <p>To ignore case, use <code>-i</code>:</p>
+  <pre><code class="language-bash">grep -i "server" app.log</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: grep -i server app.log prints INFO: Server started, Server started, server stopped, SERVER restarted" width="738" height="184"><figcaption>Every spelling matches, including <code>INFO: Server started</code> from the first part of the file.</figcaption></figure>
+
   <h3>Line numbers with <code>-n</code></h3>
-  <p>To know <i>where</i> in the file each match is, add <code>-n</code> (back to the 4-line <code>app.log</code>):</p>
+  <p>By default, grep shows the matching lines but does not show their line numbers:</p>
+  <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: grep ERROR app.log prints the two ERROR lines with no line numbers" width="676" height="132"><figcaption>Matches, but no idea where they are in the file.</figcaption></figure>
+  <p>Sometimes you also want to know <i>where</i> in the file the error appears. Use the <code>-n</code> option (show line numbers):</p>
   <pre><code class="language-bash">grep -n "ERROR" app.log</code></pre>
-  <pre class="out"><code>2:ERROR: Database failed
-4:ERROR: Connection timeout</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: cat app.log shows 7 lines; grep -n ERROR app.log prints 2:ERROR: Database failed and 4:ERROR: Connection timeout" width="714" height="331"><figcaption>Each match now starts with its line number: lines 2 and 4.</figcaption></figure>
+
   <h3>Several files at once</h3>
+  <p>grep can search more than one file at a time. To find <code>ERROR</code> in both <code>app.log</code> and <code>server.log</code>:</p>
+  <pre><code class="language-bash">grep "ERROR" app.log server.log</code></pre>
+  <p><b>Practical example.</b> <code>app.log</code> contains the seven lines from above, and another file, <code>server.log</code>, contains three lines:</p>
   <div class="two">
     <div class="codebox"><span class="cap">app.log</span><pre><code class="language-plaintext">INFO: Server started
 ERROR: Database failed
@@ -302,35 +336,47 @@ SERVER restarted</code></pre></div>
 ERROR Server unavailable
 INFO Server restarted</code></pre></div>
   </div>
-  <div class="two">
-    <div><pre><code class="language-bash">grep "ERROR" app.log server.log</code></pre>
-    <pre class="out"><code>app.log:ERROR: Database failed
-app.log:ERROR: Connection timeout
-server.log:ERROR Server unavailable</code></pre></div>
-    <div><pre><code class="language-bash">grep -n "ERROR" app.log server.log</code></pre>
-    <pre class="out"><code>app.log:2:ERROR: Database failed
-app.log:4:ERROR: Connection timeout
-server.log:2:ERROR Server unavailable</code></pre></div>
+  <div class="shots">
+    <figure class="shot"><img src="img/19.webp" alt="Terminal: cat app.log shows the seven lines" width="549" height="231"><figcaption><code>app.log</code></figcaption></figure>
+    <figure class="shot"><img src="img/20.webp" alt="Terminal: cat server.log shows INFO Server running, ERROR Server unavailable, INFO Server restarted" width="606" height="115"><figcaption><code>server.log</code></figcaption></figure>
   </div>
-  <p>With more than one file, grep puts the <b>file name</b> in front of each match (and the line number after it, with <code>-n</code>).</p>
+  <p>Search <code>ERROR</code> in both files, then search multiple files and show line numbers:</p>
+  <pre><code class="language-bash">grep "ERROR" app.log server.log
+grep -n "ERROR" app.log server.log</code></pre>
+  <figure class="shot"><img src="img/21.webp" alt="Terminal: grep ERROR app.log server.log prints three app.log matches and one server.log match, each prefixed with the file name" width="822" height="183"><figcaption>Each match is prefixed with its file name.</figcaption></figure>
+  <figure class="shot"><img src="img/22.webp" alt="Terminal: grep -n ERROR app.log server.log prints app.log:2, app.log:4, app.log:9 and server.log:2 matches" width="864" height="169"><figcaption>With <code>-n</code>: file name, then line number, then the line.</figcaption></figure>
+  <p>With more than one file, grep puts the <b>file name</b> in front of each match (and the line number after it, with <code>-n</code>). By the time these two screenshots were taken, one more line, <code>ERROR Database connection failed</code>, had been appended to <code>app.log</code> as line 9, which is why <code>app.log</code> shows three matches.</p>
 </section>
 
 <!-- 9 -->
 <section class="ch" id="grep-r">
   <h2>Search a whole folder tree: <code>grep -r</code></h2>
-  <p>When files are spread over many directories, listing each one is impractical. <code>-r</code> (<b>recursive</b>) makes grep search every file in a directory and all its subdirectories.</p>
+  <p>Sometimes you have many files spread across several directories:</p>
+  <pre class="out"><code>project/
+├── logs/
+│   ├── app.log
+│   └── server.log
+├── backup/
+│   └── old.log
+└── config/
+    └── settings.txt</code></pre>
+  <p>You want to find <code>ERROR</code> in all relevant files under the project. Instead of specifying every file individually, use <code>-r</code> (<b>recursive</b>): grep searches every file in a directory and all its subdirectories.</p>
   <pre><code class="language-bash">grep -r "ERROR" .        # search everything under the current directory</code></pre>
   <div class="cmd"><p class="what">Practical example: build a small project</p>
   <pre><code class="language-bash">mkdir -p grep-recursive/logs/app grep-recursive/logs/server grep-recursive/config
 cd grep-recursive
 
+# create files with some content
 echo "INFO Application started" &gt; logs/app/app.log
 echo "ERROR Database connection failed" &gt;&gt; logs/app/app.log
 
+# create a server file with some content
 echo "INFO Server started" &gt; logs/server/server.log
 echo "ERROR Server unavailable" &gt;&gt; logs/server/server.log
 
+# create a configuration file
 echo "port=8080" &gt; config/settings.txt</code></pre></div>
+  <p>Now the structure looks like this. Check the files with <code>find</code>:</p>
   <div class="two">
     <pre class="out"><code>grep-recursive/
 ├── logs/
@@ -340,30 +386,27 @@ echo "port=8080" &gt; config/settings.txt</code></pre></div>
 │       └── server.log
 └── config/
     └── settings.txt</code></pre>
-    <div><pre><code class="language-bash">find . -type f     # check the files</code></pre>
-    <pre class="out"><code>./logs/app/app.log
-./logs/server/server.log
-./config/settings.txt</code></pre></div>
+    <div><pre><code class="language-bash">find . -type f     # check the files</code></pre></div>
   </div>
+  <figure class="shot"><img src="img/23.webp" alt="Terminal in ~/grep-recursive: find . -type f prints ./config/settings.txt, ./logs/app/app.log, ./logs/server/server.log" width="784" height="151"><figcaption>The three files we just created.</figcaption></figure>
   <p>Now ask: <b>which files contain ERROR?</b></p>
   <pre><code class="language-bash">grep -r "ERROR" .</code></pre>
-  <pre class="out"><code>./logs/app/app.log:ERROR Database connection failed
-./logs/server/server.log:ERROR Server unavailable</code></pre>
-  <p><code>settings.txt</code> was searched too, but it has no match, so it doesn’t appear.</p>
+  <figure class="shot"><img src="img/24.webp" alt="Terminal in home directory: grep -r ERROR . prints ./grep-recursive/logs/app/app.log:ERROR Database connection failed and ./grep-recursive/logs/server/server.log:ERROR Server unavailable" width="942" height="123"><figcaption>Each match comes with the path of the file it was found in.</figcaption></figure>
+  <p>In the screenshot the command was run from the home directory (<code>~</code>), so the paths start with <code>./grep-recursive/</code>. Run inside <code>grep-recursive</code>, they would start with <code>./logs/…</code>. <code>settings.txt</code> was searched too, but it has no match, so it doesn’t appear.</p>
   <div class="sticky tip"><strong>Just the file names</strong> Add <code>-l</code> to print only the names of matching files: <code>grep -rl "ERROR" .</code></div>
 </section>
 
 <!-- 10 -->
 <section class="ch" id="grep-vcw">
   <h2>Invert, count and whole words: <code>-v</code>, <code>-c</code>, <code>-w</code></h2>
-  <p>For the first two, use this <code>app.log</code>:</p>
+  <p>For the first two, imagine an <code>app.log</code> file tracking these events:</p>
   <div class="codebox"><span class="cap">app.log</span><pre><code class="language-plaintext">INFO: Application started.
 INFO: User logged in.
 ERROR: Database connection failed.
 INFO: Loading dashboard.
 ERROR: Image failed to load.</code></pre></div>
   <h3>Invert the search with <code>-v</code></h3>
-  <p>Normally grep shows lines that <i>contain</i> the word. <code>-v</code> does the exact opposite: <b>show every line that does NOT contain it</b>. It turns grep into a filter that hides what you don’t want to see.</p>
+  <p>Normally grep shows lines that <i>contain</i> the word. Inverting the search tells grep to do the exact opposite: <b>“show me every line that does NOT have this word.”</b> You are basically using grep as a filter to hide things you don’t want to see. Just add <code>-v</code>: <code>grep -v "ERROR" app.log</code>.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="The same log split two ways: grep ERROR keeps the 2 ERROR lines; grep -v ERROR keeps the 3 INFO lines">
       <g class="rough">
@@ -382,36 +425,30 @@ ERROR: Image failed to load.</code></pre></div>
     </svg></div>
     <figcaption>Same file, opposite halves.</figcaption>
   </figure>
-  <div class="two">
-    <div><pre><code class="language-bash">grep "ERROR" app.log</code></pre>
-    <pre class="out"><code>ERROR: Database connection failed.
-ERROR: Image failed to load.</code></pre></div>
-    <div><pre><code class="language-bash">grep -v "ERROR" app.log</code></pre>
-    <pre class="out"><code>INFO: Application started.
-INFO: User logged in.
-INFO: Loading dashboard.</code></pre></div>
-  </div>
+  <p><b>The normal search.</b> If you want to see only the problems:</p>
+  <pre><code class="language-bash">grep "ERROR" app.log</code></pre>
+  <figure class="shot"><img src="img/25.webp" alt="Terminal: grep ERROR app.log prints ERROR: Database connection failed. and ERROR: Image failed to load." width="682" height="130"><figcaption>Only the two problem lines.</figcaption></figure>
+  <p><b>The inverted search (<code>-v</code>).</b></p>
+  <pre><code class="language-bash">grep -v "ERROR" app.log</code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: grep -v ERROR app.log prints the three INFO lines" width="735" height="159"><figcaption>Everything except the ERROR lines.</figcaption></figure>
 
   <h3>Count matches with <code>-c</code></h3>
-  <p>Sometimes you don’t care <i>what</i> the lines say, only <b>how many</b> there are:</p>
+  <p>Normally grep prints all the lines it finds. But sometimes you don’t care <i>what</i> the lines say, only <b>how many</b> there are. Adding <code>-c</code> tells grep to give you just a total. To know how many errors happened:</p>
   <pre><code class="language-bash">grep -c "ERROR" app.log</code></pre>
-  <pre class="out"><code>2</code></pre>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal: grep -c ERROR app.log prints 2" width="720" height="94"><figcaption>Just a number: 2 error lines.</figcaption></figure>
   <p><code>-c</code> counts matching <b>lines</b>; a line with ERROR twice still counts once.</p>
 
   <h3>Match the whole word with <code>-w</code></h3>
-  <p>By default grep looks for the sequence of letters anywhere, so <code>cat</code> also matches <i>category</i> and <i>dedicate</i>. <code>-w</code> only matches the word standing on its own, with spaces or punctuation around it.</p>
+  <p>By default grep looks for the sequence of letters anywhere, so <code>cat</code> also matches <i>category</i> and <i>dedicate</i>. <code>-w</code> only matches the exact, standalone word, with spaces or punctuation around it. Imagine a file called <code>notes.txt</code>:</p>
   <div class="codebox"><span class="cap">notes.txt</span><pre><code class="language-plaintext">The system threw an error today.
 Please fix the errors in the code.
 The movie was an absolute terror.</code></pre></div>
-  <div class="two">
-    <div><pre><code class="language-bash">grep "error" notes.txt</code></pre>
-    <pre class="out"><code>The system threw an error today.
-Please fix the errors in the code.
-The movie was an absolute terror.</code></pre></div>
-    <div><pre><code class="language-bash">grep -w "error" notes.txt</code></pre>
-    <pre class="out"><code>The system threw an error today.</code></pre></div>
-  </div>
-  <p>The plain search found all three, because <i>error</i>, <i>errors</i> and <i>terror</i> all contain the letters e-r-r-o-r. With <code>-w</code>, only the standalone word matches.</p>
+  <p>A normal search for <code>error</code>:</p>
+  <pre><code class="language-bash">grep "error" notes.txt</code></pre>
+  <figure class="shot"><img src="img/28.webp" alt="Terminal: grep error notes.txt prints all three lines, with error highlighted inside errors and terror too" width="726" height="181"><figcaption>All three lines match: look at the red letters inside <i>errors</i> and <i>terror</i>.</figcaption></figure>
+  <p>It found all three, because they all contain the letters e-r-r-o-r. Now use <code>-w</code> to strictly find the whole word:</p>
+  <pre><code class="language-bash">grep -w "error" notes.txt</code></pre>
+  <figure class="shot"><img src="img/29.webp" alt="Terminal: grep -w error notes.txt prints only The system threw an error today." width="754" height="94"><figcaption>Only the standalone word <i>error</i> matches.</figcaption></figure>
 </section>
 
 <!-- 11 -->

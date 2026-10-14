@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Control Flow · Python Fundamentals | AIFDE Notes</title>
+<meta name="description" content="Teach Python to decide and repeat: if, else, elif, logical conditions, nested ifs, indentation, for and while loops, break, continue, pass, range() and enumerate(), with traced examples.">
+<meta name="keywords" content="if elif else, nested if, for loop, while loop, break and continue, pass, range(), enumerate()">
+<meta name="date" content="2026-09-22">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="python-fundamentals/control-flow">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>Control Flow</h1>
+  <p class="byline">Teach your programs to make decisions and to repeat work: choose a path with if / elif / else, and loop with for and while, steering them with break, continue, pass, range() and enumerate().</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="why">
+  <h2>Can Python make a decision?</h2>
+  <p>Till now you have learned the Python basics that let you do practical tasks. You can now:</p>
+  <ul><li>Store data</li><li>Take input</li><li>Perform calculations</li><li>Display output</li></ul>
+  <p>For example:</p>
+  <pre><code class="language-python">name = input("Enter your name: ")
+age = int(input("Enter your age: "))
+
+print("Name:", name)
+print("Age:", age)</code></pre>
+  <pre class="out"><code>Enter your name: Asha
+Enter your age: 22
+Name: Asha
+Age: 22</code></pre>
+  <p>One important thing is missing. <b>Can Python make a decision?</b> Can it look at a student’s marks and decide whether they passed or failed? That is where <mark>control flow and conditional statements</mark> come in.</p>
+  <h3>A real problem: the student result program</h3>
+  <p>Suppose you want to build a simple student result program. It should ask the student for their marks and announce the result using this rule:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Table: marks 50 or above give Pass; marks below 50 give Fail" width="1108" height="196"><figcaption>The whole rule: 50 or above passes, below 50 fails.</figcaption></figure>
+  <p>You already have the pieces:</p>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))   # take input
+print("Your marks are:", marks)            # display output
+marks &gt;= 50                                # ask: are the marks 50 or more?</code></pre>
+  <p>This asks: “Are the marks greater than or equal to 50?” The comparison <b>asks</b> the question and gives <code>True</code> or <code>False</code>. The problem: how does Python <b>use</b> that answer to actually choose what to do?</p>
+  <h3>How a human solves it</h3>
+  <div class="story"><b class="lbl">The class teacher</b>A teacher doesn’t look at 65 and announce a random result. She thinks: “65. Is it 50 or more? Yes. So, PASS.” For 35: “Is it 50 or more? No. So, FAIL.” In both cases the teacher’s thought process follows the same pattern: <mark>look at the value, ask a yes/no question, choose an action based on the answer.</mark></div>
+  <div class="two">
+    <div class="flow v"><span>Student’s marks = 65</span><span class="op">marks &gt;= 50 ?</span><span class="ok">YES → PASS</span></div>
+    <div class="flow v"><span>Student’s marks = 35</span><span class="op">marks &gt;= 50 ?</span><span class="bad">NO → FAIL</span></div>
+  </div>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Look at the value</b>The marks: 65 or 35.</div></li>
+    <li><span class="dot">2</span><div><b>Ask a yes/no question</b>Are the marks 50 or more?</div></li>
+    <li><span class="dot">3</span><div><b>Choose an action based on the answer</b>PASS on yes, FAIL on no. <span class="tag">→ this is exactly what <code>if</code> does</span></div></li>
+  </ol>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="what-is-control-flow">
+  <h2>What is control flow?</h2>
+  <p><b>Control flow</b> is <mark>the order in which a program’s instructions are executed</mark>. By default Python runs code line by line, top to bottom. This is <b>sequential flow</b>:</p>
+  <pre><code class="language-python">print("Step 1")
+print("Step 2")
+print("Step 3")</code></pre>
+  <div class="flow"><span>Step 1</span><span>Step 2</span><span>Step 3</span></div>
+  <p>The same thing with a cup of chai:</p>
+  <pre><code class="language-python">print("Boil water")
+print("Add tea leaves")
+print("Add milk and sugar")
+print("Serve hot")</code></pre>
+  <pre class="out"><code>Boil water
+Add tea leaves
+Add milk and sugar
+Serve hot</code></pre>
+  <p>That works when every instruction must always run. Real problems are rarely that simple: sometimes a line should run <b>only if</b> something is true, or run <b>many times</b>. <b>Control flow statements</b> let a program:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Branch</h4><p>Choose between different paths: decision making with <code>if</code> / <code>elif</code> / <code>else</code>.</p></div>
+    <div class="card t2 tilt-b"><h4>Repeat</h4><p>Run a block several times: loops with <code>for</code> and <code>while</code>.</p></div>
+    <div class="card t3 tilt-a"><h4>Skip or alter</h4><p>Change the normal order: <code>break</code>, <code>continue</code>, <code>pass</code>.</p></div>
+  </div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Three kinds of control flow: sequential runs step 1, 2, 3; branching asks a condition and takes one of two paths; looping asks whether there is more and repeats the body until done">
+      <g class="rough">
+        <path class="ln dash" d="M240 20 L 240 228"/>
+        <path class="ln dash" d="M480 20 L 480 228"/>
+        <rect class="box f-blue" x="60" y="56" width="120" height="40" rx="10"/>
+        <rect class="box f-blue" x="60" y="118" width="120" height="40" rx="10"/>
+        <rect class="box f-blue" x="60" y="180" width="120" height="40" rx="10"/>
+        <path class="ln" d="M120 98 L 120 114" marker-end="url(#ah)"/>
+        <path class="ln" d="M120 160 L 120 176" marker-end="url(#ah)"/>
+        <path class="box f-yellow" d="M360 56 L 420 92 L 360 128 L 300 92 Z"/>
+        <rect class="box f-green" x="256" y="178" width="96" height="40" rx="10"/>
+        <rect class="box f-orange" x="368" y="178" width="96" height="40" rx="10"/>
+        <path class="lb" d="M318 112 L 304 172" marker-end="url(#ahb)"/>
+        <path class="lr" d="M402 112 L 416 172" marker-end="url(#ahr)"/>
+        <path class="box f-yellow" d="M600 54 L 660 84 L 600 114 L 540 84 Z"/>
+        <rect class="box f-purple" x="545" y="150" width="110" height="40" rx="10"/>
+        <path class="ln" d="M600 116 L 600 146" marker-end="url(#ah)"/>
+        <path class="lr" d="M545 170 C 505 170, 505 84, 534 84" marker-end="url(#ahr)"/>
+        <path class="ln" d="M662 84 L 706 84" marker-end="url(#ah)"/>
+      </g>
+      <text class="th" x="120" y="36" text-anchor="middle">Sequential</text>
+      <text class="t" x="120" y="82" text-anchor="middle">Step 1</text>
+      <text class="t" x="120" y="144" text-anchor="middle">Step 2</text>
+      <text class="t" x="120" y="206" text-anchor="middle">Step 3</text>
+      <text class="th" x="360" y="36" text-anchor="middle">Branching</text>
+      <text class="t" x="360" y="98" text-anchor="middle">cond?</text>
+      <text class="ts" x="292" y="150" text-anchor="middle">True</text>
+      <text class="ts" x="432" y="150" text-anchor="middle">False</text>
+      <text class="t" x="304" y="204" text-anchor="middle">do this</text>
+      <text class="t" x="416" y="204" text-anchor="middle">do that</text>
+      <text class="th" x="600" y="36" text-anchor="middle">Looping</text>
+      <text class="t" x="600" y="90" text-anchor="middle">more?</text>
+      <text class="ts" x="614" y="136">yes</text>
+      <text class="t" x="600" y="176" text-anchor="middle">body</text>
+      <text class="ts" x="684" y="108" text-anchor="middle">no: exit</text>
+    </svg></div>
+    <figcaption>Every program is built from these three shapes.</figcaption>
+  </figure>
+  <h3>Types of control flow</h3>
+  <figure class="shot"><img src="img/02.webp" alt="Table of control-flow types: Sequential executes statements one after another (normal code execution); Conditional (decision making) executes code only if a condition is true or false (if, elif, else); Iterative (looping) repeats a block of code (for, while)" width="1101" height="322"><figcaption>Three types: sequential, conditional (<code>if</code>, <code>elif</code>, <code>else</code>) and iterative (<code>for</code>, <code>while</code>).</figcaption></figure>
+  <p>Inside loops, <code>break</code>, <code>continue</code> and <code>pass</code> then let you leave, skip or hold a place, as you will see later.</p>
+  <p><b>Focus: conditional control flow.</b> For the student result problem we need the ability to say:</p>
+  <pre><code class="language-plaintext">IF a condition is true → do this
+OTHERWISE → do that</code></pre>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/03.webp" alt="Flowchart: Start, then Check a condition; TRUE leads to Action A, FALSE leads to Action B; both lead to Continue" width="1400" height="788"><figcaption>One condition, two possible actions, and the program continues either way.</figcaption></figure>
+  <p>That branching is exactly what a teacher does mentally when checking marks, and it is what Python’s <code>if</code> statement lets you write in code.</p>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="if">
+  <h2>The <code>if</code> statement</h2>
+  <p><code>if</code> runs a block of code <mark>only when its condition is <code>True</code></mark>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">if condition:
+    # code to run if condition is True</code></pre></div>
+  <ul>
+    <li>The condition must evaluate to <code>True</code> or <code>False</code>.</li>
+    <li>The line ends with a colon <code>:</code>.</li>
+    <li>The code inside is indented (normally 4 spaces).</li>
+    <li>If the condition is <code>False</code>, the indented block is simply <b>skipped</b>.</li>
+  </ul>
+  <p>Checking whether a student passed:</p>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+
+if marks &gt;= 50:
+    print("PASS")</code></pre>
+  <p>Output:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/04.webp" alt="Colab cell: the if marks >= 50 program; input 60 prints PASS" width="771" height="306"><figcaption>Marks 60: the condition is True, so PASS prints.</figcaption></figure>
+    <figure class="shot"><img src="img/05.webp" alt="Colab cell: the same program with input 35 prints nothing after the prompt" width="649" height="303"><figcaption>Marks 35: the condition is False, so nothing prints at all.</figcaption></figure>
+  </div>
+  <p>Trace through it:</p>
+  <figure class="shot"><img src="img/06.webp" alt="Two flowcharts. marks = 65: Is 65 >= 50? True, PASS is printed, End. marks = 35: Is 35 >= 50? False, nothing happens (block is skipped), End" width="1400" height="700"><figcaption>Same code, two runs: True prints PASS; False skips the block.</figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>marks</th><th><code>marks &gt;= 50</code></th><th>What happens</th><th>Output</th></tr>
+    <tr><td>65</td><td><code>True</code></td><td>the block runs</td><td><code>PASS</code></td></tr>
+    <tr><td>35</td><td><code>False</code></td><td>the block is skipped</td><td>(nothing)</td></tr>
+  </table></div>
+  <p>Another example: may this person vote?</p>
+  <pre><code class="language-python">age = int(input("Enter your age: "))
+
+if age &gt;= 18:
+    print("You can vote")</code></pre>
+  <pre class="out"><code>Enter your age: 20
+You can vote</code></pre>
+  <p>Forget to indent the body and Python refuses to run:</p>
+  <pre><code class="language-python">age = int(input("Enter your age: "))
+
+if age &gt;= 18:
+print("You can vote")</code></pre>
+  <pre class="out"><code>IndentationError: expected an indented block after 'if' statement on line 3</code></pre>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="if-else">
+  <h2>The <code>if…else</code> statement</h2>
+  <p>With only <code>if</code>, marks of 35 print <b>nothing at all</b>. Python correctly skips “PASS” but never tells us the student failed:</p>
+  <pre><code class="language-python">marks = 35
+
+if marks &gt;= 50:
+    print("PASS")
+
+# No output, but we wanted "FAIL" to show!</code></pre>
+  <p>We need: <i>IF the condition is true → do this; OTHERWISE → do something else</i>. That is <code>else</code>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">if condition:
+    # runs when condition is True
+else:
+    # runs when condition is False</code></pre></div>
+  <ul>
+    <li><code>else</code> has <b>no condition</b> of its own; it catches whatever the <code>if</code> didn’t.</li>
+    <li><code>else</code> must line up with its matching <code>if</code> (same indentation).</li>
+    <li><mark>Exactly one of the two blocks runs</mark>: never both, never neither.</li>
+  </ul>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+
+if marks &gt;= 50:
+    print("PASS")
+else:
+    print("FAIL")</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/07.webp" alt="Colab cell: the if/else program; input 40 prints FAIL" width="610" height="306"><figcaption>Marks 40: the <code>else</code> block runs.</figcaption></figure>
+    <figure class="shot"><img src="img/08.webp" alt="Colab cell: the if/else program; input 60 prints PASS" width="663" height="321"><figcaption>Marks 60: the <code>if</code> block runs.</figcaption></figure>
+  </div>
+  <p>Flow diagram:</p>
+  <figure class="shot"><img src="img/09.webp" alt="Two flowcharts. Case 1, marks = 65: Start, marks = 65, Is marks >= 50? True, print PASS, End. Case 2, marks = 35: Start, marks = 35, Is marks >= 50? False, print FAIL, End" width="1400" height="933"><figcaption>Exactly one path runs each time. (The False box in Case 1 has a typo: it should read <code>print("FAIL")</code>.)</figcaption></figure>
+  <p>More two-way decisions:</p>
+  <pre><code class="language-python">temperature = int(input("Enter temperature: "))
+
+if temperature &gt; 30:
+    print("It is hot")
+else:
+    print("It is cool")</code></pre>
+  <pre class="out"><code>Enter temperature: 34
+It is hot</code></pre>
+  <p>A login screen comparing the entered password with the saved one:</p>
+  <pre><code class="language-python">saved_password = "abc123"
+entered_password = input("Enter password: ")
+
+if entered_password == saved_password:
+    print("Login successful")
+else:
+    print("Incorrect password")</code></pre>
+  <pre class="out"><code>Enter password: abc124
+Incorrect password</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Real systems never store or compare plain-text passwords like this; they compare <b>hashes</b>. The <code>if…else</code> shape is the same, though, and you’ll see it in every auth check you debug.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="elif">
+  <h2>More than two outcomes: <code>if…elif…else</code></h2>
+  <p>Pass/Fail has two outcomes. What about <b>grades</b> A, B, C, D, F? <code>if…else</code> can only split two ways. For several conditions in sequence, use <code>elif</code> (short for “else if”).</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">if condition1:
+    # runs if condition1 is True
+elif condition2:
+    # runs if condition1 is False AND condition2 is True
+elif condition3:
+    # runs if condition1 and condition2 are False AND condition3 is True
+else:
+    # runs if none of the above are True</code></pre></div>
+  <ul>
+    <li>Python checks the conditions <b>in order, top to bottom</b>.</li>
+    <li><mark>The first condition that is True runs; the rest are skipped</mark>, even if they would also be True.</li>
+    <li>You can have <b>as many</b> <code>elif</code> blocks as you need.</li>
+    <li>The final <code>else</code> is optional but good practice: it catches “everything else”.</li>
+  </ul>
+  <h3>A grading system</h3>
+  <p>Instead of Pass/Fail, assign a grade based on marks:</p>
+  <figure class="shot"><img src="img/10.webp" alt="Grade table: 90 and above A; 75 to 89 B; 60 to 74 C; 50 to 59 D; below 50 F" width="897" height="294"><figcaption>Five grade bands, so five possible outcomes.</figcaption></figure>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+
+if marks &gt;= 90:
+    print("Grade: A")
+elif marks &gt;= 75:
+    print("Grade: B")
+elif marks &gt;= 60:
+    print("Grade: C")
+elif marks &gt;= 50:
+    print("Grade: D")
+else:
+    print("Grade: F")</code></pre>
+  <figure class="shot sm"><img src="img/11.webp" alt="Colab cell: the if/elif/else grading program; input 78 prints Grade: B" width="645" height="493"><figcaption>78 fails <code>&gt;= 90</code>, passes <code>&gt;= 75</code>: Grade B.</figcaption></figure>
+  <p>Flow diagram:</p>
+  <figure class="shot"><img src="img/12.webp" alt="Two elif flowcharts. Case 1, marks = 82: 82 is not >= 90 so move to the next condition; 82 is >= 75 so this condition is True; print Grade: B and skip the remaining elif/else. Case 2, marks = 95: 95 is >= 90, so this condition is True; Python stops there and does not check the remaining conditions" width="1400" height="933"><figcaption>Python steps off the ladder at the first True and skips everything below it.</figcaption></figure>
+  <div class="sticky warn"><strong>Order matters</strong> Because only the first True branch runs, put the <b>strictest</b> condition first. If <code>marks &gt;= 50</code> came first, a 95 would get “D” and never reach the A check.</div>
+  <p>A traffic light:</p>
+  <pre><code class="language-python">light = input("Enter light colour: ")
+
+if light == "red":
+    print("Stop")
+elif light == "yellow":
+    print("Get ready")
+elif light == "green":
+    print("Go")
+else:
+    print("Invalid colour")</code></pre>
+  <pre class="out"><code>Enter light colour: yellow
+Get ready</code></pre>
+  <p>Delivery charges by order amount: ₹2000 or more is free, ₹1000–₹1999 costs ₹50, anything smaller costs ₹100:</p>
+  <pre><code class="language-python">amount = int(input("Enter order amount: "))
+
+if amount &gt;= 2000:
+    print("Free delivery")
+elif amount &gt;= 1000:
+    print("Delivery charge: ₹50")
+else:
+    print("Delivery charge: ₹100")</code></pre>
+  <pre class="out"><code>Enter order amount: 1450
+Delivery charge: ₹50</code></pre>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="logical">
+  <h2>Combining conditions with <code>and</code>, <code>or</code>, <code>not</code></h2>
+  <p>Sometimes a decision depends on <b>several conditions at once</b>: <i>“A student passes only if marks are 50 or above AND attendance is at least 75%.”</i> One comparison can’t capture that, so you combine them with the logical operators from Part 2.</p>
+  <h3><code>and</code>: both must be True</h3>
+  <pre><code class="language-plaintext">condition1 and condition2</code></pre>
+  <p>The result is True only if <b>both</b> are True. Problem: a student passes only if marks ≥ 50 and attendance ≥ 75%.</p>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+attendance = int(input("Enter your attendance %: "))
+
+if marks &gt;= 50 and attendance &gt;= 75:
+    print("PASS")
+else:
+    print("FAIL")</code></pre>
+  <pre class="out"><code>Enter your marks: 65
+Enter your attendance %: 80
+PASS</code></pre>
+  <p>Trace (marks = 65, attendance = 80, and a second run with attendance = 60):</p>
+  <figure class="shot"><img src="img/13.webp" alt="Two and-flowcharts. Case 1, marks 65 attendance 80: 65 >= 50 True, 80 >= 75 True, True AND True gives True, print PASS. Case 2, marks 65 attendance 60: 65 >= 50 True, 60 >= 75 False, True AND False gives False, print FAIL" width="1400" height="933"><figcaption><code>and</code> needs both: one False (attendance 60) is enough to FAIL.</figcaption></figure>
+  <p>Entry to a movie hall needs age 18+ <b>and</b> a ticket; a bank loan needs salary ≥ 25000 <b>and</b> credit score ≥ 700:</p>
+  <pre><code class="language-python">age = int(input("Enter your age: "))
+has_ticket = input("Do you have a ticket? (yes/no): ")
+
+if age &gt;= 18 and has_ticket == "yes":
+    print("Enter the hall")
+else:
+    print("Entry not allowed")</code></pre>
+  <pre class="out"><code>Enter your age: 20
+Do you have a ticket? (yes/no): no
+Entry not allowed</code></pre>
+  <pre><code class="language-python">salary = int(input("Enter monthly salary: "))
+credit_score = int(input("Enter credit score: "))
+
+if salary &gt;= 25000 and credit_score &gt;= 700:
+    print("Loan approved")
+else:
+    print("Loan rejected")</code></pre>
+  <pre class="out"><code>Enter monthly salary: 32000
+Enter credit score: 680
+Loan rejected</code></pre>
+  <h3><code>or</code>: at least one must be True</h3>
+  <pre><code class="language-plaintext">condition1 or condition2</code></pre>
+  <p>The result is True if <b>at least one</b> condition is True.</p>
+  <p>A scholarship goes to students with marks ≥ 90 <b>or</b> who are sports champions:</p>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+is_sports_champion = input("Sports champion? (yes/no): ")
+
+if marks &gt;= 90 or is_sports_champion == "yes":
+    print("Scholarship Awarded")
+else:
+    print("Not Eligible")</code></pre>
+  <pre class="out"><code>Enter your marks: 60
+Sports champion? (yes/no): yes
+Scholarship Awarded</code></pre>
+  <p>Trace (marks = 60, champion = "yes"):</p>
+  <figure class="shot sm"><img src="img/14.webp" alt="or-flowchart for marks 60, champion yes: Check 1, is 60 >= 90? False; Check 2, is champion == yes? True; result False OR True gives True, so it prints Scholarship Awarded" width="1199" height="1312"><figcaption>False OR True → True: one True is enough. (The diagram labels the other branch “No Scholarship”; the code prints <code>Not Eligible</code>.)</figcaption></figure>
+  <pre><code class="language-python">day = input("Enter the day: ")
+
+if day == "Saturday" or day == "Sunday":
+    print("Office is closed")
+else:
+    print("Office is open")</code></pre>
+  <pre class="out"><code>Enter the day: Sunday
+Office is closed</code></pre>
+  <pre><code class="language-python">amount = int(input("Enter order amount: "))
+is_premium = input("Premium member? (yes/no): ")
+
+if amount &gt;= 500 or is_premium == "yes":
+    print("Free delivery")
+else:
+    print("Delivery charge: Rs 40")</code></pre>
+  <pre class="out"><code>Enter order amount: 350
+Premium member? (yes/no): no
+Delivery charge: Rs 40</code></pre>
+  <div class="sticky warn l"><strong>A classic trap</strong> <code>if day == "Saturday" or "Sunday":</code> is <b>always</b> True, because the non-empty string <code>"Sunday"</code> is truthy on its own. Repeat the comparison on both sides: <code>day == "Saturday" or day == "Sunday"</code>.</div>
+  <h3><code>not</code>: reverse a condition</h3>
+  <pre><code class="language-plaintext">not condition</code></pre>
+  <p>It flips True to False, and False to True.</p>
+  <pre><code class="language-python">is_failed = False
+
+if not is_failed:
+    print("Student has passed")
+
+is_raining = False
+
+if not is_raining:
+    print("Let's go for a walk")
+
+is_logged_in = False
+
+if not is_logged_in:
+    print("Please log in to continue")</code></pre>
+  <pre class="out"><code>Student has passed
+Let's go for a walk
+Please log in to continue</code></pre>
+  <p>In each case <code>not False</code> becomes <code>True</code>, so the message prints.</p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="nested-if">
+  <h2>Nested conditions: a decision inside a decision</h2>
+  <p>A <b>nested if</b> is an <code>if</code> placed inside another <code>if</code> (or <code>else</code>) block. Use it when <mark>one decision only makes sense after another has been checked</mark>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">if condition1:
+    if condition2:
+        # runs only if BOTH condition1 and condition2 are True
+    else:
+        # runs if condition1 is True but condition2 is False
+else:
+    # runs if condition1 is False</code></pre></div>
+  <p><b>Key idea:</b> the inner <code>if</code> is only ever checked if the outer condition already passed. It is a decision within a decision.</p>
+  <h3>Pass/Fail with a distinction</h3>
+  <p>Extend the student result problem:</p>
+  <figure class="shot"><img src="img/15.webp" alt="Table: marks below 50 Fail; marks at least 50 and below 90 Pass; marks 90 or more Pass with Distinction" width="886" height="202"><figcaption>Three outcomes, where Distinction only matters once the student has passed.</figcaption></figure>
+  <pre><code class="language-python">marks = int(input("Enter your marks: "))
+
+if marks &gt;= 50:
+    if marks &gt;= 90:
+        print("PASS with Distinction")
+    else:
+        print("PASS")
+else:
+    print("FAIL")</code></pre>
+  <pre class="out"><code>Enter your marks: 95
+PASS with Distinction</code></pre>
+  <p>Tracing through it:</p>
+  <figure class="shot"><img src="img/16.webp" alt="Nested if/else flowchart, plus three traces: marks 95 gives 95 >= 50 True and 95 >= 90 True, output PASS with Distinction; marks 65 gives True then False, output PASS; marks 30 gives 30 >= 50 False, output FAIL" width="1400" height="933"><figcaption>Three runs through the nested <code>if</code>: 95, 65 and 30.</figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>marks</th><th>Outer: <code>&gt;= 50</code>?</th><th>Inner: <code>&gt;= 90</code>?</th><th>Output</th></tr>
+    <tr><td>95</td><td>True</td><td>True</td><td><code>PASS with Distinction</code></td></tr>
+    <tr><td>65</td><td>True</td><td>False</td><td><code>PASS</code></td></tr>
+    <tr><td>30</td><td>False</td><td><i>never checked</i></td><td><code>FAIL</code></td></tr>
+  </table></div>
+  <p>When marks are 30, the inner condition is <b>never evaluated</b>: it lives inside the outer block, and the outer condition already failed.</p>
+  <p>An online shop checks stock first, and only then whether the customer can afford the ₹500 item:</p>
+  <pre><code class="language-python">stock = 10
+money = int(input("Enter your money: "))
+
+if stock &gt; 0:
+    if money &gt;= 500:
+        print("Order placed")
+    else:
+        print("Not enough money")
+else:
+    print("Out of stock")</code></pre>
+  <pre class="out"><code>Enter your money: 300
+Not enough money</code></pre>
+  <p>An ATM checks the PIN first, and asks for an amount only if the PIN is right:</p>
+  <pre><code class="language-python">correct_pin = 1234
+balance = 5000
+
+pin = int(input("Enter PIN: "))
+
+if pin == correct_pin:
+    amount = int(input("Enter amount to withdraw: "))
+    if amount &lt;= balance:
+        print("Collect your cash")
+    else:
+        print("Insufficient balance")
+else:
+    print("Wrong PIN")</code></pre>
+  <pre class="out"><code>Enter PIN: 1234
+Enter amount to withdraw: 7000
+Insufficient balance</code></pre>
+  <div class="sticky tip"><strong>Nest only when it reads better</strong> Two or three levels are fine. If you find yourself four levels deep, <code>and</code> or an <code>elif</code> ladder is usually clearer.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="indentation">
+  <h2>Indentation decides what belongs where</h2>
+  <p>In every <code>if</code>, <code>elif</code> and <code>else</code> so far, some lines were pushed right. Many languages use curly braces <code>{ }</code> to mark a block; Python uses <b>indentation</b>. Get it wrong and either the program won’t run, or <mark>it runs but gives the wrong result</mark>.</p>
+  <p>All lines indented by the same amount directly under a line ending in <code>:</code> form one block. The block ends at the first line that moves back left.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">if condition:
+    # this line is inside the if block
+    # this line is also inside the if block
+# this line is outside: it always runs</code></pre></div>
+  <ul>
+    <li>A line ending with <code>:</code> must be followed by at least one indented line.</li>
+    <li>Every line in the same block uses exactly the same indentation.</li>
+    <li>The standard is 4 spaces per level.</li>
+    <li>The block ends at the first line that moves back to the left.</li>
+    <li><code>elif</code> and <code>else</code> sit at the same level as their matching <code>if</code>.</li>
+  </ul>
+  <h3>Indentation in if…else</h3>
+  <p>Print PASS or FAIL, a message that belongs only to that result, and a final line that always prints:</p>
+  <pre><code class="language-python">marks = 35
+
+if marks &gt;= 50:
+    print("PASS")
+    print("Well done!")
+else:
+    print("FAIL")
+    print("Better luck next time!")
+
+print("Result checked")</code></pre>
+  <pre class="out"><code>FAIL
+Better luck next time!
+Result checked</code></pre>
+  <div class="codebox"><span class="cap">each · is one space</span><pre><code class="language-plaintext">if marks &gt;= 50:              -&gt; level 0 (not indented)
+····print("PASS")            -&gt; level 1, inside if
+····print("Well done!")      -&gt; level 1, inside if
+else:                        -&gt; level 0, same as if
+····print("FAIL")            -&gt; level 1, inside else
+····print("Better luck...")  -&gt; level 1, inside else
+print("Result checked")      -&gt; level 0, outside both, always runs</code></pre></div>
+  <p>With marks = 35 the whole <code>if</code> block (both lines) is skipped, the <code>else</code> block runs, and the last line runs no matter what.</p>
+  <h3>Same code, different indentation, different result</h3>
+  <p>Goal: congratulate only students who pass.</p>
+  <div class="two">
+    <div>
+      <div class="codebox"><span class="cap">❌ wrong: runs, but lies</span><pre><code class="language-python">marks = 35
+
+if marks &gt;= 50:
+    print("PASS")
+print("Congratulations!")</code></pre></div>
+      <pre class="out"><code>Congratulations!</code></pre>
+    </div>
+    <div>
+      <div class="codebox"><span class="cap">✅ right</span><pre><code class="language-python">marks = 35
+
+if marks &gt;= 50:
+    print("PASS")
+    print("Congratulations!")</code></pre></div>
+      <pre class="out"><code>(no output)</code></pre>
+    </div>
+  </div>
+  <div class="sticky warn"><strong>No error, just wrong</strong> Python gives no error for the first version: it is valid code that means something different. The student failed and was still congratulated. Indentation must always match what you mean.</div>
+  <h3>Nested indentation</h3>
+  <p>Each new level adds 4 more spaces:</p>
+  <pre><code class="language-python">marks = 95
+
+if marks &gt;= 50:
+    if marks &gt;= 90:
+        print("PASS with Distinction")
+    else:
+        print("PASS")
+else:
+    print("FAIL")</code></pre>
+  <pre class="out"><code>PASS with Distinction</code></pre>
+  <div class="codebox"><span class="cap">each · is one space</span><pre><code class="language-plaintext">if marks &gt;= 50:                          -&gt; 0 spaces (level 0)
+····if marks &gt;= 90:                      -&gt; 4 spaces (level 1)
+········print("PASS with Distinction")   -&gt; 8 spaces (level 2)
+····else:                                -&gt; 4 spaces, pairs with inner if
+········print("PASS")                    -&gt; 8 spaces (level 2)
+else:                                    -&gt; 0 spaces, pairs with outer if
+····print("FAIL")                        -&gt; 4 spaces (level 1)</code></pre></div>
+  <p>The indentation of each <code>else</code> tells Python which <code>if</code> it belongs to: the inner <code>else</code> lines up with the inner <code>if</code>, the outer with the outer.</p>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="for">
+  <h2><code>for</code> loops: once for each item</h2>
+  <div class="story"><b class="lbl">The dabbawala’s round</b>A dabbawala doesn’t get a separate instruction for each tiffin. He has one rule, “deliver this box”, and repeats it for every box in his crate until the crate is empty. <mark>A for loop repeats the same block once for each item in a sequence, then stops by itself.</mark></div>
+  <p>Greeting 100 students or printing every item of a list with separate <code>print()</code> lines isn’t practical and doesn’t scale. A loop repeats an action automatically.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">for item in sequence:
+    # code to run for each item</code></pre></div>
+  <ul>
+    <li><code>item</code> is a new variable, created automatically, holding the current value on each round.</li>
+    <li><code>sequence</code> can be a list, string, tuple, a <code>range()</code> of numbers, or any other iterable.</li>
+    <li>The line ends with a colon and the block is indented, the same rule as <code>if</code>.</li>
+    <li>The loop runs once per item, then stops automatically when the sequence ends.</li>
+  </ul>
+  <h3>Repeating a task for each item: iterating over lists, strings and other sequences</h3>
+  <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
+
+for fruit in fruits:
+    print(fruit)</code></pre>
+  <pre class="out"><code>apple
+banana
+cherry</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Round 1</b><code>fruit = "apple"</code> <span class="tag">→ print(apple)</span></div></li>
+    <li><span class="dot">2</span><div><b>Round 2</b><code>fruit = "banana"</code> <span class="tag">→ print(banana)</span></div></li>
+    <li><span class="dot">3</span><div><b>Round 3</b><code>fruit = "cherry"</code> <span class="tag">→ print(cherry)</span></div></li>
+    <li><span class="dot">✓</span><div><b>Sequence exhausted</b>The loop ends automatically.</div></li>
+  </ol>
+  <p>Totalling a shopping cart:</p>
+  <pre><code class="language-python">prices = [250, 120, 80]
+total = 0
+
+for price in prices:
+    total = total + price
+
+print("Total bill:", total)</code></pre>
+  <pre class="out"><code>Total bill: 450</code></pre>
+  <p>Notice <code>print</code> is <b>not</b> indented, so it runs once, after the loop. Indent it and you’d print a running total three times.</p>
+  <h3>Looping over a string</h3>
+  <p>A string is a sequence of characters, so you loop over it the same way:</p>
+  <pre><code class="language-python">for letter in "Python":
+    print(letter)</code></pre>
+  <pre class="out"><code>P
+y
+t
+h
+o
+n</code></pre>
+  <div class="two">
+    <div><pre><code class="language-python">for letter in "Code":
+    print(letter)</code></pre>
+    <pre class="out"><code>C
+o
+d
+e</code></pre></div>
+    <div><pre><code class="language-python">for digit in "4821":     # an OTP, one digit at a time
+    print(digit)</code></pre>
+    <pre class="out"><code>4
+8
+2
+1</code></pre></div>
+  </div>
+  <h3>The loop variable</h3>
+  <p>The variable in <code>for item in sequence</code> (here <code>fruit</code> or <code>letter</code>) is the <b>loop variable</b>. You don’t create it beforehand; Python makes it and updates it each round. After the loop ends it still holds the <b>last</b> value:</p>
+  <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    pass
+print("after loop:", fruit)</code></pre>
+  <pre class="out"><code>after loop: cherry</code></pre>
+  <h3>Nested for loops</h3>
+  <p>A small multiplication table, one loop inside another:</p>
+  <pre><code class="language-python">for i in range(1, 4):
+    for j in range(1, 4):
+        print(i, "x", j, "=", i*j)</code></pre>
+  <pre class="out"><code>1 x 1 = 1
+1 x 2 = 2
+1 x 3 = 3
+2 x 1 = 2
+2 x 2 = 4
+2 x 3 = 6
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9</code></pre>
+  <p><mark>For every single value of the outer loop, the inner loop runs from start to finish</mark> before the outer loop moves on.</p>
+  <div class="two">
+    <div><pre><code class="language-python">for day in ["Mon", "Tue"]:
+    for meal in ["Lunch", "Dinner"]:
+        print(day, meal)</code></pre>
+    <pre class="out"><code>Mon Lunch
+Mon Dinner
+Tue Lunch
+Tue Dinner</code></pre></div>
+    <div><pre><code class="language-python">for floor in [1, 2]:          # a hotel
+    for room in [1, 2, 3]:
+        print("Floor", floor, "Room", room)</code></pre>
+    <pre class="out"><code>Floor 1 Room 1
+Floor 1 Room 2
+Floor 1 Room 3
+Floor 2 Room 1
+Floor 2 Room 2
+Floor 2 Room 3</code></pre></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="while">
+  <h2><code>while</code> loops: repeat as long as a condition holds</h2>
+  <p>A <code>for</code> loop is perfect when you know how many times to repeat, or you’re walking through a sequence. Sometimes you don’t know in advance; you just want to <b>keep going until a condition becomes False</b>. That is a <code>while</code> loop: it loops on a <b>condition</b>, not over items.</p>
+  <p>Print the numbers 1 to 5:</p>
+  <pre><code class="language-python">count = 1
+while count &lt;= 5:
+    print(count)
+    count = count + 1</code></pre>
+  <pre class="out"><code>1
+2
+3
+4
+5</code></pre>
+  <figure>
+    <div class="dia sm"><svg viewBox="0 0 520 270" role="img" aria-label="count = 1, then the check count <= 5. If True, print count and add 1, then go back to the check. If False, the loop ends">
+      <g class="rough">
+        <rect class="box f-blue" x="170" y="10" width="180" height="40" rx="12"/>
+        <path class="box f-yellow" d="M260 74 L 350 112 L 260 150 L 170 112 Z"/>
+        <rect class="box f-green" x="160" y="186" width="200" height="66" rx="12"/>
+        <rect class="box f-grey" x="400" y="90" width="110" height="44" rx="12"/>
+        <path class="ln" d="M260 52 L 260 70" marker-end="url(#ah)"/>
+        <path class="lb" d="M260 152 L 260 182" marker-end="url(#ahb)"/>
+        <path class="lr" d="M160 219 C 90 219, 90 112, 164 112" marker-end="url(#ahr)"/>
+        <path class="ln" d="M352 112 L 394 112" marker-end="url(#ah)"/>
+      </g>
+      <text class="tm" x="260" y="35" text-anchor="middle">count = 1</text>
+      <text class="tm" x="260" y="117" text-anchor="middle">count &lt;= 5?</text>
+      <text class="ts" x="272" y="172">True</text>
+      <text class="tm" x="260" y="214" text-anchor="middle">print(count)</text>
+      <text class="tm" x="260" y="236" text-anchor="middle">count = count + 1</text>
+      <text class="tr" x="60" y="170" text-anchor="middle">repeat</text>
+      <text class="ts" x="373" y="102" text-anchor="middle">False</text>
+      <text class="t" x="455" y="117" text-anchor="middle">loop ends</text>
+    </svg></div>
+    <figcaption>The condition is checked before every round; the body must move it toward False.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <tr><th>count</th><th><code>count &lt;= 5</code>?</th><th>Action</th></tr>
+    <tr><td>1</td><td>True</td><td>print 1, count becomes 2</td></tr>
+    <tr><td>2</td><td>True</td><td>print 2, count becomes 3</td></tr>
+    <tr><td>3</td><td>True</td><td>print 3, count becomes 4</td></tr>
+    <tr><td>4</td><td>True</td><td>print 4, count becomes 5</td></tr>
+    <tr><td>5</td><td>True</td><td>print 5, count becomes 6</td></tr>
+    <tr><td>6</td><td>False</td><td>loop stops</td></tr>
+  </table></div>
+  <ul>
+    <li>The condition is checked <b>before every</b> iteration.</li>
+    <li>While it is True, the indented block keeps running.</li>
+    <li>The loop stops as soon as the condition is False at a check.</li>
+    <li>Unlike <code>for</code>, Python does <b>not</b> move to a next value for you. <mark>You must update the condition yourself inside the loop.</mark></li>
+  </ul>
+  <h3>Counting down</h3>
+  <div class="two">
+    <div><pre><code class="language-python">count = 5
+
+while count &gt;= 1:
+    print(count)
+    count = count - 1
+
+print("Liftoff!")</code></pre>
+    <pre class="out"><code>5
+4
+3
+2
+1
+Liftoff!</code></pre></div>
+    <div><pre><code class="language-python">seconds = 5            # microwave timer
+
+while seconds &gt;= 1:
+    print(seconds)
+    seconds = seconds - 1
+
+print("Beep! Food is ready")</code></pre>
+    <pre class="out"><code>5
+4
+3
+2
+1
+Beep! Food is ready</code></pre></div>
+  </div>
+  <h3>Avoiding infinite loops</h3>
+  <p>An <b>infinite loop</b> happens when the condition never becomes False, one of the most common <code>while</code> mistakes:</p>
+  <pre><code class="language-python">count = 1
+while count &lt;= 5:
+    print(count)
+    # forgot to update count!</code></pre>
+  <p><code>count</code> stays 1, <code>count &lt;= 5</code> stays True, and 1 is printed forever (stop it with <kbd>Ctrl</kbd> + <kbd>C</kbd>). The fix: make sure the body always moves the condition toward False.</p>
+  <pre><code class="language-python"># WRONG - infinite loop (seconds never changes)
+# seconds = 5
+# while seconds &gt;= 1:
+#     print(seconds)
+
+# CORRECT - update the variable inside the loop
+seconds = 5
+while seconds &gt;= 1:
+    print(seconds)
+    seconds = seconds - 1</code></pre>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Polling loops (“wait until the job finishes”) on customer systems are where infinite loops bite. Always add a limit: a maximum number of tries or a timeout, so a stuck job can’t hang your script forever.</div>
+  <h3>Nested while loops</h3>
+  <p>A 3-by-3 grid of stars:</p>
+  <pre><code class="language-python">row = 1
+while row &lt;= 3:
+    col = 1
+    while col &lt;= 3:
+        print("*", end=" ")
+        col = col + 1
+    print()
+    row = row + 1</code></pre>
+  <pre class="out"><code>* * *
+* * *
+* * *</code></pre>
+  <p>For every row (outer loop), the inner loop runs across all 3 columns; then <code>print()</code> ends the line. Note that <code>col = 1</code> is reset at the start of each row. The same pattern prints a cinema hall’s seats (O = empty seat) and a 3-floor parking lot:</p>
+  <div class="two">
+    <div><pre><code class="language-python">row = 1
+
+while row &lt;= 3:
+    seat = 1
+    while seat &lt;= 4:
+        print("O", end=" ")
+        seat = seat + 1
+    print()
+    row = row + 1</code></pre>
+    <pre class="out"><code>O O O O
+O O O O
+O O O O</code></pre></div>
+    <div><pre><code class="language-python">floor = 1
+
+while floor &lt;= 3:
+    slot = 1
+
+    while slot &lt;= 4:
+        print("Floor", floor, "Slot", slot)
+        slot = slot + 1
+
+    floor = floor + 1</code></pre>
+    <pre class="out"><code>Floor 1 Slot 1
+Floor 1 Slot 2
+Floor 1 Slot 3
+Floor 1 Slot 4
+Floor 2 Slot 1
+Floor 2 Slot 2
+Floor 2 Slot 3
+Floor 2 Slot 4
+Floor 3 Slot 1
+Floor 3 Slot 2
+Floor 3 Slot 3
+Floor 3 Slot 4</code></pre></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="break-continue">
+  <h2><code>break</code> and <code>continue</code></h2>
+  <p>Normally a loop runs until its condition is False (<code>while</code>) or its sequence is used up (<code>for</code>). Sometimes you want to <b>leave early</b>, or <b>skip one round</b> without stopping the whole loop.</p>
+  <div class="grid two">
+    <div class="card t4 tilt-a"><h4><code>break</code> · stop the loop</h4><p>Exits the loop immediately. No further rounds run, even if items remain or the condition is still True.</p></div>
+    <div class="card t1 tilt-b"><h4><code>continue</code> · skip this round</h4><p>Abandons the rest of the current round and jumps straight to the next one. The loop keeps going.</p></div>
+  </div>
+  <div class="two">
+    <div class="flow v"><span class="op">round 1</span><span class="op">round 2: break</span><span class="bad">round 3, 4… never run</span></div>
+    <div class="flow v"><span class="op">round 1</span><span class="skip">round 2: continue (rest skipped)</span><span class="ok">round 3, 4… run</span></div>
+  </div>
+  <h3><code>break</code> in a for loop</h3>
+  <p>Stop searching the moment the target is found:</p>
+  <pre><code class="language-python">numbers = [4, 9, 15, 22, 7]
+target = 15
+
+for num in numbers:
+    if num == target:
+        print("Found it!")
+        break</code></pre>
+  <pre class="out"><code>Found it!</code></pre>
+  <p>Once <code>num</code> is 15, <code>break</code> runs and Python never even looks at 22 or 7. Here it is with a progress message, searching a shopping basket for milk:</p>
+  <pre><code class="language-python">basket = ["bread", "eggs", "milk", "butter", "jam"]
+
+for item in basket:
+    if item == "milk":
+        print("Milk found!")
+        break
+    print("Checking:", item)</code></pre>
+  <pre class="out"><code>Checking: bread
+Checking: eggs
+Milk found!</code></pre>
+  <h3><code>break</code> in a while loop</h3>
+  <p><code>while True</code> would run forever; <code>break</code> is the way out once a condition inside is met:</p>
+  <pre><code class="language-python">while True:
+    word = input("Type 'exit' to stop: ")
+    if word == "exit":
+        print("Bye!")
+        break
+    print("You typed:", word)</code></pre>
+  <pre class="out"><code>Type 'exit' to stop: hello
+You typed: hello
+Type 'exit' to stop: python
+You typed: python
+Type 'exit' to stop: exit
+Bye!</code></pre>
+  <p>An ATM that keeps asking until the right PIN is entered:</p>
+  <pre><code class="language-python">while True:
+    pin = input("Enter PIN: ")
+    if pin == "1234":
+        print("PIN accepted")
+        break
+    print("Wrong PIN, try again")</code></pre>
+  <pre class="out"><code>Enter PIN: 1111
+Wrong PIN, try again
+Enter PIN: 1234
+PIN accepted</code></pre>
+  <h3><code>continue</code> in a for loop</h3>
+  <p>Print only the odd numbers from 1 to 5:</p>
+  <pre><code class="language-python">for num in range(1, 6):
+    if num % 2 == 0:
+        continue
+    print(num)</code></pre>
+  <pre class="out"><code>1
+3
+5</code></pre>
+  <div class="tbl"><table>
+    <tr><th>num</th><th><code>num % 2 == 0</code>?</th><th>Action</th></tr>
+    <tr><td>1</td><td>False</td><td>print 1</td></tr>
+    <tr><td>2</td><td>True</td><td><code>continue</code>: print skipped</td></tr>
+    <tr><td>3</td><td>False</td><td>print 3</td></tr>
+    <tr><td>4</td><td>True</td><td><code>continue</code>: print skipped</td></tr>
+    <tr><td>5</td><td>False</td><td>print 5</td></tr>
+  </table></div>
+  <div class="two">
+    <div><pre><code class="language-python">for num in range(1, 6):      # skip 3
+    if num == 3:
+        continue
+    print(num)</code></pre>
+    <pre class="out"><code>1
+2
+4
+5</code></pre></div>
+    <div><pre><code class="language-python">tickets = ["Confirmed", "Cancelled", "Confirmed"]
+
+for status in tickets:
+    if status == "Cancelled":
+        continue
+    print("Boarding pass issued")</code></pre>
+    <pre class="out"><code>Boarding pass issued
+Boarding pass issued</code></pre></div>
+  </div>
+  <h3><code>continue</code> in a while loop</h3>
+  <div class="two">
+    <div><pre><code class="language-python">count = 0
+while count &lt; 5:
+    count = count + 1
+    if count == 3:
+        continue
+    print(count)</code></pre>
+    <pre class="out"><code>1
+2
+4
+5</code></pre></div>
+    <div><pre><code class="language-python">day = 0              # Day 3 is a holiday
+
+while day &lt; 5:
+    day = day + 1
+    if day == 3:
+        continue
+    print("Office open on Day", day)</code></pre>
+    <pre class="out"><code>Office open on Day 1
+Office open on Day 2
+Office open on Day 4
+Office open on Day 5</code></pre></div>
+  </div>
+  <div class="sticky warn"><strong>Update before you continue</strong> In a <code>while</code> loop, <code>count = count + 1</code> sits <b>before</b> the <code>continue</code> check. Put it after, and when <code>count</code> hits 3 the update is skipped every time: an infinite loop.</div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="pass">
+  <h2><code>pass</code>: a placeholder that does nothing</h2>
+  <p>Sometimes you want to write the <b>shape</b> of an <code>if</code>, loop, function or class before deciding what goes inside. Python doesn’t allow an empty block, and a comment alone doesn’t count:</p>
+  <pre><code class="language-python">if marks &gt;= 50:
+    # nothing here</code></pre>
+  <pre class="out"><code>IndentationError: expected an indented block after 'if' statement on line 1</code></pre>
+  <p><code>pass</code> is a statement that <mark>does absolutely nothing but keeps the block valid</mark>:</p>
+  <pre><code class="language-python">if marks &gt;= 50:
+    pass</code></pre>
+  <h3>In conditional statements</h3>
+  <pre><code class="language-python">marks = 40
+
+if marks &gt;= 50:
+    pass  # TODO: add pass logic later
+else:
+    print("FAIL")</code></pre>
+  <pre class="out"><code>FAIL</code></pre>
+  <p>You can build the FAIL case now and leave PASS as a placeholder. Two more:</p>
+  <pre><code class="language-python">temperature = 25
+
+if temperature &gt; 35:
+    pass  # TODO: add "too hot" logic later
+else:
+    print("Weather is fine")
+
+payment_mode = "Cash"          # payment app still under development
+
+if payment_mode == "UPI":
+    pass  # TODO: add UPI payment logic later
+else:
+    print("Pay by cash at delivery")</code></pre>
+  <pre class="out"><code>Weather is fine
+Pay by cash at delivery</code></pre>
+  <h3>In loops, functions and classes</h3>
+  <pre><code class="language-python">for num in range(10):
+    pass  # loop structure ready, logic to be added later
+
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    pass  # logic to be added later
+
+def calculate_grade(marks):
+    pass
+
+class Student:
+    pass</code></pre>
+  <p>This is common while sketching a program: define every function and class first, fill in the logic later, and Python never complains about empty bodies in between. (Functions and classes have their own notes later in this module.)</p>
+  <h3><code>pass</code> vs <code>continue</code></h3>
+  <div class="tbl"><table>
+    <tr><th></th><th><code>pass</code></th><th><code>continue</code></th></tr>
+    <tr><td>Meaning</td><td>“do nothing here”; a placeholder</td><td>“skip the rest of this round”</td></tr>
+    <tr><td>Effect</td><td>execution carries on normally with the next line</td><td>jumps to the next iteration of the loop</td></tr>
+    <tr><td>Where it works</td><td>anywhere a statement is required: if, loops, functions, classes</td><td>only inside a loop</td></tr>
+  </table></div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="range">
+  <h2><code>range()</code>: a sequence of numbers</h2>
+  <p>To repeat something a fixed number of times, or walk through numbers, you don’t type them all out. <code>range()</code> generates them, and it is almost always used with a <code>for</code> loop.</p>
+  <div class="tbl"><table>
+    <tr><th>Form</th><th>Generates</th><th>Example</th><th>Numbers</th></tr>
+    <tr><td><code>range(stop)</code></td><td>0 up to, not including, stop</td><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td></tr>
+    <tr><td><code>range(start, stop)</code></td><td>start up to, not including, stop</td><td><code>range(2, 6)</code></td><td>2, 3, 4, 5</td></tr>
+    <tr><td><code>range(start, stop, step)</code></td><td>jumps by step each time</td><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td></tr>
+    <tr><td>negative step</td><td>counts down</td><td><code>range(10, 0, -1)</code></td><td>10, 9, … , 1</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Number line 0 to 10. range(2, 6) covers 2, 3, 4, 5 and stops before 6. range(0, 10, 2) covers 0, 2, 4, 6, 8 and stops before 10">
+      <g class="rough">
+        <path class="ln" d="M46 62 L 634 62"/>
+        <path class="ln" d="M46 152 L 634 152"/>
+        <circle class="box f-card" cx="60" cy="62" r="13"/><circle class="box f-card" cx="116" cy="62" r="13"/><circle class="box f-green" cx="172" cy="62" r="13"/><circle class="box f-green" cx="228" cy="62" r="13"/><circle class="box f-green" cx="284" cy="62" r="13"/><circle class="box f-green" cx="340" cy="62" r="13"/><circle class="box f-orange" cx="396" cy="62" r="13"/><circle class="box f-card" cx="452" cy="62" r="13"/><circle class="box f-card" cx="508" cy="62" r="13"/><circle class="box f-card" cx="564" cy="62" r="13"/><circle class="box f-card" cx="620" cy="62" r="13"/>
+        <circle class="box f-green" cx="60" cy="152" r="13"/><circle class="box f-card" cx="116" cy="152" r="13"/><circle class="box f-green" cx="172" cy="152" r="13"/><circle class="box f-card" cx="228" cy="152" r="13"/><circle class="box f-green" cx="284" cy="152" r="13"/><circle class="box f-card" cx="340" cy="152" r="13"/><circle class="box f-green" cx="396" cy="152" r="13"/><circle class="box f-card" cx="452" cy="152" r="13"/><circle class="box f-green" cx="508" cy="152" r="13"/><circle class="box f-card" cx="564" cy="152" r="13"/><circle class="box f-orange" cx="620" cy="152" r="13"/>
+      </g>
+      <text class="tm" x="46" y="28">range(2, 6)  → 2, 3, 4, 5</text>
+      <text class="tm" x="46" y="118">range(0, 10, 2)  → 0, 2, 4, 6, 8</text>
+      <text class="ts" x="60" y="94" text-anchor="middle">0</text><text class="ts" x="116" y="94" text-anchor="middle">1</text><text class="ts" x="172" y="94" text-anchor="middle">2</text><text class="ts" x="228" y="94" text-anchor="middle">3</text><text class="ts" x="284" y="94" text-anchor="middle">4</text><text class="ts" x="340" y="94" text-anchor="middle">5</text><text class="ts" x="396" y="94" text-anchor="middle">6</text><text class="ts" x="452" y="94" text-anchor="middle">7</text><text class="ts" x="508" y="94" text-anchor="middle">8</text><text class="ts" x="564" y="94" text-anchor="middle">9</text><text class="ts" x="620" y="94" text-anchor="middle">10</text>
+      <text class="ts" x="60" y="184" text-anchor="middle">0</text><text class="ts" x="116" y="184" text-anchor="middle">1</text><text class="ts" x="172" y="184" text-anchor="middle">2</text><text class="ts" x="228" y="184" text-anchor="middle">3</text><text class="ts" x="284" y="184" text-anchor="middle">4</text><text class="ts" x="340" y="184" text-anchor="middle">5</text><text class="ts" x="396" y="184" text-anchor="middle">6</text><text class="ts" x="452" y="184" text-anchor="middle">7</text><text class="ts" x="508" y="184" text-anchor="middle">8</text><text class="ts" x="564" y="184" text-anchor="middle">9</text><text class="ts" x="620" y="184" text-anchor="middle">10</text>
+      <text class="tr" x="420" y="34">stop 6: excluded</text>
+      <text class="tr" x="560" y="124">stop 10: excluded</text>
+    </svg></div>
+    <figcaption>Green numbers are produced; the orange stop value never is.</figcaption>
+  </figure>
+  <h3><code>range(stop)</code></h3>
+  <div class="two">
+    <div><pre><code class="language-python">for i in range(5):
+    print(i)</code></pre>
+    <pre class="out"><code>0
+1
+2
+3
+4</code></pre></div>
+    <div><pre><code class="language-python">for i in range(3):
+    print("Hello")
+
+for i in range(3):       # a payment reminder, 3 times
+    print("Reminder", i)</code></pre>
+    <pre class="out"><code>Hello
+Hello
+Hello
+Reminder 0
+Reminder 1
+Reminder 2</code></pre></div>
+  </div>
+  <h3><code>range(start, stop)</code></h3>
+  <div class="two">
+    <div><pre><code class="language-python">for i in range(2, 6):
+    print(i)</code></pre>
+    <pre class="out"><code>2
+3
+4
+5</code></pre></div>
+    <div><pre><code class="language-python">for token in range(1, 6):     # bank tokens 1 to 5
+    print("Token number", token)</code></pre>
+    <pre class="out"><code>Token number 1
+Token number 2
+Token number 3
+Token number 4
+Token number 5</code></pre></div>
+  </div>
+  <p>To print 1 to 5 you write <code>range(1, 6)</code>: the stop has to be one past the last number you want.</p>
+  <h3><code>range(start, stop, step)</code></h3>
+  <div class="two">
+    <div><pre><code class="language-python">for i in range(0, 10, 2):
+    print(i)
+
+for i in range(2, 11, 2):     # even numbers 2 to 10
+    print(i)</code></pre>
+    <pre class="out"><code>0
+2
+4
+6
+8
+2
+4
+6
+8
+10</code></pre></div>
+    <div><pre><code class="language-python">for km in range(0, 11, 2):    # a bus stop every 2 km
+    print("Bus stop at km", km)</code></pre>
+    <pre class="out"><code>Bus stop at km 0
+Bus stop at km 2
+Bus stop at km 4
+Bus stop at km 6
+Bus stop at km 8
+Bus stop at km 10</code></pre></div>
+  </div>
+  <h3>Positive and negative steps</h3>
+  <p>A positive step counts upward; a negative step counts downward.</p>
+  <div class="two">
+    <div><pre><code class="language-python">for i in range(10, 0, -1):
+    print(i)</code></pre>
+    <pre class="out"><code>10
+9
+8
+7
+6
+5
+4
+3
+2
+1</code></pre></div>
+    <div><pre><code class="language-python">for i in range(5, 0, -1):
+    print(i)
+
+print("Happy New Year!")
+
+for floor in range(5, 0, -1):     # a lift going down
+    print("Floor", floor)
+
+print("Ground exit reached")</code></pre>
+    <pre class="out"><code>5
+4
+3
+2
+1
+Happy New Year!
+Floor 5
+Floor 4
+Floor 3
+Floor 2
+Floor 1
+Ground exit reached</code></pre></div>
+  </div>
+  <div class="sticky warn l"><strong>The stop value is excluded</strong> The most common <code>range()</code> mistake. <code>range(5)</code> → 0, 1, 2, 3, 4 (5 excluded); <code>range(2, 6)</code> → 2, 3, 4, 5 (6 excluded). Memory trick: <code>range(n)</code> always produces exactly <b>n</b> numbers, starting at 0.</div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="enumerate">
+  <h2><code>enumerate()</code>: index and value together</h2>
+  <h3>Why indexes are needed, and basic enumerate() usage</h3>
+  <p>Looping with <code>for fruit in fruits</code> gives you each value but loses its <b>position</b>. To print “1. apple”, “2. banana”, you need both. <code>enumerate()</code> gives you both at once.</p>
+  <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
+
+for index, fruit in enumerate(fruits):
+    print(index, fruit)</code></pre>
+  <pre class="out"><code>0 apple
+1 banana
+2 cherry</code></pre>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Round 1</b><code>index = 0, fruit = "apple"</code> <span class="tag">→ 0 apple</span></div></li>
+    <li><span class="dot">2</span><div><b>Round 2</b><code>index = 1, fruit = "banana"</code> <span class="tag">→ 1 banana</span></div></li>
+    <li><span class="dot">3</span><div><b>Round 3</b><code>index = 2, fruit = "cherry"</code> <span class="tag">→ 2 cherry</span></div></li>
+  </ol>
+  <p>For each item, <code>enumerate()</code> produces a <b>pair</b> <code>(index, value)</code>. Writing <code>for index, fruit in …</code> <mark>unpacks each pair into two variables in one step</mark>, so you never keep a separate counter by hand.</p>
+  <pre><code class="language-python">print(list(enumerate(fruits)))</code></pre>
+  <pre class="out"><code>[(0, 'apple'), (1, 'banana'), (2, 'cherry')]</code></pre>
+  <p>A support system listing tickets with their position:</p>
+  <pre><code class="language-python">tickets = ["Login problem", "Payment failed", "Password reset"]
+
+for index, ticket in enumerate(tickets):
+    print(index, ticket)</code></pre>
+  <pre class="out"><code>0 Login problem
+1 Payment failed
+2 Password reset</code></pre>
+  <h3>A custom starting number: <code>enumerate(iterable, start)</code></h3>
+  <p>Counting starts at 0 by default. Pass <code>start</code> to change it:</p>
+  <div class="two">
+    <div><pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
+
+for index, fruit in enumerate(fruits, start=1):
+    print(index, fruit)</code></pre>
+    <pre class="out"><code>1 apple
+2 banana
+3 cherry</code></pre></div>
+    <div><pre><code class="language-python">students = ["Rahul", "Priya", "Amit", "Sneha"]
+
+for roll_no, name in enumerate(students, start=1):
+    print("Roll No:", roll_no, "-", name)</code></pre>
+    <pre class="out"><code>Roll No: 1 - Rahul
+Roll No: 2 - Priya
+Roll No: 3 - Amit
+Roll No: 4 - Sneha</code></pre></div>
+  </div>
+  <h3>With strings and other iterables</h3>
+  <p><code>enumerate()</code> works with any iterable, including strings:</p>
+  <div class="two">
+    <div><pre><code class="language-python">for index, letter in enumerate("abc"):
+    print(index, letter)
+
+for index, letter in enumerate("cat"):
+    print(index, letter)</code></pre>
+    <pre class="out"><code>0 a
+1 b
+2 c
+0 c
+1 a
+2 t</code></pre></div>
+    <div><pre><code class="language-python">password = "Secure123"      # check each character's position
+
+for position, character in enumerate(password):
+    print(position, character)</code></pre>
+    <pre class="out"><code>0 S
+1 e
+2 c
+3 u
+4 r
+5 e
+6 1
+7 2
+8 3</code></pre></div>
+  </div>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> When you loop over rows of a customer’s CSV, <code>for line_no, row in enumerate(rows, start=1)</code> lets your error messages say “bad value on line 47”, which saves everyone a lot of hunting.</div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Control flow</dt><dd>The order in which a program’s statements are executed; sequential by default, changed by conditions, loops and jump statements.</dd></div>
+    <div><dt>Condition</dt><dd>An expression that evaluates to True or False and decides whether a block runs.</dd></div>
+    <div><dt>if statement</dt><dd>Runs its indented block only when its condition is True; otherwise the block is skipped.</dd></div>
+    <div><dt>else</dt><dd>The catch-all branch of an if, with no condition of its own, that runs when the if (and any elif) conditions are all False.</dd></div>
+    <div><dt>elif</dt><dd>“Else if”: an extra condition checked only when every condition above it was False; the first True branch wins.</dd></div>
+    <div><dt>Nested if</dt><dd>An if statement inside another if or else block, checked only after the outer condition has passed.</dd></div>
+    <div><dt>Block</dt><dd>A group of consecutive lines with the same indentation under a line ending in a colon.</dd></div>
+    <div><dt>for loop</dt><dd>Repeats its block once for each item of a sequence or iterable, then stops automatically.</dd></div>
+    <div><dt>Loop variable</dt><dd>The variable in <code>for x in seq</code> that Python sets to the next item on every round; it keeps the last value after the loop.</dd></div>
+    <div><dt>while loop</dt><dd>Repeats its block as long as its condition stays True, checking the condition before every round.</dd></div>
+    <div><dt>Infinite loop</dt><dd>A loop whose condition never becomes False, usually because the body forgets to update the variable it depends on.</dd></div>
+    <div><dt>break</dt><dd>Immediately exits the innermost loop; no further iterations run.</dd></div>
+    <div><dt>continue</dt><dd>Skips the rest of the current iteration and moves on to the next one.</dd></div>
+    <div><dt>pass</dt><dd>A statement that does nothing, used as a placeholder where Python requires a block.</dd></div>
+    <div><dt>range()</dt><dd>Generates a sequence of integers from start up to but not including stop, moving by step.</dd></div>
+    <div><dt>enumerate()</dt><dd>Wraps an iterable so each round yields an (index, value) pair, counting from 0 or a chosen start.</dd></div>
+  </dl>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="2"><p>With <code>marks = 95</code>, what does the grading ladder print if the first condition is <code>marks &gt;= 50</code> (D) and <code>marks &gt;= 90</code> (A) comes later?</p>
+      <ol><li>Grade: A</li><li>Grade: D</li><li>Both A and D</li><li>Nothing</li></ol>
+      <p class="why">Only the first True branch runs. 95 &gt;= 50 is True, so it prints D and never checks the rest. Put the strictest test first.</p></div>
+    <div class="q" data-answer="4"><p>How many numbers does <code>range(3, 8)</code> produce?</p>
+      <ol><li>8</li><li>6</li><li>3</li><li>5</li></ol>
+      <p class="why">3, 4, 5, 6, 7: stop (8) is excluded, so 8 − 3 = 5 numbers.</p></div>
+    <div class="q" data-answer="1"><p>What does this print? <code>for n in range(1, 6):</code> / <code>if n == 4: break</code> / <code>print(n)</code></p>
+      <ol><li>1 2 3</li><li>1 2 3 5</li><li>1 2 3 4</li><li>4</li></ol>
+      <p class="why"><code>break</code> exits the loop the moment n is 4, before it is printed, so 5 is never reached either.</p></div>
+    <div class="q" data-answer="3"><p>Same loop, but with <code>continue</code> instead of <code>break</code>. What prints?</p>
+      <ol><li>1 2 3</li><li>4</li><li>1 2 3 5</li><li>1 2 3 4 5</li></ol>
+      <p class="why"><code>continue</code> skips only the round where n is 4; the loop carries on to 5.</p></div>
+    <div class="q" data-answer="2"><p>Why might <code>count = 1</code> / <code>while count &lt;= 5:</code> / <code>print(count)</code> never stop?</p>
+      <ol><li><code>while</code> needs a <code>range()</code></li><li>count is never updated, so the condition stays True</li><li>print() blocks the loop</li><li>5 is excluded</li></ol>
+      <p class="why">A while loop only re-checks its condition; the body must change <code>count</code> or it loops forever.</p></div>
+    <div class="q" data-answer="3"><p><code>marks = 35</code>; <code>if marks &gt;= 50: print("PASS")</code>, and on the next line, <b>not indented</b>, <code>print("Well done")</code>. What prints?</p>
+      <ol><li>PASS and Well done</li><li>Nothing</li><li>Well done</li><li>An IndentationError</li></ol>
+      <p class="why">The unindented line is outside the if block, so it always runs. Valid code, wrong meaning.</p></div>
+    <div class="q" data-answer="1"><p>What does <code>for i, ch in enumerate("hi", start=1): print(i, ch)</code> print?</p>
+      <ol><li><code>1 h</code> then <code>2 i</code></li><li><code>0 h</code> then <code>1 i</code></li><li><code>h 1</code> then <code>i 2</code></li><li>An error</li></ol>
+      <p class="why">enumerate yields (index, value) pairs and <code>start=1</code> makes counting begin at 1.</p></div>
+    <div class="q" data-answer="4"><p>Which statement is allowed <b>outside</b> a loop?</p>
+      <ol><li><code>break</code></li><li><code>continue</code></li><li>Both</li><li><code>pass</code></li></ol>
+      <p class="why"><code>pass</code> works anywhere a statement is needed. <code>break</code> and <code>continue</code> only make sense inside loops.</p></div>
+    <div class="q" data-answer="2"><p>A student passes only if marks ≥ 50 <b>and</b> attendance ≥ 75. Marks 80, attendance 60. Result?</p>
+      <ol><li>PASS</li><li>FAIL</li><li>Error</li><li>Depends on the order of the conditions</li></ol>
+      <p class="why"><code>True and False</code> is False, so the else branch (FAIL) runs.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final"><b>if / elif / else</b> let a program choose one path based on True/False conditions (combined with <b>and, or, not</b> and nested when one decision depends on another), <b>indentation</b> decides which lines belong to each block, and <b>for</b> (over items) and <b>while</b> (on a condition) repeat work, steered by <b>break</b>, <b>continue</b>, <b>pass</b>, <b>range()</b> and <b>enumerate()</b>.</p>
+  <p>Next up: Data Structures, where you’ll meet lists, tuples, sets and dictionaries, the collections these loops were made to walk through.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

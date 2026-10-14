@@ -68,9 +68,9 @@ touch app.txt</code></pre></div>
   <pre><code class="language-bash">mkdir chaining_practice
 cd chaining_practice
 mkdir project ; echo "Done"</code></pre></div>
-  <p>The first time, <code>project</code> doesn’t exist, so Linux creates it, then prints <code>Done</code>. Now run the <b>same line again</b>:</p>
-  <pre class="out"><code>mkdir: cannot create directory 'project': File exists
-Done</code></pre>
+  <figure class="shot"><img src="img/01.webp" alt="Terminal: mkdir project ; echo Done prints Done, and ls shows the new project folder" width="1036" height="169"><figcaption>First run: <code>project</code> doesn’t exist, so Linux creates it, then <code>echo "Done"</code> runs.</figcaption></figure>
+  <p>Now run the <b>same line again</b>:</p>
+  <figure class="shot"><img src="img/02.webp" alt="Terminal: mkdir fails with File exists, but Done is still printed (highlighted)" width="1053" height="166"><figcaption>Second run: <code>mkdir</code> fails with “File exists”… and <code>Done</code> still prints.</figcaption></figure>
   <p><code>mkdir</code> <b>failed</b> because the folder already exists, but <code>echo "Done"</code> <mark>still ran</mark>. That is exactly what <code>;</code> means.</p>
   <div class="flow"><span class="op">mkdir project</span><span class="bad">FAIL</span><span class="op">;</span><span class="ok">echo "Done" runs</span></div>
 </section>
@@ -78,7 +78,7 @@ Done</code></pre>
 <!-- 3 -->
 <section class="ch" id="and">
   <h2><code>&amp;&amp;</code> · run only if the previous command succeeds</h2>
-  <p>New requirement: create a directory → enter it → create a file. If creating the directory fails, we <b>don’t</b> want to continue.</p>
+  <p>Now we have a different requirement: create a directory → enter it → create a file. If creating the directory fails, we <b>don’t</b> want to continue.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 &amp;&amp; command2      # command2 runs only if command1 succeeds</code></pre></div>
   <figure>
     <div class="dia sm"><svg viewBox="0 0 520 250" role="img" aria-label="mkdir project2; if successful, cd project2 runs; if it fails, the chain stops">
@@ -105,6 +105,10 @@ Done</code></pre>
 pwd                                 # check where you are
 cd ..                               # go back
 mkdir project2 &amp;&amp; echo "Created"   # fails: project2 exists, so "Created" never prints</code></pre></div>
+  <div class="shots">
+    <figure class="shot"><img src="img/03.webp" alt="Terminal: mkdir project2 && cd project2 succeeds; pwd shows /home/ubuntu/chaining_practice/project2" width="1089" height="130"><figcaption><code>mkdir</code> succeeded, so <code>cd</code> ran: <code>pwd</code> confirms you’re inside <code>project2</code>.</figcaption></figure>
+    <figure class="shot"><img src="img/04.webp" alt="Terminal: mkdir project2 && echo Created prints only the File exists error" width="1086" height="175"><figcaption><code>mkdir</code> failed, so <code>&amp;&amp;</code> stopped the chain: “Created” never prints.</figcaption></figure>
+  </div>
   <div class="two">
     <div class="flow v"><span class="op">mkdir project2</span><span class="ok">SUCCESS</span><span class="op">cd project2 runs</span></div>
     <div class="flow v"><span class="op">mkdir project2</span><span class="bad">FAIL</span><span class="hl">&amp;&amp; → STOP</span></div>
@@ -132,8 +136,7 @@ mkdir project2 &amp;&amp; echo "Created"   # fails: project2 exists, so "Created
   <p>Sometimes we want: <i>“Try the first command. If it fails, do something else.”</i> That is a <b>fallback</b>.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">command1 || command2      # command2 runs only if command1 fails</code></pre></div>
   <pre><code class="language-bash">cd /wrong/path || echo "Directory not found"</code></pre>
-  <pre class="out"><code>bash: cd: /wrong/path: No such file or directory
-Directory not found</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: cd /wrong/path fails with No such file or directory, then Directory not found is printed" width="1267" height="129"><figcaption><code>cd</code> failed, so <code>||</code> ran the fallback <code>echo</code>.</figcaption></figure>
   <div class="two">
     <div class="flow v"><span class="op">cd /wrong/path</span><span class="bad">FAIL</span><span class="ok">echo runs</span></div>
     <div class="flow v"><span class="op">cd /tmp</span><span class="ok">SUCCESS</span><span class="hl">|| → STOP (echo skipped)</span></div>

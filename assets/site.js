@@ -468,6 +468,19 @@
       }).catch(function () {});
     }
 
+    // screenshots: click to zoom
+    $$('figure.shot img', main).forEach(function (img) {
+      img.setAttribute('loading', 'lazy');
+      img.addEventListener('click', function () {
+        var lb = h('<div class="lightbox" role="dialog" aria-label="Enlarged screenshot"><img alt=""></div>');
+        $('img', lb).src = img.src; $('img', lb).alt = img.alt;
+        function close() { lb.remove(); document.removeEventListener('keydown', esc); }
+        function esc(e) { if (e.key === 'Escape') close(); }
+        lb.addEventListener('click', close); document.addEventListener('keydown', esc);
+        body.appendChild(lb);
+      });
+    });
+
     // completion + pager
     var all = orderedNotes(D), ix = all.map(function (x) { return x.id; }).indexOf(id);
     var pv = all[ix - 1], nx = all[ix + 1];

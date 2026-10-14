@@ -24,6 +24,7 @@
 <!-- 1 -->
 <section class="ch" id="identity">
   <h2>Why every device needs an address</h2>
+  <figure class="shot"><img src="img/01.webp" alt="Title banner: Networking Fundamentals II, Device Identification and Core Protocols, with a globe under a magnifying glass showing IP 192.168.1.10, and labels MAC 00:1A:2B:3C:4D:5E, DNS www.example.com, DHCP automatic IP, TCP/UDP core protocols" width="1400" height="788"><figcaption>The second of three Networking Fundamentals notes: MAC, IP, protocols, ports, TCP/UDP, DNS and DHCP. Identify, communicate, build, connect.</figcaption></figure>
   <p>In the last note a switch sent data “only to PC C”, using a <b>MAC address</b>, and a router forwarded data using a “network-layer address”. Both terms were used but not explained. This note fills that gap, one problem at a time:</p>
   <div class="flow"><span>which device?</span><span>same rules?</span><span>which app?</span><span>easy names?</span><span class="ok">automatic setup?</span></div>
   <div class="story"><b class="lbl">The office post room</b>Ten people share one office. A letter that just says “for you” is useless; it needs a name on it so the post room delivers it to one desk, and so the right person knows it is theirs. <mark>On a network, every device needs a unique identity, an address, so the sender can name the receiver and the receiver can recognise what is meant for it.</mark></div>
@@ -40,7 +41,8 @@
     <div><span class="sw a4"></span><p><b>First half</b>: identifies the manufacturer of the network card (the OUI, Organizationally Unique Identifier).</p></div>
     <div><span class="sw a2"></span><p><b>Second half</b>: a number the manufacturer gives this one particular card.</p></div>
   </div>
-  <p>A <b>switch</b> keeps a record of <b>which MAC address is connected to which port</b>, and sends each frame out through the correct port.</p>
+    <figure class="shot"><img src="img/02.webp" alt="MAC address infographic: 1, a laptop Wi-Fi panel shows physical address (MAC) 00:1A:2B:3C:4D:5E; 2, a switch keeps a record of which MAC is on which port (port 1 00:1A:2B:3C:4D:5E laptop, port 3 00:1B:2C:3D:4E:5F printer, port 5 00:1C:2D:3E:4F:60 desktop); 3, house number analogy with houses 12, 25 and 48 and a delivery man; key takeaway MAC address identifies a device, switch keeps track, switch port is the connection point, data is delivered to the correct device" width="1400" height="788"><figcaption>The MAC is printed in your network settings as the “physical address”; the switch maps each MAC to a port, like a delivery person who knows which gate leads to house 25.</figcaption></figure>
+  <p>A <b>switch</b> keeps a record of <b>which MAC address is connected to which port</b>. When data must reach a particular device, it checks this record and sends the data through the correct port.</p>
   <div class="story"><b class="lbl">House numbers</b>In a colony, houses are numbered 12, 25, 48. The colony’s delivery person knows which lane each house number is on. <mark>A MAC address is like the house number; the switch is the delivery person who knows which lane (port) leads to it.</mark></div>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>MAC address</h4><p>Identifies one specific network interface.</p></div>
@@ -48,6 +50,7 @@
     <div class="card t7 tilt-a"><h4>Switch port</h4><p>The socket where the device is plugged in.</p></div>
     <div class="card t2 tilt-b"><h4>Data</h4><p>Leaves through the correct port to the intended device.</p></div>
   </div>
+  <p><b>In short:</b> a MAC address helps a switch identify and reach the correct device on the local network.</p>
   <div class="sticky warn"><strong>“Permanent” has fine print</strong> The burned-in MAC normally stays fixed, but software can override it. Modern phones and laptops even use a <b>random MAC per Wi-Fi network</b> for privacy. So don’t treat a MAC address as a security-grade identity.</div>
 </section>
 
@@ -55,30 +58,7 @@
 <section class="ch" id="mac-not-enough">
   <h2>Why MAC addresses alone are not enough</h2>
   <p>MACs work brilliantly inside one local network, where a switch can track every device. But the Internet is millions of networks. A MAC address says <i>nothing</i> about <b>which network</b> a device is on, so a router somewhere in Delhi has no way to know where <code>00:1A:2B:3C:4D:5E</code> lives.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="Six separate networks joined by links. A piece of data addressed only to a MAC address has no clue which of the networks to head for.">
-      <g class="rough">
-        <path class="ln" d="M90 110 L 260 70 M 260 70 L 430 110 M 90 110 L 180 200 M 180 200 L 360 210 M 360 210 L 430 110 M 360 210 L 560 200 M 430 110 L 560 200"/>
-        <ellipse class="box f-blue" cx="90" cy="110" rx="62" ry="30"/>
-        <ellipse class="box f-blue" cx="260" cy="70" rx="62" ry="30"/>
-        <ellipse class="box f-blue" cx="430" cy="110" rx="62" ry="30"/>
-        <ellipse class="box f-blue" cx="180" cy="200" rx="62" ry="30"/>
-        <ellipse class="box f-blue" cx="360" cy="210" rx="62" ry="30"/>
-        <ellipse class="box f-blue" cx="560" cy="200" rx="62" ry="30"/>
-        <rect class="box f-pink" x="530" y="24" width="180" height="70" rx="12"/>
-      </g>
-      <text class="t" x="90" y="116" text-anchor="middle">Network 1</text>
-      <text class="t" x="260" y="76" text-anchor="middle">Network 2</text>
-      <text class="t" x="430" y="116" text-anchor="middle">Network 3</text>
-      <text class="t" x="180" y="206" text-anchor="middle">Network 4</text>
-      <text class="t" x="360" y="216" text-anchor="middle">Network 5</text>
-      <text class="t" x="560" y="206" text-anchor="middle">Network 6</text>
-      <text class="ts" x="620" y="50" text-anchor="middle">deliver to MAC</text>
-      <text class="tm" x="620" y="74" text-anchor="middle">00:1A:2B:3C:4D:5E</text>
-      <text class="tr" x="620" y="138" text-anchor="middle">which network??</text>
-    </svg></div>
-    <figcaption>A MAC address is a name with no location. Routers need to know which <i>network</i> to head toward.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/03.webp" alt="Why MAC addressing alone is not enough: left, within a single network a switch uses MAC addresses (00:1A:2B:3C:4D:5E and 00:1A:2B:3C:4D:6F) to deliver data locally; right, across the Internet with many routers, your device and a remote device have only MAC addresses, which cannot identify which network a device belongs to; to reach devices across the Internet we need another type of address" width="1400" height="788"><figcaption>A switch’s “which port is this MAC on?” works inside one network. Across millions of networks and many routers, a MAC says nothing about <i>which network</i> to head for.</figcaption></figure>
   <p>What’s needed is an address that identifies <b>the device and the network it belongs to</b>, so routers can move data step by step toward the right network.</p>
 </section>
 
@@ -86,31 +66,8 @@
 <section class="ch" id="ip">
   <h2>IP address: identifying a device across networks</h2>
   <p>That address is the <b>IP address</b>. Unlike a MAC address, it is a <b>logical address</b>: it is given to the device based on the <b>network it is currently connected to</b>, and it can change when the device moves to another network. <mark>Routers use IP addresses to decide where data should go between networks.</mark></p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Left: a house with the number 25 on it, labelled MAC equals house number. Right: an envelope addressed House 25, MG Road, Bengaluru, labelled IP equals full address.">
-      <g class="rough">
-        <path class="box f-orange" d="M60 100 L 130 48 L 200 100 Z"/>
-        <rect class="box f-yellow" x="75" y="100" width="110" height="80" rx="4"/>
-        <rect class="box f-card" x="90" y="130" width="32" height="50" rx="3"/>
-        <rect class="box f-card" x="138" y="114" width="36" height="26" rx="4"/>
-        <rect class="box f-card" x="380" y="36" width="300" height="156" rx="8"/>
-        <path class="ln" d="M380 36 L 530 104 L 680 36"/>
-        <rect class="box f-pink" x="636" y="48" width="32" height="38" rx="3"/>
-        <path class="lr" d="M230 120 L 350 120" marker-end="url(#ahr)"/>
-      </g>
-      <text class="tm" x="156" y="132" text-anchor="middle">25</text>
-      <text class="tr" x="130" y="218" text-anchor="middle">MAC = house number</text>
-      <text class="tm" x="410" y="136">House 25</text>
-      <text class="tm" x="410" y="158">MG Road</text>
-      <text class="tm" x="410" y="180">Bengaluru</text>
-      <text class="ts" x="540" y="136">← which house</text>
-      <text class="ts" x="540" y="169">← which area</text>
-      <text class="tr" x="530" y="226" text-anchor="middle">IP = full address</text>
-      <text class="ts" x="290" y="108" text-anchor="middle">from another city</text>
-      <text class="ts" x="290" y="144" text-anchor="middle">you need more</text>
-    </svg></div>
-    <figcaption>Sending a parcel from another city, “house 25” isn’t enough. You need the street and city too. An IP address carries both the device part and the network part.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/04.webp" alt="IP address infographic: MAC is the house number 25, IP is the complete location 25, MG Road, Bengaluru; key difference MAC is permanent (belongs to hardware), IP can change (based on network); routers use IP addresses to move data between networks, your device 192.168.1.10 on a local network and a remote device 203.0.113.25 on a different network; formats IPv4 192.168.1.10 and IPv6 2001:0db8:85a3:0000:0000:8a2e:0370:7334; public IP reachable from the Internet, private IP used inside the local network" width="1400" height="788"><figcaption>House number 25 is enough inside the colony; from another city you need “25, MG Road, Bengaluru”. MAC = which device; IP = which device + which network.</figcaption></figure>
+  <p>The house number identifies the particular house, just as a MAC address identifies a specific device on a local network. But someone sending a parcel from another city also needs the street and city. In the same way, an IP address identifies both the device and the network it currently lives on, so routers can move data from network to network until it reaches the right one, and eventually the right device.</p>
   <p>A MAC address belongs to the <b>network hardware</b>, like the number fixed on the house. An IP address belongs to the device’s <b>current network connection</b>, like its current full postal address. Connect to a different network and the IP can change.</p>
 
   <h3>Switch delivers locally, router delivers between networks</h3>
@@ -156,7 +113,7 @@
     <div class="card t5 tilt-b"><h4>IPv6</h4><p>A longer, 128-bit format written in hexadecimal groups, e.g. <code>2001:db8::1</code>. Created to provide vastly more addresses than IPv4.</p></div>
   </div>
   <div class="anatomy"><span class="a1">192</span><span class="a7">.</span><span class="a2">168</span><span class="a7">.</span><span class="a3">1</span><span class="a7">.</span><span class="a5">10</span></div>
-  <p class="legend-note">Each of the four parts of an IPv4 address is one byte (8 bits), so it ranges from 0 to 255.</p>
+  <p>Each of the four parts of an IPv4 address is one byte (8 bits), so it ranges from 0 to 255.</p>
 
   <h3>Public and private</h3>
   <div class="two">
@@ -168,6 +125,7 @@
 
 <!-- 5 -->
 <section class="ch" id="arp">
+  <div class="sticky tip"><strong>Quick recap before moving on</strong> We can now find the receiving device: the <b>MAC address</b> on the local network, the <b>IP address</b> across networks. But knowing someone’s address is not the same as knowing how to communicate with them. Mail a letter to someone who speaks a completely different language: it arrives, but they can’t understand it. A device that receives data also needs to know how it is formatted and what it means. That problem is solved by <b>protocols</b>, after a short bonus on how IP and MAC work together.</div>
   <h2>Bonus: how IP and MAC meet (ARP)</h2>
   <p>Here’s a gap worth closing. Your laptop knows the <b>IP</b> it wants to reach (say the printer at <code>192.168.1.20</code>), but the switch delivers by <b>MAC</b>. How does the laptop learn the printer’s MAC? With <b>ARP, the Address Resolution Protocol</b>: it shouts a question to everyone on the local network, and only the owner answers.</p>
   <figure>
@@ -176,7 +134,7 @@
         <rect class="box f-blue" x="35" y="20" width="170" height="56" rx="12"/>
         <rect class="box f-grey" x="275" y="20" width="170" height="56" rx="12"/>
         <rect class="box f-green" x="515" y="20" width="170" height="56" rx="12"/>
-        <path class="ln dash" d="M120 78 L 120 290 M 360 78 L 360 290 M 600 78 L 600 290"/>
+        <path class="ln dash" d="M120 78 L 120 290 M 360 78 L 360 212 M 360 246 L 360 290 M 600 78 L 600 290"/>
         <path class="lr" d="M122 125 L 354 125" marker-end="url(#ahr)"/>
         <path class="lr" d="M122 148 L 594 148" marker-end="url(#ahr)"/>
         <path class="lb" d="M598 240 L 126 240" marker-end="url(#ahb)"/>
@@ -187,11 +145,11 @@
       <text class="tm" x="360" y="66" text-anchor="middle">192.168.1.15</text>
       <text class="t" x="600" y="44" text-anchor="middle">Printer</text>
       <text class="tm" x="600" y="66" text-anchor="middle">192.168.1.20</text>
-      <text class="tm" x="360" y="112" text-anchor="middle">Who has 192.168.1.20?</text>
+      <text class="tm" x="240" y="112" text-anchor="middle">Who has 192.168.1.20?</text>
       <text class="ts" x="240" y="170" text-anchor="middle">broadcast: everyone hears it</text>
-      <text class="ts" x="420" y="194" text-anchor="middle">PC B: not me, ignore</text>
+      <text class="ts" x="372" y="194">PC B: not me, ignore</text>
       <text class="tm" x="360" y="230" text-anchor="middle">192.168.1.20 is at AA:BB:CC:11:22:33</text>
-      <text class="ts" x="360" y="262" text-anchor="middle">reply goes only to the laptop</text>
+      <text class="ts" x="240" y="262" text-anchor="middle">reply goes only to the laptop</text>
       <text class="tb" x="120" y="312" text-anchor="middle">saved in ARP cache</text>
     </svg></div>
     <figcaption>ARP turns “I know the IP” into “I know the MAC” for devices on the same local network.</figcaption>
@@ -208,8 +166,9 @@ arp -a          # Windows / macOS</code></pre></div>
   <p>Knowing <b>where</b> to send data doesn’t mean the receiver can <b>understand</b> it. Two computers from different manufacturers, running different software, can only communicate if both follow the same format and rules.</p>
   <div class="story"><b class="lbl">A letter in the wrong language</b>Post a letter to someone who only reads Odia while you wrote in German. It arrives perfectly, but it means nothing to them. <mark>A protocol is an agreed set of rules for how communication happens: the format of the data, the order of messages, and how each side behaves.</mark></div>
   <p>Crucially, a protocol is <b>not tied to any brand</b>. If two devices follow the same protocol, they understand each other, whoever built them.</p>
+  <figure class="shot"><img src="img/05.webp" alt="Protocols as rules of communication, two analogies: two people who share a language, take turns and follow conventions communicate, but with no common language (Hello versus Bonjour) communication breaks down; a letter written in the correct format (Rahul Sharma, 25 MG Road, Bengaluru 560001) goes through India Post and is delivered, while a letter in an incorrect format cannot be processed and is marked not delivered" width="1400" height="788"><figcaption>Same language and etiquette → the conversation works. Agreed envelope format and postal process → the letter arrives. Break the rules and both fail.</figcaption></figure>
   <div class="two">
-    <div class="card t4 tilt-a"><h4>Human conversation</h4><p>Same language, take turns, greet before starting, say goodbye before ending. Ignore these and the conversation breaks down, even between two capable speakers.</p></div>
+    <div class="card t4 tilt-a"><h4>Human conversation</h4><p>Same language, take turns, greet before starting, say goodbye before ending. Ignore these and the conversation breaks down, even between two capable speakers. A protocol is this shared “language and etiquette”, for computers.</p></div>
     <div class="card t7 tilt-b"><h4>Postal system</h4><p>An agreed way to write an address on the envelope, use stamps, and move the letter. Write the address in a format the post office doesn’t recognise and it can’t be delivered.</p></div>
   </div>
   <figure>
@@ -264,6 +223,8 @@ arp -a          # Windows / macOS</code></pre></div>
   <h2>Ports: reaching the right application</h2>
   <p>Your laptop runs a browser, an email client and a chat app at the same time, all over <b>one</b> network connection. The IP address gets data to the <b>device</b>, but which <b>app</b> is it for?</p>
   <div class="story"><b class="lbl">The apartment block</b>The building address gets the courier to the gate; the <b>flat number</b> gets the parcel to the right family. <mark>A port is a number that identifies a specific application or service on a device.</mark></div>
+  <p>If data simply arrived at the right device with no further detail, the device couldn’t tell whether it belonged to the browser, the email client or the chat app. Ports let many applications use the network at the same time without their data getting mixed up.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Port numbers infographic: one laptop runs a web browser on port 80, an email app on port 25 and video streaming on port 443; port numbers keep web, email and video traffic separate as it passes the router to the Internet; IP address 192.168.1.10 identifies the device plus port number 80 identifies the application equals network endpoint 192.168.1.10:80" width="1400" height="788"><figcaption>IP address = which device, port = which application; together they form a complete destination. (Strictly, 80, 25 and 443 are the <i>server-side</i> ports these apps connect to; your own laptop uses a temporary port for each connection.)</figcaption></figure>
   <p>Put together, the <b>IP address + port</b> form a <b>network endpoint</b>: the exact device and the exact application.</p>
   <div class="anatomy"><span class="a4">203.0.113.10</span><span class="a3">:443</span></div>
   <div class="legend">
@@ -296,6 +257,7 @@ arp -a          # Windows / macOS</code></pre></div>
     <figcaption>One IP, many doors. The port number decides which service gets the data.</figcaption>
   </figure>
   <h3>Well-known ports</h3>
+  <p>Certain ports are so consistently tied to certain services that they have become effectively standard:</p>
   <div class="notes">
     <div class="note"><b>22</b>SSH · secure remote login</div>
     <div class="note"><b>53</b>DNS · name lookup</div>
@@ -356,13 +318,14 @@ arp -a          # Windows / macOS</code></pre></div>
     <tr><td>Overhead</td><td>Higher, due to reliability mechanisms</td><td>Lower: simpler and faster</td></tr>
     <tr><td>Typical use</td><td>Web browsing, email, file transfer</td><td>Live video/voice calls, online gaming</td></tr>
   </table></div>
-  <p>How TCP achieves reliability (the three-way handshake, sequence numbers, acknowledgements) is saved for the TCP &amp; UDP module.</p>
+  <p>How TCP achieves reliability (the three-way handshake, sequence numbers, acknowledgements) is saved for the TCP &amp; UDP module. What matters now: both solve the same basic problem, getting data from one application to another, but they make different trade-offs between reliability and speed.</p>
 </section>
 
 <!-- 10 -->
 <section class="ch" id="dns">
   <h2>DNS: names instead of numbers</h2>
   <p>IP addresses suit computers, not people. Nobody wants to memorise a different string of numbers for every website. People remember <b>domain names</b> like <code>example.com</code> or <code>google.com</code>.</p>
+  <figure class="shot"><img src="img/07.webp" alt="The problem with remembering IP addresses: a confused man tries to remember 142.250.190.78, 172.217.16.110, 104.21.28.189 and 13.107.21.200, next to a table of Google, YouTube, Facebook, Amazon and Netflix IP addresses; a smiling woman uses the matching domain names google.com, youtube.com, facebook.com, amazon.com and netflix.com; humans prefer easy names but computers need numeric IP addresses" width="1400" height="788"><figcaption>Humans prefer easy-to-remember names, but computers need numeric IP addresses. Domain names and DNS bridge the gap.</figcaption></figure>
   <div class="story"><b class="lbl">The phone contacts list</b>You tap “Amma”, not a 10-digit number; the phone looks the number up for you. <mark>DNS (Domain Name System) is the Internet’s contacts list: it translates a human-friendly domain name into the IP address a computer needs.</mark></div>
   <p>Your device acts as a <b>DNS client</b> (also called a resolver) and sends a <b>DNS query</b>: “What is the IP address for this name?” A <b>DNS server</b>, which stores or knows how to find these mappings, sends back a <b>DNS response</b> with the IP address.</p>
   <figure>
@@ -389,9 +352,10 @@ arp -a          # Windows / macOS</code></pre></div>
     <figcaption>Type a name, DNS quietly finds the number, then the browser connects. (203.0.113.10 is an example address.)</figcaption>
   </figure>
   <div class="flow"><span class="op">example.com</span><span class="hl">DNS</span><span class="ok">IP address</span></div>
+  <figure class="shot"><img src="img/08.webp" alt="Basic DNS communication: 1, your device (DNS client or resolver) sends a DNS query, what is the IP address for example.com; 2, the DNS server looks up the name and sends a DNS response 93.184.216.34; simple flow example.com (domain name), DNS (lookup), 93.184.216.34 (IP address); type a name, get an IP address, then connect" width="1400" height="788"><figcaption>Query out, response back: type a name, get an IP address, then connect.</figcaption></figure>
   <div class="cmd"><p class="what">Try it</p>
   <pre><code class="language-bash">nslookup example.com     # ask DNS for the IP of a name</code></pre></div>
-  <p>Record types, caching and DNS troubleshooting come in the dedicated DNS module.</p>
+  <p>DNS has more details, such as different record types, how lookups are cached, and how to troubleshoot DNS problems. Those come in the dedicated DNS module; the idea to keep now is simply DNS’s role: translating a human-friendly name into the numeric IP address a computer needs.</p>
 </section>
 
 <!-- 11 -->
@@ -403,36 +367,13 @@ arp -a          # Windows / macOS</code></pre></div>
     <div class="card t6 tilt-b"><h4>Hard maintenance</h4><p>Any network change means re-editing every device.</p></div>
     <div class="card t3 tilt-a"><h4>Poor scalability</h4><p>Hundreds of laptops and phones? Impossible by hand.</p></div>
   </div>
+  <figure class="shot"><img src="img/09.webp" alt="The problem with manually configuring every computer: a man types IP address 192.168.1.10, subnet mask 255.255.255.0, default gateway 192.168.1.1 and DNS servers 8.8.8.8 and 8.8.4.4 into the Windows IPv4 properties dialog; problems: human errors (invalid IP 192.168.1.100 typo), difficult maintenance (update all devices), poor scalability (rows of laptops); manually setting IP, gateway and DNS is static configuration" width="1400" height="788"><figcaption>Static configuration: typing the IP address, gateway and DNS server into each device by hand. Fine for a server, painful for hundreds of laptops.</figcaption></figure>
   <p>Setting these values manually is called <b>static configuration</b>. It still has its place, for example a <b>server</b> that must always keep the same address, but it doesn’t scale for everyday clients.</p>
   <p><mark>DHCP (Dynamic Host Configuration Protocol) automatically gives a device the network settings it needs.</mark> The device asking is the <b>DHCP client</b>; the computer or network box answering (often your home router) is the <b>DHCP server</b>. That’s why your phone just works within seconds on a new Wi-Fi.</p>
+  <figure class="shot"><img src="img/10.webp" alt="DHCP infographic in four panels: 1, device connects to Wi-Fi (DHCP client, your device); 2, device sends a DHCP request to the DHCP server (e.g. your router) saying I need network settings; 3, the server sends back IP address 192.168.1.10, gateway 192.168.1.1 and DNS server 8.8.8.8; 4, the device is connected and ready" width="1400" height="788"><figcaption>DHCP = automatically gives a device the network settings it needs (IP address, gateway, DNS server) to connect and communicate.</figcaption></figure>
   <h3>The four steps (remember “DORA”)</h3>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 380" role="img" aria-label="DHCP sequence between a new phone and the DHCP server: Discover (broadcast), Offer, Request, Acknowledgement, after which the phone has an IP address, gateway and DNS server.">
-      <g class="rough">
-        <rect class="box f-blue" x="50" y="18" width="180" height="56" rx="12"/>
-        <rect class="box f-yellow" x="490" y="18" width="180" height="56" rx="12"/>
-        <path class="ln dash" d="M140 76 L 140 296 M 580 76 L 580 296"/>
-        <path class="lr" d="M142 112 L 574 112" marker-end="url(#ahr)"/>
-        <path class="lb" d="M578 162 L 146 162" marker-end="url(#ahb)"/>
-        <path class="lr" d="M142 212 L 574 212" marker-end="url(#ahr)"/>
-        <path class="lb" d="M578 262 L 146 262" marker-end="url(#ahb)"/>
-        <rect class="box f-green" x="90" y="306" width="540" height="58" rx="12"/>
-      </g>
-      <text class="t" x="140" y="52" text-anchor="middle">New phone (client)</text>
-      <text class="t" x="580" y="52" text-anchor="middle">DHCP server</text>
-      <text class="t" x="360" y="104" text-anchor="middle">1 · Discover</text>
-      <text class="ts" x="360" y="132" text-anchor="middle">broadcast: is any DHCP server out there?</text>
-      <text class="t" x="360" y="154" text-anchor="middle">2 · Offer</text>
-      <text class="ts" x="360" y="182" text-anchor="middle">“You can have 192.168.1.23, plus these settings”</text>
-      <text class="t" x="360" y="204" text-anchor="middle">3 · Request</text>
-      <text class="ts" x="360" y="232" text-anchor="middle">“I’d like to use that configuration, please”</text>
-      <text class="t" x="360" y="254" text-anchor="middle">4 · Acknowledgement</text>
-      <text class="ts" x="360" y="282" text-anchor="middle">“Confirmed. It’s yours.”</text>
-      <text class="tm" x="360" y="332" text-anchor="middle">IP 192.168.1.23 · gateway 192.168.1.1</text>
-      <text class="tm" x="360" y="352" text-anchor="middle">DNS server 192.168.1.1</text>
-    </svg></div>
-    <figcaption>Discover → Offer → Request → Acknowledge. Four messages and the device is configured.</figcaption>
-  </figure>
+  <p>This is a fundamental, high-level view of the process; fuller detail comes later wherever more advanced material needs it.</p>
+  <figure class="shot"><img src="img/11.webp" alt="The basic DHCP process between a DHCP client laptop and a DHCP server router: 1, DHCP Discover, the device broadcasts a request looking for any available DHCP server; 2, DHCP Offer, a server responds offering an available IP address and settings; 3, DHCP Request, the device formally asks to use the offered configuration; 4, DHCP Acknowledgement, the server confirms and the configuration is finalised" width="1400" height="788"><figcaption>Discover (broadcast) → Offer → Request → Acknowledgement. Four messages and the device is configured.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">D</span><div><b>Discover</b>The device broadcasts a request looking for any available DHCP server.</div></li>
     <li><span class="dot">O</span><div><b>Offer</b>A DHCP server responds, offering an available IP address and settings.</div></li>
@@ -454,7 +395,8 @@ arp -a          # Windows / macOS</code></pre></div>
     <li><span class="dot">5</span><div><b>Humans can’t remember numbers</b>DNS turns names into IP addresses.</div></li>
     <li><span class="dot">6</span><div><b>Nobody wants to configure by hand</b>DHCP hands out IP, gateway and DNS automatically.</div></li>
   </ol>
-  <p>With so many separate jobs, how does it all stay organised? That is exactly what the OSI model answers next.</p>
+  <p>Every one of these topics (MAC/IP addressing, protocols, TCP/UDP, DNS) gets its own dedicated module later in the course.</p>
+  <p>With so many separate responsibilities in sending even one message (addressing it, formatting it, delivering it locally, routing it globally, and making sure the right application receives it), how does it all stay organised instead of becoming one giant, tangled process? That is exactly what the OSI model answers next.</p>
 </section>
 
 <!-- 13 -->
@@ -512,7 +454,7 @@ arp -a          # Windows / macOS</code></pre></div>
 <section class="ch" id="summary">
   <h2>All of it, in one sentence</h2>
   <p class="final">A <b>MAC</b> finds a device locally, an <b>IP</b> finds it across networks, <b>protocols</b> make sure both sides understand each other, a <b>port</b> picks the app, <b>TCP/UDP</b> choose between reliable and fast, <b>DNS</b> turns names into IPs, and <b>DHCP</b> sets all of it up automatically.</p>
-  <p>Next up: <b>OSI Model &amp; Data Communication</b>, which organises every piece so far into seven layers and follows one message all the way from sender to receiver.</p>
+  <p>Next up: <b>Networking Fundamentals III: OSI Model &amp; Data Communication</b>, which introduces <b>layering</b> and organises every piece so far into seven layers and follows one message all the way from sender to receiver.</p>
   <p class="sign">— Vishwa Mohan</p>
 </section>
 

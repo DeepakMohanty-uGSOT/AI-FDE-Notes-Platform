@@ -31,7 +31,7 @@
   <h3>What kind of language Python is</h3>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>High-level</h4><p>Code reads close to plain English, not low-level machine instructions.</p></div>
-    <div class="card t2 tilt-b"><h4>General-purpose</h4><p>The same language builds websites, analyses data, automates tasks and trains AI models.</p></div>
+    <div class="card t2 tilt-b"><h4>General-purpose</h4><p>The same language can build a website, analyze data, automate a task, or build an AI model.</p></div>
     <div class="card t3 tilt-a"><h4>Interpreted</h4><p>The interpreter runs your statements directly, so you can test code quickly.</p></div>
     <div class="card t5 tilt-b"><h4>Dynamically typed</h4><p>You never declare a variable’s type. Python works it out from the value.</p></div>
   </div>
@@ -88,15 +88,26 @@
   <p>(Your version number may differ; anything starting with 3 is fine.) If it is missing, install it from <b>python.org</b>. Any editor works, but an IDE such as <b>VS Code</b> or <b>PyCharm</b> highlights mistakes as you type.</p>
 
   <h3>The road through this module</h3>
-  <div class="flow"><span class="hl">What is Python</span><span>First program</span><span>Syntax · indentation · comments</span><span>Identifiers · variables · naming</span><span>Data types · literals · conversion</span><span class="ok">Input &amp; output</span></div>
-  <p>That is this note. <b>Part 2</b> continues with operators, strings, booleans, <code>None</code>, built-in functions, common errors and exercises, and then the module moves on to control flow.</p>
+  <p>Each concept below comes with what it is, its syntax, an example and the output. <b>Run every example yourself</b> before moving to the next topic.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>What is Python?</b>then your first Python program</div></li>
+    <li><span class="dot">2</span><div><b>Syntax → indentation → comments</b></div></li>
+    <li><span class="dot">3</span><div><b>Identifiers → variables → naming conventions</b></div></li>
+    <li><span class="dot">4</span><div><b>Data types → literals → type conversion</b></div></li>
+    <li><span class="dot">5</span><div><b>Input &amp; output</b><span class="tag">→ end of Part 1</span></div></li>
+    <li><span class="dot">6</span><div><b>Operators → precedence → separators and delimiters</b><span class="tag">→ Part 2</span></div></li>
+    <li><span class="dot">7</span><div><b>Strings → string indexing → string slicing → f-strings</b></div></li>
+    <li><span class="dot">8</span><div><b>Boolean values → None → built-in functions</b></div></li>
+    <li><span class="dot">9</span><div><b>Putting everything together → basic problem solving</b></div></li>
+    <li><span class="dot">10</span><div><b>Common errors → practical exercises</b><span class="tag">→ then Module 2: Control Flow</span></div></li>
+  </ol>
+  <p>Steps 1 to 5 are this note. <b>Part 2</b> continues from operators onward, and then the module moves on to control flow.</p>
 </section>
 
 <!-- 2 -->
 <section class="ch" id="first-program">
   <h2>Your first Python program</h2>
   <pre><code class="language-python">print("Hello, World!")</code></pre>
-  <pre class="out"><code>Hello, World!</code></pre>
   <p>A <mark>statement is one instruction</mark>. The line above is one statement. Python runs statements one after another, from top to bottom.</p>
   <h3>Understanding <code>print()</code></h3>
   <p><code>print</code> is a <b>built-in function</b>. You <b>call</b> a function by writing its name followed by parentheses; whatever you put inside is the <b>argument</b> passed to it.</p>
@@ -109,6 +120,7 @@
   <h3>Running a Python program</h3>
   <p>Save your code in a <code>.py</code> file and run it from the terminal:</p>
   <pre><code class="language-bash">python app.py</code></pre>
+  <figure class="shot"><img src="img/01.webp" alt="VS Code: app.py contains print(&quot;Hello World!&quot;); the terminal runs python .\app.py and prints Hello World!" width="1400" height="232"><figcaption>The file on the left, the terminal on the right: <code>python .\app.py</code> runs it and the text appears. (This run used <code>"Hello World!"</code> without the comma.)</figcaption></figure>
   <p>Most editors also have a “Run” button that does the same thing.</p>
   <h3>What happens when it runs</h3>
   <ol class="path">
@@ -122,23 +134,21 @@
 <section class="ch" id="syntax">
   <h2>Syntax: the rules Python follows</h2>
   <p><b>Syntax</b> is the set of rules Python code must follow, just as English has grammar. A statement that follows the rules is <b>valid</b>; one that breaks a rule is <b>invalid</b>, and Python refuses to run it with a <code>SyntaxError</code>.</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">print("Deployment successful")</code></pre></div>
-    <div class="codebox"><span class="cap">❌ invalid: no closing quote or parenthesis</span><pre><code class="language-python">print("Deployment successful</code></pre></div>
-  </div>
-  <pre class="out"><code>  File "app.py", line 1
-    print("Deployment successful
-          ^
-SyntaxError: unterminated string literal (detected at line 1)</code></pre>
+  <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">print("Deployment successful")</code></pre></div>
+  <figure class="shot"><img src="img/02.webp" alt="VS Code: print(&quot;Deployment successful&quot;) runs and the terminal prints Deployment successful" width="1400" height="182"><figcaption>A valid statement runs and prints its text.</figcaption></figure>
+  <p>Here is an invalid one, missing its closing quotation mark <b>and</b> its closing parenthesis:</p>
+  <div class="codebox"><span class="cap">❌ invalid: no closing quote or parenthesis</span><pre><code class="language-python">print("Deployment successful</code></pre></div>
+  <pre class="out"><code>SyntaxError: unterminated string literal (detected at line 1)</code></pre>
+  <p>Close the quote but still forget the parenthesis, and Python stops with a different message, pointing at the bracket it never saw closed:</p>
+  <div class="codebox"><span class="cap">❌ invalid: no closing parenthesis</span><pre><code class="language-python">print("Deployment successful"</code></pre></div>
+  <figure class="shot"><img src="img/03.webp" alt="VS Code: print(&quot;Deployment successful&quot; without the closing bracket; the terminal shows File app.py, line 1, a caret under the open bracket, and SyntaxError: '(' was never closed" width="1400" height="218"><figcaption>Nothing runs at all: Python reports <code>SyntaxError: '(' was never closed</code> and marks the bracket with <code>^</code>.</figcaption></figure>
 
   <h3>Statements run in order</h3>
   <p>A program can contain one statement or thousands. Python runs them <b>in the exact order they appear</b>, top to bottom, unless something like a condition or a loop (coming soon) changes that order.</p>
   <pre><code class="language-python">print("Connecting to server...")
 print("Connection established")
 print("Server ready to accept requests")</code></pre>
-  <pre class="out"><code>Connecting to server...
-Connection established
-Server ready to accept requests</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code: three print statements; the terminal prints Connecting to server..., Connection established, Server ready to accept requests in that order" width="1400" height="224"><figcaption>Three statements, three lines of output, in exactly the order they were written.</figcaption></figure>
 
   <h3>Python is case-sensitive</h3>
   <p>Uppercase and lowercase letters are different characters to Python, so two names that differ only in capitalisation are <b>two separate names</b> pointing at two different values.</p>
@@ -147,8 +157,7 @@ Name = "Python"
 
 print(name)
 print(Name)</code></pre>
-  <pre class="out"><code>Deepak
-Python</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="VS Code: name = &quot;Deepak&quot; and Name = &quot;Python&quot; are printed; the terminal shows Deepak then Python" width="1400" height="226"><figcaption><code>name</code> and <code>Name</code> are two different variables holding two different values.</figcaption></figure>
   <div class="sticky warn"><strong>Classic beginner slip</strong> <code>Print("hi")</code> fails with <code>NameError: name 'Print' is not defined</code>. The function is <code>print</code>, all lowercase.</div>
 </section>
 
@@ -187,7 +196,7 @@ if attendance_days &gt;= 20:
   <p>If Python expects an indented block and doesn’t find one, it raises an error before the program even starts:</p>
   <pre><code class="language-python">if attendance_days &gt;= 20:
 print("Eligible for bonus")</code></pre>
-  <pre class="out"><code>IndentationError: expected an indented block after 'if' statement on line 1</code></pre>
+  <figure class="shot"><img src="img/06.webp" alt="VS Code: an if line followed by an unindented print; the terminal shows File app.py, line 2, carets under print, and IndentationError: expected an indented block after 'if' statement on line 1" width="1400" height="242"><figcaption>Python points at line 2, the <code>print</code> that should have been indented: <code>IndentationError: expected an indented block after 'if' statement on line 1</code>.</figcaption></figure>
   <h3>Rules to follow</h3>
   <ul>
     <li>Use <b>4 spaces</b> per level. This is the accepted standard in the Python community.</li>
@@ -207,7 +216,7 @@ print("Eligible for bonus")</code></pre>
   <pre><code class="language-python"># Calculate the employee's net salary after deductions
 net_salary = 45000 - 3200
 print(net_salary)</code></pre>
-  <pre class="out"><code>41800</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="VS Code: a comment line, net_salary = 45000 - 3200 and print(net_salary); the terminal prints 41800" width="1400" height="199"><figcaption>The comment line produces no output at all; only the result <code>41800</code> is printed.</figcaption></figure>
   <h3>Inline comments</h3>
   <p>A comment at the end of a line that already has code:</p>
   <pre><code class="language-python">retry_limit = 3  # maximum number of retry attempts allowed</code></pre>
@@ -250,13 +259,19 @@ net_salary = 45000 - 3200</code></pre>
     <li>Case-sensitive: <code>age</code>, <code>Age</code> and <code>AGE</code> are three different names.</li>
     <li>No fixed maximum length, but clear, concise names are easier to read.</li>
   </ul>
-  <div class="two">
-    <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">student_name = "Rahul"
+  <p>These are <b>valid</b>: Python recognises them as names that can identify variables, functions, classes and other objects.</p>
+  <div class="codebox"><span class="cap">✅ valid</span><pre><code class="language-python">student_name = "Rahul"
 age2 = 20
-_total = 100</code></pre></div>
-    <div class="codebox"><span class="cap">❌ invalid: SyntaxError</span><pre><code class="language-python">2age = 20               # starts with a digit
-student name = "Rahul"  # contains a space</code></pre></div>
-  </div>
+_total = 100
+
+print(student_name, age2, _total)</code></pre></div>
+  <figure class="shot"><img src="img/08.webp" alt="VS Code: student_name, age2 and _total are assigned and printed; the terminal shows Rahul 20 100" width="1400" height="244"><figcaption>All three names work: the program prints <code>Rahul 20 100</code>.</figcaption></figure>
+  <p>These are <b>invalid</b>. Python raises a <code>SyntaxError</code> for both, because it cannot recognise them as names:</p>
+  <div class="codebox"><span class="cap">❌ invalid: starts with a digit</span><pre><code class="language-python">2age = 20
+
+print(2age)</code></pre></div>
+  <figure class="shot"><img src="img/09.webp" alt="VS Code: 2age = 20; the terminal shows File app.py, line 1, a caret under 2age, and SyntaxError: invalid decimal literal" width="1400" height="233"><figcaption>Python sees <code>2</code> and expects a number, so it reports <code>SyntaxError: invalid decimal literal</code>.</figcaption></figure>
+  <div class="codebox"><span class="cap">❌ invalid: contains a space</span><pre><code class="language-python">student name = "Rahul"</code></pre></div>
   <h3>Python keywords</h3>
   <p>A <b>keyword</b> is a word with a fixed meaning built into the language, so it cannot be used as a name. Python 3 has <b>35</b> of them:</p>
   <div class="tbl"><table>
@@ -279,6 +294,7 @@ student name = "Rahul"  # contains a space</code></pre></div>
   <pre><code class="language-python">employee_name = "Deepak"
 employee_age = 30</code></pre>
   <h3>Understanding assignment</h3>
+  <p>It helps to break the statement <code>employee_age = 30</code> into its three parts:</p>
   <div class="anatomy"><span class="a1">employee_age</span> <span class="a3">=</span> <span class="a2">30</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p>the variable name</p></div>
@@ -289,7 +305,7 @@ employee_age = 30</code></pre>
   <h3>Reading a variable</h3>
   <pre><code class="language-python">employee_age = 30
 print(employee_age)</code></pre>
-  <pre class="out"><code>30</code></pre>
+  <figure class="shot"><img src="img/10.webp" alt="VS Code: employee_age = 30 and print(employee_age); the terminal prints 30" width="1400" height="201"><figcaption>Using the name gives you its current value: <code>30</code>.</figcaption></figure>
   <h3>Changing (updating) a variable</h3>
   <p>Assigning a new value to the same name does <b>not</b> create a second variable. The same name now refers to the new value.</p>
   <pre><code class="language-python">stock_count = 20
@@ -297,8 +313,7 @@ print(stock_count)
 
 stock_count = 15
 print(stock_count)</code></pre>
-  <pre class="out"><code>20
-15</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="VS Code: stock_count is set to 20 and printed, then set to 15 and printed; the terminal shows 20 then 15" width="1400" height="224"><figcaption>Same name, new value: the first <code>print</code> shows 20, the second shows 15.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="The name stock_count first points to the object 20, then is moved to point to the object 15">
       <g class="rough">
@@ -326,15 +341,13 @@ print(stock_count)</code></pre>
 print(employee_name)
 print(employee_age)
 print(department)</code></pre>
-  <pre class="out"><code>Rahul
-21
-Bengaluru</code></pre>
+  <figure class="shot"><img src="img/12.webp" alt="VS Code: employee_name, employee_age, department = &quot;Rahul&quot;, 21, &quot;Bengaluru&quot; and three prints; the terminal shows Rahul, 21, Bengaluru" width="1400" height="248"><figcaption>Each name picks up the value in the same position: Rahul, 21, Bengaluru.</figcaption></figure>
   <h3>The same value for several variables</h3>
   <p>Chain the assignment instead of repeating it:</p>
   <pre><code class="language-python">retries_allowed = max_retries = default_retries = 3
 
 print(retries_allowed, max_retries, default_retries)</code></pre>
-  <pre class="out"><code>3 3 3</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="VS Code: retries_allowed = max_retries = default_retries = 3 and a print of all three; the terminal shows 3 3 3" width="1400" height="205"><figcaption>One statement, three names, all holding <code>3</code>.</figcaption></figure>
   <h3>Variables refer to objects</h3>
   <p>In Python every value is an <b>object</b> in memory, and a variable is a <mark>label attached to that object</mark>, not a box that holds it. Writing <code>employee_age = 31</code> after <code>employee_age = 30</code> doesn’t change the object <code>30</code>; Python points the name at a different object, <code>31</code>. In the chained example above, all three names are tags on the <b>same</b> object:</p>
   <figure>
@@ -413,11 +426,8 @@ print(type(99.5))
 print(type("Python"))
 print(type(True))
 print(type(None))</code></pre>
-  <pre class="out"><code>&lt;class 'int'&gt;
-&lt;class 'float'&gt;
-&lt;class 'str'&gt;
-&lt;class 'bool'&gt;
-&lt;class 'NoneType'&gt;</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="VS Code: five print(type(...)) lines; the terminal shows class int, class float, class str, class bool, class NoneType" width="1400" height="262"><figcaption>One type per value: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code> and <code>NoneType</code>.</figcaption></figure>
+  <h3>Quick reference</h3>
   <div class="tbl"><table>
     <tr><th>Value</th><th>Type</th></tr>
     <tr><td><code>10</code></td><td><code>int</code></td></tr>
@@ -467,27 +477,32 @@ None</code></pre>
     <tr><td><code>str(value)</code></td><td>text (a string)</td></tr>
     <tr><td><code>bool(value)</code></td><td><code>True</code> or <code>False</code></td></tr>
   </table></div>
-  <pre><code class="language-python">age = int("20")              # the text "20" becomes the integer 20
-print(age, type(age))
-
-price = float("99.5")        # the text "99.5" becomes the number 99.5
-print(price)
-
-age_text = str(20)           # the integer 20 becomes the string "20"
-print(age_text, type(age_text))
-
-print(bool(1), bool(0))      # 1 becomes True, 0 becomes False</code></pre>
-  <pre class="out"><code>20 &lt;class 'int'&gt;
-99.5
-20 &lt;class 'str'&gt;
-True False</code></pre>
+  <h3><code>int(value)</code></h3>
+  <p>Converts a value into an integer (whole number), when possible.</p>
+  <pre><code class="language-python">age = int("20")
+print(age, type(age))</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="VS Code: age = int(&quot;20&quot;) and print(age, type(age)); the terminal shows 20 class int" width="1400" height="218"><figcaption>The text <code>"20"</code> is converted into the integer <code>20</code>.</figcaption></figure>
+  <h3><code>float(value)</code></h3>
+  <p>Converts a value into a floating-point (decimal) number.</p>
+  <pre><code class="language-python">price = float("99.5")
+print(price)</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="VS Code: price = float(&quot;99.5&quot;) and print(price); the terminal shows 99.5" width="1400" height="161"><figcaption>The text <code>"99.5"</code> is converted into the number <code>99.5</code>.</figcaption></figure>
+  <h3><code>str(value)</code></h3>
+  <p>Converts a value into text (a string).</p>
+  <pre><code class="language-python">age_text = str(20)
+print(age_text, type(age_text))</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="VS Code: age_text = str(20) and print(age_text, type(age_text)); the terminal shows 20 class str" width="1400" height="205"><figcaption>The integer <code>20</code> is converted into the string <code>"20"</code>.</figcaption></figure>
+  <h3><code>bool(value)</code></h3>
+  <p>Converts a value into either <code>True</code> or <code>False</code>.</p>
+  <pre><code class="language-python">print(bool(1), bool(0))</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="VS Code: print(bool(1), bool(0)); the terminal shows True False" width="1400" height="185"><figcaption><code>1</code> becomes <code>True</code> and <code>0</code> becomes <code>False</code>.</figcaption></figure>
   <p>Notice that <code>20</code> and <code>"20"</code> print the same; only <code>type()</code> reveals the difference.</p>
   <div class="sticky info l"><strong>How <code>bool()</code> decides</strong> <code>0</code>, <code>0.0</code>, the empty string <code>""</code> and <code>None</code> become <code>False</code>; almost everything else becomes <code>True</code>. So <code>bool("False")</code> is <code>True</code>, because it is a non-empty string!</div>
   <h3>When conversion fails</h3>
   <p>Not every value can become every type. If the text isn’t a valid number, Python raises a <code>ValueError</code>:</p>
   <pre><code class="language-python">int("hello")</code></pre>
-  <pre class="out"><code>ValueError: invalid literal for int() with base 10: 'hello'</code></pre>
-  <p>There is simply no sensible whole number that <code>"hello"</code> could mean.</p>
+  <figure class="shot"><img src="img/19.webp" alt="VS Code: int(&quot;hello&quot;); the terminal shows a Traceback pointing at line 1 and ValueError: invalid literal for int() with base 10: 'hello'" width="1400" height="272"><figcaption>A full traceback ending in <code>ValueError: invalid literal for int() with base 10: 'hello'</code>.</figcaption></figure>
+  <p>Python raises a <code>ValueError</code> because <code>"hello"</code> doesn’t represent any valid whole number, so there is no sensible way to convert it.</p>
   <h3>Explicit vs implicit conversion</h3>
   <div class="two">
     <div class="card t1 tilt-a"><h4>Explicit</h4><p>You call <code>int()</code>, <code>float()</code> or <code>str()</code> yourself, as above.</p></div>
@@ -495,7 +510,7 @@ True False</code></pre>
   </div>
   <pre><code class="language-python">result = 5 + 2.5
 print(result, type(result))</code></pre>
-  <pre class="out"><code>7.5 &lt;class 'float'&gt;</code></pre>
+  <figure class="shot"><img src="img/20.webp" alt="VS Code: result = 5 + 2.5 and print(result, type(result)); the terminal shows 7.5 class float" width="1400" height="197"><figcaption>Nobody asked for a float, but <code>5 + 2.5</code> gives <code>7.5 &lt;class 'float'&gt;</code>.</figcaption></figure>
 </section>
 
 <!-- 12 -->
@@ -508,42 +523,33 @@ print(result, type(result))</code></pre>
 employee_age = 21
 
 print(employee_name, employee_age)</code></pre>
-  <pre class="out"><code>Rahul 21</code></pre>
-  <div class="two">
-    <div>
-      <h3>The <code>sep</code> parameter</h3>
-      <p>Replaces the space placed <b>between</b> values.</p>
-      <pre><code class="language-python">print("2026", "09", "21", sep="-")</code></pre>
-      <pre class="out"><code>2026-09-21</code></pre>
-    </div>
-    <div>
-      <h3>The <code>end</code> parameter</h3>
-      <p>Replaces the newline printed <b>after</b> the output, so the next <code>print()</code> continues on the same line.</p>
-      <pre><code class="language-python">print("Processing", end=" ")
+  <figure class="shot"><img src="img/21.webp" alt="VS Code: employee_name = &quot;Rahul&quot;, employee_age = 21, print(employee_name, employee_age); the terminal shows Rahul 21" width="1400" height="207"><figcaption>Two values, one space between them: <code>Rahul 21</code>.</figcaption></figure>
+  <h3>The <code>sep</code> parameter</h3>
+  <p><code>sep</code> controls what is placed <b>between</b> multiple values, replacing the default single space.</p>
+  <pre><code class="language-python">print("2026", "09", "21", sep="-")</code></pre>
+  <figure class="shot"><img src="img/22.webp" alt="VS Code: print(&quot;2026&quot;, &quot;09&quot;, &quot;21&quot;, sep=&quot;-&quot;); the terminal shows 2026-09-21" width="1400" height="180"><figcaption>The hyphen replaces the spaces: <code>2026-09-21</code>.</figcaption></figure>
+  <h3>The <code>end</code> parameter</h3>
+  <p>By default <code>print()</code> moves to a new line after its output. <code>end</code> replaces that newline with something else, such as a space, so the next <code>print()</code> continues on the same line.</p>
+  <pre><code class="language-python">print("Processing", end=" ")
 print("request")</code></pre>
-      <pre class="out"><code>Processing request</code></pre>
-    </div>
-  </div>
+  <figure class="shot"><img src="img/23.webp" alt="VS Code: print(&quot;Processing&quot;, end=&quot; &quot;) then print(&quot;request&quot;); the terminal shows Processing request on one line" width="1400" height="161"><figcaption>Two <code>print()</code> calls, one line of output: <code>Processing request</code>.</figcaption></figure>
   <h3>Taking input with <code>input()</code></h3>
   <p><code>input()</code> pauses the program, waits for the user to type something and press <kbd>Enter</kbd>, and returns what they typed. The optional text in the brackets is shown as a prompt.</p>
   <pre><code class="language-python">employee_name = input("Enter employee name: ")
 print("Welcome,", employee_name)</code></pre>
-  <pre class="out"><code>Enter employee name: Priya
-Welcome, Priya</code></pre>
+  <figure class="shot"><img src="img/24.webp" alt="VS Code: employee_name = input(&quot;Enter employee name: &quot;) and a Welcome print; the terminal shows Enter employee name: Deepak, then Welcome, Deepak" width="1400" height="215"><figcaption>The program waits at the prompt; the user typed <code>Deepak</code> and pressed <kbd>Enter</kbd>, so it prints <code>Welcome, Deepak</code>.</figcaption></figure>
   <h3><code>input()</code> always returns a string</h3>
   <p>This is one of the most important rules to remember: <mark>whatever the user types, even digits, <code>input()</code> gives you a <code>str</code></mark>.</p>
   <pre><code class="language-python">age = input("Enter your age: ")
 print(type(age))</code></pre>
-  <pre class="out"><code>Enter your age: 20
-&lt;class 'str'&gt;</code></pre>
-  <p>The user typed 20, but Python stored the string <code>"20"</code>, not the integer <code>20</code>.</p>
+  <figure class="shot"><img src="img/25.webp" alt="VS Code: age = input(&quot;Enter your age: &quot;) and print(type(age)); the terminal shows Enter your age: 22, then class str" width="1400" height="180"><figcaption>The user typed <code>22</code>, yet the type is <code>&lt;class 'str'&gt;</code>.</figcaption></figure>
+  <p>The user typed 22, but Python stored the string <code>"22"</code>, not the integer <code>22</code>. Type 20 and you get the string <code>"20"</code>; the rule never changes.</p>
   <h3>Converting user input</h3>
   <p>So convert it with <code>int()</code> or <code>float()</code> before calculating:</p>
   <pre><code class="language-python">age = int(input("Enter your age: "))
 years_until_retirement = 60 - age
 print(years_until_retirement)</code></pre>
-  <pre class="out"><code>Enter your age: 22
-38</code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="VS Code: age = int(input(&quot;Enter your age: &quot;)), years_until_retirement = 60 - age, print; the terminal shows Enter your age: 22, then 38" width="1400" height="235"><figcaption>After <code>int()</code>, the maths works: 60 − 22 = <code>38</code>.</figcaption></figure>
   <div class="sticky warn"><strong>Forget to convert and it breaks</strong> Without <code>int()</code>, <code>60 - age</code> raises <code>TypeError: unsupported operand type(s) for -: 'int' and 'str'</code>. And if the user types <code>twenty</code>, even <code>int()</code> raises a <code>ValueError</code>. You will learn to handle that gracefully in the Error Handling note.</div>
   <h3>The overall input-to-output flow</h3>
   <p>Almost every interactive program follows this sequence:</p>
@@ -552,7 +558,8 @@ print(years_until_retirement)</code></pre>
 
 <!-- 13 -->
 <section class="ch" id="recap">
-  <h2>Part 1 at a glance</h2>
+  <h2>Summary: what you learned in this part</h2>
+  <p>This part covered everything you need to write your first complete Python programs: from what Python is and how it runs your code, to storing values in variables, to taking input from a user and displaying a result.</p>
   <div class="tbl"><table>
     <tr><th>Concept</th><th>What to remember</th></tr>
     <tr><td>Python</td><td>A high-level, interpreted language; the interpreter runs your <code>.py</code> file top to bottom.</td></tr>

@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The FDE Mindset · The Forward Deployed Engineer | AIFDE Notes</title>
+<meta name="description" content="The seven habits of thinking that make a Forward Deployed Engineer effective: ownership, handling ambiguity, speed, technical depth, business understanding, customer empathy and bias toward action.">
+<meta name="keywords" content="ownership, ambiguity, speed, technical depth, business understanding, customer empathy, bias toward action">
+<meta name="date" content="2026-09-18">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../assets/style.css">
+<script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
+</head>
+<body data-root="../../../" data-page="note" data-note="fde/fde-mindset">
+
+<main class="page" id="top">
+
+<header class="top">
+  <h1>The FDE Mindset</h1>
+  <p class="byline">Skills tell you how to build; mindset tells you what to do when the problem is vague, the customer is waiting and something just broke. Learn the seven habits of thinking that great FDEs share.</p>
+</header>
+
+<!-- 1 -->
+<section class="ch" id="overview">
+  <h2>Seven habits of thinking</h2>
+  <div class="story"><b class="lbl">The good auto driver</b>Two drivers know the same roads. One drops you at the main gate and says “my job is done”. The other asks which building, finds a shortcut when the road is blocked, and waits until you are actually inside. <mark>Same skills, different mindset, and only one of them solved your problem.</mark></div>
+  <p>The previous note listed <i>what</i> an FDE does. This note is about <i>how an FDE thinks</i> while doing it. We will use one running example throughout: <b>ABC Bank</b>, which wants AI to help with loan applications and customer questions.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 280" role="img" aria-label="The FDE mindset in the centre, connected to seven habits: ownership, ambiguity, speed, technical depth, business understanding, customer empathy and bias toward action">
+      <g class="rough">
+        <path class="ln" d="M330 117 L 90 72"/>
+        <path class="ln" d="M345 117 L 270 72"/>
+        <path class="ln" d="M375 117 L 450 72"/>
+        <path class="ln" d="M390 117 L 630 72"/>
+        <path class="ln" d="M320 173 L 180 210"/>
+        <path class="ln" d="M360 173 L 360 210"/>
+        <path class="ln" d="M400 173 L 540 210"/>
+        <rect class="box f-purple" x="260" y="115" width="200" height="60" rx="16"/>
+        <rect class="box f-blue" x="15" y="20" width="150" height="50" rx="12"/>
+        <rect class="box f-yellow" x="195" y="20" width="150" height="50" rx="12"/>
+        <rect class="box f-orange" x="375" y="20" width="150" height="50" rx="12"/>
+        <rect class="box f-teal" x="555" y="20" width="150" height="50" rx="12"/>
+        <rect class="box f-green" x="105" y="210" width="150" height="50" rx="12"/>
+        <rect class="box f-pink" x="285" y="210" width="150" height="50" rx="12"/>
+        <rect class="box f-grey" x="465" y="210" width="150" height="50" rx="12"/>
+      </g>
+      <text class="th" x="360" y="154" text-anchor="middle">FDE mindset</text>
+      <text class="t" x="90" y="51" text-anchor="middle">1 Ownership</text>
+      <text class="t" x="270" y="51" text-anchor="middle">2 Ambiguity</text>
+      <text class="t" x="450" y="51" text-anchor="middle">3 Speed</text>
+      <text class="t" x="630" y="51" text-anchor="middle">4 Tech depth</text>
+      <text class="t" x="180" y="241" text-anchor="middle">5 Business</text>
+      <text class="t" x="360" y="241" text-anchor="middle">6 Empathy</text>
+      <text class="t" x="540" y="241" text-anchor="middle">7 Action</text>
+    </svg></div>
+    <figcaption>Seven habits, one goal: the customer’s problem actually gets solved.</figcaption>
+  </figure>
+</section>
+
+<!-- 2 -->
+<section class="ch" id="ownership">
+  <h2>1 · Ownership</h2>
+  <p><mark>Ownership means taking responsibility for solving a customer’s problem from start to finish.</mark> An FDE does not think “I only need to finish my assigned task.” An FDE thinks “I need to make sure the customer’s problem is actually solved.”</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>Responsibility from discovery to solution</b>Stay involved from understanding the problem until the solution works in production. <span class="tag">→ understand → build → deploy → fix problems</span></div></li>
+    <li><span class="dot">2</span><div><b>Own technical decisions and implementation</b>Take responsibility for <i>how</i> it is built: which API, database connection or AI model to use.</div></li>
+    <li><span class="dot">3</span><div><b>Follow problems until they are resolved</b>If something breaks, don’t just pass it on. <span class="tag">→ API fails → find the cause → fix it → test again</span></div></li>
+    <li><span class="dot">4</span><div><b>Own outcomes, not just tasks</b>Don’t just build a chatbot; make sure it actually reduces the customer-support workload.</div></li>
+    <li><span class="dot">5</span><div><b>Coordinate product, engineering and customer teams</b>Customer explains the issue → FDE works with product and engineering → solution is built → FDE reports back to the customer.</div></li>
+  </ol>
+  <h3>Example: ABC Bank’s loan-status assistant</h3>
+  <p>ABC Bank wants an AI assistant that answers customers’ loan-status questions.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="A track of seven steps: understand, design, build, deploy, test, fix, outcome. The task mindset covers only the build step. Ownership covers the whole track until customers can get their loan status.">
+      <g class="rough">
+        <path class="ln" d="M60 100 L 660 100"/>
+        <circle class="box f-card" cx="60" cy="100" r="10"/>
+        <circle class="box f-card" cx="160" cy="100" r="10"/>
+        <circle class="box f-orange" cx="260" cy="100" r="10"/>
+        <circle class="box f-card" cx="360" cy="100" r="10"/>
+        <circle class="box f-card" cx="460" cy="100" r="10"/>
+        <circle class="box f-card" cx="560" cy="100" r="10"/>
+        <circle class="box f-green" cx="660" cy="100" r="12"/>
+        <path class="ln" d="M215 80 L 215 70 L 305 70 L 305 80"/>
+        <path class="lr" d="M45 155 L 45 165 L 675 165 L 675 155"/>
+      </g>
+      <text class="tr" x="260" y="56" text-anchor="middle">task mindset: “I built the API, done.”</text>
+      <text class="ts" x="60" y="132" text-anchor="middle">Understand</text>
+      <text class="ts" x="160" y="132" text-anchor="middle">Design</text>
+      <text class="ts" x="260" y="132" text-anchor="middle">Build</text>
+      <text class="ts" x="360" y="132" text-anchor="middle">Deploy</text>
+      <text class="ts" x="460" y="132" text-anchor="middle">Test real data</text>
+      <text class="ts" x="560" y="132" text-anchor="middle">Fix errors</text>
+      <text class="ts" x="660" y="132" text-anchor="middle">Outcome</text>
+      <text class="tr" x="360" y="194" text-anchor="middle">ownership: until customers really get their loan status</text>
+    </svg></div>
+    <figcaption>Ownership stretches across the whole journey, not one box in it.</figcaption>
+  </figure>
+  <div class="flow"><span>Customer problem</span><span>Understand the issue</span><span>Design the solution</span><span>Build AI + API integration</span><span>Deploy to bank</span><span>Test with real data</span><span>Fix errors</span><span class="ok">Customers can get loan status</span></div>
+</section>
+
+<!-- 3 -->
+<section class="ch" id="ambiguity">
+  <h2>2 · Handling ambiguity</h2>
+  <p><b>Ambiguity</b> means the problem or requirements are not completely clear. Customers say things like “We need AI to make this faster” without saying exactly what to build. <mark>The FDE works out what they really need and keeps moving even when some information is missing.</mark></p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Work with unclear requirements</h4><p>Customers may not know what they want technically. Start with what you have and work toward the missing pieces.</p></div>
+    <div class="card t2 tilt-b"><h4>Ask to find the real problem</h4><p>Ask before building: “Which part of the process is slow?” “Who is using the system?”</p></div>
+    <div class="card t7 tilt-a"><h4>Make reasonable assumptions</h4><p>Waiting for every detail stalls a project. Assume sensibly, <b>say the assumption out loud</b>, and continue.</p></div>
+    <div class="card t3 tilt-b"><h4>Name unknowns and risks</h4><p>“We don’t know if the customer’s API can handle 1,000 requests per minute.”</p></div>
+    <div class="card t8 tilt-a"><h4>Break it into small problems</h4><p>“Build AI assistant” → understand data → connect API → test AI → deploy assistant.</p></div>
+    <div class="card t5 tilt-b"><h4>Iterate as you learn</h4><p>The first solution need not be perfect. Build, learn, improve.</p></div>
+  </div>
+  <h3>Example: “reduce loan-processing time”</h3>
+  <p>ABC Bank says: <i>“We want AI to reduce the time employees spend processing loan applications.”</i> The requirement is unclear, so the FDE narrows it down:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 215" role="img" aria-label="A funnel that narrows an unclear request into concrete questions and finally a small prototype">
+      <g class="rough">
+        <path class="box f-yellow" d="M40 20 L 680 20 L 500 200 L 220 200 Z"/>
+      </g>
+      <text class="t" x="360" y="50" text-anchor="middle">“We want AI to reduce loan processing time.”</text>
+      <text class="t" x="360" y="86" text-anchor="middle">What takes most time? Manual document reading.</text>
+      <text class="t" x="360" y="122" text-anchor="middle">Which documents? Which fields?</text>
+      <text class="t" x="360" y="156" text-anchor="middle">How does data reach the bank?</text>
+      <text class="th" x="360" y="190" text-anchor="middle">Small prototype</text>
+    </svg></div>
+    <figcaption>Each question makes the problem smaller and more buildable.</figcaption>
+  </figure>
+  <div class="flow"><span class="bad">Unclear request</span><span>What takes the most time?</span><span>Employees read loan documents by hand</span><span>Can AI extract the info?</span><span>Which documents? Which fields?</span><span>How will data reach the bank system?</span><span class="hl">Build small prototype</span><span class="ok">Test → feedback → improve</span></div>
+  <div class="sticky tip"><strong>Ambiguity in one line</strong> Don’t get stuck because the problem is unclear. Ask, assume carefully, break it down, and keep learning as you go.</div>
+</section>
+
+<!-- 4 -->
+<section class="ch" id="speed">
+  <h2>3 · Speed</h2>
+  <p><b>Speed</b> means solving and testing customer problems quickly without wasting time: <mark>understand → build something small → get feedback → improve</mark>. Speed does <b>not</b> mean careless or unreliable code.</p>
+  <div class="tbl"><table>
+    <tr><th>Habit</th><th>Example</th></tr>
+    <tr><td>Move quickly from understanding to experimenting</td><td>Customer wants AI document processing → test it on 20 sample documents</td></tr>
+    <tr><td>Do the most important technical work first</td><td>Check the AI can extract data correctly before building the full app</td></tr>
+    <tr><td>Build small prototypes before big implementations</td><td>A simple chatbot before the full production system</td></tr>
+    <tr><td>Avoid unnecessary early complexity</td><td>One API and one data source, not 10 systems on day one</td></tr>
+    <tr><td>Get feedback quickly</td><td>Customer tries the chatbot: “It also needs to answer loan-status questions.”</td></tr>
+    <tr><td>Balance speed with reliability and quality</td><td>A prototype can have basic error handling; production needs proper security, testing and monitoring</td></tr>
+  </table></div>
+  <h3>Example: two weeks, not two months</h3>
+  <p>Instead of spending <b>2 months</b> building everything for ABC Bank’s loan assistant:</p>
+  <div class="flow"><span>Customer problem</span><span class="hl">Small prototype</span><span>20 sample loan documents</span><span>Test AI extraction</span><span>Show customer</span><span>Get feedback</span><span>Improve</span><span class="ok">Build production system</span></div>
+  <div class="two">
+    <div class="card t2 tilt-a"><h4>Fast is right for…</h4><p>Experiments, prototypes, proving whether an idea works, getting early feedback.</p></div>
+    <div class="card t4 tilt-b"><h4>Careful is right for…</h4><p>The production system: security, testing, monitoring, maintainable code.</p></div>
+  </div>
+  <div class="sticky tip l"><strong>Speed in one line</strong> Build small → test fast → get feedback → improve → <b>then</b> build big.</div>
+</section>
+
+<!-- 5 -->
+<section class="ch" id="technical-depth">
+  <h2>4 · Technical depth</h2>
+  <p><b>Technical depth</b> means <mark>understanding how a system actually works, not just how to use it</mark>. Not just “the API is failing”, but <b>why</b> it is failing and how to fix it.</p>
+  <ol class="path">
+    <li><span class="dot">1</span><div><b>See beyond the surface</b>Don’t only call an API; understand how it connects to the backend and database.</div></li>
+    <li><span class="dot">2</span><div><b>Strong engineering fundamentals</b>Programming, data structures, APIs, databases, testing and system design, so solutions are reliable and maintainable.</div></li>
+    <li><span class="dot">3</span><div><b>Debug complex problems</b>AI response is slow → check API → database → network → model → find the bottleneck.</div></li>
+    <li><span class="dot">4</span><div><b>Know how the pieces connect</b>Customer app → API → backend → database → cloud.</div></li>
+    <li><span class="dot">5</span><div><b>Find root causes</b>“The application is slow” → one database query takes 8 seconds.</div></li>
+    <li><span class="dot">6</span><div><b>Make informed decisions</b>Choose based on real requirements and constraints, e.g. use an existing API instead of building a new system from scratch.</div></li>
+    <li><span class="dot">7</span><div><b>Know when to go deeper</b>A small UI glitch may be simple; a data-security issue deserves a much deeper investigation. Go deep when reliability, performance, security or the customer outcome is at stake.</div></li>
+  </ol>
+  <h3>Example: the 10-second answer</h3>
+  <p>ABC Bank’s AI assistant takes <b>10 seconds</b> to answer a question. The surface-level response: “The AI is slow.” The FDE with depth traces every layer instead:</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="A stack of layers from user question through frontend, API, backend, database, document retrieval, LLM and response. The database layer is highlighted as taking 8 of the 10 seconds.">
+      <g class="rough">
+        <rect class="box f-card" x="230" y="10" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="44" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="78" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="112" width="260" height="28" rx="8"/>
+        <rect class="box f-orange" x="230" y="146" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="180" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="214" width="260" height="28" rx="8"/>
+        <rect class="box f-card" x="230" y="248" width="260" height="28" rx="8"/>
+        <path class="lr" d="M500 160 L 530 160"/>
+      </g>
+      <text class="t" x="360" y="30" text-anchor="middle">User question</text>
+      <text class="t" x="360" y="64" text-anchor="middle">Frontend</text>
+      <text class="t" x="360" y="98" text-anchor="middle">API</text>
+      <text class="t" x="360" y="132" text-anchor="middle">Backend</text>
+      <text class="t" x="360" y="166" text-anchor="middle">Database query</text>
+      <text class="t" x="360" y="200" text-anchor="middle">Document retrieval</text>
+      <text class="t" x="360" y="234" text-anchor="middle">LLM</text>
+      <text class="t" x="360" y="268" text-anchor="middle">Response</text>
+      <text class="tr" x="540" y="156">8 of 10 seconds</text>
+      <text class="ts" x="540" y="178">the main bottleneck</text>
+      <text class="t" x="20" y="90">Surface view:</text>
+      <text class="ts" x="20" y="114">“The AI is slow.”</text>
+      <text class="t" x="20" y="190">With depth:</text>
+      <text class="ts" x="20" y="214">trace every layer</text>
+    </svg></div>
+    <figcaption>The “slow AI” was really a slow database query.</figcaption>
+  </figure>
+  <p>The FDE optimises the database query, and the response time drops.</p>
+  <div class="sticky fde"><strong>In the field (FDE)</strong> Customers blame the most visible part, usually “the AI”. Measuring each layer before you touch anything saves days of fixing the wrong thing.</div>
+</section>
+
+<!-- 6 -->
+<section class="ch" id="business">
+  <h2>5 · Business understanding</h2>
+  <p><b>Business understanding</b> means knowing how the customer’s business works and <mark>what business result they need</mark>. An FDE thinks beyond code: <b>why</b> does the customer need this, and what should be better afterwards?</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Business context</h4><p>What the customer does, who their users are, how they operate. For a bank: how loan applications are processed.</p></div>
+    <div class="card t3 tilt-b"><h4>Tech → business impact</h4><p>Slow API → loan processing takes longer → customers wait longer.</p></div>
+    <div class="card t7 tilt-a"><h4>Workflows &amp; operational processes</h4><p>The steps people follow to complete a business task. Customer submits loan → employee checks documents → employee verifies data → loan is processed.</p></div>
+    <div class="card t4 tilt-b"><h4>Requirements &amp; constraints</h4><p>“Process loans faster, but customer data must remain secure.”</p></div>
+    <div class="card t2 tilt-a"><h4>The outcome needed</h4><p>“What should be better after we build this?” Loan processing from <b>2 days to a few hours</b>.</p></div>
+    <div class="card t8 tilt-b"><h4>Measurable objectives</h4><p>AI document processing → less manual work → faster loans → better customer experience.</p></div>
+  </div>
+  <h3>Example: “We need an AI system for loan processing”</h3>
+  <p>The FDE does not start building AI immediately. First, the business:</p>
+  <div class="flow v"><span class="bad">Business problem: loans take 2 days</span><span>Why? Employees read documents by hand</span><span class="hl">Technical opportunity: AI extracts the information</span><span class="ok">Business outcome: shorter processing time</span></div>
+  <p>Now the FDE can state a clear objective: <mark class="g">“Build an AI document-processing system that reduces manual data entry and helps decrease loan processing time.”</mark></p>
+</section>
+
+<!-- 7 -->
+<section class="ch" id="empathy">
+  <h2>6 · Customer empathy</h2>
+  <p><b>Customer empathy</b> means understanding the customer’s situation <mark>from their point of view, not just the engineer’s</mark>: what users need, what problems they face, what constraints they have, and then building something truly useful and practical for them.</p>
+  <div class="story"><b class="lbl">The tailor, not the shop</b>A readymade shirt is built for “everyone”. A good tailor measures <i>you</i>, asks how you’ll wear it and adjusts after the trial. Empathy is the tailor’s habit.</div>
+  <ul>
+    <li><b>Understand the customer’s perspective.</b> Not only “How do I build this?” but “What is the customer trying to achieve, and why does it matter to them?”</li>
+    <li><b>Listen carefully.</b> Don’t rush to suggest technology. Hear their concerns about cost, speed, security, usability and reliability.</li>
+    <li><b>Understand workflows and pain points.</b> How do users work today, and where do they struggle? E.g. customer submits document → employee checks it manually → data entered → approval.</li>
+    <li><b>Explain technical ideas simply.</b> Non-technical users may not know “API”, “latency”, “embeddings”, “Kubernetes” or “vector database”. Use plain business language.</li>
+    <li><b>Respect the customer’s constraints and environment.</b> Their budget, existing tools, team skills, security rules and infrastructure shape what is practical.</li>
+    <li><b>Adjust based on real feedback.</b> The first version won’t be perfect; show it, collect feedback, and change it to fit what users actually need: <b>Build → Show → Listen → Improve</b>.</li>
+    <li><b>Build practical solutions.</b> Don’t build something impressive just because you can. Build what the customer can use, maintain, operate and get value from.</li>
+  </ul>
+  <h3>Example: listening to loan officers</h3>
+  <p>Talking to ABC Bank’s loan officers, the FDE hears: <i>“The AI is not the main problem. We spend hours manually checking customer documents.”</i> So the FDE observes their workflow and proposes a change. After seeing a prototype, employees ask for <b>human review before anything is submitted</b>, so the final design includes it.</p>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Today: submit documents, download, read by hand, type in data, loan processing. Proposed: documents, AI extracts, human review added after employee feedback, loan processing.">
+      <g class="rough">
+        <rect class="box f-card" x="24" y="45" width="112" height="50" rx="10"/>
+        <rect class="box f-card" x="164" y="45" width="112" height="50" rx="10"/>
+        <rect class="box f-orange" x="304" y="45" width="112" height="50" rx="10"/>
+        <rect class="box f-orange" x="444" y="45" width="112" height="50" rx="10"/>
+        <rect class="box f-card" x="584" y="45" width="112" height="50" rx="10"/>
+        <path class="ln" d="M138 70 L 162 70" marker-end="url(#ah)"/>
+        <path class="ln" d="M278 70 L 302 70" marker-end="url(#ah)"/>
+        <path class="ln" d="M418 70 L 442 70" marker-end="url(#ah)"/>
+        <path class="ln" d="M558 70 L 582 70" marker-end="url(#ah)"/>
+        <rect class="box f-card" x="20" y="160" width="150" height="50" rx="10"/>
+        <rect class="box f-purple" x="196" y="160" width="150" height="50" rx="10"/>
+        <rect class="box f-green" x="372" y="160" width="150" height="50" rx="10"/>
+        <rect class="box f-card" x="548" y="160" width="150" height="50" rx="10"/>
+        <path class="ln" d="M172 185 L 192 185" marker-end="url(#ah)"/>
+        <path class="ln" d="M348 185 L 368 185" marker-end="url(#ah)"/>
+        <path class="ln" d="M524 185 L 544 185" marker-end="url(#ah)"/>
+      </g>
+      <text class="tr" x="20" y="34">Today: hours of manual checking</text>
+      <text class="tr" x="20" y="149">Proposed: AI helps, a human decides</text>
+      <text class="t" x="80" y="75" text-anchor="middle">Submit docs</text>
+      <text class="t" x="220" y="75" text-anchor="middle">Download</text>
+      <text class="t" x="360" y="75" text-anchor="middle">Read by hand</text>
+      <text class="t" x="500" y="75" text-anchor="middle">Type in data</text>
+      <text class="t" x="640" y="75" text-anchor="middle">Loan process</text>
+      <text class="t" x="95" y="190" text-anchor="middle">Documents</text>
+      <text class="t" x="271" y="190" text-anchor="middle">AI extracts</text>
+      <text class="t" x="447" y="190" text-anchor="middle">Human review</text>
+      <text class="t" x="623" y="190" text-anchor="middle">Loan process</text>
+      <text class="tb" x="447" y="236" text-anchor="middle">added after users’ feedback</text>
+    </svg></div>
+    <figcaption>Empathy changed the design: the review step exists because employees asked for it.</figcaption>
+  </figure>
+  <div class="sticky tip l"><strong>Empathy in one line</strong> Understand the customer → listen to their problems → understand their environment → build what actually works for them.</div>
+</section>
+
+<!-- 8 -->
+<section class="ch" id="action">
+  <h2>7 · Bias toward action</h2>
+  <p><b>Bias toward action</b> means <mark>not getting stuck in endless discussion or waiting for perfect information</mark>. Take what you know, start with a small action, test it, learn from the result, and keep moving.</p>
+  <div class="tbl"><table>
+    <tr><th>Habit</th><th>What it looks like</th></tr>
+    <tr><td>Turn problems into concrete next steps</td><td>Not “The system is too slow” but “Let’s measure the API response time and find which part is slow.”</td></tr>
+    <tr><td>Start with available information</td><td>Use what you know, make reasonable assumptions, start investigating</td></tr>
+    <tr><td>Test assumptions through experiments</td><td>Think the AI can read invoices? Test it on 20 real invoices</td></tr>
+    <tr><td>Build prototypes to answer uncertain questions</td><td>A small prototype answers “Can this actually work?”</td></tr>
+    <tr><td>Learn from results and adjust</td><td>A failed experiment is useful information. Change the approach and try again</td></tr>
+    <tr><td>Move from discussion to implementation</td><td>Instead of a week of meetings, build a small version and show the customer</td></tr>
+  </table></div>
+  <figure>
+    <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="A loop of four steps: try, test, learn, adjust, and back to try again">
+      <g class="rough">
+        <ellipse class="box f-yellow" cx="360" cy="42" rx="72" ry="28"/>
+        <ellipse class="box f-blue" cx="560" cy="130" rx="72" ry="28"/>
+        <ellipse class="box f-green" cx="360" cy="218" rx="72" ry="28"/>
+        <ellipse class="box f-orange" cx="160" cy="130" rx="72" ry="28"/>
+        <path class="lr" d="M434 46 C 500 56, 540 78, 552 98" marker-end="url(#ahr)"/>
+        <path class="lr" d="M552 162 C 540 184, 500 206, 434 214" marker-end="url(#ahr)"/>
+        <path class="lr" d="M286 214 C 220 206, 180 184, 168 162" marker-end="url(#ahr)"/>
+        <path class="lr" d="M168 98 C 180 78, 220 56, 286 46" marker-end="url(#ahr)"/>
+      </g>
+      <text class="th" x="360" y="51" text-anchor="middle">Try</text>
+      <text class="th" x="560" y="139" text-anchor="middle">Test</text>
+      <text class="th" x="360" y="227" text-anchor="middle">Learn</text>
+      <text class="th" x="160" y="139" text-anchor="middle">Adjust</text>
+      <text class="t" x="360" y="124" text-anchor="middle">start small</text>
+      <text class="ts" x="360" y="146" text-anchor="middle">don’t wait for perfect</text>
+    </svg></div>
+    <figcaption>Try → Test → Learn → Adjust → Try again.</figcaption>
+  </figure>
+  <h3>Example: “Automatically process loan documents”</h3>
+  <p>Instead of weeks of debate about which AI model to use, the FDE identifies the key question, <b>“Can AI extract the required data?”</b>, and tests it:</p>
+  <div class="flow"><span>Customer problem</span><span class="hl">Key question</span><span>20 sample documents</span><span>Small prototype</span><span>Test accuracy</span><span>Show customer</span><span>Feedback</span><span>Improve</span><span class="ok">Production system</span></div>
+  <p>The FDE acts early, learns from real results, and then makes better technical decisions.</p>
+  <div class="sticky warn"><strong>Action ≠ rushing</strong> Bias toward action is about small, safe experiments. It is not an excuse to skip discovery or push untested code to production.</div>
+</section>
+
+<!-- 9 -->
+<section class="ch" id="together">
+  <h2>The seven habits together</h2>
+  <p>The habits support each other. Ambiguity is handled by acting (bias toward action) quickly (speed); depth finds the real cause; business understanding and empathy make sure you solve the <i>right</i> problem; ownership carries it to the end.</p>
+  <div class="tbl"><table>
+    <tr><th>Habit</th><th>In one line</th><th>Where you saw it in practice</th></tr>
+    <tr><td><b>Ownership</b></td><td>Responsible for the outcome, not just the task</td><td>Following ABC Bank’s assistant all the way to customers getting answers</td></tr>
+    <tr><td><b>Ambiguity</b></td><td>Ask, assume carefully, break it down, keep learning</td><td>Turning “reduce loan time” into concrete questions</td></tr>
+    <tr><td><b>Speed</b></td><td>Build small, test fast, then build big</td><td>20 sample documents before the full system</td></tr>
+    <tr><td><b>Technical depth</b></td><td>Know how it works underneath; find the root cause</td><td>The “slow AI” that was a slow database query</td></tr>
+    <tr><td><b>Business understanding</b></td><td>Connect the tech to a measurable business result</td><td>2 days → a few hours of loan processing</td></tr>
+    <tr><td><b>Customer empathy</b></td><td>See it from their side; build what works for them</td><td>Adding human review because employees asked</td></tr>
+    <tr><td><b>Bias toward action</b></td><td>Don’t wait for perfect; start small and learn</td><td>Testing the key question instead of debating models</td></tr>
+  </table></div>
+  <div class="sticky fde l"><strong>In the field (FDE)</strong> Interviewers for FDE roles often probe these habits with “tell me about a time…” questions. Collect your own small stories for each one as you work through this course.</div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="terms">
+  <h2>Key terms</h2>
+  <dl class="terms">
+    <div><dt>Ownership</dt><dd>Taking responsibility for a customer’s problem from discovery until the solution works in production, and caring about the outcome rather than just finishing tasks.</dd></div>
+    <div><dt>Ambiguity</dt><dd>A situation where the problem or requirements are not fully clear; FDEs handle it by asking questions, making stated assumptions and breaking the problem down.</dd></div>
+    <div><dt>Reasonable assumption</dt><dd>A sensible guess made when information is missing, clearly communicated to the customer, so work can continue without waiting for every detail.</dd></div>
+    <div><dt>Speed (FDE sense)</dt><dd>Moving quickly from understanding to a small tested prototype and feedback, while keeping the final production system secure and reliable.</dd></div>
+    <div><dt>Technical depth</dt><dd>Understanding how a system works beneath the surface well enough to debug it and find the root cause of a problem.</dd></div>
+    <div><dt>Bottleneck</dt><dd>The single slowest part of a system that limits its overall speed, such as one database query taking 8 of 10 seconds.</dd></div>
+    <div><dt>Business understanding</dt><dd>Knowing how the customer’s business works and linking technical work to a measurable business result.</dd></div>
+    <div><dt>Customer empathy</dt><dd>Seeing a problem from the customer’s and users’ point of view and designing around how they actually work.</dd></div>
+    <div><dt>Bias toward action</dt><dd>Preferring a small, concrete experiment over endless discussion or waiting for perfect information.</dd></div>
+  </dl>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="quiz">
+  <h2>Self-check</h2>
+  <p>Pick an answer. You’ll see right away whether it’s correct and why.</p>
+  <div class="quiz">
+    <div class="q" data-answer="3"><p>An FDE finishes the API for a chatbot. Which thought shows ownership?</p>
+      <ol><li>“My task is done; the rest is someone else’s job.”</li><li>“I’ll wait for the customer to report bugs.”</li><li>“Is the chatbot actually reducing the support team’s workload?”</li><li>“I should start a new project now.”</li></ol>
+      <p class="why">Ownership is about the customer’s outcome, not just the assigned task.</p></div>
+    <div class="q" data-answer="1"><p>Some details are missing and the customer is slow to reply. What should the FDE do?</p>
+      <ol><li>Make a reasonable assumption, state it clearly, and continue</li><li>Stop all work until every detail is confirmed</li><li>Guess silently and never mention it</li><li>Build every possible version</li></ol>
+      <p class="why">Stated assumptions keep the project moving while staying honest with the customer.</p></div>
+    <div class="q" data-answer="4"><p>Which is the best “speed” move at the start of a document-AI project?</p>
+      <ol><li>Connect all 10 of the customer’s systems on day one</li><li>Build the full production system first</li><li>Skip testing to save time</li><li>Test AI extraction on 20 sample documents</li></ol>
+      <p class="why">Test the riskiest part small and fast before building big.</p></div>
+    <div class="q" data-answer="2"><p>The AI assistant takes 10 seconds. Tracing shows one database query takes 8 seconds. Which habit found this?</p>
+      <ol><li>Customer empathy</li><li>Technical depth</li><li>Business understanding</li><li>Speed</li></ol>
+      <p class="why">Tracing each layer to find the real bottleneck is technical depth.</p></div>
+    <div class="q" data-answer="3"><p>Which statement best shows business understanding?</p>
+      <ol><li>“We used the newest model.”</li><li>“The code has 95% test coverage.”</li><li>“Loan processing dropped from 2 days to a few hours.”</li><li>“We moved to Kubernetes.”</li></ol>
+      <p class="why">It ties the technical work to a measurable business outcome.</p></div>
+    <div class="q" data-answer="1"><p>Loan officers ask for a human review step before anything is submitted. An empathetic FDE…</p>
+      <ol><li>Adds the review step to the design</li><li>Removes humans to make it faster</li><li>Explains why AI is always right</li><li>Ignores it because the AI is accurate</li></ol>
+      <p class="why">Empathy means designing around how users actually work and what they need to trust the system.</p></div>
+    <div class="q" data-answer="4"><p>A team has debated which AI model to use for a week. What does bias toward action suggest?</p>
+      <ol><li>Debate for another week</li><li>Pick the most expensive model</li><li>Wait for the customer to decide</li><li>Test the key question with a small prototype on real samples</li></ol>
+      <p class="why">A small experiment answers the question faster than more discussion.</p></div>
+    <div class="q" data-answer="2"><p>What is the right balance between speed and quality?</p>
+      <ol><li>Always fast, quality later</li><li>Fast during experiments; secure, tested and monitored in production</li><li>Always slow and perfect</li><li>Quality only matters in prototypes</li></ol>
+      <p class="why">Prototypes can be rough; the production system cannot.</p></div>
+  </div>
+</section>
+
+<section class="ch" id="summary">
+  <h2>All of it, in one sentence</h2>
+  <p class="final">A great FDE <b>owns the outcome</b>, stays calm in <b>ambiguity</b>, moves with <b>speed</b>, digs with <b>technical depth</b>, thinks in <b>business results</b>, builds with <b>customer empathy</b> and leans toward <b>action</b>.</p>
+  <p>That wraps up this first module. Next up: the <b>Linux</b> module, where you start building the hands-on skills behind this mindset, beginning with the terminal you will use on every customer server.</p>
+  <p class="sign">— Vishwa Mohan</p>
+</section>
+
+</main>
+
+<script src="../../../assets/site.js"></script>
+</body>
+</html>
