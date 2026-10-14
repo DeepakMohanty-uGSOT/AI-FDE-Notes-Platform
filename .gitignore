@@ -21,3 +21,6 @@ desktop.ini
 # Logs and scratch
 *.log
 *.tmp
+
+# Original full-size photo (web copies live in assets/img/)
+Image (Vishwa Mohan*.png
