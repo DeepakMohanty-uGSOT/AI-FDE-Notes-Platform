@@ -590,3 +590,8 @@ ol.road .pn{font-size:19px;letter-spacing:-.02em}
 @media (max-width:760px){.road-bot{left:25px;width:34px;height:48px}.road-bot svg{width:34px;height:48px}}
 @media print{.road-bot{display:none}}
 ol.road li.stage{z-index:6}
+
+/* wider page column on big screens: less empty space beside the margin line */
+.wrap{max-width:1320px}
+footer.site .in{max-width:1320px}
+.bar .in{max-width:1320px}
