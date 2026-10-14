@@ -175,7 +175,7 @@ MODULE_PAGE = '''<!doctype html>
 <main class="wrap ruled">
   <section aria-labelledby="m-title">
     <p class="eyebrow" id="m-eyebrow">Module</p>
-    <div class="actions" style="gap:16px"><span class="pn" id="m-icon" aria-hidden="true" style="width:64px;height:64px;font-size:34px;border-radius:16px 18px 14px 17px">{icon}</span><h1 id="m-title">{title}</h1></div>
+    <div class="actions" style="gap:16px"><span class="pn" id="m-icon" aria-hidden="true" style="width:64px;height:64px;font-size:26px;border-radius:50%">{icon}</span><h1 id="m-title">{title}</h1></div>
     <svg class="squiggle" viewBox="0 0 210 15" aria-hidden="true"><path d="M3 9 C 24 2, 44 14, 68 8 S 112 2, 136 9 S 178 14, 207 7"/></svg>
     <p class="lede" id="m-summary">{desc}</p>
     <p class="meta" id="m-meta"></p>
@@ -204,7 +204,12 @@ def main():
         warnings.append('%s: %s' % (where, msg))
 
     notes, index, glossary, modules = [], [], [], []
+    num = 0
     for mod in sorted(cfg['modules'], key=lambda m: m['order']):
+        mod.setdefault('kind', 'module')
+        if mod['kind'] == 'module':
+            num += 1
+            mod.setdefault('number', str(num))
         found = []
         for i, meta in enumerate(mod.get('notes', []), 1):
             meta = dict(meta, order=i)
@@ -215,15 +220,15 @@ def main():
             n, ix, gl = parse_note(p, mod, meta, warn)
             notes.append(n); index.extend(ix); glossary.extend(gl); found.append(n['slug'])
         status = 'soon' if (mod.get('status') == 'soon' or not found) else 'published'
-        m = {k: v for k, v in mod.items() if k not in ('notes', 'folder')}
+        m = {k: v for k, v in mod.items() if k not in ('notes', 'folder', 'topics') or k == 'topics'}
         m['status'] = status
         m['notes'] = found
         modules.append(m)
-        if status == 'published':
+        if status == 'published' and mod['kind'] == 'module':
             d = os.path.join(ROOT, 'notes', mod['slug'])
             os.makedirs(d, exist_ok=True)
             with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8', newline='\n') as f:
-                f.write(MODULE_PAGE.format(title=mod['title'], desc=mod['summary'].replace('"', '&quot;'), slug=mod['slug'], icon=mod['icon']))
+                f.write(MODULE_PAGE.format(title=mod['title'], desc=mod['summary'].replace('"', '&quot;'), slug=mod['slug'], icon=mod['number']))
 
     data = {'site': cfg['site'], 'stages': cfg['stages'], 'modules': modules, 'notes': notes,
             'built': datetime.datetime.now().isoformat(timespec='seconds')}
@@ -240,7 +245,7 @@ def main():
     js('search.js', 'AIFDE_SEARCH', index)
     js('glossary.js', 'AIFDE_GLOSSARY', glossary)
 
-    pub = [m for m in modules if m['status'] == 'published']
+    pub = [m for m in modules if m['status'] == 'published' and m['kind'] == 'module']
     print('Built: %d modules published, %d notes, %d sections, %d glossary terms, %d quiz questions, ~%d min reading'
           % (len(pub), len(notes), len(index), len(glossary), sum(n['quiz'] for n in notes), sum(n['readMinutes'] for n in notes)))
     if warnings:

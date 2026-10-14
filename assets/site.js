@@ -48,7 +48,7 @@
     return { c: c, t: t, pct: t ? Math.round(c / t * 100) : 0 };
   }
   function notesOf(m, D) { return D.notes.filter(function (n) { return n.module === m.slug; }).sort(function (a, b) { return a.order - b.order; }); }
-  function published(D) { return D.modules.filter(function (m) { return m.status !== 'soon'; }); }
+  function published(D) { return D.modules.filter(function (m) { return m.status !== 'soon' && (m.kind || 'module') === 'module'; }); }
   function orderedNotes(D) {
     var out = [];
     D.modules.slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (m) { out = out.concat(notesOf(m, D)); });
@@ -121,7 +121,7 @@
     return '<li><a class="note-card" href="' + noteUrl(n) + '">' +
       '<span class="tape" aria-hidden="true"></span>' +
       (p.pct === 100 ? '<span class="done-tick">✓ done</span>' : '') +
-      '<span class="top"><span class="pn" aria-hidden="true">' + (opts.num || esc(m.icon || '')) + '</span>' +
+      '<span class="top"><span class="pn" aria-hidden="true">' + (opts.num || esc(m.number || '')) + '</span>' +
       '<span><span class="meta">' + esc(m.title || '') + ' · note ' + n.order + (isNew(n.date) ? ' · <span class="pill new">New</span>' : '') + '</span>' +
       '<h3>' + esc(n.title) + '</h3></span></span>' +
       '<p>' + esc(n.summary) + '</p>' +
@@ -134,9 +134,9 @@
     var ns = notesOf(m, D), p = modDone(m, D);
     var mins = ns.reduce(function (a, n) { return a + (n.readMinutes || 0); }, 0);
     return '<li><a class="mod-card" href="' + modUrl(m) + '">' +
-      '<span class="top"><span class="pn" aria-hidden="true">' + esc(m.icon) + '</span><span><span class="meta">Module ' + m.order + '</span><h3>' + esc(m.title) + '</h3></span></span>' +
+      '<span class="top"><span class="pn" aria-hidden="true">' + m.number + '</span><span><span class="meta">Module ' + m.number + (m.weeks ? ' · ' + esc(m.weeks) : '') + '</span><h3>' + esc(m.title) + '</h3></span></span>' +
       '<p>' + esc(m.summary) + '</p>' +
-      '<span class="meta">' + ns.length + ' notes · about ' + Math.max(1, Math.round(mins / 60 * 10) / 10) + ' h of reading</span>' +
+      '<span class="meta">' + ns.length + (ns.length === 1 ? ' note' : ' notes') + ' · about ' + Math.max(1, Math.round(mins / 60 * 10) / 10) + ' h of reading</span>' +
       '<span class="mini-prog"><span class="track"><span class="fill" style="width:' + p.pct + '%"></span></span>' + p.pct + '%</span>' +
       '<span class="go">Open module →</span></a></li>';
   }
@@ -165,36 +165,61 @@
       start.innerHTML = lastNote ? 'Continue: ' + esc(target.title) + ' →' : 'Start reading →';
     }
 
-    // roadmap
+    // roadmap: phases → numbered modules, labs and the capstone, in course order
     var el = $('#roadmap-list');
     if (el) {
       var hereMod = lastNote ? lastNote.module : (mods[0] && mods[0].slug);
+      var ordered = D.modules.slice().sort(function (a, b) { return a.order - b.order; });
       var lastStage = '', i = 0;
-      el.innerHTML = D.modules.slice().sort(function (a, b) { return a.order - b.order; }).map(function (m) {
+      el.innerHTML = ordered.map(function (m) {
         var stage = '';
         if (m.stage !== lastStage) {
           lastStage = m.stage;
-          var s = D.stages.filter(function (x) { return x.id === m.stage; })[0];
-          stage = '<li class="stage"><span>' + esc(s ? s.title : m.stage) + '</span></li>';
+          var s = D.stages.filter(function (x) { return x.id === m.stage; })[0] || { title: m.stage };
+          var mm = ordered.filter(function (x) { return x.stage === m.stage && (x.kind || 'module') === 'module'; });
+          var ready = mm.filter(function (x) { return x.status !== 'soon'; }).length;
+          var parts = s.title.split(' · ');
+          stage = '<li class="stage" id="phase-' + m.stage + '"><span><small>' + esc(parts[0]) + '</small>' + esc(parts.slice(1).join(' · ') || s.title) +
+            '<em>' + mm.length + ' modules' + (ready ? ' · ' + ready + ' ready' : '') + '</em></span></li>';
         }
-        var soon = m.status === 'soon', ns = notesOf(m, D), p = modDone(m, D);
+        var kind = m.kind || 'module', soon = m.status === 'soon', ns = notesOf(m, D), p = modDone(m, D);
         var side = (i++ % 2) ? 'right' : 'left';
-        var list = soon
-          ? (m.upcoming || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('')
-          : ns.map(function (n) {
-            return '<li><a href="' + noteUrl(n) + '">' + esc(n.title) + '</a>' + (noteDone(n).pct === 100 ? '<span class="ck" title="done">✓</span>' : '') + '</li>';
-          }).join('');
+        var notesList = ns.map(function (n) {
+          return '<li><a href="' + noteUrl(n) + '">' + esc(n.title) + '</a>' + (noteDone(n).pct === 100 ? '<span class="ck" title="done">✓</span>' : '') + '</li>';
+        }).join('');
+        var upcoming = m.upcoming || [];
+        var covered = m.show_topics ? (m.topics || []).filter(function (t) { return upcoming.indexOf(t) < 0; }) : [];
+        var upList = covered.map(function (t) { return '<li class="cov">✓ ' + esc(t) + '</li>'; }).join('') +
+          upcoming.map(function (t) { return '<li class="up">' + esc(t) + '</li>'; }).join('');
         var mins = ns.reduce(function (a, n) { return a + (n.readMinutes || 0); }, 0);
-        return stage + '<li class="stop ' + side + (soon ? '' : ' done') + '">' +
-          '<span class="pn" aria-hidden="true">' + esc(m.icon) + '</span>' +
+        var badge = kind === 'lab' ? '<span class="pill lab">Hands-on lab</span>'
+          : kind === 'project' ? '<span class="pill lab">Capstone project</span>'
+          : soon ? '<span class="pill">Coming soon</span>'
+          : '<span class="pill ok">Ready</span><span>' + ns.length + (ns.length === 1 ? ' note · ' : ' notes · ') + mins + ' min</span>' + (p.c ? '<span>· you: ' + p.pct + '%</span>' : '');
+        var marker = kind === 'module' ? String(m.number) : kind === 'lab' ? 'LAB' : '★';
+        var label = kind === 'module' ? 'Module ' + m.number : kind === 'lab' ? 'Lab' : 'Capstone';
+        return stage + '<li class="stop ' + side + ' k-' + kind + (soon ? '' : ' done') + '">' +
+          '<span class="pn" aria-hidden="true">' + marker + '</span>' +
           (m.slug === hereMod ? '<span class="here" aria-hidden="true">You are here</span>' : '') +
           '<details' + (m.slug === hereMod ? ' open' : '') + '><summary>' +
-          '<span class="ttl"><span class="sr">Module ' + m.order + ': </span>' + esc(m.title) + '</span>' +
-          '<span class="row">' + (soon ? '<span class="pill">Coming soon</span>'
-            : '<span class="pill ok">Ready</span><span>' + ns.length + ' notes · ' + mins + ' min</span>' + (p.c ? '<span>· you: ' + p.pct + '%</span>' : '')) + '</span>' +
+          '<span class="kicker">' + label + (m.weeks ? ' · ' + esc(m.weeks) : '') + '</span>' +
+          '<span class="ttl">' + esc(m.title) + '</span>' +
+          '<span class="row">' + badge + '</span>' +
           '<span class="sub">' + esc(m.summary) + '</span>' +
-          '</summary>' + (list ? '<ol class="topics">' + list + '</ol>' : '') +
-          (soon ? '' : '<a class="btn small" href="' + modUrl(m) + '">Open module →</a>') + '</details></li>';
+          '</summary>' +
+          (notesList ? '<ol class="topics">' + notesList + '</ol>' : '') +
+          (upList ? (notesList ? '<p class="up-lbl">' + (m.show_topics ? 'Curriculum topics' + (upcoming.length ? ' (dashed = coming soon)' : '') : 'Coming next in this module') + '</p>' : '') + '<ul class="topics up-list">' + upList + '</ul>' : '') +
+          (soon || kind !== 'module' ? '' : '<a class="btn small" href="' + modUrl(m) + '">Open module →</a>') + '</details></li>';
+      }).join('');
+
+      var nav = $('#phase-nav');
+      if (nav) nav.innerHTML = D.stages.map(function (s, k) {
+        var mm = ordered.filter(function (x) { return x.stage === s.id && (x.kind || 'module') === 'module'; });
+        var ready = mm.filter(function (x) { return x.status !== 'soon'; }).length;
+        var parts = s.title.split(' · ');
+        return '<li><a href="#phase-' + s.id + '" class="' + (mm.length && ready === mm.length ? 'full' : ready ? 'part' : '') + '">' +
+          '<b>' + (k + 1) + '</b><span>' + esc(parts.slice(1).join(' · ') || s.title) + '</span>' +
+          '<small>' + mm.length + ' modules · ' + ready + ' ready</small></a></li>';
       }).join('');
     }
     var bar = $('#road-progress');
@@ -202,7 +227,8 @@
       var c = 0, t = 0;
       D.notes.forEach(function (n) { var p = noteDone(n); c += p.c; t += p.t; });
       var pct = t ? Math.round(c / t * 100) : 0;
-      bar.innerHTML = '<span class="lbl"><b>' + mods.length + ' of ' + D.modules.length + '</b> modules published · your progress: <b>' + pct + '%</b> (' + c + ' of ' + t + ' sections ticked)</span>' +
+      var allMods = D.modules.filter(function (m) { return (m.kind || 'module') === 'module'; }).length;
+      bar.innerHTML = '<span class="lbl"><b>' + mods.length + ' of ' + allMods + '</b> modules published · your progress: <b>' + pct + '%</b> (' + c + ' of ' + t + ' sections ticked)</span>' +
         '<span class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="Your progress"><span class="fill" style="width:' + Math.max(pct, 2) + '%"></span></span>';
     }
 
@@ -228,7 +254,7 @@
     if (params.get('q')) q.value = params.get('q');
 
     filters.innerHTML = '<button type="button" data-m="all">All</button>' + mods.map(function (m) {
-      return '<button type="button" data-m="' + m.slug + '">' + esc(m.icon + ' ' + m.title) + '</button>';
+      return '<button type="button" data-m="' + m.slug + '">' + esc(m.number + ' · ' + m.title) + '</button>';
     }).join('');
     function pressed() { $$('button', filters).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-m') === mod ? 'true' : 'false'); }); }
 
@@ -294,8 +320,8 @@
     document.title = m.title + ' | ' + D.site.name;
     var ns = notesOf(m, D), p = modDone(m, D);
     var mins = ns.reduce(function (a, n) { return a + (n.readMinutes || 0); }, 0);
-    $('#m-icon').textContent = m.icon;
-    $('#m-eyebrow').innerHTML = '<a href="' + ROOT + 'index.html#roadmap">Roadmap</a> · Module ' + m.order;
+    $('#m-icon').textContent = m.number;
+    $('#m-eyebrow').innerHTML = '<a href="' + ROOT + 'index.html#roadmap">Roadmap</a> · Module ' + m.number + (m.weeks ? ' · ' + esc(m.weeks) : '');
     $('#m-title').textContent = m.title;
     $('#m-summary').textContent = m.summary;
     $('#m-meta').textContent = ns.length + ' notes · about ' + mins + ' minutes of reading · ' + ns.reduce(function (a, n) { return a + (n.quiz || 0); }, 0) + ' quiz questions';
@@ -304,7 +330,7 @@
     var first = ns.filter(function (n) { return noteDone(n).pct < 100; })[0] || ns[0];
     if (first) { $('#m-start').href = noteUrl(first); $('#m-start').textContent = (p.c ? 'Continue: ' : 'Start: ') + first.title + ' →'; }
     $('#m-notes').innerHTML = ns.map(function (n, i) { return noteCard(n, D, { num: i + 1 }); }).join('');
-    var pub = mods.filter(function (x) { return x.status !== 'soon'; }), idx = pub.indexOf(m);
+    var pub = mods.filter(function (x) { return x.status !== 'soon' && (x.kind || 'module') === 'module'; }), idx = pub.indexOf(m);
     var pv = pub[idx - 1], nx = pub[idx + 1];
     $('#m-pager').innerHTML = (pv ? '<a class="pv" href="' + modUrl(pv) + '"><small>← Previous module</small><b>' + esc(pv.title) + '</b></a>' : '') +
       (nx ? '<a class="nx" href="' + modUrl(nx) + '"><small>Next module →</small><b>' + esc(nx.title) + '</b></a>' : '');
@@ -316,7 +342,7 @@
   function notePage(D) {
     var id = body.getAttribute('data-note');
     var n = D.notes.filter(function (x) { return x.id === id; })[0] || { id: id, module: id.split('/')[0], slug: id.split('/')[1], title: ($('h1') || {}).textContent, order: 0, sections: [] };
-    var m = D.modules.filter(function (x) { return x.slug === n.module; })[0] || { title: '', icon: '✎', slug: n.module };
+    var m = D.modules.filter(function (x) { return x.slug === n.module; })[0] || { title: '', number: '', slug: n.module };
     var siblings = notesOf(m, D);
     save('last', id);
     var main = $('main.page');
@@ -331,7 +357,7 @@
     // header extras
     var top = $('header.top', main), h1 = $('h1', top);
     if (top && h1) {
-      top.insertBefore(h('<p class="eyebrow"><a href="' + ROOT + 'index.html">Home</a> · <a href="' + modUrl(m) + '">' + esc(m.icon + ' ' + m.title) + '</a> · note ' + (n.order || '') + ' of ' + siblings.length + '</p>'), h1);
+      top.insertBefore(h('<p class="eyebrow"><a href="' + ROOT + 'index.html">Home</a> · <a href="' + modUrl(m) + '">Module ' + m.number + ' · ' + esc(m.title) + '</a> · note ' + (n.order || '') + ' of ' + siblings.length + '</p>'), h1);
       top.insertBefore(h('<div class="stamp" aria-label="' + esc(D.site.author) + '"><b>' + esc(D.site.author) + '</b><span>' + esc(D.site.name) + '</span></div>'), top.firstChild);
       h1.insertAdjacentElement('afterend', h('<svg class="squiggle" viewBox="0 0 210 15" aria-hidden="true"><path d="M3 9 C 24 2, 44 14, 68 8 S 112 2, 136 9 S 178 14, 207 7"/></svg>'));
     }
@@ -370,7 +396,7 @@
     chips.innerHTML = secs.map(function (s, i) { return '<a href="#' + s.id + '">' + (i + 1) + ' · ' + esc(stitle(s)) + '</a>'; }).join('');
     meta.insertAdjacentElement('afterend', chips);
 
-    side.innerHTML = '<a href="' + modUrl(m) + '" class="t" style="text-decoration:none;color:var(--ink)">' + esc(m.icon + ' ' + m.title) + '</a>' +
+    side.innerHTML = '<a href="' + modUrl(m) + '" class="t" style="text-decoration:none;color:var(--ink)"><small class="mnum">Module ' + m.number + '</small>' + esc(m.title) + '</a>' +
       '<span class="mp" id="side-prog"></span>' +
       '<ol>' + secs.map(function (s, i) { return '<li><a href="#' + s.id + '" data-s="' + s.id + '"><span class="n">' + (i + 1) + '</span><span>' + esc(stitle(s)) + '</span><span class="c">✓</span></a></li>'; }).join('') + '</ol>' +
       (siblings.length > 1 ? '<div class="mods"><span class="eyebrow">In this module</span><ol>' + siblings.map(function (x, i) {
@@ -490,6 +516,18 @@
       (pv ? '<a class="pv" href="' + noteUrl(pv) + '"><small>← Previous' + (pv.module !== n.module ? ' module' : '') + '</small><b>' + esc(pv.title) + '</b></a>' : '') +
       (nx ? '<a class="nx" href="' + noteUrl(nx) + '"><small>Next' + (nx.module !== n.module ? ' module' : '') + ' →</small><b>' + esc(nx.title) + '</b></a>' : '') + '</nav>';
     main.appendChild(end);
+    var nu = $('p.next-up', main);
+    if (nu) {
+      var modOrder = D.modules.slice().sort(function (a, b) { return a.order - b.order; }).filter(function (x) { return (x.kind || 'module') === 'module'; });
+      var nextMod = modOrder[modOrder.map(function (x) { return x.slug; }).indexOf(m.slug) + 1];
+      var nxMod = nx && D.modules.filter(function (x) { return x.slug === nx.module; })[0];
+      var link = function (x) { return '<a href="' + noteUrl(x) + '">' + esc(x.title) + '</a>'; };
+      if (nx && nx.module === n.module) nu.innerHTML = '<b>Next up:</b> ' + link(nx) + '.';
+      else if (nx && nextMod && nextMod.slug === nx.module) nu.innerHTML = 'That wraps up <b>' + esc(m.number + ' ' + m.title) + '</b>. <b>Next up:</b> module ' + esc(nextMod.number + ' ' + nextMod.title) + ', starting with ' + link(nx) + '.';
+      else if (nextMod) nu.innerHTML = 'That wraps up <b>' + esc(m.number + ' ' + m.title) + '</b>. In the course, <b>' + esc(nextMod.number + ' ' + nextMod.title) + '</b> comes next (notes coming soon).' +
+        (nx ? ' The next notes on this site: ' + link(nx) + ' in module ' + esc(nxMod.number + ' ' + nxMod.title) + '.' : '');
+      else nu.innerHTML = 'You have reached the end of the course roadmap.';
+    }
     body.appendChild(h('<p class="corner" aria-hidden="true">' + esc(D.site.author) + '</p>'));
     syncChecks();
 
@@ -510,7 +548,7 @@
       var list = $('#gl'), q = $('#gq'), filt = $('#gfilters'), letters = $('#letters'), mod = 'all';
       var byId = {}; D.notes.forEach(function (n) { byId[n.id] = n; });
       var mods = published(D).filter(function (m) { return G.some(function (x) { return x.n.split('/')[0] === m.slug; }); });
-      filt.innerHTML = '<button type="button" data-m="all" aria-pressed="true">All</button>' + mods.map(function (m) { return '<button type="button" data-m="' + m.slug + '" aria-pressed="false">' + esc(m.icon + ' ' + m.title) + '</button>'; }).join('');
+      filt.innerHTML = '<button type="button" data-m="all" aria-pressed="true">All</button>' + mods.map(function (m) { return '<button type="button" data-m="' + m.slug + '" aria-pressed="false">' + esc(m.number + ' · ' + m.title) + '</button>'; }).join('');
       $('#gcount').textContent = G.length + ' terms from ' + Object.keys(G.reduce(function (a, x) { a[x.n] = 1; return a; }, {})).length + ' notes';
       function current() {
         var w = (q.value || '').trim().toLowerCase();

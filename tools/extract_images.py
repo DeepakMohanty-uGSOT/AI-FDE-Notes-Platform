@@ -35,7 +35,7 @@ TITLES = {
     'Networking Fundamentals – II: Device Identification & Core Protocols': ('networking', 'device-identification-protocols'),
     'Networking Fundamentals – III: OSI Model & Data Communication': ('networking', 'osi-model'),
     'IP Address Fundamentals': ('networking', 'ip-address-fundamentals'), 'IP Addressing – Subnetting & CIDR': ('networking', 'subnetting-cidr'),
-    'Version Control System': ('git', 'version-control'), 'Git Fundamentals': ('git', 'git-fundamentals'),
+    'Version Control System': ('git', 'version-control'), 'Git Fundamentals': ('git-basics', 'git-fundamentals'),
     'Untitled document': ('git', 'git-workflows+github'), 'Git deep dive': ('git', 'git-workflows+github'),
     'HTML Syntax and Structure': ('web', 'html-syntax-structure'), 'Common HTML Elements': ('web', 'common-html-elements'),
     'HTML List & image': ('web', 'html-lists-images'), 'Forms and inputs': ('web', 'forms-and-inputs'),

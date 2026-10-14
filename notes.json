@@ -4,7 +4,7 @@
   "fullName": "Forward Deployed AI Engineer · Notes",
   "author": "Vishwa Mohan",
   "tagline": "Become a Forward Deployed AI Engineer, one sketched page at a time.",
-  "course": "Forward Deployed AI Engineer · 9 months · 36 weeks",
+  "course": "Forward Deployed AI Engineer · 9 phases",
   "links": {
    "github": "",
    "youtube": "",
@@ -13,34 +13,57 @@
  },
  "stages": [
   {
-   "id": "start",
-   "title": "Start here"
+   "id": "p1",
+   "title": "Phase 01 · FDE Foundations & Python Engineering"
   },
   {
-   "id": "foundations",
-   "title": "Developer foundations"
+   "id": "p2",
+   "title": "Phase 02 · Applied AI I: LLMs, LangChain & RAG"
   },
   {
-   "id": "python",
-   "title": "Python & backend"
+   "id": "p3",
+   "title": "Phase 03 · Applied AI II: Agents, MCP, Data & Engineering Fundamentals"
   },
   {
-   "id": "genai",
-   "title": "Generative AI"
+   "id": "p4",
+   "title": "Phase 04 · Backend & Enterprise Integration"
   },
   {
-   "id": "next",
-   "title": "Coming next"
+   "id": "p5",
+   "title": "Phase 05 · Frontend & Operational Applications"
+  },
+  {
+   "id": "p6",
+   "title": "Phase 06 · Cloud, DevOps & LLMOps"
+  },
+  {
+   "id": "p7",
+   "title": "Phase 07 · System Design at Scale"
+  },
+  {
+   "id": "p8",
+   "title": "Phase 08 · Security, Reliability & Governance"
+  },
+  {
+   "id": "p9",
+   "title": "Phase 09 · The FDE Craft"
   }
  ],
  "modules": [
   {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.1",
    "slug": "fde",
-   "order": 1,
-   "stage": "start",
-   "icon": "🧭",
-   "title": "The Forward Deployed Engineer",
+   "title": "What is a Forward Deployed Engineer?",
+   "topics": [
+    "FDE Role",
+    "FDE Responsibilities",
+    "FDE Mindset"
+   ],
+   "upcoming": [],
    "summary": "What an FDE actually does, how the role differs from SWE, AI and solutions engineers, the end-to-end responsibilities, and the mindset that makes FDEs effective at customer sites.",
+   "order": 1,
    "status": "published",
    "notes": [
     "fde-role",
@@ -49,80 +72,49 @@
    ]
   },
   {
-   "slug": "linux",
-   "order": 2,
-   "stage": "foundations",
-   "icon": "🐧",
-   "title": "Linux",
-   "summary": "Living in the terminal: what Linux is, how it is built, the file system tree, moving around, reading and searching files, text filters, pipes, redirection and command chaining.",
-   "status": "published",
-   "notes": [
-    "intro-unix-linux",
-    "linux-architecture",
-    "environment-setup",
-    "terminal-and-shell",
-    "file-system-structure",
-    "files-and-directories",
-    "reading-files",
-    "searching-files",
-    "text-filters",
-    "pipes-and-redirection",
-    "command-chaining"
-   ]
-  },
-  {
-   "slug": "networking",
-   "order": 3,
-   "stage": "foundations",
-   "icon": "🌐",
-   "title": "Networking Basics",
-   "summary": "How machines find and talk to each other: cables and network types, MAC and IP, core protocols, the OSI model, IP addressing, subnetting and CIDR.",
-   "status": "published",
-   "notes": [
-    "physical-connectivity",
-    "device-identification-protocols",
-    "osi-model",
-    "ip-address-fundamentals",
-    "subnetting-cidr"
-   ]
-  },
-  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.2",
    "slug": "git",
-   "order": 4,
-   "stage": "foundations",
-   "icon": "🌿",
    "title": "Git & GitHub",
-   "summary": "Why version control exists, how Git tracks snapshots, and the everyday workflow of commits, branches and remotes on GitHub.",
+   "topics": [
+    "Introduction to Version Control",
+    "Local Git Deep Dive",
+    "Integrating Local Git with Remote GitHub"
+   ],
+   "upcoming": [],
+   "summary": "Why version control exists, how to drive Git in a real project (new, existing or joined), .gitignore, and connecting your local repository to GitHub: pushing, forks, pull requests, conflicts and Pages.",
+   "order": 2,
    "status": "published",
    "notes": [
     "version-control",
-    "git-fundamentals",
     "git-workflows",
     "github"
    ]
   },
   {
-   "slug": "web",
-   "order": 5,
-   "stage": "foundations",
-   "icon": "🧱",
-   "title": "Web & HTML",
-   "summary": "The building blocks of every web page: HTML syntax and document structure, common elements, lists and images, and forms that collect user input.",
-   "status": "published",
-   "notes": [
-    "html-syntax-structure",
-    "common-html-elements",
-    "html-lists-images",
-    "forms-and-inputs"
-   ]
-  },
-  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.3",
    "slug": "python-fundamentals",
-   "order": 6,
-   "stage": "python",
-   "icon": "🐍",
    "title": "Python Fundamentals",
+   "topics": [
+    "Python Basics — Part 1",
+    "Python Basics — Part 2",
+    "Control Flow",
+    "Data Structures",
+    "Functions",
+    "Modules & Packages",
+    "Working with Data",
+    "Error Handling",
+    "Introduction to OOP — Part 1",
+    "Introduction to OOP — Part 2",
+    "Inheritance",
+    "Method Overriding"
+   ],
+   "upcoming": [],
    "summary": "Python from zero to object-oriented: variables and types, control flow, data structures, functions, modules, working with files and data, error handling, classes, inheritance and overriding.",
+   "order": 3,
    "status": "published",
    "notes": [
     "python-basics-1",
@@ -140,200 +132,1549 @@
    ]
   },
   {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.4",
    "slug": "python-advanced",
-   "order": 7,
-   "stage": "python",
-   "icon": "⚡",
-   "title": "Python Advanced & FastAPI",
-   "summary": "From scripts to services: structuring real Python projects, how APIs work, FastAPI setup, Pydantic validation, path operations, HTTP methods, path and query parameters.",
+   "title": "Python Advanced",
+   "topics": [
+    "Python Project Development",
+    "Pydantic",
+    "API Basics",
+    "FastAPI Fundamentals, Setup & Project Structure",
+    "Path & Query Parameters",
+    "Path Operations & HTTP Methods",
+    "Pydantic Models, Status Codes & Error Handling",
+    "Dependency Injection & API Documentation",
+    "Running, Configuration & API Testing",
+    "Async Programming",
+    "FastAPI Mini Project — Complete API"
+   ],
+   "upcoming": [
+    "Pydantic Models, Status Codes & Error Handling",
+    "Dependency Injection & API Documentation",
+    "Running, Configuration & API Testing",
+    "Async Programming",
+    "FastAPI Mini Project — Complete API"
+   ],
+   "summary": "From scripts to services: structuring real Python projects, Pydantic validation, how APIs work, FastAPI setup, path and query parameters, path operations and HTTP methods.",
+   "order": 4,
    "status": "published",
    "notes": [
     "project-development",
+    "pydantic",
     "api-basics",
     "fastapi-fundamentals",
-    "pydantic",
-    "path-operations-http-methods",
-    "path-query-parameters"
+    "path-query-parameters",
+    "path-operations-http-methods"
    ]
   },
   {
-   "slug": "sql",
-   "order": 8,
-   "stage": "python",
-   "icon": "🗄️",
-   "title": "SQL",
-   "status": "soon",
-   "summary": "Querying relational data like an investigator: SELECT, filtering, joins, aggregation and real case-study projects.",
-   "upcoming": [
-    "Tables, keys & relationships",
-    "SELECT, WHERE, ORDER BY",
-    "GROUP BY & aggregates",
-    "Joins",
-    "Subqueries & CTEs",
-    "Investigation projects"
-   ],
-   "notes": []
-  },
-  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.1",
    "slug": "llm-engineering",
-   "order": 9,
-   "stage": "genai",
-   "icon": "🧠",
    "title": "LLM Engineering",
+   "topics": [
+    "LLM fundamentals",
+    "Tokens",
+    "Context windows",
+    "Transformers — conceptual understanding",
+    "Embeddings",
+    "Inference",
+    "Model capabilities",
+    "Open vs proprietary models"
+   ],
+   "upcoming": [],
    "summary": "How large language models work from an engineer's point of view: tokens, context windows, sampling, APIs, costs and building reliable LLM features.",
+   "show_topics": true,
+   "order": 5,
    "status": "published",
    "notes": [
     "llm-engineering"
    ]
   },
   {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.2",
    "slug": "prompt-context",
-   "order": 10,
-   "stage": "genai",
-   "icon": "✍️",
    "title": "Prompt & Context Engineering",
+   "topics": [
+    "Prompt Engineering Fundamentals",
+    "Prompt Structure & Instructions",
+    "Prompting Techniques",
+    "Structured Prompts",
+    "Prompting Frameworks",
+    "Context Engineering Fundamentals",
+    "Building Effective Context",
+    "Output Control & Structured Outputs",
+    "Prompt & Context Testing",
+    "Prompt Optimization",
+    "Engineering Practices",
+    "Basic Prompt Security Awareness",
+    "End-to-End Practice"
+   ],
+   "upcoming": [],
    "summary": "Writing instructions models follow: prompt patterns, structure, examples, and engineering the whole context window the model sees.",
+   "show_topics": true,
+   "order": 6,
    "status": "published",
    "notes": [
     "prompt-context-engineering"
    ]
   },
   {
-   "slug": "langchain",
-   "order": 11,
-   "stage": "genai",
-   "icon": "🔗",
-   "title": "LangChain",
-   "summary": "Composing LLM apps with LangChain: models, prompts, chains, output parsers and the building blocks behind agents and RAG.",
-   "status": "published",
-   "notes": [
-    "langchain-fundamentals"
-   ]
-  },
-  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.3",
    "slug": "model-selection",
-   "order": 12,
-   "stage": "genai",
-   "icon": "⚖️",
    "title": "Model Selection",
+   "topics": [
+    "Model Selection Fundamentals",
+    "Understanding Model Requirements",
+    "Key Factors in Model Selection",
+    "Model Evaluation and Comparison",
+    "Selecting the Right Model",
+    "Practical Model Selection"
+   ],
+   "upcoming": [],
    "summary": "Choosing the right model for the job: capability, latency, cost, context length, open vs closed models and how to evaluate the trade-offs.",
+   "show_topics": true,
+   "order": 7,
    "status": "published",
    "notes": [
     "model-selection"
    ]
   },
   {
-   "slug": "rag",
-   "order": 13,
-   "stage": "next",
-   "icon": "📚",
-   "title": "RAG & Knowledge AI",
-   "status": "soon",
-   "summary": "Grounding models in your own documents.",
-   "upcoming": [
-    "Embeddings",
-    "Vector databases",
-    "Document ingestion & chunking",
-    "Semantic, BM25 & hybrid search",
-    "Re-ranking"
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.4",
+   "slug": "langchain",
+   "title": "LangChain",
+   "topics": [
+    "LangChain Fundamentals",
+    "Chat Models & Messages",
+    "Prompt Templates",
+    "Structured Output & Output Parsers",
+    "LCEL & Runnables",
+    "Tool Calling",
+    "Chat History & Context Management",
+    "Cost, Caching & Debugging",
+    "Streaming, Serving & Testing"
    ],
+   "upcoming": [
+    "Chat History & Context Management",
+    "Cost, Caching & Debugging",
+    "Streaming, Serving & Testing"
+   ],
+   "summary": "Composing LLM apps with LangChain: models, prompts, chains, output parsers and the building blocks behind agents and RAG.",
+   "show_topics": true,
+   "order": 8,
+   "status": "published",
+   "notes": [
+    "langchain-fundamentals"
+   ]
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.5",
+   "slug": "rag",
+   "title": "RAG Engineering",
+   "topics": [
+    "RAG Fundamentals",
+    "Document Ingestion and Preparation",
+    "Embeddings and Vector Foundations",
+    "Vector Stores and Vector Databases",
+    "Building a Basic RAG Pipeline",
+    "Retrieval Engineering",
+    "RAG Evaluation and Iteration",
+    "Advanced RAG Techniques and Architectures",
+    "Enterprise RAG: Security, Access, and Data Management"
+   ],
+   "upcoming": [
+    "RAG Fundamentals",
+    "Document Ingestion and Preparation",
+    "Embeddings and Vector Foundations",
+    "Vector Stores and Vector Databases",
+    "Building a Basic RAG Pipeline",
+    "Retrieval Engineering",
+    "RAG Evaluation and Iteration",
+    "Advanced RAG Techniques and Architectures",
+    "Enterprise RAG: Security, Access, and Data Management"
+   ],
+   "summary": "Grounding LLMs in your own documents: ingestion, embeddings, vector stores, retrieval, evaluation, advanced architectures and enterprise-grade security.",
+   "order": 9,
+   "status": "soon",
    "notes": []
   },
   {
-   "slug": "agents",
-   "order": 14,
-   "stage": "next",
-   "icon": "🤖",
-   "title": "AI Agents",
-   "status": "soon",
-   "summary": "Models that plan, call tools and act.",
+   "kind": "lab",
+   "stage": "p2",
+   "slug": "labs-p2",
+   "title": "Phase 02 labs",
+   "topics": [
+    "Northstar AI Support Copilot",
+    "RAG Failure Lab",
+    "AI Red-Team Lab"
+   ],
    "upcoming": [
-    "Agent workflows",
-    "LangGraph: state & memory",
-    "Planning, ReAct & routers",
+    "Northstar AI Support Copilot",
+    "RAG Failure Lab",
+    "AI Red-Team Lab"
+   ],
+   "summary": "Hands-on FDE challenges for LLM, LangChain and RAG systems.",
+   "order": 10,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.1",
+   "slug": "workflows-vs-agents",
+   "title": "Workflows vs Agents",
+   "topics": [
+    "What is an agent?",
+    "What is a workflow?",
+    "Agent vs chatbot",
+    "Agent vs deterministic workflow",
+    "When to use an agent",
+    "When NOT to use an agent",
+    "Reliability vs flexibility"
+   ],
+   "upcoming": [
+    "What is an agent?",
+    "What is a workflow?",
+    "Agent vs chatbot",
+    "Agent vs deterministic workflow",
+    "When to use an agent",
+    "When NOT to use an agent",
+    "Reliability vs flexibility"
+   ],
+   "summary": "What an agent really is, how it differs from a chatbot or a deterministic workflow, and when (and when not) to use one.",
+   "order": 11,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.2",
+   "slug": "agent-architecture",
+   "title": "Agent Architecture",
+   "topics": [
+    "State",
+    "Memory",
+    "Planning",
+    "ReAct",
+    "Router",
+    "Planner/executor",
+    "Supervisor",
+    "Sequential agents",
+    "Parallel agents",
     "Multi-agent systems",
     "Human-in-the-loop"
    ],
+   "upcoming": [
+    "State",
+    "Memory",
+    "Planning",
+    "ReAct",
+    "Router",
+    "Planner/executor",
+    "Supervisor",
+    "Sequential agents",
+    "Parallel agents",
+    "Multi-agent systems",
+    "Human-in-the-loop"
+   ],
+   "summary": "The building blocks and patterns of agents: state, memory, planning, ReAct, routers, planner/executor, supervisors, sequential, parallel and multi-agent systems.",
+   "order": 12,
+   "status": "soon",
    "notes": []
   },
   {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.3",
+   "slug": "langgraph",
+   "title": "LangGraph",
+   "topics": [
+    "Graph architecture",
+    "State",
+    "Nodes",
+    "Edges",
+    "Conditional routing",
+    "Persistence",
+    "Human approval",
+    "Error recovery",
+    "Retry",
+    "Agent evaluation"
+   ],
+   "upcoming": [
+    "Graph architecture",
+    "State",
+    "Nodes",
+    "Edges",
+    "Conditional routing",
+    "Persistence",
+    "Human approval",
+    "Error recovery",
+    "Retry",
+    "Agent evaluation"
+   ],
+   "summary": "Building reliable agents as graphs: state, nodes, edges, conditional routing, persistence, human approval, error recovery, retry and evaluation.",
+   "order": 13,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.4",
    "slug": "mcp",
-   "order": 15,
-   "stage": "next",
-   "icon": "🔌",
-   "title": "Model Context Protocol (MCP)",
-   "status": "soon",
-   "summary": "A standard plug for connecting models to tools and data.",
-   "upcoming": [
-    "MCP client & server",
-    "Tools, resources & prompts",
-    "Tool schemas"
+   "title": "MCP",
+   "topics": [
+    "MCP fundamentals",
+    "MCP architecture",
+    "MCP client",
+    "MCP server",
+    "Tools",
+    "Resources",
+    "Prompts",
+    "Tool schemas",
+    "Authentication",
+    "Authorization",
+    "Secure tool execution"
    ],
+   "upcoming": [
+    "MCP fundamentals",
+    "MCP architecture",
+    "MCP client",
+    "MCP server",
+    "Tools",
+    "Resources",
+    "Prompts",
+    "Tool schemas",
+    "Authentication",
+    "Authorization",
+    "Secure tool execution"
+   ],
+   "summary": "The Model Context Protocol: connecting models to tools and data through clients and servers, with tools, resources, prompts, schemas and secure execution.",
+   "order": 14,
+   "status": "soon",
    "notes": []
   },
   {
-   "slug": "data-engineering",
-   "order": 16,
-   "stage": "next",
-   "icon": "🏗️",
-   "title": "Data Engineering",
-   "status": "soon",
-   "summary": "Moving and shaping data at scale.",
-   "upcoming": [
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.5",
+   "slug": "enterprise-agent-integration",
+   "title": "Enterprise Agent Integration",
+   "topics": [
+    "CRM",
+    "Jira",
+    "Slack",
     "PostgreSQL",
-    "ETL vs ELT",
+    "Email",
+    "REST APIs",
+    "SOAP",
+    "Knowledge base"
+   ],
+   "upcoming": [
+    "CRM",
+    "Jira",
+    "Slack",
+    "PostgreSQL",
+    "Email",
+    "REST APIs",
+    "SOAP",
+    "Knowledge base"
+   ],
+   "summary": "Plugging agents into the systems companies already run: CRM, Jira, Slack, PostgreSQL, email, REST and SOAP APIs, and knowledge bases.",
+   "order": 15,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.6",
+   "slug": "sql",
+   "title": "Enterprise Data",
+   "topics": [
+    "SQL",
+    "Database Investigation",
+    "Data Modeling"
+   ],
+   "upcoming": [
+    "SQL",
+    "Database Investigation",
+    "Data Modeling"
+   ],
+   "summary": "Querying and investigating enterprise data with SQL, and modelling it well.",
+   "order": 16,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.7",
+   "slug": "data-engineering",
+   "title": "Data Engineering for FDEs",
+   "topics": [
+    "ETL",
+    "ELT",
+    "Data ingestion",
+    "Data validation",
+    "Data cleaning",
+    "Deduplication",
+    "Schema mapping",
+    "Data transformation",
+    "Batch processing",
+    "Data pipelines",
+    "Failure recovery",
     "PySpark",
-    "dbt"
+    "Distributed data processing",
+    "dbt concepts",
+    "Data warehouse concepts"
    ],
-   "notes": []
-  },
-  {
-   "slug": "enterprise-integration",
+   "upcoming": [
+    "ETL",
+    "ELT",
+    "Data ingestion",
+    "Data validation",
+    "Data cleaning",
+    "Deduplication",
+    "Schema mapping",
+    "Data transformation",
+    "Batch processing",
+    "Data pipelines",
+    "Failure recovery",
+    "PySpark",
+    "Distributed data processing",
+    "dbt concepts",
+    "Data warehouse concepts"
+   ],
+   "summary": "Moving and shaping customer data: ETL and ELT, ingestion, validation, cleaning, pipelines, failure recovery, PySpark, dbt and warehouses.",
    "order": 17,
-   "stage": "next",
-   "icon": "🏢",
-   "title": "Enterprise AI Integration",
    "status": "soon",
-   "summary": "Wiring AI into the systems companies already run.",
-   "upcoming": [
-    "REST, SOAP & XML",
-    "Webhooks, OAuth 2.0 & JWT",
-    "CRM, Jira & ticketing",
-    "Slack & email",
-    "Knowledge bases"
-   ],
    "notes": []
   },
   {
-   "slug": "frontend",
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.8",
+   "slug": "git-basics",
+   "title": "Git & GitHub Basics",
+   "topics": [
+    "Git Fundamentals",
+    "Working with Changes",
+    "Branching",
+    "Remote Repository"
+   ],
+   "upcoming": [],
+   "summary": "The everyday Git command set: staging and committing, reading history, undoing changes, branching, merging and rebasing, and working with remote repositories.",
+   "show_topics": true,
    "order": 18,
-   "stage": "next",
-   "icon": "🖥️",
-   "title": "Frontend for AI Apps",
-   "status": "soon",
-   "summary": "Interfaces for streaming AI products.",
-   "upcoming": [
-    "JavaScript",
-    "React",
-    "WebSockets & SSE"
+   "status": "published",
+   "notes": [
+    "git-fundamentals"
+   ]
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.9",
+   "slug": "networking",
+   "title": "Networking Basics",
+   "topics": [
+    "Networking Fundamentals I: Physical Connectivity & Network Types",
+    "Networking Fundamentals II: Device Identification & Core Protocols",
+    "Networking Fundamentals III: OSI Model & Data Communication",
+    "IP Address Fundamentals",
+    "Subnetting & CIDR",
+    "Gateway & Practical IP Addressing",
+    "TCP & UDP",
+    "DNS",
+    "Network Troubleshooting"
    ],
+   "upcoming": [
+    "Gateway & Practical IP Addressing",
+    "TCP & UDP",
+    "DNS",
+    "Network Troubleshooting"
+   ],
+   "summary": "How machines find and talk to each other: cables and network types, MAC and IP, core protocols, the OSI model, IP addressing, subnetting and CIDR.",
+   "order": 19,
+   "status": "published",
+   "notes": [
+    "physical-connectivity",
+    "device-identification-protocols",
+    "osi-model",
+    "ip-address-fundamentals",
+    "subnetting-cidr"
+   ]
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.10",
+   "slug": "linux",
+   "title": "Linux Basics",
+   "topics": [
+    "Introduction to UNIX & Linux",
+    "Linux Architecture",
+    "Environment Setup",
+    "Linux terminal and shell concepts",
+    "Essential Linux Commands"
+   ],
+   "upcoming": [],
+   "summary": "Living in the terminal: what Linux is, how it is built, the file system tree, moving around, reading and searching files, text filters, pipes, redirection and command chaining.",
+   "order": 20,
+   "status": "published",
+   "notes": [
+    "intro-unix-linux",
+    "linux-architecture",
+    "environment-setup",
+    "terminal-and-shell",
+    "file-system-structure",
+    "files-and-directories",
+    "reading-files",
+    "searching-files",
+    "text-filters",
+    "pipes-and-redirection",
+    "command-chaining"
+   ]
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.11",
+   "slug": "web",
+   "title": "Web & APIs",
+   "topics": [
+    "Web Fundamentals",
+    "HTML Basics",
+    "CSS Basics",
+    "JavaScript Basics"
+   ],
+   "upcoming": [
+    "Web Fundamentals",
+    "CSS Basics",
+    "JavaScript Basics"
+   ],
+   "summary": "How the web works and the languages of the browser: HTML structure, elements, lists, images, links and forms, then CSS and JavaScript.",
+   "show_topics": true,
+   "order": 21,
+   "status": "published",
+   "notes": [
+    "html-syntax-structure",
+    "common-html-elements",
+    "html-lists-images",
+    "forms-and-inputs"
+   ]
+  },
+  {
+   "kind": "lab",
+   "stage": "p3",
+   "slug": "labs-p3",
+   "title": "Phase 03 labs & project",
+   "topics": [
+    "Northstar Support Agent",
+    "MCP Enterprise Tools",
+    "Agent Failure Lab",
+    "Northstar Data Archaeology",
+    "Northstar Data Pipeline",
+    "Project: Autonomous Business Operations Agent"
+   ],
+   "upcoming": [
+    "Northstar Support Agent",
+    "MCP Enterprise Tools",
+    "Agent Failure Lab",
+    "Northstar Data Archaeology",
+    "Northstar Data Pipeline",
+    "Project: Autonomous Business Operations Agent"
+   ],
+   "summary": "Agent and data challenges, plus the phase project: an Autonomous Business Operations Agent that automates support operations. It must include an agent, RAG, MCP, enterprise tools, human approval, security, evaluation, observability and failure handling.",
+   "order": 22,
+   "status": "soon",
    "notes": []
   },
   {
-   "slug": "cloud",
-   "order": 19,
-   "stage": "next",
-   "icon": "☁️",
-   "title": "Cloud & Deployment",
-   "status": "soon",
-   "summary": "Shipping it to production on AWS.",
-   "upcoming": [
-    "Docker",
-    "EC2, ECS & RDS",
-    "S3, VPC & IAM",
-    "Load balancers",
-    "CloudWatch & Secrets Manager"
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.1",
+   "slug": "production-api-engineering",
+   "title": "Production API Engineering",
+   "topics": [
+    "REST API design",
+    "API contracts",
+    "OpenAPI",
+    "Authentication",
+    "Authorization",
+    "OAuth2",
+    "JWT",
+    "RBAC",
+    "Multi-tenancy",
+    "Pagination",
+    "Rate limiting",
+    "Retries",
+    "Timeouts",
+    "Idempotency",
+    "API versioning",
+    "Webhooks"
    ],
+   "upcoming": [
+    "REST API design",
+    "API contracts",
+    "OpenAPI",
+    "Authentication",
+    "Authorization",
+    "OAuth2",
+    "JWT",
+    "RBAC",
+    "Multi-tenancy",
+    "Pagination",
+    "Rate limiting",
+    "Retries",
+    "Timeouts",
+    "Idempotency",
+    "API versioning",
+    "Webhooks"
+   ],
+   "summary": "APIs that survive production: design and contracts, OpenAPI, authentication and authorization (OAuth2, JWT, RBAC), multi-tenancy, pagination, rate limits, retries, timeouts, idempotency, versioning and webhooks.",
+   "order": 23,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.2",
+   "slug": "enterprise-integration",
+   "title": "Enterprise Integration",
+   "topics": [
+    "REST APIs",
+    "SOAP",
+    "XML",
+    "Webhooks",
+    "Third-party APIs",
+    "Legacy systems",
+    "CRM systems",
+    "Ticketing systems",
+    "Slack-style integrations",
+    "Database integrations",
+    "Integration Patterns"
+   ],
+   "upcoming": [
+    "REST APIs",
+    "SOAP",
+    "XML",
+    "Webhooks",
+    "Third-party APIs",
+    "Legacy systems",
+    "CRM systems",
+    "Ticketing systems",
+    "Slack-style integrations",
+    "Database integrations",
+    "Integration Patterns"
+   ],
+   "summary": "Connecting to the real enterprise: REST, SOAP and XML, webhooks, third-party and legacy systems, CRMs, ticketing, chat and database integrations, and integration patterns.",
+   "order": 24,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.3",
+   "slug": "event-driven",
+   "title": "State & Event-Driven Systems",
+   "topics": [
+    "Order and Workflow State",
+    "Messaging Infrastructure",
+    "Event-Driven Basics",
+    "Kafka Basics"
+   ],
+   "upcoming": [
+    "Order and Workflow State",
+    "Messaging Infrastructure",
+    "Event-Driven Basics",
+    "Kafka Basics"
+   ],
+   "summary": "Order and workflow state, messaging infrastructure, event-driven design and Kafka basics.",
+   "order": 25,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "lab",
+   "stage": "p4",
+   "slug": "labs-p4",
+   "title": "Phase 04 labs",
+   "topics": [
+    "Northstar Orders API",
+    "Real-Time Order System",
+    "Enterprise Integration Challenge"
+   ],
+   "upcoming": [
+    "Northstar Orders API",
+    "Real-Time Order System",
+    "Enterprise Integration Challenge"
+   ],
+   "summary": "Backend and enterprise integration challenges.",
+   "order": 26,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p5",
+   "number": "5.1",
+   "slug": "frontend",
+   "title": "Frontend for FDEs",
+   "topics": [
+    "React",
+    "API Integration",
+    "Authentication",
+    "Authorization",
+    "Error Handling"
+   ],
+   "upcoming": [
+    "React",
+    "API Integration",
+    "Authentication",
+    "Authorization",
+    "Error Handling"
+   ],
+   "summary": "React front-ends wired to real APIs, with authentication, authorization and solid error handling.",
+   "order": 27,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p5",
+   "number": "5.2",
+   "slug": "dashboards",
+   "title": "Operational Dashboards",
+   "topics": [
+    "Dashboard Fundamentals",
+    "Business Views",
+    "Real-Time Operations",
+    "Role-Based Operations"
+   ],
+   "upcoming": [
+    "Dashboard Fundamentals",
+    "Business Views",
+    "Real-Time Operations",
+    "Role-Based Operations"
+   ],
+   "summary": "Dashboards operations teams actually use: business views, real-time operations and role-based operations.",
+   "order": 28,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "lab",
+   "stage": "p5",
+   "slug": "labs-p5",
+   "title": "Phase 05 lab",
+   "topics": [
+    "Northstar Operations Dashboard"
+   ],
+   "upcoming": [
+    "Northstar Operations Dashboard"
+   ],
+   "summary": "Build a working operations dashboard.",
+   "order": 29,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.1",
+   "slug": "docker",
+   "title": "Docker",
+   "topics": [
+    "Docker images",
+    "Containers",
+    "Dockerfiles",
+    "Multi-container applications",
+    "Networking",
+    "Volumes",
+    "Secrets",
+    "Container security",
+    "Production hardening"
+   ],
+   "upcoming": [
+    "Docker images",
+    "Containers",
+    "Dockerfiles",
+    "Multi-container applications",
+    "Networking",
+    "Volumes",
+    "Secrets",
+    "Container security",
+    "Production hardening"
+   ],
+   "summary": "Packaging apps as containers: images, Dockerfiles, multi-container applications, networking, volumes, secrets, security and production hardening.",
+   "order": 30,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.2",
+   "slug": "aws",
+   "title": "AWS",
+   "topics": [
+    "IAM",
+    "VPC",
+    "Networking",
+    "EC2",
+    "ECS",
+    "RDS",
+    "S3",
+    "Load Balancer",
+    "CloudWatch",
+    "Secrets Manager"
+   ],
+   "upcoming": [
+    "IAM",
+    "VPC",
+    "Networking",
+    "EC2",
+    "ECS",
+    "RDS",
+    "S3",
+    "Load Balancer",
+    "CloudWatch",
+    "Secrets Manager"
+   ],
+   "summary": "Running workloads on AWS: IAM, VPC and networking, EC2, ECS, RDS, S3, load balancers, CloudWatch and Secrets Manager.",
+   "order": 31,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.3",
+   "slug": "terraform",
+   "title": "Terraform",
+   "topics": [
+    "Infrastructure as Code",
+    "Providers",
+    "Resources",
+    "Variables",
+    "Outputs",
+    "State",
+    "Modules",
+    "Environment management"
+   ],
+   "upcoming": [
+    "Infrastructure as Code",
+    "Providers",
+    "Resources",
+    "Variables",
+    "Outputs",
+    "State",
+    "Modules",
+    "Environment management"
+   ],
+   "summary": "Infrastructure as code with Terraform: providers, resources, variables, outputs, state, modules and environment management.",
+   "order": 32,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.4",
+   "slug": "cicd",
+   "title": "CI/CD",
+   "topics": [
+    "GitHub Actions",
+    "Automated tests",
+    "Build",
+    "Docker image",
+    "Security scan",
+    "Deployment",
+    "Environment management",
+    "Rollback",
+    "Release strategy"
+   ],
+   "upcoming": [
+    "GitHub Actions",
+    "Automated tests",
+    "Build",
+    "Docker image",
+    "Security scan",
+    "Deployment",
+    "Environment management",
+    "Rollback",
+    "Release strategy"
+   ],
+   "summary": "Automated delivery with GitHub Actions: tests, builds, Docker images, security scans, deployments, environments, rollbacks and release strategy.",
+   "order": 33,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.5",
+   "slug": "llmops",
+   "title": "LLMOps",
+   "topics": [
+    "Prompt versioning",
+    "Model versioning",
+    "Evaluation",
+    "Tracing",
+    "Token monitoring",
+    "Cost monitoring",
+    "Latency",
+    "Model routing",
+    "Guardrails",
+    "AI regression",
+    "Drift"
+   ],
+   "upcoming": [
+    "Prompt versioning",
+    "Model versioning",
+    "Evaluation",
+    "Tracing",
+    "Token monitoring",
+    "Cost monitoring",
+    "Latency",
+    "Model routing",
+    "Guardrails",
+    "AI regression",
+    "Drift"
+   ],
+   "summary": "Operating LLM systems: prompt and model versioning, evaluation, tracing, token, cost and latency monitoring, model routing, guardrails, AI regression and drift.",
+   "order": 34,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "lab",
+   "stage": "p6",
+   "slug": "labs-p6",
+   "title": "Phase 06 lab",
+   "topics": [
+    "Full Northstar Deployment"
+   ],
+   "upcoming": [
+    "Full Northstar Deployment"
+   ],
+   "summary": "Deploy the whole Northstar system end to end.",
+   "order": 35,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.1",
+   "slug": "system-design",
+   "title": "System Design",
+   "topics": [
+    "Scalability",
+    "Availability",
+    "Load Balancing",
+    "Caching",
+    "Asynchronous Processing",
+    "Distributed Systems",
+    "API Reliability",
+    "Fault Tolerance",
+    "Architecture Trade-offs"
+   ],
+   "upcoming": [
+    "Scalability",
+    "Availability",
+    "Load Balancing",
+    "Caching",
+    "Asynchronous Processing",
+    "Distributed Systems",
+    "API Reliability",
+    "Fault Tolerance",
+    "Architecture Trade-offs"
+   ],
+   "summary": "Designing for scale: scalability, availability, load balancing, caching, asynchronous processing, distributed systems, API reliability, fault tolerance and trade-offs.",
+   "order": 36,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.2",
+   "slug": "database-scaling",
+   "title": "Database Scaling",
+   "topics": [
+    "Read replicas",
+    "Sharding",
+    "Partitioning",
+    "Indexing",
+    "Database bottlenecks",
+    "Distributed databases"
+   ],
+   "upcoming": [
+    "Read replicas",
+    "Sharding",
+    "Partitioning",
+    "Indexing",
+    "Database bottlenecks",
+    "Distributed databases"
+   ],
+   "summary": "Read replicas, sharding, partitioning, indexing, database bottlenecks and distributed databases.",
+   "order": 37,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.3",
+   "slug": "distributed-systems",
+   "title": "Distributed Systems",
+   "topics": [
+    "Distributed Identities",
+    "Message Guarantees",
+    "Distributed Transactions"
+   ],
+   "upcoming": [
+    "Distributed Identities",
+    "Message Guarantees",
+    "Distributed Transactions"
+   ],
+   "summary": "Identities, message guarantees and transactions across many machines.",
+   "order": 38,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.4",
+   "slug": "microservices",
+   "title": "Microservices",
+   "topics": [
+    "Architecture Evolution",
+    "Service Design",
+    "Reliability",
+    "Architecture Decisions"
+   ],
+   "upcoming": [
+    "Architecture Evolution",
+    "Service Design",
+    "Reliability",
+    "Architecture Decisions"
+   ],
+   "summary": "How architectures evolve into services, and how to design, run and make decisions about them.",
+   "order": 39,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.5",
+   "slug": "ai-at-scale",
+   "title": "AI at Scale",
+   "topics": [
+    "Model gateways",
+    "Model routing",
+    "GPU capacity",
+    "Inference scaling",
+    "AI caching",
+    "Batch inference",
+    "Canary model releases",
+    "AI drift",
+    "AI reliability"
+   ],
+   "upcoming": [
+    "Model gateways",
+    "Model routing",
+    "GPU capacity",
+    "Inference scaling",
+    "AI caching",
+    "Batch inference",
+    "Canary model releases",
+    "AI drift",
+    "AI reliability"
+   ],
+   "summary": "Serving AI to many users: model gateways and routing, GPU capacity, inference scaling, AI caching, batch inference, canary releases, drift and reliability.",
+   "order": 40,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "lab",
+   "stage": "p7",
+   "slug": "labs-p7",
+   "title": "Phase 07 lab",
+   "topics": [
+    "Northstar Black Friday"
+   ],
+   "upcoming": [
+    "Northstar Black Friday"
+   ],
+   "summary": "Survive a Black Friday-level traffic spike.",
+   "order": 41,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.1",
+   "slug": "app-security",
+   "title": "Application Security",
+   "topics": [
+    "OWASP Top 10",
+    "Authentication",
+    "Authorization",
+    "RBAC",
+    "Secrets",
+    "API security",
+    "Input validation",
+    "Data protection"
+   ],
+   "upcoming": [
+    "OWASP Top 10",
+    "Authentication",
+    "Authorization",
+    "RBAC",
+    "Secrets",
+    "API security",
+    "Input validation",
+    "Data protection"
+   ],
+   "summary": "OWASP Top 10, authentication, authorization, RBAC, secrets, API security, input validation and data protection.",
+   "order": 42,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.2",
+   "slug": "ai-security",
+   "title": "AI Security Review & Agent Governance",
+   "topics": [
+    "Indirect injection",
+    "Excessive agency",
+    "Tool abuse",
+    "Secure RAG",
+    "Agent permissions"
+   ],
+   "upcoming": [
+    "Indirect injection",
+    "Excessive agency",
+    "Tool abuse",
+    "Secure RAG",
+    "Agent permissions"
+   ],
+   "summary": "Reviewing AI systems for indirect injection, excessive agency and tool abuse, securing RAG, and governing agent permissions.",
+   "order": 43,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.3",
+   "slug": "sre",
+   "title": "SRE & Reliability",
+   "topics": [
+    "SLAs",
+    "SLOs",
+    "SLIs",
+    "Availability",
+    "Reliability",
+    "Disaster recovery",
+    "Backups",
+    "Incident management",
+    "Postmortems"
+   ],
+   "upcoming": [
+    "SLAs",
+    "SLOs",
+    "SLIs",
+    "Availability",
+    "Reliability",
+    "Disaster recovery",
+    "Backups",
+    "Incident management",
+    "Postmortems"
+   ],
+   "summary": "SLAs, SLOs and SLIs, availability and reliability, disaster recovery, backups, incident management and postmortems.",
+   "order": 44,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.4",
+   "slug": "incident-response",
+   "title": "Incident Response",
+   "topics": [
+    "Incident detection",
+    "Severity",
+    "Incident commander",
+    "Communication",
+    "Mitigation",
+    "Root-cause analysis",
+    "Recovery",
+    "Postmortem",
+    "Prevention"
+   ],
+   "upcoming": [
+    "Incident detection",
+    "Severity",
+    "Incident commander",
+    "Communication",
+    "Mitigation",
+    "Root-cause analysis",
+    "Recovery",
+    "Postmortem",
+    "Prevention"
+   ],
+   "summary": "Running an incident: detection, severity, incident command, communication, mitigation, root-cause analysis, recovery, postmortem and prevention.",
+   "order": 45,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "lab",
+   "stage": "p8",
+   "slug": "labs-p8",
+   "title": "Phase 08 labs",
+   "topics": [
+    "Northstar Red Team",
+    "Production Incident Room",
+    "Client Discovery"
+   ],
+   "upcoming": [
+    "Northstar Red Team",
+    "Production Incident Room",
+    "Client Discovery"
+   ],
+   "summary": "Security, incident and client discovery challenges.",
+   "order": 46,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.1",
+   "slug": "technical-discovery",
+   "title": "Technical Discovery",
+   "topics": [
+    "Discovery frameworks",
+    "Stakeholder interviews",
+    "Business process mapping",
+    "Technical discovery",
+    "System discovery",
+    "Data discovery",
+    "Constraint discovery",
+    "Success metrics"
+   ],
+   "upcoming": [
+    "Discovery frameworks",
+    "Stakeholder interviews",
+    "Business process mapping",
+    "Technical discovery",
+    "System discovery",
+    "Data discovery",
+    "Constraint discovery",
+    "Success metrics"
+   ],
+   "summary": "Running discovery with a customer: frameworks, stakeholder interviews, business process mapping, technical, system, data and constraint discovery, and success metrics.",
+   "order": 47,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.2",
+   "slug": "problem-framing",
+   "title": "Problem Framing",
+   "topics": [
+    "Problem statement",
+    "User personas",
+    "Current state",
+    "Future state",
+    "Pain points",
+    "Requirements",
+    "Assumptions",
+    "Constraints",
+    "Risks",
+    "Success metrics"
+   ],
+   "upcoming": [
+    "Problem statement",
+    "User personas",
+    "Current state",
+    "Future state",
+    "Pain points",
+    "Requirements",
+    "Assumptions",
+    "Constraints",
+    "Risks",
+    "Success metrics"
+   ],
+   "summary": "Turning ambiguity into a clear problem: problem statement, personas, current and future state, pain points, requirements, assumptions, constraints, risks and success metrics.",
+   "order": 48,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.3",
+   "slug": "solution-architecture",
+   "title": "Solution Architecture",
+   "topics": [
+    "Architecture diagrams",
+    "Data flows",
+    "Sequence diagrams",
+    "API architecture",
+    "AI architecture",
+    "Security architecture",
+    "Infrastructure architecture",
+    "ADRs",
+    "Technology selection"
+   ],
+   "upcoming": [
+    "Architecture diagrams",
+    "Data flows",
+    "Sequence diagrams",
+    "API architecture",
+    "AI architecture",
+    "Security architecture",
+    "Infrastructure architecture",
+    "ADRs",
+    "Technology selection"
+   ],
+   "summary": "Architecture, data-flow and sequence diagrams; API, AI, security and infrastructure architecture; ADRs and technology selection.",
+   "order": 49,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.4",
+   "slug": "scope-sow",
+   "title": "Scope & SOW",
+   "topics": [
+    "POC",
+    "Prototype",
+    "MVP",
+    "Production",
+    "Scope definition",
+    "Milestones",
+    "Dependencies",
+    "Estimates",
+    "Risks",
+    "Statement of Work",
+    "Acceptance criteria"
+   ],
+   "upcoming": [
+    "POC",
+    "Prototype",
+    "MVP",
+    "Production",
+    "Scope definition",
+    "Milestones",
+    "Dependencies",
+    "Estimates",
+    "Risks",
+    "Statement of Work",
+    "Acceptance criteria"
+   ],
+   "summary": "From POC to production: scope definition, milestones, dependencies, estimates, risks, the statement of work and acceptance criteria.",
+   "order": 50,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.5",
+   "slug": "customer-communication",
+   "title": "Customer Communication",
+   "topics": [
+    "Technical communication",
+    "Executive communication",
+    "Architecture presentation",
+    "Demo",
+    "Incident communication",
+    "Stakeholder updates",
+    "Expectation management",
+    "Scope negotiation",
+    "Handling objections",
+    "Explaining AI limitations"
+   ],
+   "upcoming": [
+    "Technical communication",
+    "Executive communication",
+    "Architecture presentation",
+    "Demo",
+    "Incident communication",
+    "Stakeholder updates",
+    "Expectation management",
+    "Scope negotiation",
+    "Handling objections",
+    "Explaining AI limitations"
+   ],
+   "summary": "Technical and executive communication, architecture presentations and demos, incident communication, stakeholder updates, expectations, scope negotiation, objections and explaining AI limitations.",
+   "order": 51,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.6",
+   "slug": "business-value",
+   "title": "Business Value & ROI",
+   "topics": [
+    "Business KPIs",
+    "Technical KPIs",
+    "Baseline",
+    "Target",
+    "ROI",
+    "Cost savings",
+    "Time savings",
+    "Revenue impact",
+    "Productivity",
+    "Error reduction",
+    "Adoption"
+   ],
+   "upcoming": [
+    "Business KPIs",
+    "Technical KPIs",
+    "Baseline",
+    "Target",
+    "ROI",
+    "Cost savings",
+    "Time savings",
+    "Revenue impact",
+    "Productivity",
+    "Error reduction",
+    "Adoption"
+   ],
+   "summary": "Proving value: business and technical KPIs, baselines and targets, ROI, cost and time savings, revenue impact, productivity, error reduction and adoption.",
+   "order": 52,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.7",
+   "slug": "adoption-handoff",
+   "title": "Adoption & Handoff",
+   "topics": [
+    "UAT",
+    "User training",
+    "Documentation",
+    "Operational handoff",
+    "Change management",
+    "Adoption measurement",
+    "Support model",
+    "Knowledge transfer",
+    "Post-deployment roadmap"
+   ],
+   "upcoming": [
+    "UAT",
+    "User training",
+    "Documentation",
+    "Operational handoff",
+    "Change management",
+    "Adoption measurement",
+    "Support model",
+    "Knowledge transfer",
+    "Post-deployment roadmap"
+   ],
+   "summary": "UAT, user training, documentation, operational handoff, change management, adoption measurement, support model, knowledge transfer and the post-deployment roadmap.",
+   "order": 53,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.8",
+   "slug": "discovery-design",
+   "title": "Discovery & Design",
+   "topics": [
+    "Discover",
+    "Define",
+    "Design",
+    "Deliverables"
+   ],
+   "upcoming": [
+    "Discover",
+    "Define",
+    "Design",
+    "Deliverables"
+   ],
+   "summary": "Putting the craft together: discover, define and design a real solution, and produce the deliverables.",
+   "order": 54,
+   "status": "soon",
+   "notes": []
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.9",
+   "slug": "build-deploy",
+   "title": "Build & Deploy",
+   "topics": [
+    "Backend",
+    "Frontend",
+    "AI",
+    "RAG",
+    "Agent",
+    "Integration",
+    "Dockerize",
+    "Deploy",
+    "Monitor",
+    "Evaluate",
+    "Secure"
+   ],
+   "upcoming": [
+    "Backend",
+    "Frontend",
+    "AI",
+    "RAG",
+    "Agent",
+    "Integration",
+    "Dockerize",
+    "Deploy",
+    "Monitor",
+    "Evaluate",
+    "Secure"
+   ],
+   "summary": "Build and ship the full system: backend, frontend, AI, RAG, agent and integrations, then dockerize, deploy, monitor, evaluate and secure it.",
+   "order": 55,
+   "status": "soon",
    "notes": []
   }
  ],
@@ -355,7 +1696,7 @@
     "system integration"
    ],
    "readMinutes": 29,
-   "words": 5536,
+   "words": 5511,
    "sections": [
     {
      "id": "what",
@@ -447,7 +1788,7 @@
     "business value"
    ],
    "readMinutes": 35,
-   "words": 6721,
+   "words": 6700,
    "sections": [
     {
      "id": "abc-insurance",
@@ -540,7 +1881,7 @@
     "bias toward action"
    ],
    "readMinutes": 15,
-   "words": 2906,
+   "words": 2874,
    "sections": [
     {
      "id": "overview",
@@ -597,1336 +1938,11 @@
    "drive": "14BNgyeU4FPTphWr5jpL3LKycj1GnQol_8lJubgVIIs4"
   },
   {
-   "id": "linux/intro-unix-linux",
-   "module": "linux",
-   "slug": "intro-unix-linux",
-   "order": 1,
-   "title": "Introduction to UNIX & Linux",
-   "summary": "The origin story of UNIX and Linux: the problems of early computing, Multics, UNIX and C, GNU and Linus Torvalds, the open-source idea, kernel vs operating system, and the major distributions.",
-   "topics": [
-    "UNIX history",
-    "Linux kernel",
-    "GNU",
-    "open source",
-    "UNIX philosophy",
-    "distributions",
-    "Ubuntu",
-    "RHEL"
-   ],
-   "readMinutes": 19,
-   "words": 3645,
-   "sections": [
-    {
-     "id": "everywhere",
-     "title": "Where is Linux? (Spoiler: everywhere)"
-    },
-    {
-     "id": "dark-ages",
-     "title": "The “dark ages” of computing"
-    },
-    {
-     "id": "history",
-     "title": "The history: from giant failures to global dominance"
-    },
-    {
-     "id": "unix-philosophy",
-     "title": "What made UNIX special?"
-    },
-    {
-     "id": "open-source",
-     "title": "Why the open-source philosophy was needed"
-    },
-    {
-     "id": "why-linux",
-     "title": "Why Linux was created"
-    },
-    {
-     "id": "kernel-vs-os",
-     "title": "What exactly is Linux? The big clarification"
-    },
-    {
-     "id": "unix-vs-linux",
-     "title": "The family tree: UNIX vs Linux"
-    },
-    {
-     "id": "why-it-rules",
-     "title": "Why Linux rules the world"
-    },
-    {
-     "id": "distros",
-     "title": "Why so many “flavours” of Linux?"
-    },
-    {
-     "id": "major-distros",
-     "title": "The major Linux distributions"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 12,
-   "date": "2026-09-08",
-   "drive": "1Onjx-QeePhx7b-_FIsTZu9zMly4ycTiYz_C8h0uQSYY"
-  },
-  {
-   "id": "linux/linux-architecture",
-   "module": "linux",
-   "slug": "linux-architecture",
-   "order": 2,
-   "title": "Linux Architecture",
-   "summary": "How Linux is built in layers: hardware, kernel, shell and user space. What the kernel does, why kernel space is protected, how system calls cross the wall, and what really happens when you type ls.",
-   "topics": [
-    "kernel",
-    "shell",
-    "user space",
-    "kernel space",
-    "system calls",
-    "device drivers",
-    "hardware layer"
-   ],
-   "readMinutes": 17,
-   "words": 3246,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why learn Linux architecture?"
-    },
-    {
-     "id": "layers",
-     "title": "The layers of Linux architecture"
-    },
-    {
-     "id": "hardware",
-     "title": "Layer 1 · The hardware layer"
-    },
-    {
-     "id": "kernel",
-     "title": "Layer 2 · The kernel layer"
-    },
-    {
-     "id": "kernel-space",
-     "title": "Layer 2.5 · Kernel space"
-    },
-    {
-     "id": "shell",
-     "title": "Layer 3 · The shell"
-    },
-    {
-     "id": "syscalls",
-     "title": "The bridge · system calls"
-    },
-    {
-     "id": "user-space",
-     "title": "Layer 4 · User space"
-    },
-    {
-     "id": "two-worlds",
-     "title": "The two worlds: kernel space vs user space"
-    },
-    {
-     "id": "execution-flow",
-     "title": "Execution flow: what happens when you type ls"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 12,
-   "date": "2026-09-08",
-   "drive": "1dE7gy9QtbNU9j3VaSgwSJ_L9xG9v6FvZf7hCSwfxojM"
-  },
-  {
-   "id": "linux/environment-setup",
-   "module": "linux",
-   "slug": "environment-setup",
-   "order": 3,
-   "title": "Environment Setup",
-   "summary": "Get a real Linux machine in the cloud: create an AWS account, launch an Ubuntu EC2 instance, connect over SSH with a key pair, and run your first commands.",
-   "topics": [
-    "AWS",
-    "EC2",
-    "instance",
-    "AMI",
-    "key pair",
-    "SSH",
-    "security group",
-    "cloud vs local"
-   ],
-   "readMinutes": 13,
-   "words": 2482,
-   "sections": [
-    {
-     "id": "cloud",
-     "title": "Linux in the cloud: what is AWS?"
-    },
-    {
-     "id": "why-aws",
-     "title": "Why use AWS, and what is EC2?"
-    },
-    {
-     "id": "local-vs-cloud",
-     "title": "Local installation vs cloud installation"
-    },
-    {
-     "id": "account",
-     "title": "Create your AWS account"
-    },
-    {
-     "id": "launch",
-     "title": "Launch an EC2 instance: name, image and size"
-    },
-    {
-     "id": "key-pair",
-     "title": "Create a key pair (your login key)"
-    },
-    {
-     "id": "configure",
-     "title": "Network, storage, firewall, then launch"
-    },
-    {
-     "id": "connect",
-     "title": "Connect to your instance with SSH"
-    },
-    {
-     "id": "first-commands",
-     "title": "Your first commands on the server"
-    },
-    {
-     "id": "big-picture",
-     "title": "What this means: the full picture"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 7,
-   "terms": 12,
-   "date": "2026-09-08",
-   "drive": "1Qw_9OI8ruePEk2UaK5cw9Gscpv-8H7tNCUVOH3KDUmI"
-  },
-  {
-   "id": "linux/terminal-and-shell",
-   "module": "linux",
-   "slug": "terminal-and-shell",
-   "order": 4,
-   "title": "Linux Terminal and Shell",
-   "summary": "GUI vs CLI, what a terminal is (GUI terminal, TTY, PTY), what the shell does, the journey of a command, the main Linux shells, reading the prompt, command structure, built-ins vs external commands, PATH and environment variables.",
-   "topics": [
-    "terminal",
-    "shell",
-    "Bash",
-    "command prompt",
-    "TTY and PTY",
-    "PATH",
-    "built-in commands",
-    "environment variables"
-   ],
-   "readMinutes": 19,
-   "words": 3583,
-   "sections": [
-    {
-     "id": "interact",
-     "title": "How users interact with an operating system"
-    },
-    {
-     "id": "why-cli",
-     "title": "Why the command line exists"
-    },
-    {
-     "id": "model",
-     "title": "The basic interaction model"
-    },
-    {
-     "id": "terminal",
-     "title": "What is a terminal?"
-    },
-    {
-     "id": "terminal-types",
-     "title": "Types of Linux terminals"
-    },
-    {
-     "id": "shell",
-     "title": "The shell: the program that understands you"
-    },
-    {
-     "id": "journey",
-     "title": "How a Linux command actually works"
-    },
-    {
-     "id": "shells",
-     "title": "Different Linux shells"
-    },
-    {
-     "id": "bash",
-     "title": "Bash: starting and identifying your shell"
-    },
-    {
-     "id": "prompt",
-     "title": "The command prompt, explained"
-    },
-    {
-     "id": "structure",
-     "title": "Understanding command structure"
-    },
-    {
-     "id": "builtins",
-     "title": "Built-in vs external commands"
-    },
-    {
-     "id": "path",
-     "title": "How Bash finds external commands: $PATH"
-    },
-    {
-     "id": "environment",
-     "title": "The Bash environment and variables"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-10",
-   "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg"
-  },
-  {
-   "id": "linux/file-system-structure",
-   "module": "linux",
-   "slug": "file-system-structure",
-   "order": 5,
-   "title": "The Linux File System Structure",
-   "summary": "The Linux directory tree from / downwards: what lives in /bin, /etc, /home, /var and friends, absolute vs relative paths, and navigating with pwd, cd, ls, history and the . .. ~ shortcuts.",
-   "topics": [
-    "root directory",
-    "/etc /var /home /bin",
-    "absolute path",
-    "relative path",
-    "pwd and cd",
-    "ls options",
-    "history",
-    "hidden files"
-   ],
-   "readMinutes": 23,
-   "words": 4308,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why the file system structure exists"
-    },
-    {
-     "id": "what-is-fs",
-     "title": "What is a file system?"
-    },
-    {
-     "id": "root",
-     "title": "The root directory (/), and the /root trap"
-    },
-    {
-     "id": "map",
-     "title": "The map of the system: critical directories"
-    },
-    {
-     "id": "bin",
-     "title": "/bin · the essential toolbelt"
-    },
-    {
-     "id": "etc",
-     "title": "/etc · the settings and rulebooks"
-    },
-    {
-     "id": "home",
-     "title": "/home · the personal workspaces"
-    },
-    {
-     "id": "var",
-     "title": "/var · the system diary"
-    },
-    {
-     "id": "real-world",
-     "title": "How Linux uses the file system: real-world flows"
-    },
-    {
-     "id": "paths",
-     "title": "Navigation and the idea of a path"
-    },
-    {
-     "id": "absolute-relative",
-     "title": "Absolute vs relative paths"
-    },
-    {
-     "id": "pwd-cd",
-     "title": "pwd and cd: where am I, and how do I move?"
-    },
-    {
-     "id": "ls",
-     "title": "ls · the eyes of the system"
-    },
-    {
-     "id": "history",
-     "title": "history and the ! shortcuts"
-    },
-    {
-     "id": "symbols",
-     "title": "Special symbols: ., .. and ~"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-07",
-   "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo"
-  },
-  {
-   "id": "linux/files-and-directories",
-   "module": "linux",
-   "slug": "files-and-directories",
-   "order": 6,
-   "title": "Files & Directories",
-   "summary": "Create, copy, move, rename and delete files and folders from the Linux terminal with touch, mkdir, cp, mv, rm and rmdir, and learn to use rm -rf safely.",
-   "topics": [
-    "touch",
-    "mkdir -p",
-    "cp",
-    "mv",
-    "rm -rf",
-    "rmdir",
-    "safe deletion",
-    "renaming"
-   ],
-   "readMinutes": 18,
-   "words": 3426,
-   "sections": [
-    {
-     "id": "recap",
-     "title": "Quick recap before we start"
-    },
-    {
-     "id": "touch",
-     "title": "touch · creating files"
-    },
-    {
-     "id": "mkdir",
-     "title": "mkdir · creating directories"
-    },
-    {
-     "id": "cp",
-     "title": "cp · copying files"
-    },
-    {
-     "id": "mv",
-     "title": "mv · moving and renaming"
-    },
-    {
-     "id": "destination",
-     "title": "How mv reads the destination"
-    },
-    {
-     "id": "rm",
-     "title": "rm · removing files"
-    },
-    {
-     "id": "rm-rf",
-     "title": "The risk of rm -rf"
-    },
-    {
-     "id": "rmdir",
-     "title": "rmdir · removing empty directories"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 10,
-   "date": "2026-09-07",
-   "drive": "1xJNHx2ZOa6CoKUh28h9iV_V0TQh_cVOqwevn82A1H1M"
-  },
-  {
-   "id": "linux/reading-files",
-   "module": "linux",
-   "slug": "reading-files",
-   "order": 7,
-   "title": "Reading Files",
-   "summary": "Look inside files from the terminal: cat for small files, less to scroll and search big logs, and head to peek at the first lines.",
-   "topics": [
-    "cat",
-    "cat -n",
-    "less",
-    "head",
-    "head -n",
-    "log files",
-    "searching in less"
-   ],
-   "readMinutes": 10,
-   "words": 1944,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why we need file-reading commands"
-    },
-    {
-     "id": "cat",
-     "title": "cat · display the complete file"
-    },
-    {
-     "id": "cat-multiple",
-     "title": "Reading and combining several files"
-    },
-    {
-     "id": "cat-limit",
-     "title": "The limitation of cat"
-    },
-    {
-     "id": "less",
-     "title": "less · browse a file interactively"
-    },
-    {
-     "id": "less-practice",
-     "title": "Practise less on a log file"
-    },
-    {
-     "id": "head",
-     "title": "head · read the beginning of a file"
-    },
-    {
-     "id": "choose",
-     "title": "Choosing the right tool"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 7,
-   "terms": 8,
-   "date": "2026-09-07",
-   "drive": "101ipcrowp4SNObS37EK0pjdfUS-RCQ2KmQPuvnCEecs"
-  },
-  {
-   "id": "linux/searching-files",
-   "module": "linux",
-   "slug": "searching-files",
-   "order": 8,
-   "title": "Searching Files & Content",
-   "summary": "Locate files anywhere with find (by name, type, size and time) and search inside files with grep (-i, -n, -r, -v, -c, -w), with examples and expected output.",
-   "topics": [
-    "find",
-    "grep",
-    "-name",
-    "-type",
-    "grep -r",
-    "grep -v",
-    "wildcards",
-    "case sensitivity"
-   ],
-   "readMinutes": 16,
-   "words": 2951,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why searching is needed"
-    },
-    {
-     "id": "find",
-     "title": "find · search for files and directories"
-    },
-    {
-     "id": "find-name",
-     "title": "Search by name"
-    },
-    {
-     "id": "find-iname",
-     "title": "Case-insensitive search with -iname"
-    },
-    {
-     "id": "find-type",
-     "title": "Only files, or only directories: -type"
-    },
-    {
-     "id": "find-size-time",
-     "title": "Search by size and by time"
-    },
-    {
-     "id": "grep",
-     "title": "grep · search inside files"
-    },
-    {
-     "id": "grep-options",
-     "title": "Case, line numbers and multiple files"
-    },
-    {
-     "id": "grep-r",
-     "title": "Search a whole folder tree: grep -r"
-    },
-    {
-     "id": "grep-vcw",
-     "title": "Invert, count and whole words: -v, -c, -w"
-    },
-    {
-     "id": "cheatsheet",
-     "title": "Cheat sheet: find vs grep"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 10,
-   "date": "2026-09-10",
-   "drive": "1Ivf5qxUNbA036kQke91o2XMaYvHiUrhScDS5FMy2AIo"
-  },
-  {
-   "id": "linux/text-filters",
-   "module": "linux",
-   "slug": "text-filters",
-   "order": 9,
-   "title": "Essential Text Filters",
-   "summary": "Count, sort, de-duplicate, slice and transform text with wc, sort, uniq, cut and tr, with sample input files and the exact output of every command.",
-   "topics": [
-    "wc",
-    "sort",
-    "uniq",
-    "cut",
-    "tr",
-    "text filters",
-    "characters vs bytes"
-   ],
-   "readMinutes": 13,
-   "words": 2479,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why text filters matter"
-    },
-    {
-     "id": "wc",
-     "title": "wc · measure your text"
-    },
-    {
-     "id": "wc-options",
-     "title": "Counting one thing at a time"
-    },
-    {
-     "id": "wc-more",
-     "title": "wc with several files and with pipes"
-    },
-    {
-     "id": "sort",
-     "title": "sort · put lines in order"
-    },
-    {
-     "id": "sort-options",
-     "title": "Numbers, reverse and unique: -n, -r, -u"
-    },
-    {
-     "id": "uniq",
-     "title": "uniq · remove repeated lines"
-    },
-    {
-     "id": "cut",
-     "title": "cut · extract part of every line"
-    },
-    {
-     "id": "tr",
-     "title": "tr · translate characters"
-    },
-    {
-     "id": "recap",
-     "title": "The five filters at a glance"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 9,
-   "date": "2026-09-07",
-   "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg"
-  },
-  {
-   "id": "linux/pipes-and-redirection",
-   "module": "linux",
-   "slug": "pipes-and-redirection",
-   "order": 10,
-   "title": "Pipes & Redirection",
-   "summary": "Control where command input comes from and where output goes: stdin, stdout and stderr, the >, >> and < redirection operators, and the | pipe that connects commands.",
-   "topics": [
-    "stdin",
-    "stdout",
-    "stderr",
-    "> redirection",
-    ">> append",
-    "< input",
-    "pipe |"
-   ],
-   "readMinutes": 15,
-   "words": 2771,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why control the flow of data?"
-    },
-    {
-     "id": "streams",
-     "title": "The foundation: three standard streams"
-    },
-    {
-     "id": "output",
-     "title": "> · send output to a file"
-    },
-    {
-     "id": "append",
-     "title": ">> · append to a file"
-    },
-    {
-     "id": "input",
-     "title": "< · take input from a file"
-    },
-    {
-     "id": "pipe",
-     "title": "| · the pipe"
-    },
-    {
-     "id": "pipe-practice",
-     "title": "Practise: show only the .txt files"
-    },
-    {
-     "id": "stderr-redirect",
-     "title": "Redirecting errors: 2>"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 7,
-   "terms": 10,
-   "date": "2026-09-07",
-   "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk"
-  },
-  {
-   "id": "linux/command-chaining",
-   "module": "linux",
-   "slug": "command-chaining",
-   "order": 11,
-   "title": "Command Chaining",
-   "summary": "Run several Linux commands on one line and control what happens next with ;, && and ||. Flows, examples and a self-check.",
-   "topics": [
-    "; operator",
-    "&& operator",
-    "|| operator",
-    "exit status",
-    "combining chains",
-    "workflows"
-   ],
-   "readMinutes": 7,
-   "words": 1249,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why chain commands?"
-    },
-    {
-     "id": "semicolon",
-     "title": "; · run commands one after another"
-    },
-    {
-     "id": "and",
-     "title": "&& · run only if the previous command succeeds"
-    },
-    {
-     "id": "many-and",
-     "title": "Several && in a row"
-    },
-    {
-     "id": "or",
-     "title": "|| · run only if the previous command fails"
-    },
-    {
-     "id": "difference",
-     "title": "The three operators, side by side"
-    },
-    {
-     "id": "combining",
-     "title": "Combining chains"
-    },
-    {
-     "id": "workflow",
-     "title": "A practical workflow"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 6,
-   "terms": 5,
-   "date": "2026-09-08",
-   "drive": "1pyE8sQmjkH5Wd7yyGMiRqdDSDSay1wOoMgdunF3U-tQ"
-  },
-  {
-   "id": "networking/physical-connectivity",
-   "module": "networking",
-   "slug": "physical-connectivity",
-   "order": 1,
-   "title": "Physical Connectivity & Network Types",
-   "summary": "Why computers needed networks, how they physically connect (NIC, cables, Wi-Fi), what hubs, switches, routers, modems and access points do, and how to tell a LAN from a WAN, plus MAN, CAN, PAN, ISP, Intranet and the Web.",
-   "topics": [
-    "computer network",
-    "NIC",
-    "hub vs switch",
-    "router",
-    "modem",
-    "access point",
-    "LAN vs WAN",
-    "Internet vs Web"
-   ],
-   "readMinutes": 26,
-   "words": 4920,
-   "sections": [
-    {
-     "id": "before-networks",
-     "title": "The world before networking"
-    },
-    {
-     "id": "what-is-a-network",
-     "title": "From two computers to a computer network"
-    },
-    {
-     "id": "interface-and-medium",
-     "title": "How a computer physically connects"
-    },
-    {
-     "id": "hub",
-     "title": "Hub: the first central box"
-    },
-    {
-     "id": "switch",
-     "title": "Switch: a smarter central box"
-    },
-    {
-     "id": "router",
-     "title": "Router: connecting different networks"
-    },
-    {
-     "id": "modem",
-     "title": "Modem: talking to your Internet provider"
-    },
-    {
-     "id": "access-point",
-     "title": "Wireless access point, and the all-in-one home box"
-    },
-    {
-     "id": "lan-wan",
-     "title": "LAN vs WAN: the one rule"
-    },
-    {
-     "id": "scales",
-     "title": "PAN, LAN, CAN, MAN: the same idea at different sizes"
-    },
-    {
-     "id": "internet-web",
-     "title": "ISP, Internet, Intranet and the Web"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 15,
-   "date": "2026-09-09",
-   "drive": "1k7IVPGvXWHSmf557Rmo1UUQhnJENaAUu0pXHpSY3EBo"
-  },
-  {
-   "id": "networking/device-identification-protocols",
-   "module": "networking",
-   "slug": "device-identification-protocols",
-   "order": 2,
-   "title": "Device Identification & Core Protocols",
-   "summary": "How a network finds the right device (MAC and IP addresses), the right app (ports), and agrees on rules (protocols), plus what TCP, UDP, DNS and DHCP do, with sketched exchanges.",
-   "topics": [
-    "MAC address",
-    "IP address",
-    "ARP",
-    "protocols",
-    "ports",
-    "TCP vs UDP",
-    "DNS",
-    "DHCP"
-   ],
-   "readMinutes": 20,
-   "words": 3782,
-   "sections": [
-    {
-     "id": "identity",
-     "title": "Why every device needs an address"
-    },
-    {
-     "id": "mac",
-     "title": "MAC address: identifying a device on the local network"
-    },
-    {
-     "id": "mac-not-enough",
-     "title": "Why MAC addresses alone are not enough"
-    },
-    {
-     "id": "ip",
-     "title": "IP address: identifying a device across networks"
-    },
-    {
-     "id": "arp",
-     "title": "Bonus: how IP and MAC meet (ARP)"
-    },
-    {
-     "id": "protocols",
-     "title": "Protocols: shared rules for talking"
-    },
-    {
-     "id": "common-protocols",
-     "title": "Common protocols and their jobs"
-    },
-    {
-     "id": "ports",
-     "title": "Ports: reaching the right application"
-    },
-    {
-     "id": "tcp-udp",
-     "title": "TCP and UDP: two ways to deliver"
-    },
-    {
-     "id": "dns",
-     "title": "DNS: names instead of numbers"
-    },
-    {
-     "id": "dhcp",
-     "title": "DHCP: automatic network setup"
-    },
-    {
-     "id": "chain",
-     "title": "The chain of problems, solved"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 13,
-   "date": "2026-09-09",
-   "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU"
-  },
-  {
-   "id": "networking/osi-model",
-   "module": "networking",
-   "slug": "osi-model",
-   "order": 3,
-   "title": "OSI Model & Data Communication",
-   "summary": "Why networking is split into layers, the seven OSI layers told through one report travelling from Bengaluru to Bhubaneswar, encapsulation and data units, and what really happens when you open a website.",
-   "topics": [
-    "OSI model",
-    "seven layers",
-    "layering",
-    "encapsulation",
-    "decapsulation",
-    "segment packet frame bits",
-    "opening a website"
-   ],
-   "readMinutes": 20,
-   "words": 3828,
-   "sections": [
-    {
-     "id": "why-layers",
-     "title": "Why networking needs layers"
-    },
-    {
-     "id": "osi",
-     "title": "The OSI model: seven layers"
-    },
-    {
-     "id": "story-setup",
-     "title": "The story: a report from Bengaluru to Bhubaneswar"
-    },
-    {
-     "id": "upper-layers",
-     "title": "Layers 7, 6, 5: application, presentation, session"
-    },
-    {
-     "id": "transport",
-     "title": "Layer 4 · Transport: the heart"
-    },
-    {
-     "id": "network",
-     "title": "Layer 3 · Network: addressing and routing"
-    },
-    {
-     "id": "data-link",
-     "title": "Layer 2 · Data Link: frames and the next hop"
-    },
-    {
-     "id": "physical",
-     "title": "Layer 1 · Physical: bits become signals"
-    },
-    {
-     "id": "receiver",
-     "title": "The receiving side: back up the stack"
-    },
-    {
-     "id": "encapsulation",
-     "title": "Encapsulation, decapsulation and data units"
-    },
-    {
-     "id": "website-journey",
-     "title": "The complete journey: opening a website"
-    },
-    {
-     "id": "series-recap",
-     "title": "The whole series in one map"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 14,
-   "date": "2026-09-09",
-   "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk"
-  },
-  {
-   "id": "networking/ip-address-fundamentals",
-   "module": "networking",
-   "slug": "ip-address-fundamentals",
-   "order": 4,
-   "title": "IP Address Fundamentals",
-   "summary": "Why devices need IP addresses, how a 32-bit IPv4 address is built and converted between binary and decimal, the old A–E classes, public vs private, NAT, special addresses and IPv6.",
-   "topics": [
-    "IPv4",
-    "binary conversion",
-    "octets",
-    "network and host portion",
-    "IP classes",
-    "private IP",
-    "NAT",
-    "IPv6"
-   ],
-   "readMinutes": 28,
-   "words": 5233,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why IP addresses are needed"
-    },
-    {
-     "id": "types",
-     "title": "“Types” of IP address: five different lenses"
-    },
-    {
-     "id": "ipv4-bits",
-     "title": "IPv4: 32 bits in four octets"
-    },
-    {
-     "id": "binary",
-     "title": "Dotted decimal and binary ↔ decimal conversion"
-    },
-    {
-     "id": "network-host",
-     "title": "Network portion and host portion"
-    },
-    {
-     "id": "classes",
-     "title": "Classful addressing: the historical A–E system"
-    },
-    {
-     "id": "classful-waste",
-     "title": "Why classful addressing was wasteful"
-    },
-    {
-     "id": "public-private",
-     "title": "Public vs private IPv4 addresses"
-    },
-    {
-     "id": "static-dynamic",
-     "title": "Static vs dynamic addresses"
-    },
-    {
-     "id": "nat",
-     "title": "NAT: private networks on the public Internet"
-    },
-    {
-     "id": "delivery",
-     "title": "Unicast, broadcast, multicast and anycast"
-    },
-    {
-     "id": "special",
-     "title": "Special IPv4 addresses"
-    },
-    {
-     "id": "ipv6",
-     "title": "IPv4 exhaustion and the arrival of IPv6"
-    },
-    {
-     "id": "ipv6-compress",
-     "title": "IPv6 compression, types and special addresses"
-    },
-    {
-     "id": "v4-vs-v6",
-     "title": "IPv4 vs IPv6, side by side"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-13",
-   "drive": "1FDYwr59XXKDTWRzGxm_Owm9kJrVT9SftWDVKRPgqNTQ"
-  },
-  {
-   "id": "networking/subnetting-cidr",
-   "module": "networking",
-   "slug": "subnetting-cidr",
-   "order": 5,
-   "title": "Subnetting & CIDR",
-   "summary": "Split one network into many: subnet masks in binary, CIDR prefixes, borrowing bits, the block-size shortcut, network/broadcast/host-range calculations, design by requirement, VLSM, /31 and /32, IPv6 prefixes and troubleshooting.",
-   "topics": [
-    "subnet mask",
-    "CIDR",
-    "borrowing bits",
-    "block size",
-    "network address",
-    "broadcast address",
-    "VLSM",
-    "troubleshooting"
-   ],
-   "readMinutes": 29,
-   "words": 5433,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why subnetting?"
-    },
-    {
-     "id": "mask",
-     "title": "The subnet mask: drawing the boundary"
-    },
-    {
-     "id": "cidr",
-     "title": "CIDR: any prefix you need"
-    },
-    {
-     "id": "maths",
-     "title": "How many addresses does a subnet have?"
-    },
-    {
-     "id": "borrowing",
-     "title": "Borrowing bits: how one network becomes many"
-    },
-    {
-     "id": "slash24",
-     "title": "Subnetting a /24, step by step"
-    },
-    {
-     "id": "block-size",
-     "title": "The block-size shortcut"
-    },
-    {
-     "id": "network-address",
-     "title": "Finding the network address"
-    },
-    {
-     "id": "broadcast-range",
-     "title": "Broadcast address and usable host range"
-    },
-    {
-     "id": "four-answers",
-     "title": "The four-answer method"
-    },
-    {
-     "id": "other-octets",
-     "title": "Subnetting in the third octet (/16 to /23)"
-    },
-    {
-     "id": "design",
-     "title": "Designing subnets from a requirement"
-    },
-    {
-     "id": "vlsm",
-     "title": "VLSM: different sizes in one network"
-    },
-    {
-     "id": "special",
-     "title": "Supernetting, /31 and /32"
-    },
-    {
-     "id": "ipv6",
-     "title": "CIDR in IPv6: basic awareness"
-    },
-    {
-     "id": "end-to-end",
-     "title": "A complete problem, end to end"
-    },
-    {
-     "id": "troubleshooting",
-     "title": "Real configurations and troubleshooting"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-19",
-   "drive": "1zPzHSur0nullH9MfNC7DEXJM-8BqLBqDhkDWRWA8Jwg"
-  },
-  {
    "id": "git/version-control",
    "module": "git",
    "slug": "version-control",
    "order": 1,
-   "title": "Version Control Systems",
+   "title": "Introduction to Version Control",
    "summary": "What a version control system is, why every team needs one, local vs centralised vs distributed VCS, how a VCS works step by step, and how to install and configure Git.",
    "topics": [
     "version control",
@@ -1939,7 +1955,7 @@
     "git help"
    ],
    "readMinutes": 12,
-   "words": 2293,
+   "words": 2273,
    "sections": [
     {
      "id": "what",
@@ -1996,98 +2012,11 @@
    "drive": "13SJ18Xn0FMO44fgyZOuQOX_qZDGnUamPgAg_4N3ClSs"
   },
   {
-   "id": "git/git-fundamentals",
-   "module": "git",
-   "slug": "git-fundamentals",
-   "order": 2,
-   "title": "Git Fundamentals",
-   "summary": "Why Git, its alternatives, and every everyday Git command: init, status, add, commit, log, diff, clone, remote, pull, push, branch, checkout, merge, rebase, squash, cherry-pick, stash, reset, revert, clean, tag, blame, reflog, prune and help.",
-   "topics": [
-    "git commands",
-    "staging and commits",
-    "commit messages",
-    "branches",
-    "merge vs rebase",
-    "git stash",
-    "reset vs revert",
-    "remotes",
-    "tags"
-   ],
-   "readMinutes": 22,
-   "words": 4142,
-   "sections": [
-    {
-     "id": "why-git",
-     "title": "Why Git, and what else is out there"
-    },
-    {
-     "id": "map",
-     "title": "The map: where each command acts"
-    },
-    {
-     "id": "init-status",
-     "title": "git init and git status"
-    },
-    {
-     "id": "add-commit",
-     "title": "git add and git commit"
-    },
-    {
-     "id": "log-diff",
-     "title": "Reading history: git log and git diff"
-    },
-    {
-     "id": "remotes",
-     "title": "Working with remotes: clone, remote, pull, push"
-    },
-    {
-     "id": "branches",
-     "title": "Branches: git branch and git checkout"
-    },
-    {
-     "id": "combine",
-     "title": "Combining work: merge, rebase, squash, cherry-pick"
-    },
-    {
-     "id": "stash",
-     "title": "git stash · park unfinished work"
-    },
-    {
-     "id": "undo",
-     "title": "Undoing things: reset, revert, clean"
-    },
-    {
-     "id": "tags",
-     "title": "git tag · mark releases"
-    },
-    {
-     "id": "investigate",
-     "title": "Investigate and tidy: blame, reflog, prune, help"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-10-12",
-   "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU"
-  },
-  {
    "id": "git/git-workflows",
    "module": "git",
    "slug": "git-workflows",
-   "order": 3,
-   "title": "Git in Real Projects & .gitignore",
+   "order": 2,
+   "title": "Local Git Deep Dive",
    "summary": "Put Git to work in real situations: start a brand-new project, add Git to an existing one, and join a teammate's project with clone, branch, commit, pull and push. Plus why .gitignore matters, with ready-to-use sample files.",
    "topics": [
     "new project with git",
@@ -2098,8 +2027,8 @@
     "ignore patterns",
     "secrets in git"
    ],
-   "readMinutes": 14,
-   "words": 2570,
+   "readMinutes": 13,
+   "words": 2537,
    "sections": [
     {
      "id": "three-ways",
@@ -2151,8 +2080,8 @@
    "id": "git/github",
    "module": "git",
    "slug": "github",
-   "order": 4,
-   "title": "GitHub, Pull Requests & GitHub Desktop",
+   "order": 3,
+   "title": "Integrating Local Git with Remote GitHub",
    "summary": "What GitHub is and why teams use it: set up an account, link it to VS Code, create a repo and push code, fork projects, open pull requests, resolve merge conflicts, host a site on GitHub Pages, compare alternatives, and use GitHub Desktop.",
    "topics": [
     "GitHub",
@@ -2165,7 +2094,7 @@
     "GitLab and Bitbucket"
    ],
    "readMinutes": 21,
-   "words": 4019,
+   "words": 3992,
    "sections": [
     {
      "id": "what-is-github",
@@ -2238,363 +2167,11 @@
    "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo"
   },
   {
-   "id": "web/html-syntax-structure",
-   "module": "web",
-   "slug": "html-syntax-structure",
-   "order": 1,
-   "title": "HTML Syntax and Structure",
-   "summary": "Why HTML exists, how to set up your first HTML project with VS Code and Live Server, the grammar of tags, elements and attributes, and the skeleton every HTML document shares.",
-   "topics": [
-    "HTML basics",
-    "tags and elements",
-    "attributes",
-    "nesting",
-    "DOCTYPE",
-    "head and body",
-    "meta tags",
-    "block vs inline"
-   ],
-   "readMinutes": 19,
-   "words": 3692,
-   "sections": [
-    {
-     "id": "why-html",
-     "title": "Why Tim Berners-Lee created HTML"
-    },
-    {
-     "id": "what-is-html",
-     "title": "What HTML is"
-    },
-    {
-     "id": "first-project",
-     "title": "Setting up your first HTML project"
-    },
-    {
-     "id": "syntax",
-     "title": "HTML syntax: the grammar of the web"
-    },
-    {
-     "id": "tags",
-     "title": "Tags: labels for content"
-    },
-    {
-     "id": "elements",
-     "title": "Elements: the complete building block"
-    },
-    {
-     "id": "attributes",
-     "title": "Attributes: extra settings for a tag"
-    },
-    {
-     "id": "rules",
-     "title": "Common HTML syntax rules"
-    },
-    {
-     "id": "structure",
-     "title": "The core structure: a blueprint for every page"
-    },
-    {
-     "id": "doctype-html",
-     "title": "The DOCTYPE and the <html> root"
-    },
-    {
-     "id": "head",
-     "title": "The head section: information about the page"
-    },
-    {
-     "id": "body",
-     "title": "The body section: everything you see"
-    },
-    {
-     "id": "block-inline",
-     "title": "Block-level vs inline elements"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 15,
-   "date": "2026-09-21",
-   "drive": "1YcIMjouA5XHNzf5rlFhmTm3IIerQqqzJMWJ2n02kYI4"
-  },
-  {
-   "id": "web/common-html-elements",
-   "module": "web",
-   "slug": "common-html-elements",
-   "order": 2,
-   "title": "Common HTML Elements",
-   "summary": "The everyday HTML elements: six heading levels and why they matter, paragraphs, line breaks, and the formatting tags b, strong, i, em, mark, small, del, ins, s, sub, sup and the obsolete big.",
-   "topics": [
-    "headings h1-h6",
-    "paragraph",
-    "line break",
-    "formatting tags",
-    "b vs strong",
-    "i vs em",
-    "del ins s",
-    "sub and sup"
-   ],
-   "readMinutes": 12,
-   "words": 2313,
-   "sections": [
-    {
-     "id": "headings",
-     "title": "Heading tags: <h1> to <h6>"
-    },
-    {
-     "id": "why-headings",
-     "title": "Why heading tags matter"
-    },
-    {
-     "id": "paragraphs",
-     "title": "The paragraph tag <p>"
-    },
-    {
-     "id": "line-break",
-     "title": "Line break <br>"
-    },
-    {
-     "id": "formatting",
-     "title": "Formatting tags: making words stand out"
-    },
-    {
-     "id": "bold-strong",
-     "title": "Bold: <b> and <strong>"
-    },
-    {
-     "id": "italic-em",
-     "title": "Italic: <i> and <em>"
-    },
-    {
-     "id": "mark-small",
-     "title": "Highlight and fine print: <mark> and <small>"
-    },
-    {
-     "id": "del-ins-s",
-     "title": "Edits and outdated text: <del>, <ins>, <s>"
-    },
-    {
-     "id": "sub-sup",
-     "title": "Below and above the line: <sub> and <sup>"
-    },
-    {
-     "id": "big",
-     "title": "The obsolete <big> tag"
-    },
-    {
-     "id": "cheat-sheet",
-     "title": "Formatting tags at a glance"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 11,
-   "date": "2026-09-21",
-   "drive": "19bVbhvyiGHiaI3eEp0tf8um32UVOlwuV11A9atJAebo"
-  },
-  {
-   "id": "web/html-lists-images",
-   "module": "web",
-   "slug": "html-lists-images",
-   "order": 3,
-   "title": "HTML Lists & Images",
-   "summary": "Ordered, unordered and description lists with their attributes and nesting; the img tag with src, alt, width, height, loading and title; and links with the anchor tag: href, link types, target, rel and download.",
-   "topics": [
-    "ordered list",
-    "unordered list",
-    "description list",
-    "img tag",
-    "alt text",
-    "lazy loading",
-    "anchor tag",
-    "href and target"
-   ],
-   "readMinutes": 17,
-   "words": 3145,
-   "sections": [
-    {
-     "id": "lists",
-     "title": "Why lists?"
-    },
-    {
-     "id": "ordered",
-     "title": "Ordered lists <ol>"
-    },
-    {
-     "id": "ol-attributes",
-     "title": "Attributes of <ol>: type, start, reversed"
-    },
-    {
-     "id": "unordered",
-     "title": "Unordered lists <ul>"
-    },
-    {
-     "id": "description",
-     "title": "Description lists <dl>"
-    },
-    {
-     "id": "images",
-     "title": "Images with <img>"
-    },
-    {
-     "id": "src",
-     "title": "src: the image’s address"
-    },
-    {
-     "id": "alt",
-     "title": "alt: backup text"
-    },
-    {
-     "id": "img-attributes",
-     "title": "Size, loading and hover text"
-    },
-    {
-     "id": "anchor",
-     "title": "Links with the anchor tag <a>"
-    },
-    {
-     "id": "link-types",
-     "title": "Three kinds of links"
-    },
-    {
-     "id": "target-rel-download",
-     "title": "target, rel and download"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-22",
-   "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg"
-  },
-  {
-   "id": "web/forms-and-inputs",
-   "module": "web",
-   "slug": "forms-and-inputs",
-   "order": 4,
-   "title": "Forms and Inputs",
-   "summary": "How HTML forms collect information: the form tag with action, target and enctype, text and choice controls, id, name and value, buttons, labels, fieldsets, and built-in validation rules.",
-   "topics": [
-    "form tag",
-    "input types",
-    "name and value",
-    "radio and checkbox",
-    "select dropdown",
-    "label for id",
-    "fieldset legend",
-    "form validation"
-   ],
-   "readMinutes": 22,
-   "words": 4120,
-   "sections": [
-    {
-     "id": "real-forms",
-     "title": "Forms you already use every day"
-    },
-    {
-     "id": "submission",
-     "title": "How form submission works"
-    },
-    {
-     "id": "form-tag",
-     "title": "The <form> tag: the master envelope"
-    },
-    {
-     "id": "form-attributes",
-     "title": "More form attributes: target and enctype"
-    },
-    {
-     "id": "text-controls",
-     "title": "Text takers: the “fill in the blank” crew"
-    },
-    {
-     "id": "id-value-name",
-     "title": "The three key attributes: id, value, name"
-    },
-    {
-     "id": "choice-controls",
-     "title": "Choice makers: radio, checkbox, select"
-    },
-    {
-     "id": "buttons",
-     "title": "The “do something” buttons"
-    },
-    {
-     "id": "labels",
-     "title": "The <label> tag: the leash"
-    },
-    {
-     "id": "fieldset",
-     "title": "Grouping with <fieldset> and <legend>"
-    },
-    {
-     "id": "validation-why",
-     "title": "Form validation: the bouncer"
-    },
-    {
-     "id": "validation-rules",
-     "title": "Validation attributes"
-    },
-    {
-     "id": "full-example",
-     "title": "Putting it together: a strict form"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-09-21",
-   "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw"
-  },
-  {
    "id": "python-fundamentals/python-basics-1",
    "module": "python-fundamentals",
    "slug": "python-basics-1",
    "order": 1,
-   "title": "Python Basics · Part 1",
+   "title": "Python Basics — Part 1",
    "summary": "Your first Python programs: what Python is, print(), syntax and indentation, comments, identifiers, variables, naming conventions, data types, literals, type conversion, and input/output.",
    "topics": [
     "print()",
@@ -2606,7 +2183,7 @@
     "input()"
    ],
    "readMinutes": 24,
-   "words": 4615,
+   "words": 4594,
    "sections": [
     {
      "id": "what-is-python",
@@ -2683,7 +2260,7 @@
    "module": "python-fundamentals",
    "slug": "python-basics-2",
    "order": 2,
-   "title": "Python Basics · Part 2",
+   "title": "Python Basics — Part 2",
    "summary": "Processing data in Python: arithmetic, assignment, comparison, logical, membership and identity operators, precedence, strings, indexing, slicing, f-strings, booleans, None, built-in functions and common errors.",
    "topics": [
     "operators",
@@ -2696,7 +2273,7 @@
     "common errors"
    ],
    "readMinutes": 31,
-   "words": 5824,
+   "words": 5807,
    "sections": [
     {
      "id": "recap",
@@ -2789,8 +2366,8 @@
     "range()",
     "enumerate()"
    ],
-   "readMinutes": 33,
-   "words": 6194,
+   "readMinutes": 32,
+   "words": 6173,
    "sections": [
     {
      "id": "why",
@@ -2883,8 +2460,8 @@
     "list comprehension",
     "dict comprehension"
    ],
-   "readMinutes": 31,
-   "words": 5805,
+   "readMinutes": 30,
+   "words": 5786,
    "sections": [
     {
      "id": "why",
@@ -2966,7 +2543,7 @@
     "lambda"
    ],
    "readMinutes": 23,
-   "words": 4445,
+   "words": 4424,
    "sections": [
     {
      "id": "why",
@@ -3056,7 +2633,7 @@
     "__name__"
    ],
    "readMinutes": 22,
-   "words": 4186,
+   "words": 4172,
    "sections": [
     {
      "id": "why",
@@ -3137,8 +2714,8 @@
     "csv",
     "persistent data"
    ],
-   "readMinutes": 27,
-   "words": 5147,
+   "readMinutes": 26,
+   "words": 4882,
    "sections": [
     {
      "id": "why",
@@ -3210,8 +2787,8 @@
     "raise",
     "validation"
    ],
-   "readMinutes": 27,
-   "words": 5036,
+   "readMinutes": 26,
+   "words": 4956,
    "sections": [
     {
      "id": "why",
@@ -3288,7 +2865,7 @@
    "module": "python-fundamentals",
    "slug": "oops-1",
    "order": 9,
-   "title": "Intro to OOP · Part 1",
+   "title": "Introduction to OOP — Part 1",
    "summary": "Why procedural code struggles as programs grow, and the first building blocks of Object-Oriented Programming in Python: classes, objects, reference variables and self.",
    "topics": [
     "programming paradigms",
@@ -3300,7 +2877,7 @@
     "self"
    ],
    "readMinutes": 26,
-   "words": 5022,
+   "words": 4992,
    "sections": [
     {
      "id": "paradigms",
@@ -3373,7 +2950,7 @@
    "module": "python-fundamentals",
    "slug": "oops-2",
    "order": 10,
-   "title": "Intro to OOP · Part 2",
+   "title": "Introduction to OOP — Part 2",
    "summary": "The constructor __init__ and why objects need automatic setup, decorators (custom, @classmethod, @staticmethod), instance, static and local variables, and the three kinds of methods.",
    "topics": [
     "constructor",
@@ -3386,7 +2963,7 @@
     "static methods"
    ],
    "readMinutes": 17,
-   "words": 3310,
+   "words": 3298,
    "sections": [
     {
      "id": "init-problem",
@@ -3476,7 +3053,7 @@
     "hybrid inheritance"
    ],
    "readMinutes": 21,
-   "words": 3945,
+   "words": 3923,
    "sections": [
     {
      "id": "why-connect",
@@ -3565,7 +3142,7 @@
     "multiple inheritance"
    ],
    "readMinutes": 14,
-   "words": 2622,
+   "words": 2594,
    "sections": [
     {
      "id": "what",
@@ -3639,7 +3216,7 @@
     "type hints"
    ],
    "readMinutes": 17,
-   "words": 3200,
+   "words": 3183,
    "sections": [
     {
      "id": "why",
@@ -3716,195 +3293,11 @@
    "drive": "1i1l55HLG3JQfiVcPlppXS6keDnrOA__UatSotRGiQ0g"
   },
   {
-   "id": "python-advanced/api-basics",
-   "module": "python-advanced",
-   "slug": "api-basics",
-   "order": 2,
-   "title": "API Basics",
-   "summary": "How one program asks another for data: APIs, client and server, HTTP requests and responses, GET and POST, calling APIs with Python's requests library, reading JSON and handling errors.",
-   "topics": [
-    "API",
-    "client and server",
-    "HTTP",
-    "GET and POST",
-    "requests library",
-    "JSON",
-    "status codes",
-    "error handling"
-   ],
-   "readMinutes": 29,
-   "words": 5571,
-   "sections": [
-    {
-     "id": "why",
-     "title": "The problem: data that lives somewhere else"
-    },
-    {
-     "id": "what-is-api",
-     "title": "What is an API?"
-    },
-    {
-     "id": "why-apis",
-     "title": "Why we need APIs"
-    },
-    {
-     "id": "waiter",
-     "title": "The API is the waiter"
-    },
-    {
-     "id": "client-server",
-     "title": "Client and server"
-    },
-    {
-     "id": "http",
-     "title": "HTTP: the shared language"
-    },
-    {
-     "id": "message-anatomy",
-     "title": "Inside a request and a response"
-    },
-    {
-     "id": "get-post",
-     "title": "GET and POST"
-    },
-    {
-     "id": "making-requests",
-     "title": "Making API requests"
-    },
-    {
-     "id": "responses",
-     "title": "Working with responses"
-    },
-    {
-     "id": "json",
-     "title": "Working with JSON"
-    },
-    {
-     "id": "status-codes",
-     "title": "When things go wrong: detecting errors"
-    },
-    {
-     "id": "handling-errors",
-     "title": "Handling API errors with exceptions"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 9,
-   "terms": 15,
-   "date": "2026-10-01",
-   "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM"
-  },
-  {
-   "id": "python-advanced/fastapi-fundamentals",
-   "module": "python-advanced",
-   "slug": "fastapi-fundamentals",
-   "order": 3,
-   "title": "FastAPI Fundamentals, Setup & Project Structure",
-   "summary": "Build and run your first FastAPI app: virtual environment, installing FastAPI and Uvicorn, the app instance, routes, JSON responses, 404s, Uvicorn options, an app package, requirements.txt and a small Student API.",
-   "topics": [
-    "FastAPI",
-    "Uvicorn",
-    "routes",
-    "app instance",
-    "--reload",
-    "project structure",
-    "requirements.txt",
-    "Student API"
-   ],
-   "readMinutes": 18,
-   "words": 3414,
-   "sections": [
-    {
-     "id": "what-is",
-     "title": "What is FastAPI?"
-    },
-    {
-     "id": "setup",
-     "title": "Setting up the project"
-    },
-    {
-     "id": "install",
-     "title": "Installing FastAPI and Uvicorn"
-    },
-    {
-     "id": "first-app",
-     "title": "Your first FastAPI application"
-    },
-    {
-     "id": "first-route",
-     "title": "Your first route"
-    },
-    {
-     "id": "run",
-     "title": "Running the app with Uvicorn"
-    },
-    {
-     "id": "test",
-     "title": "Testing your first API"
-    },
-    {
-     "id": "app-instance",
-     "title": "The application instance, and more routes"
-    },
-    {
-     "id": "responses",
-     "title": "Exploring responses and 404s"
-    },
-    {
-     "id": "uvicorn-options",
-     "title": "Uvicorn options: port and reload"
-    },
-    {
-     "id": "structure",
-     "title": "Basic project structure"
-    },
-    {
-     "id": "requirements",
-     "title": "requirements.txt"
-    },
-    {
-     "id": "student-api",
-     "title": "Final project: a Student API"
-    },
-    {
-     "id": "mistakes",
-     "title": "Common mistakes and quick revision"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 12,
-   "date": "2026-10-06",
-   "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA"
-  },
-  {
    "id": "python-advanced/pydantic",
    "module": "python-advanced",
    "slug": "pydantic",
-   "order": 4,
-   "title": "Pydantic: Validating Data",
+   "order": 2,
+   "title": "Pydantic",
    "summary": "Check data before your program uses it with Pydantic v2: BaseModel, field types, required and optional fields, EmailStr, Field() rules, strict mode, field and model validators, computed fields, nested models and model_dump().",
    "topics": [
     "Pydantic",
@@ -3917,7 +3310,7 @@
     "model_dump"
    ],
    "readMinutes": 24,
-   "words": 4517,
+   "words": 4492,
    "sections": [
     {
      "id": "problem",
@@ -3994,10 +3387,276 @@
    "drive": "1uSBnwTpwPGJS2wqKobXmMFqCMQFK9y6dH8HLYJJDyG0"
   },
   {
+   "id": "python-advanced/api-basics",
+   "module": "python-advanced",
+   "slug": "api-basics",
+   "order": 3,
+   "title": "API Basics",
+   "summary": "How one program asks another for data: APIs, client and server, HTTP requests and responses, GET and POST, calling APIs with Python's requests library, reading JSON and handling errors.",
+   "topics": [
+    "API",
+    "client and server",
+    "HTTP",
+    "GET and POST",
+    "requests library",
+    "JSON",
+    "status codes",
+    "error handling"
+   ],
+   "readMinutes": 29,
+   "words": 5555,
+   "sections": [
+    {
+     "id": "why",
+     "title": "The problem: data that lives somewhere else"
+    },
+    {
+     "id": "what-is-api",
+     "title": "What is an API?"
+    },
+    {
+     "id": "why-apis",
+     "title": "Why we need APIs"
+    },
+    {
+     "id": "waiter",
+     "title": "The API is the waiter"
+    },
+    {
+     "id": "client-server",
+     "title": "Client and server"
+    },
+    {
+     "id": "http",
+     "title": "HTTP: the shared language"
+    },
+    {
+     "id": "message-anatomy",
+     "title": "Inside a request and a response"
+    },
+    {
+     "id": "get-post",
+     "title": "GET and POST"
+    },
+    {
+     "id": "making-requests",
+     "title": "Making API requests"
+    },
+    {
+     "id": "responses",
+     "title": "Working with responses"
+    },
+    {
+     "id": "json",
+     "title": "Working with JSON"
+    },
+    {
+     "id": "status-codes",
+     "title": "When things go wrong: detecting errors"
+    },
+    {
+     "id": "handling-errors",
+     "title": "Handling API errors with exceptions"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-10-01",
+   "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM"
+  },
+  {
+   "id": "python-advanced/fastapi-fundamentals",
+   "module": "python-advanced",
+   "slug": "fastapi-fundamentals",
+   "order": 4,
+   "title": "FastAPI Fundamentals, Setup & Project Structure",
+   "summary": "Build and run your first FastAPI app: virtual environment, installing FastAPI and Uvicorn, the app instance, routes, JSON responses, 404s, Uvicorn options, an app package, requirements.txt and a small Student API.",
+   "topics": [
+    "FastAPI",
+    "Uvicorn",
+    "routes",
+    "app instance",
+    "--reload",
+    "project structure",
+    "requirements.txt",
+    "Student API"
+   ],
+   "readMinutes": 18,
+   "words": 3388,
+   "sections": [
+    {
+     "id": "what-is",
+     "title": "What is FastAPI?"
+    },
+    {
+     "id": "setup",
+     "title": "Setting up the project"
+    },
+    {
+     "id": "install",
+     "title": "Installing FastAPI and Uvicorn"
+    },
+    {
+     "id": "first-app",
+     "title": "Your first FastAPI application"
+    },
+    {
+     "id": "first-route",
+     "title": "Your first route"
+    },
+    {
+     "id": "run",
+     "title": "Running the app with Uvicorn"
+    },
+    {
+     "id": "test",
+     "title": "Testing your first API"
+    },
+    {
+     "id": "app-instance",
+     "title": "The application instance, and more routes"
+    },
+    {
+     "id": "responses",
+     "title": "Exploring responses and 404s"
+    },
+    {
+     "id": "uvicorn-options",
+     "title": "Uvicorn options: port and reload"
+    },
+    {
+     "id": "structure",
+     "title": "Basic project structure"
+    },
+    {
+     "id": "requirements",
+     "title": "requirements.txt"
+    },
+    {
+     "id": "student-api",
+     "title": "Final project: a Student API"
+    },
+    {
+     "id": "mistakes",
+     "title": "Common mistakes and quick revision"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 12,
+   "date": "2026-10-06",
+   "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA"
+  },
+  {
+   "id": "python-advanced/path-query-parameters",
+   "module": "python-advanced",
+   "slug": "path-query-parameters",
+   "order": 5,
+   "title": "Path & Query Parameters",
+   "summary": "Make FastAPI routes dynamic: path parameters pick one item, query parameters filter, sort and paginate a list. Type conversion, 422 errors, route order, optional values, skip and limit, and a Student Search API.",
+   "topics": [
+    "path parameters",
+    "query parameters",
+    "dynamic routes",
+    "type conversion",
+    "422 error",
+    "route order",
+    "pagination",
+    "skip and limit"
+   ],
+   "readMinutes": 26,
+   "words": 4891,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why do APIs need parameters?"
+    },
+    {
+     "id": "path-params",
+     "title": "Path parameters: pick one specific item"
+    },
+    {
+     "id": "conversion",
+     "title": "Type conversion and validation"
+    },
+    {
+     "id": "multiple-path",
+     "title": "Multiple path parameters and route order"
+    },
+    {
+     "id": "query-params",
+     "title": "Query parameters: how you want the list"
+    },
+    {
+     "id": "filtering",
+     "title": "Filtering, optional parameters and defaults"
+    },
+    {
+     "id": "multiple-query",
+     "title": "Multiple query parameters"
+    },
+    {
+     "id": "pagination",
+     "title": "Pagination with skip and limit"
+    },
+    {
+     "id": "path-and-query",
+     "title": "Path and query together, and how to tell them apart"
+    },
+    {
+     "id": "project",
+     "title": "Final project: Student Search API"
+    },
+    {
+     "id": "mistakes",
+     "title": "Common mistakes and quick revision"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 10,
+   "date": "2026-10-09",
+   "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E"
+  },
+  {
    "id": "python-advanced/path-operations-http-methods",
    "module": "python-advanced",
    "slug": "path-operations-http-methods",
-   "order": 5,
+   "order": 6,
    "title": "Path Operations & HTTP Methods",
    "summary": "Build a full CRUD Books API in FastAPI with GET, POST, PUT, PATCH and DELETE, test it in Swagger UI at /docs, compare PUT with PATCH, and tell 404 from 405.",
    "topics": [
@@ -4010,7 +3669,7 @@
     "405 Method Not Allowed"
    ],
    "readMinutes": 24,
-   "words": 4506,
+   "words": 4479,
    "sections": [
     {
      "id": "path-operation",
@@ -4091,88 +3750,6 @@
    "drive": "1QpNGo32aynyfTHiTlcvUIJQsI3U5jPqtN0Y7aDY_X40"
   },
   {
-   "id": "python-advanced/path-query-parameters",
-   "module": "python-advanced",
-   "slug": "path-query-parameters",
-   "order": 6,
-   "title": "Path & Query Parameters",
-   "summary": "Make FastAPI routes dynamic: path parameters pick one item, query parameters filter, sort and paginate a list. Type conversion, 422 errors, route order, optional values, skip and limit, and a Student Search API.",
-   "topics": [
-    "path parameters",
-    "query parameters",
-    "dynamic routes",
-    "type conversion",
-    "422 error",
-    "route order",
-    "pagination",
-    "skip and limit"
-   ],
-   "readMinutes": 26,
-   "words": 4871,
-   "sections": [
-    {
-     "id": "why",
-     "title": "Why do APIs need parameters?"
-    },
-    {
-     "id": "path-params",
-     "title": "Path parameters: pick one specific item"
-    },
-    {
-     "id": "conversion",
-     "title": "Type conversion and validation"
-    },
-    {
-     "id": "multiple-path",
-     "title": "Multiple path parameters and route order"
-    },
-    {
-     "id": "query-params",
-     "title": "Query parameters: how you want the list"
-    },
-    {
-     "id": "filtering",
-     "title": "Filtering, optional parameters and defaults"
-    },
-    {
-     "id": "multiple-query",
-     "title": "Multiple query parameters"
-    },
-    {
-     "id": "pagination",
-     "title": "Pagination with skip and limit"
-    },
-    {
-     "id": "path-and-query",
-     "title": "Path and query together, and how to tell them apart"
-    },
-    {
-     "id": "project",
-     "title": "Final project: Student Search API"
-    },
-    {
-     "id": "mistakes",
-     "title": "Common mistakes and quick revision"
-    },
-    {
-     "id": "terms",
-     "title": "Key terms"
-    },
-    {
-     "id": "quiz",
-     "title": "Self-check"
-    },
-    {
-     "id": "summary",
-     "title": "All of it, in one sentence"
-    }
-   ],
-   "quiz": 8,
-   "terms": 10,
-   "date": "2026-10-09",
-   "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E"
-  },
-  {
    "id": "llm-engineering/llm-engineering",
    "module": "llm-engineering",
    "slug": "llm-engineering",
@@ -4189,8 +3766,8 @@
     "inference cost",
     "open vs proprietary models"
    ],
-   "readMinutes": 50,
-   "words": 9491,
+   "readMinutes": 51,
+   "words": 9674,
    "sections": [
     {
      "id": "what-is-llm",
@@ -4292,7 +3869,7 @@
     "prompt injection"
    ],
    "readMinutes": 35,
-   "words": 6620,
+   "words": 6602,
    "sections": [
     {
      "id": "what-is-prompt",
@@ -4377,6 +3954,107 @@
    "drive": "1BSR8p--HS3l0pHNNGYqbsq7_xXmq1uj6aGiUaE-xXtQ"
   },
   {
+   "id": "model-selection/model-selection",
+   "module": "model-selection",
+   "slug": "model-selection",
+   "order": 1,
+   "title": "Model Selection",
+   "summary": "How to choose the right AI model for a task: define requirements, weigh quality, cost, latency, context window, privacy and deployment, test candidates fairly, read trade-offs, and make an evidence-based recommendation.",
+   "topics": [
+    "model selection",
+    "model evaluation",
+    "cost vs latency",
+    "context window",
+    "hosted vs open-weight",
+    "benchmarks",
+    "decision matrix"
+   ],
+   "readMinutes": 28,
+   "words": 5252,
+   "sections": [
+    {
+     "id": "what-is",
+     "title": "What is model selection?"
+    },
+    {
+     "id": "why-matters",
+     "title": "Why model selection matters"
+    },
+    {
+     "id": "selection-vs-evaluation",
+     "title": "Model selection vs model evaluation"
+    },
+    {
+     "id": "requirements",
+     "title": "Understanding model requirements"
+    },
+    {
+     "id": "constraints",
+     "title": "Quality targets and practical constraints"
+    },
+    {
+     "id": "quality-cost",
+     "title": "Key factors: output quality and cost"
+    },
+    {
+     "id": "latency-context",
+     "title": "Key factors: latency and context window"
+    },
+    {
+     "id": "other-factors",
+     "title": "Key factors: privacy, reliability, integration and deployment"
+    },
+    {
+     "id": "candidates-tests",
+     "title": "Shortlisting candidates and preparing test cases"
+    },
+    {
+     "id": "metrics",
+     "title": "Evaluation criteria, metrics and output quality"
+    },
+    {
+     "id": "cost-time-edge",
+     "title": "Cost, response time, consistency and edge cases"
+    },
+    {
+     "id": "trade-offs",
+     "title": "Trade-offs, benchmarks and leaderboards"
+    },
+    {
+     "id": "small-vs-capable",
+     "title": "Smaller vs more capable models"
+    },
+    {
+     "id": "hosted-vs-open",
+     "title": "Hosted models vs open-weight models"
+    },
+    {
+     "id": "matching-decision",
+     "title": "Matching models to requirements and deciding with evidence"
+    },
+    {
+     "id": "practical",
+     "title": "Practical exercise: choosing a model end to end"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 15,
+   "date": "2026-10-13",
+   "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I"
+  },
+  {
    "id": "langchain/langchain-fundamentals",
    "module": "langchain",
    "slug": "langchain-fundamentals",
@@ -4394,7 +4072,7 @@
     "LangGraph & LangSmith"
    ],
    "readMinutes": 28,
-   "words": 5375,
+   "words": 5353,
    "sections": [
     {
      "id": "why",
@@ -4479,87 +4157,155 @@
    "drive": "1Gwg9eLyT_BqdSiODfRPQI4xUt1V3yAifC5iuRVjs-GQ"
   },
   {
-   "id": "model-selection/model-selection",
-   "module": "model-selection",
-   "slug": "model-selection",
+   "id": "git-basics/git-fundamentals",
+   "module": "git-basics",
+   "slug": "git-fundamentals",
    "order": 1,
-   "title": "Model Selection",
-   "summary": "How to choose the right AI model for a task: define requirements, weigh quality, cost, latency, context window, privacy and deployment, test candidates fairly, read trade-offs, and make an evidence-based recommendation.",
+   "title": "Git Fundamentals",
+   "summary": "Why Git, its alternatives, and every everyday Git command: init, status, add, commit, log, diff, clone, remote, pull, push, branch, checkout, merge, rebase, squash, cherry-pick, stash, reset, revert, clean, tag, blame, reflog, prune and help.",
    "topics": [
-    "model selection",
-    "model evaluation",
-    "cost vs latency",
-    "context window",
-    "hosted vs open-weight",
-    "benchmarks",
-    "decision matrix"
+    "git commands",
+    "staging and commits",
+    "commit messages",
+    "branches",
+    "merge vs rebase",
+    "git stash",
+    "reset vs revert",
+    "remotes",
+    "tags"
    ],
-   "readMinutes": 30,
-   "words": 5637,
+   "readMinutes": 22,
+   "words": 4112,
    "sections": [
     {
-     "id": "what-is",
-     "title": "What is model selection?"
+     "id": "why-git",
+     "title": "Why Git, and what else is out there"
     },
     {
-     "id": "why-matters",
-     "title": "Why model selection matters"
+     "id": "map",
+     "title": "The map: where each command acts"
     },
     {
-     "id": "selection-vs-evaluation",
-     "title": "Model selection vs model evaluation"
+     "id": "init-status",
+     "title": "git init and git status"
     },
     {
-     "id": "requirements",
-     "title": "Understanding model requirements"
+     "id": "add-commit",
+     "title": "git add and git commit"
     },
     {
-     "id": "constraints",
-     "title": "Quality targets and practical constraints"
+     "id": "log-diff",
+     "title": "Reading history: git log and git diff"
     },
     {
-     "id": "quality-cost",
-     "title": "Key factors: output quality and cost"
+     "id": "remotes",
+     "title": "Working with remotes: clone, remote, pull, push"
     },
     {
-     "id": "latency-context",
-     "title": "Key factors: latency and context window"
+     "id": "branches",
+     "title": "Branches: git branch and git checkout"
     },
     {
-     "id": "other-factors",
-     "title": "Key factors: privacy, reliability, integration and deployment"
+     "id": "combine",
+     "title": "Combining work: merge, rebase, squash, cherry-pick"
     },
     {
-     "id": "candidates-tests",
-     "title": "Shortlisting candidates and preparing test cases"
+     "id": "stash",
+     "title": "git stash · park unfinished work"
     },
     {
-     "id": "metrics",
-     "title": "Evaluation criteria, metrics and output quality"
+     "id": "undo",
+     "title": "Undoing things: reset, revert, clean"
     },
     {
-     "id": "cost-time-edge",
-     "title": "Cost, response time, consistency and edge cases"
+     "id": "tags",
+     "title": "git tag · mark releases"
     },
     {
-     "id": "trade-offs",
-     "title": "Trade-offs, benchmarks and leaderboards"
+     "id": "investigate",
+     "title": "Investigate and tidy: blame, reflog, prune, help"
     },
     {
-     "id": "small-vs-capable",
-     "title": "Smaller vs more capable models"
+     "id": "terms",
+     "title": "Key terms"
     },
     {
-     "id": "hosted-vs-open",
-     "title": "Hosted models vs open-weight models"
+     "id": "quiz",
+     "title": "Self-check"
     },
     {
-     "id": "matching-decision",
-     "title": "Matching models to requirements and deciding with evidence"
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-10-12",
+   "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU"
+  },
+  {
+   "id": "networking/physical-connectivity",
+   "module": "networking",
+   "slug": "physical-connectivity",
+   "order": 1,
+   "title": "Networking Fundamentals I: Physical Connectivity & Network Types",
+   "summary": "Why computers needed networks, how they physically connect (NIC, cables, Wi-Fi), what hubs, switches, routers, modems and access points do, and how to tell a LAN from a WAN, plus MAN, CAN, PAN, ISP, Intranet and the Web.",
+   "topics": [
+    "computer network",
+    "NIC",
+    "hub vs switch",
+    "router",
+    "modem",
+    "access point",
+    "LAN vs WAN",
+    "Internet vs Web"
+   ],
+   "readMinutes": 26,
+   "words": 4876,
+   "sections": [
+    {
+     "id": "before-networks",
+     "title": "The world before networking"
     },
     {
-     "id": "practical",
-     "title": "Practical exercise: choosing a model end to end"
+     "id": "what-is-a-network",
+     "title": "From two computers to a computer network"
+    },
+    {
+     "id": "interface-and-medium",
+     "title": "How a computer physically connects"
+    },
+    {
+     "id": "hub",
+     "title": "Hub: the first central box"
+    },
+    {
+     "id": "switch",
+     "title": "Switch: a smarter central box"
+    },
+    {
+     "id": "router",
+     "title": "Router: connecting different networks"
+    },
+    {
+     "id": "modem",
+     "title": "Modem: talking to your Internet provider"
+    },
+    {
+     "id": "access-point",
+     "title": "Wireless access point, and the all-in-one home box"
+    },
+    {
+     "id": "lan-wan",
+     "title": "LAN vs WAN: the one rule"
+    },
+    {
+     "id": "scales",
+     "title": "PAN, LAN, CAN, MAN: the same idea at different sizes"
+    },
+    {
+     "id": "internet-web",
+     "title": "ISP, Internet, Intranet and the Web"
     },
     {
      "id": "terms",
@@ -4576,9 +4322,1604 @@
    ],
    "quiz": 8,
    "terms": 15,
-   "date": "2026-10-13",
-   "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I"
+   "date": "2026-09-09",
+   "drive": "1k7IVPGvXWHSmf557Rmo1UUQhnJENaAUu0pXHpSY3EBo"
+  },
+  {
+   "id": "networking/device-identification-protocols",
+   "module": "networking",
+   "slug": "device-identification-protocols",
+   "order": 2,
+   "title": "Networking Fundamentals II: Device Identification & Core Protocols",
+   "summary": "How a network finds the right device (MAC and IP addresses), the right app (ports), and agrees on rules (protocols), plus what TCP, UDP, DNS and DHCP do, with sketched exchanges.",
+   "topics": [
+    "MAC address",
+    "IP address",
+    "ARP",
+    "protocols",
+    "ports",
+    "TCP vs UDP",
+    "DNS",
+    "DHCP"
+   ],
+   "readMinutes": 20,
+   "words": 3752,
+   "sections": [
+    {
+     "id": "identity",
+     "title": "Why every device needs an address"
+    },
+    {
+     "id": "mac",
+     "title": "MAC address: identifying a device on the local network"
+    },
+    {
+     "id": "mac-not-enough",
+     "title": "Why MAC addresses alone are not enough"
+    },
+    {
+     "id": "ip",
+     "title": "IP address: identifying a device across networks"
+    },
+    {
+     "id": "arp",
+     "title": "Bonus: how IP and MAC meet (ARP)"
+    },
+    {
+     "id": "protocols",
+     "title": "Protocols: shared rules for talking"
+    },
+    {
+     "id": "common-protocols",
+     "title": "Common protocols and their jobs"
+    },
+    {
+     "id": "ports",
+     "title": "Ports: reaching the right application"
+    },
+    {
+     "id": "tcp-udp",
+     "title": "TCP and UDP: two ways to deliver"
+    },
+    {
+     "id": "dns",
+     "title": "DNS: names instead of numbers"
+    },
+    {
+     "id": "dhcp",
+     "title": "DHCP: automatic network setup"
+    },
+    {
+     "id": "chain",
+     "title": "The chain of problems, solved"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 13,
+   "date": "2026-09-09",
+   "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU"
+  },
+  {
+   "id": "networking/osi-model",
+   "module": "networking",
+   "slug": "osi-model",
+   "order": 3,
+   "title": "Networking Fundamentals III: OSI Model & Data Communication",
+   "summary": "Why networking is split into layers, the seven OSI layers told through one report travelling from Bengaluru to Bhubaneswar, encapsulation and data units, and what really happens when you open a website.",
+   "topics": [
+    "OSI model",
+    "seven layers",
+    "layering",
+    "encapsulation",
+    "decapsulation",
+    "segment packet frame bits",
+    "opening a website"
+   ],
+   "readMinutes": 20,
+   "words": 3808,
+   "sections": [
+    {
+     "id": "why-layers",
+     "title": "Why networking needs layers"
+    },
+    {
+     "id": "osi",
+     "title": "The OSI model: seven layers"
+    },
+    {
+     "id": "story-setup",
+     "title": "The story: a report from Bengaluru to Bhubaneswar"
+    },
+    {
+     "id": "upper-layers",
+     "title": "Layers 7, 6, 5: application, presentation, session"
+    },
+    {
+     "id": "transport",
+     "title": "Layer 4 · Transport: the heart"
+    },
+    {
+     "id": "network",
+     "title": "Layer 3 · Network: addressing and routing"
+    },
+    {
+     "id": "data-link",
+     "title": "Layer 2 · Data Link: frames and the next hop"
+    },
+    {
+     "id": "physical",
+     "title": "Layer 1 · Physical: bits become signals"
+    },
+    {
+     "id": "receiver",
+     "title": "The receiving side: back up the stack"
+    },
+    {
+     "id": "encapsulation",
+     "title": "Encapsulation, decapsulation and data units"
+    },
+    {
+     "id": "website-journey",
+     "title": "The complete journey: opening a website"
+    },
+    {
+     "id": "series-recap",
+     "title": "The whole series in one map"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 14,
+   "date": "2026-09-09",
+   "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk"
+  },
+  {
+   "id": "networking/ip-address-fundamentals",
+   "module": "networking",
+   "slug": "ip-address-fundamentals",
+   "order": 4,
+   "title": "IP Address Fundamentals",
+   "summary": "Why devices need IP addresses, how a 32-bit IPv4 address is built and converted between binary and decimal, the old A–E classes, public vs private, NAT, special addresses and IPv6.",
+   "topics": [
+    "IPv4",
+    "binary conversion",
+    "octets",
+    "network and host portion",
+    "IP classes",
+    "private IP",
+    "NAT",
+    "IPv6"
+   ],
+   "readMinutes": 27,
+   "words": 5211,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why IP addresses are needed"
+    },
+    {
+     "id": "types",
+     "title": "“Types” of IP address: five different lenses"
+    },
+    {
+     "id": "ipv4-bits",
+     "title": "IPv4: 32 bits in four octets"
+    },
+    {
+     "id": "binary",
+     "title": "Dotted decimal and binary ↔ decimal conversion"
+    },
+    {
+     "id": "network-host",
+     "title": "Network portion and host portion"
+    },
+    {
+     "id": "classes",
+     "title": "Classful addressing: the historical A–E system"
+    },
+    {
+     "id": "classful-waste",
+     "title": "Why classful addressing was wasteful"
+    },
+    {
+     "id": "public-private",
+     "title": "Public vs private IPv4 addresses"
+    },
+    {
+     "id": "static-dynamic",
+     "title": "Static vs dynamic addresses"
+    },
+    {
+     "id": "nat",
+     "title": "NAT: private networks on the public Internet"
+    },
+    {
+     "id": "delivery",
+     "title": "Unicast, broadcast, multicast and anycast"
+    },
+    {
+     "id": "special",
+     "title": "Special IPv4 addresses"
+    },
+    {
+     "id": "ipv6",
+     "title": "IPv4 exhaustion and the arrival of IPv6"
+    },
+    {
+     "id": "ipv6-compress",
+     "title": "IPv6 compression, types and special addresses"
+    },
+    {
+     "id": "v4-vs-v6",
+     "title": "IPv4 vs IPv6, side by side"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-13",
+   "drive": "1FDYwr59XXKDTWRzGxm_Owm9kJrVT9SftWDVKRPgqNTQ"
+  },
+  {
+   "id": "networking/subnetting-cidr",
+   "module": "networking",
+   "slug": "subnetting-cidr",
+   "order": 5,
+   "title": "Subnetting & CIDR",
+   "summary": "Split one network into many: subnet masks in binary, CIDR prefixes, borrowing bits, the block-size shortcut, network/broadcast/host-range calculations, design by requirement, VLSM, /31 and /32, IPv6 prefixes and troubleshooting.",
+   "topics": [
+    "subnet mask",
+    "CIDR",
+    "borrowing bits",
+    "block size",
+    "network address",
+    "broadcast address",
+    "VLSM",
+    "troubleshooting"
+   ],
+   "readMinutes": 28,
+   "words": 5402,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why subnetting?"
+    },
+    {
+     "id": "mask",
+     "title": "The subnet mask: drawing the boundary"
+    },
+    {
+     "id": "cidr",
+     "title": "CIDR: any prefix you need"
+    },
+    {
+     "id": "maths",
+     "title": "How many addresses does a subnet have?"
+    },
+    {
+     "id": "borrowing",
+     "title": "Borrowing bits: how one network becomes many"
+    },
+    {
+     "id": "slash24",
+     "title": "Subnetting a /24, step by step"
+    },
+    {
+     "id": "block-size",
+     "title": "The block-size shortcut"
+    },
+    {
+     "id": "network-address",
+     "title": "Finding the network address"
+    },
+    {
+     "id": "broadcast-range",
+     "title": "Broadcast address and usable host range"
+    },
+    {
+     "id": "four-answers",
+     "title": "The four-answer method"
+    },
+    {
+     "id": "other-octets",
+     "title": "Subnetting in the third octet (/16 to /23)"
+    },
+    {
+     "id": "design",
+     "title": "Designing subnets from a requirement"
+    },
+    {
+     "id": "vlsm",
+     "title": "VLSM: different sizes in one network"
+    },
+    {
+     "id": "special",
+     "title": "Supernetting, /31 and /32"
+    },
+    {
+     "id": "ipv6",
+     "title": "CIDR in IPv6: basic awareness"
+    },
+    {
+     "id": "end-to-end",
+     "title": "A complete problem, end to end"
+    },
+    {
+     "id": "troubleshooting",
+     "title": "Real configurations and troubleshooting"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-19",
+   "drive": "1zPzHSur0nullH9MfNC7DEXJM-8BqLBqDhkDWRWA8Jwg"
+  },
+  {
+   "id": "linux/intro-unix-linux",
+   "module": "linux",
+   "slug": "intro-unix-linux",
+   "order": 1,
+   "title": "Introduction to UNIX & Linux",
+   "summary": "The origin story of UNIX and Linux: the problems of early computing, Multics, UNIX and C, GNU and Linus Torvalds, the open-source idea, kernel vs operating system, and the major distributions.",
+   "topics": [
+    "UNIX history",
+    "Linux kernel",
+    "GNU",
+    "open source",
+    "UNIX philosophy",
+    "distributions",
+    "Ubuntu",
+    "RHEL"
+   ],
+   "readMinutes": 19,
+   "words": 3626,
+   "sections": [
+    {
+     "id": "everywhere",
+     "title": "Where is Linux? (Spoiler: everywhere)"
+    },
+    {
+     "id": "dark-ages",
+     "title": "The “dark ages” of computing"
+    },
+    {
+     "id": "history",
+     "title": "The history: from giant failures to global dominance"
+    },
+    {
+     "id": "unix-philosophy",
+     "title": "What made UNIX special?"
+    },
+    {
+     "id": "open-source",
+     "title": "Why the open-source philosophy was needed"
+    },
+    {
+     "id": "why-linux",
+     "title": "Why Linux was created"
+    },
+    {
+     "id": "kernel-vs-os",
+     "title": "What exactly is Linux? The big clarification"
+    },
+    {
+     "id": "unix-vs-linux",
+     "title": "The family tree: UNIX vs Linux"
+    },
+    {
+     "id": "why-it-rules",
+     "title": "Why Linux rules the world"
+    },
+    {
+     "id": "distros",
+     "title": "Why so many “flavours” of Linux?"
+    },
+    {
+     "id": "major-distros",
+     "title": "The major Linux distributions"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 12,
+   "date": "2026-09-08",
+   "drive": "1Onjx-QeePhx7b-_FIsTZu9zMly4ycTiYz_C8h0uQSYY"
+  },
+  {
+   "id": "linux/linux-architecture",
+   "module": "linux",
+   "slug": "linux-architecture",
+   "order": 2,
+   "title": "Linux Architecture",
+   "summary": "How Linux is built in layers: hardware, kernel, shell and user space. What the kernel does, why kernel space is protected, how system calls cross the wall, and what really happens when you type ls.",
+   "topics": [
+    "kernel",
+    "shell",
+    "user space",
+    "kernel space",
+    "system calls",
+    "device drivers",
+    "hardware layer"
+   ],
+   "readMinutes": 17,
+   "words": 3223,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why learn Linux architecture?"
+    },
+    {
+     "id": "layers",
+     "title": "The layers of Linux architecture"
+    },
+    {
+     "id": "hardware",
+     "title": "Layer 1 · The hardware layer"
+    },
+    {
+     "id": "kernel",
+     "title": "Layer 2 · The kernel layer"
+    },
+    {
+     "id": "kernel-space",
+     "title": "Layer 2.5 · Kernel space"
+    },
+    {
+     "id": "shell",
+     "title": "Layer 3 · The shell"
+    },
+    {
+     "id": "syscalls",
+     "title": "The bridge · system calls"
+    },
+    {
+     "id": "user-space",
+     "title": "Layer 4 · User space"
+    },
+    {
+     "id": "two-worlds",
+     "title": "The two worlds: kernel space vs user space"
+    },
+    {
+     "id": "execution-flow",
+     "title": "Execution flow: what happens when you type ls"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 12,
+   "date": "2026-09-08",
+   "drive": "1dE7gy9QtbNU9j3VaSgwSJ_L9xG9v6FvZf7hCSwfxojM"
+  },
+  {
+   "id": "linux/environment-setup",
+   "module": "linux",
+   "slug": "environment-setup",
+   "order": 3,
+   "title": "Environment Setup",
+   "summary": "Get a real Linux machine in the cloud: create an AWS account, launch an Ubuntu EC2 instance, connect over SSH with a key pair, and run your first commands.",
+   "topics": [
+    "AWS",
+    "EC2",
+    "instance",
+    "AMI",
+    "key pair",
+    "SSH",
+    "security group",
+    "cloud vs local"
+   ],
+   "readMinutes": 18,
+   "words": 3423,
+   "sections": [
+    {
+     "id": "cloud",
+     "title": "Linux in the cloud: what is AWS?"
+    },
+    {
+     "id": "why-aws",
+     "title": "Why use AWS, and what is EC2?"
+    },
+    {
+     "id": "local-vs-cloud",
+     "title": "Local installation vs cloud installation"
+    },
+    {
+     "id": "account",
+     "title": "Create your AWS account"
+    },
+    {
+     "id": "launch",
+     "title": "Launch an EC2 instance: name, image and size"
+    },
+    {
+     "id": "key-pair",
+     "title": "Step 7 · Create a key pair (your login key)"
+    },
+    {
+     "id": "configure",
+     "title": "Step 8 · Network, storage, firewall, then launch"
+    },
+    {
+     "id": "connect",
+     "title": "Step 10 · Connect to your instance with SSH"
+    },
+    {
+     "id": "first-commands",
+     "title": "10.7 · Your first commands on the server"
+    },
+    {
+     "id": "big-picture",
+     "title": "What this means: the full picture"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 7,
+   "terms": 12,
+   "date": "2026-09-08",
+   "drive": "1Qw_9OI8ruePEk2UaK5cw9Gscpv-8H7tNCUVOH3KDUmI"
+  },
+  {
+   "id": "linux/terminal-and-shell",
+   "module": "linux",
+   "slug": "terminal-and-shell",
+   "order": 4,
+   "title": "Linux Terminal and Shell Concepts",
+   "summary": "GUI vs CLI, what a terminal is (GUI terminal, TTY, PTY), what the shell does, the journey of a command, the main Linux shells, reading the prompt, command structure, built-ins vs external commands, PATH and environment variables.",
+   "topics": [
+    "terminal",
+    "shell",
+    "Bash",
+    "command prompt",
+    "TTY and PTY",
+    "PATH",
+    "built-in commands",
+    "environment variables"
+   ],
+   "readMinutes": 19,
+   "words": 3564,
+   "sections": [
+    {
+     "id": "interact",
+     "title": "How users interact with an operating system"
+    },
+    {
+     "id": "why-cli",
+     "title": "Why the command line exists"
+    },
+    {
+     "id": "model",
+     "title": "The basic interaction model"
+    },
+    {
+     "id": "terminal",
+     "title": "What is a terminal?"
+    },
+    {
+     "id": "terminal-types",
+     "title": "Types of Linux terminals"
+    },
+    {
+     "id": "shell",
+     "title": "The shell: the program that understands you"
+    },
+    {
+     "id": "journey",
+     "title": "How a Linux command actually works"
+    },
+    {
+     "id": "shells",
+     "title": "Different Linux shells"
+    },
+    {
+     "id": "bash",
+     "title": "Bash: starting and identifying your shell"
+    },
+    {
+     "id": "prompt",
+     "title": "The command prompt, explained"
+    },
+    {
+     "id": "structure",
+     "title": "Understanding command structure"
+    },
+    {
+     "id": "builtins",
+     "title": "Built-in vs external commands"
+    },
+    {
+     "id": "path",
+     "title": "How Bash finds external commands: $PATH"
+    },
+    {
+     "id": "environment",
+     "title": "The Bash environment and variables"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-10",
+   "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg"
+  },
+  {
+   "id": "linux/file-system-structure",
+   "module": "linux",
+   "slug": "file-system-structure",
+   "order": 5,
+   "title": "Essential Commands: The Linux File System Structure",
+   "summary": "The Linux directory tree from / downwards: what lives in /bin, /etc, /home, /var and friends, absolute vs relative paths, and navigating with pwd, cd, ls, history and the . .. ~ shortcuts.",
+   "topics": [
+    "root directory",
+    "/etc /var /home /bin",
+    "absolute path",
+    "relative path",
+    "pwd and cd",
+    "ls options",
+    "history",
+    "hidden files"
+   ],
+   "readMinutes": 23,
+   "words": 4293,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why the file system structure exists"
+    },
+    {
+     "id": "what-is-fs",
+     "title": "What is a file system?"
+    },
+    {
+     "id": "root",
+     "title": "The root directory (/), and the /root trap"
+    },
+    {
+     "id": "map",
+     "title": "The map of the system: critical directories"
+    },
+    {
+     "id": "bin",
+     "title": "/bin · the essential toolbelt"
+    },
+    {
+     "id": "etc",
+     "title": "/etc · the settings and rulebooks"
+    },
+    {
+     "id": "home",
+     "title": "/home · the personal workspaces"
+    },
+    {
+     "id": "var",
+     "title": "/var · the system diary"
+    },
+    {
+     "id": "real-world",
+     "title": "How Linux uses the file system: real-world flows"
+    },
+    {
+     "id": "paths",
+     "title": "Navigation and the idea of a path"
+    },
+    {
+     "id": "absolute-relative",
+     "title": "Absolute vs relative paths"
+    },
+    {
+     "id": "pwd-cd",
+     "title": "pwd and cd: where am I, and how do I move?"
+    },
+    {
+     "id": "ls",
+     "title": "ls · the eyes of the system"
+    },
+    {
+     "id": "history",
+     "title": "history and the ! shortcuts"
+    },
+    {
+     "id": "symbols",
+     "title": "Special symbols: ., .. and ~"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-07",
+   "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo"
+  },
+  {
+   "id": "linux/files-and-directories",
+   "module": "linux",
+   "slug": "files-and-directories",
+   "order": 6,
+   "title": "Essential Commands: Files & Directories",
+   "summary": "Create, copy, move, rename and delete files and folders from the Linux terminal with touch, mkdir, cp, mv, rm and rmdir, and learn to use rm -rf safely.",
+   "topics": [
+    "touch",
+    "mkdir -p",
+    "cp",
+    "mv",
+    "rm -rf",
+    "rmdir",
+    "safe deletion",
+    "renaming"
+   ],
+   "readMinutes": 18,
+   "words": 3410,
+   "sections": [
+    {
+     "id": "recap",
+     "title": "Quick recap before we start"
+    },
+    {
+     "id": "touch",
+     "title": "touch · creating files"
+    },
+    {
+     "id": "mkdir",
+     "title": "mkdir · creating directories"
+    },
+    {
+     "id": "cp",
+     "title": "cp · copying files"
+    },
+    {
+     "id": "mv",
+     "title": "mv · moving and renaming"
+    },
+    {
+     "id": "destination",
+     "title": "How mv reads the destination"
+    },
+    {
+     "id": "rm",
+     "title": "rm · removing files"
+    },
+    {
+     "id": "rm-rf",
+     "title": "The risk of rm -rf"
+    },
+    {
+     "id": "rmdir",
+     "title": "rmdir · removing empty directories"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 10,
+   "date": "2026-09-07",
+   "drive": "1xJNHx2ZOa6CoKUh28h9iV_V0TQh_cVOqwevn82A1H1M"
+  },
+  {
+   "id": "linux/reading-files",
+   "module": "linux",
+   "slug": "reading-files",
+   "order": 7,
+   "title": "Essential Commands: Reading Files",
+   "summary": "Look inside files from the terminal: cat for small files, less to scroll and search big logs, and head to peek at the first lines.",
+   "topics": [
+    "cat",
+    "cat -n",
+    "less",
+    "head",
+    "head -n",
+    "log files",
+    "searching in less"
+   ],
+   "readMinutes": 10,
+   "words": 1925,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why we need file-reading commands"
+    },
+    {
+     "id": "cat",
+     "title": "cat · display the complete file"
+    },
+    {
+     "id": "cat-multiple",
+     "title": "Reading and combining several files"
+    },
+    {
+     "id": "cat-limit",
+     "title": "The limitation of cat"
+    },
+    {
+     "id": "less",
+     "title": "less · browse a file interactively"
+    },
+    {
+     "id": "less-practice",
+     "title": "Practise less on a log file"
+    },
+    {
+     "id": "head",
+     "title": "head · read the beginning of a file"
+    },
+    {
+     "id": "choose",
+     "title": "Choosing the right tool"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 7,
+   "terms": 8,
+   "date": "2026-09-07",
+   "drive": "101ipcrowp4SNObS37EK0pjdfUS-RCQ2KmQPuvnCEecs"
+  },
+  {
+   "id": "linux/searching-files",
+   "module": "linux",
+   "slug": "searching-files",
+   "order": 8,
+   "title": "Essential Commands: Searching Files & Content",
+   "summary": "Locate files anywhere with find (by name, type, size and time) and search inside files with grep (-i, -n, -r, -v, -c, -w), with examples and expected output.",
+   "topics": [
+    "find",
+    "grep",
+    "-name",
+    "-type",
+    "grep -r",
+    "grep -v",
+    "wildcards",
+    "case sensitivity"
+   ],
+   "readMinutes": 15,
+   "words": 2934,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why searching is needed"
+    },
+    {
+     "id": "find",
+     "title": "find · search for files and directories"
+    },
+    {
+     "id": "find-name",
+     "title": "Search by name"
+    },
+    {
+     "id": "find-iname",
+     "title": "Case-insensitive search with -iname"
+    },
+    {
+     "id": "find-type",
+     "title": "Only files, or only directories: -type"
+    },
+    {
+     "id": "find-size-time",
+     "title": "Search by size and by time"
+    },
+    {
+     "id": "grep",
+     "title": "grep · search inside files"
+    },
+    {
+     "id": "grep-options",
+     "title": "Case, line numbers and multiple files"
+    },
+    {
+     "id": "grep-r",
+     "title": "Search a whole folder tree: grep -r"
+    },
+    {
+     "id": "grep-vcw",
+     "title": "Invert, count and whole words: -v, -c, -w"
+    },
+    {
+     "id": "cheatsheet",
+     "title": "Cheat sheet: find vs grep"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 10,
+   "date": "2026-09-10",
+   "drive": "1Ivf5qxUNbA036kQke91o2XMaYvHiUrhScDS5FMy2AIo"
+  },
+  {
+   "id": "linux/text-filters",
+   "module": "linux",
+   "slug": "text-filters",
+   "order": 9,
+   "title": "Essential Commands: Text Filters",
+   "summary": "Count, sort, de-duplicate, slice and transform text with wc, sort, uniq, cut and tr, with sample input files and the exact output of every command.",
+   "topics": [
+    "wc",
+    "sort",
+    "uniq",
+    "cut",
+    "tr",
+    "text filters",
+    "characters vs bytes"
+   ],
+   "readMinutes": 13,
+   "words": 2454,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why text filters matter"
+    },
+    {
+     "id": "wc",
+     "title": "wc · measure your text"
+    },
+    {
+     "id": "wc-options",
+     "title": "Counting one thing at a time"
+    },
+    {
+     "id": "wc-more",
+     "title": "wc with several files and with pipes"
+    },
+    {
+     "id": "sort",
+     "title": "sort · put lines in order"
+    },
+    {
+     "id": "sort-options",
+     "title": "Numbers, reverse and unique: -n, -r, -u"
+    },
+    {
+     "id": "uniq",
+     "title": "uniq · remove repeated lines"
+    },
+    {
+     "id": "cut",
+     "title": "cut · extract part of every line"
+    },
+    {
+     "id": "tr",
+     "title": "tr · translate characters"
+    },
+    {
+     "id": "recap",
+     "title": "The five filters at a glance"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 9,
+   "date": "2026-09-07",
+   "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg"
+  },
+  {
+   "id": "linux/pipes-and-redirection",
+   "module": "linux",
+   "slug": "pipes-and-redirection",
+   "order": 10,
+   "title": "Essential Commands: Pipes & Redirection",
+   "summary": "Control where command input comes from and where output goes: stdin, stdout and stderr, the >, >> and < redirection operators, and the | pipe that connects commands.",
+   "topics": [
+    "stdin",
+    "stdout",
+    "stderr",
+    "> redirection",
+    ">> append",
+    "< input",
+    "pipe |"
+   ],
+   "readMinutes": 14,
+   "words": 2755,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why control the flow of data?"
+    },
+    {
+     "id": "streams",
+     "title": "The foundation: three standard streams"
+    },
+    {
+     "id": "output",
+     "title": "> · send output to a file"
+    },
+    {
+     "id": "append",
+     "title": ">> · append to a file"
+    },
+    {
+     "id": "input",
+     "title": "< · take input from a file"
+    },
+    {
+     "id": "pipe",
+     "title": "| · the pipe"
+    },
+    {
+     "id": "pipe-practice",
+     "title": "Practise: show only the .txt files"
+    },
+    {
+     "id": "stderr-redirect",
+     "title": "Redirecting errors: 2>"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 7,
+   "terms": 10,
+   "date": "2026-09-07",
+   "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk"
+  },
+  {
+   "id": "linux/command-chaining",
+   "module": "linux",
+   "slug": "command-chaining",
+   "order": 11,
+   "title": "Essential Commands: Command Chaining",
+   "summary": "Run several Linux commands on one line and control what happens next with ;, && and ||. Flows, examples and a self-check.",
+   "topics": [
+    "; operator",
+    "&& operator",
+    "|| operator",
+    "exit status",
+    "combining chains",
+    "workflows"
+   ],
+   "readMinutes": 6,
+   "words": 1229,
+   "sections": [
+    {
+     "id": "why",
+     "title": "Why chain commands?"
+    },
+    {
+     "id": "semicolon",
+     "title": "; · run commands one after another"
+    },
+    {
+     "id": "and",
+     "title": "&& · run only if the previous command succeeds"
+    },
+    {
+     "id": "many-and",
+     "title": "Several && in a row"
+    },
+    {
+     "id": "or",
+     "title": "|| · run only if the previous command fails"
+    },
+    {
+     "id": "difference",
+     "title": "The three operators, side by side"
+    },
+    {
+     "id": "combining",
+     "title": "Combining chains"
+    },
+    {
+     "id": "workflow",
+     "title": "A practical workflow"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 6,
+   "terms": 5,
+   "date": "2026-09-08",
+   "drive": "1pyE8sQmjkH5Wd7yyGMiRqdDSDSay1wOoMgdunF3U-tQ"
+  },
+  {
+   "id": "web/html-syntax-structure",
+   "module": "web",
+   "slug": "html-syntax-structure",
+   "order": 1,
+   "title": "HTML Basics: Syntax and Structure",
+   "summary": "Why HTML exists, how to set up your first HTML project with VS Code and Live Server, the grammar of tags, elements and attributes, and the skeleton every HTML document shares.",
+   "topics": [
+    "HTML basics",
+    "tags and elements",
+    "attributes",
+    "nesting",
+    "DOCTYPE",
+    "head and body",
+    "meta tags",
+    "block vs inline"
+   ],
+   "readMinutes": 19,
+   "words": 3677,
+   "sections": [
+    {
+     "id": "why-html",
+     "title": "Why Tim Berners-Lee created HTML"
+    },
+    {
+     "id": "what-is-html",
+     "title": "What HTML is"
+    },
+    {
+     "id": "first-project",
+     "title": "Setting up your first HTML project"
+    },
+    {
+     "id": "syntax",
+     "title": "HTML syntax: the grammar of the web"
+    },
+    {
+     "id": "tags",
+     "title": "Tags: labels for content"
+    },
+    {
+     "id": "elements",
+     "title": "Elements: the complete building block"
+    },
+    {
+     "id": "attributes",
+     "title": "Attributes: extra settings for a tag"
+    },
+    {
+     "id": "rules",
+     "title": "Common HTML syntax rules"
+    },
+    {
+     "id": "structure",
+     "title": "The core structure: a blueprint for every page"
+    },
+    {
+     "id": "doctype-html",
+     "title": "The DOCTYPE and the <html> root"
+    },
+    {
+     "id": "head",
+     "title": "The head section: information about the page"
+    },
+    {
+     "id": "body",
+     "title": "The body section: everything you see"
+    },
+    {
+     "id": "block-inline",
+     "title": "Block-level vs inline elements"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 15,
+   "date": "2026-09-21",
+   "drive": "1YcIMjouA5XHNzf5rlFhmTm3IIerQqqzJMWJ2n02kYI4"
+  },
+  {
+   "id": "web/common-html-elements",
+   "module": "web",
+   "slug": "common-html-elements",
+   "order": 2,
+   "title": "HTML Basics: Common Elements",
+   "summary": "The everyday HTML elements: six heading levels and why they matter, paragraphs, line breaks, and the formatting tags b, strong, i, em, mark, small, del, ins, s, sub, sup and the obsolete big.",
+   "topics": [
+    "headings h1-h6",
+    "paragraph",
+    "line break",
+    "formatting tags",
+    "b vs strong",
+    "i vs em",
+    "del ins s",
+    "sub and sup"
+   ],
+   "readMinutes": 12,
+   "words": 2296,
+   "sections": [
+    {
+     "id": "headings",
+     "title": "Heading tags: <h1> to <h6>"
+    },
+    {
+     "id": "why-headings",
+     "title": "Why heading tags matter"
+    },
+    {
+     "id": "paragraphs",
+     "title": "The paragraph tag <p>"
+    },
+    {
+     "id": "line-break",
+     "title": "Line break <br>"
+    },
+    {
+     "id": "formatting",
+     "title": "Formatting tags: making words stand out"
+    },
+    {
+     "id": "bold-strong",
+     "title": "Bold: <b> and <strong>"
+    },
+    {
+     "id": "italic-em",
+     "title": "Italic: <i> and <em>"
+    },
+    {
+     "id": "mark-small",
+     "title": "Highlight and fine print: <mark> and <small>"
+    },
+    {
+     "id": "del-ins-s",
+     "title": "Edits and outdated text: <del>, <ins>, <s>"
+    },
+    {
+     "id": "sub-sup",
+     "title": "Below and above the line: <sub> and <sup>"
+    },
+    {
+     "id": "big",
+     "title": "The obsolete <big> tag"
+    },
+    {
+     "id": "cheat-sheet",
+     "title": "Formatting tags at a glance"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 8,
+   "terms": 11,
+   "date": "2026-09-21",
+   "drive": "19bVbhvyiGHiaI3eEp0tf8um32UVOlwuV11A9atJAebo"
+  },
+  {
+   "id": "web/html-lists-images",
+   "module": "web",
+   "slug": "html-lists-images",
+   "order": 3,
+   "title": "HTML Basics: Lists, Images & Links",
+   "summary": "Ordered, unordered and description lists with their attributes and nesting; the img tag with src, alt, width, height, loading and title; and links with the anchor tag: href, link types, target, rel and download.",
+   "topics": [
+    "ordered list",
+    "unordered list",
+    "description list",
+    "img tag",
+    "alt text",
+    "lazy loading",
+    "anchor tag",
+    "href and target"
+   ],
+   "readMinutes": 16,
+   "words": 3134,
+   "sections": [
+    {
+     "id": "lists",
+     "title": "Why lists?"
+    },
+    {
+     "id": "ordered",
+     "title": "Ordered lists <ol>"
+    },
+    {
+     "id": "ol-attributes",
+     "title": "Attributes of <ol>: type, start, reversed"
+    },
+    {
+     "id": "unordered",
+     "title": "Unordered lists <ul>"
+    },
+    {
+     "id": "description",
+     "title": "Description lists <dl>"
+    },
+    {
+     "id": "images",
+     "title": "Images with <img>"
+    },
+    {
+     "id": "src",
+     "title": "src: the image’s address"
+    },
+    {
+     "id": "alt",
+     "title": "alt: backup text"
+    },
+    {
+     "id": "img-attributes",
+     "title": "Size, loading and hover text"
+    },
+    {
+     "id": "anchor",
+     "title": "Links with the anchor tag <a>"
+    },
+    {
+     "id": "link-types",
+     "title": "Three kinds of links"
+    },
+    {
+     "id": "target-rel-download",
+     "title": "target, rel and download"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-22",
+   "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg"
+  },
+  {
+   "id": "web/forms-and-inputs",
+   "module": "web",
+   "slug": "forms-and-inputs",
+   "order": 4,
+   "title": "HTML Basics: Forms and Inputs",
+   "summary": "How HTML forms collect information: the form tag with action, target and enctype, text and choice controls, id, name and value, buttons, labels, fieldsets, and built-in validation rules.",
+   "topics": [
+    "form tag",
+    "input types",
+    "name and value",
+    "radio and checkbox",
+    "select dropdown",
+    "label for id",
+    "fieldset legend",
+    "form validation"
+   ],
+   "readMinutes": 22,
+   "words": 4089,
+   "sections": [
+    {
+     "id": "real-forms",
+     "title": "Forms you already use every day"
+    },
+    {
+     "id": "submission",
+     "title": "How form submission works"
+    },
+    {
+     "id": "form-tag",
+     "title": "The <form> tag: the master envelope"
+    },
+    {
+     "id": "form-attributes",
+     "title": "More form attributes: target and enctype"
+    },
+    {
+     "id": "text-controls",
+     "title": "Text takers: the “fill in the blank” crew"
+    },
+    {
+     "id": "id-value-name",
+     "title": "The three key attributes: id, value, name"
+    },
+    {
+     "id": "choice-controls",
+     "title": "Choice makers: radio, checkbox, select"
+    },
+    {
+     "id": "buttons",
+     "title": "The “do something” buttons"
+    },
+    {
+     "id": "labels",
+     "title": "The <label> tag: the leash"
+    },
+    {
+     "id": "fieldset",
+     "title": "Grouping with <fieldset> and <legend>"
+    },
+    {
+     "id": "validation-why",
+     "title": "Form validation: the bouncer"
+    },
+    {
+     "id": "validation-rules",
+     "title": "Validation attributes"
+    },
+    {
+     "id": "full-example",
+     "title": "Putting it together: a strict form"
+    },
+    {
+     "id": "terms",
+     "title": "Key terms"
+    },
+    {
+     "id": "quiz",
+     "title": "Self-check"
+    },
+    {
+     "id": "summary",
+     "title": "All of it, in one sentence"
+    }
+   ],
+   "quiz": 9,
+   "terms": 15,
+   "date": "2026-09-21",
+   "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw"
   }
  ],
- "built": "2026-10-13T22:31:07"
+ "built": "2026-10-14T12:02:07"
 }

@@ -1,173 +1,1877 @@
 {
-  "site": {
-    "name": "AIFDE Notes",
-    "fullName": "Forward Deployed AI Engineer · Notes",
-    "author": "Vishwa Mohan",
-    "tagline": "Become a Forward Deployed AI Engineer, one sketched page at a time.",
-    "course": "Forward Deployed AI Engineer · 9 months · 36 weeks",
-    "links": { "github": "", "youtube": "", "linkedin": "" }
+ "site": {
+  "name": "AIFDE Notes",
+  "fullName": "Forward Deployed AI Engineer · Notes",
+  "author": "Vishwa Mohan",
+  "tagline": "Become a Forward Deployed AI Engineer, one sketched page at a time.",
+  "course": "Forward Deployed AI Engineer · 9 phases",
+  "links": {
+   "github": "",
+   "youtube": "",
+   "linkedin": ""
+  }
+ },
+ "stages": [
+  {
+   "id": "p1",
+   "title": "Phase 01 · FDE Foundations & Python Engineering"
   },
-  "stages": [
-    { "id": "start", "title": "Start here" },
-    { "id": "foundations", "title": "Developer foundations" },
-    { "id": "python", "title": "Python & backend" },
-    { "id": "genai", "title": "Generative AI" },
-    { "id": "next", "title": "Coming next" }
-  ],
-  "modules": [
+  {
+   "id": "p2",
+   "title": "Phase 02 · Applied AI I: LLMs, LangChain & RAG"
+  },
+  {
+   "id": "p3",
+   "title": "Phase 03 · Applied AI II: Agents, MCP, Data & Engineering Fundamentals"
+  },
+  {
+   "id": "p4",
+   "title": "Phase 04 · Backend & Enterprise Integration"
+  },
+  {
+   "id": "p5",
+   "title": "Phase 05 · Frontend & Operational Applications"
+  },
+  {
+   "id": "p6",
+   "title": "Phase 06 · Cloud, DevOps & LLMOps"
+  },
+  {
+   "id": "p7",
+   "title": "Phase 07 · System Design at Scale"
+  },
+  {
+   "id": "p8",
+   "title": "Phase 08 · Security, Reliability & Governance"
+  },
+  {
+   "id": "p9",
+   "title": "Phase 09 · The FDE Craft"
+  }
+ ],
+ "modules": [
+  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.1",
+   "slug": "fde",
+   "title": "What is a Forward Deployed Engineer?",
+   "topics": [
+    "FDE Role",
+    "FDE Responsibilities",
+    "FDE Mindset"
+   ],
+   "notes": [
     {
-      "slug": "fde", "order": 1, "stage": "start", "icon": "🧭",
-      "title": "The Forward Deployed Engineer", "folder": "FORWARD DEPLOYED ENGINEER",
-      "summary": "What an FDE actually does, how the role differs from SWE, AI and solutions engineers, the end-to-end responsibilities, and the mindset that makes FDEs effective at customer sites.",
-      "notes": [
-        { "slug": "fde-role", "title": "The FDE Role", "drive": "1Fz5XiOmEKukZ-aER8pN06j4OK5yZ1flIXcj81Imco1U" },
-        { "slug": "fde-responsibilities", "title": "FDE Responsibilities", "drive": "1fSVD2ip6mPCzutUbG3MK3TkNeT6Sg44SLMVTvh4wxuI" },
-        { "slug": "fde-mindset", "title": "The FDE Mindset", "drive": "14BNgyeU4FPTphWr5jpL3LKycj1GnQol_8lJubgVIIs4" }
-      ]
+     "slug": "fde-role",
+     "title": "The FDE Role",
+     "drive": "1Fz5XiOmEKukZ-aER8pN06j4OK5yZ1flIXcj81Imco1U"
     },
     {
-      "slug": "linux", "order": 2, "stage": "foundations", "icon": "🐧",
-      "title": "Linux", "folder": "Linux",
-      "summary": "Living in the terminal: what Linux is, how it is built, the file system tree, moving around, reading and searching files, text filters, pipes, redirection and command chaining.",
-      "notes": [
-        { "slug": "intro-unix-linux", "title": "Introduction to UNIX & Linux", "drive": "1Onjx-QeePhx7b-_FIsTZu9zMly4ycTiYz_C8h0uQSYY" },
-        { "slug": "linux-architecture", "title": "Linux Architecture", "drive": "1dE7gy9QtbNU9j3VaSgwSJ_L9xG9v6FvZf7hCSwfxojM" },
-        { "slug": "environment-setup", "title": "Environment Setup", "drive": "1Qw_9OI8ruePEk2UaK5cw9Gscpv-8H7tNCUVOH3KDUmI" },
-        { "slug": "terminal-and-shell", "title": "Linux Terminal and Shell", "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg" },
-        { "slug": "file-system-structure", "title": "The Linux File System Structure", "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo" },
-        { "slug": "files-and-directories", "title": "Files & Directories", "drive": "1xJNHx2ZOa6CoKUh28h9iV_V0TQh_cVOqwevn82A1H1M" },
-        { "slug": "reading-files", "title": "Reading Files", "drive": "101ipcrowp4SNObS37EK0pjdfUS-RCQ2KmQPuvnCEecs" },
-        { "slug": "searching-files", "title": "Searching Files & Content", "drive": "1Ivf5qxUNbA036kQke91o2XMaYvHiUrhScDS5FMy2AIo" },
-        { "slug": "text-filters", "title": "Essential Text Filters", "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg" },
-        { "slug": "pipes-and-redirection", "title": "Pipes & Redirection", "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk" },
-        { "slug": "command-chaining", "title": "Command Chaining", "drive": "1pyE8sQmjkH5Wd7yyGMiRqdDSDSay1wOoMgdunF3U-tQ" }
-      ]
+     "slug": "fde-responsibilities",
+     "title": "FDE Responsibilities",
+     "drive": "1fSVD2ip6mPCzutUbG3MK3TkNeT6Sg44SLMVTvh4wxuI"
     },
     {
-      "slug": "networking", "order": 3, "stage": "foundations", "icon": "🌐",
-      "title": "Networking Basics", "folder": "Networking Basic",
-      "summary": "How machines find and talk to each other: cables and network types, MAC and IP, core protocols, the OSI model, IP addressing, subnetting and CIDR.",
-      "notes": [
-        { "slug": "physical-connectivity", "title": "Physical Connectivity & Network Types", "drive": "1k7IVPGvXWHSmf557Rmo1UUQhnJENaAUu0pXHpSY3EBo" },
-        { "slug": "device-identification-protocols", "title": "Device Identification & Core Protocols", "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU" },
-        { "slug": "osi-model", "title": "OSI Model & Data Communication", "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk" },
-        { "slug": "ip-address-fundamentals", "title": "IP Address Fundamentals", "drive": "1FDYwr59XXKDTWRzGxm_Owm9kJrVT9SftWDVKRPgqNTQ" },
-        { "slug": "subnetting-cidr", "title": "Subnetting & CIDR", "drive": "1zPzHSur0nullH9MfNC7DEXJM-8BqLBqDhkDWRWA8Jwg" }
-      ]
+     "slug": "fde-mindset",
+     "title": "The FDE Mindset",
+     "drive": "14BNgyeU4FPTphWr5jpL3LKycj1GnQol_8lJubgVIIs4"
+    }
+   ],
+   "upcoming": [],
+   "summary": "What an FDE actually does, how the role differs from SWE, AI and solutions engineers, the end-to-end responsibilities, and the mindset that makes FDEs effective at customer sites.",
+   "order": 1
+  },
+  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.2",
+   "slug": "git",
+   "title": "Git & GitHub",
+   "topics": [
+    "Introduction to Version Control",
+    "Local Git Deep Dive",
+    "Integrating Local Git with Remote GitHub"
+   ],
+   "notes": [
+    {
+     "slug": "version-control",
+     "title": "Introduction to Version Control",
+     "drive": "13SJ18Xn0FMO44fgyZOuQOX_qZDGnUamPgAg_4N3ClSs"
     },
     {
-      "slug": "git", "order": 4, "stage": "foundations", "icon": "🌿",
-      "title": "Git & GitHub", "folder": "Git & GitHub Basic",
-      "summary": "Why version control exists, how Git tracks snapshots, and the everyday workflow of commits, branches and remotes on GitHub.",
-      "notes": [
-        { "slug": "version-control", "title": "Version Control Systems", "drive": "13SJ18Xn0FMO44fgyZOuQOX_qZDGnUamPgAg_4N3ClSs" },
-        { "slug": "git-fundamentals", "title": "Git Fundamentals", "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU" },
-        { "slug": "git-workflows", "title": "Git in Real Projects & .gitignore", "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo" },
-        { "slug": "github", "title": "GitHub, Pull Requests & GitHub Desktop", "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo" }
-      ]
+     "slug": "git-workflows",
+     "title": "Local Git Deep Dive",
+     "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo"
     },
     {
-      "slug": "web", "order": 5, "stage": "foundations", "icon": "🧱",
-      "title": "Web & HTML", "folder": "Web & APIs",
-      "summary": "The building blocks of every web page: HTML syntax and document structure, common elements, lists and images, and forms that collect user input.",
-      "notes": [
-        { "slug": "html-syntax-structure", "title": "HTML Syntax and Structure", "drive": "1YcIMjouA5XHNzf5rlFhmTm3IIerQqqzJMWJ2n02kYI4" },
-        { "slug": "common-html-elements", "title": "Common HTML Elements", "drive": "19bVbhvyiGHiaI3eEp0tf8um32UVOlwuV11A9atJAebo" },
-        { "slug": "html-lists-images", "title": "HTML Lists & Images", "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg" },
-        { "slug": "forms-and-inputs", "title": "Forms and Inputs", "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw" }
-      ]
+     "slug": "github",
+     "title": "Integrating Local Git with Remote GitHub",
+     "drive": "1aMh7WyP14koLO6UD7BC0Q7Rr2Z5F_e7j8jxLfUQSvmo"
+    }
+   ],
+   "upcoming": [],
+   "summary": "Why version control exists, how to drive Git in a real project (new, existing or joined), .gitignore, and connecting your local repository to GitHub: pushing, forks, pull requests, conflicts and Pages.",
+   "order": 2
+  },
+  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.3",
+   "slug": "python-fundamentals",
+   "title": "Python Fundamentals",
+   "topics": [
+    "Python Basics — Part 1",
+    "Python Basics — Part 2",
+    "Control Flow",
+    "Data Structures",
+    "Functions",
+    "Modules & Packages",
+    "Working with Data",
+    "Error Handling",
+    "Introduction to OOP — Part 1",
+    "Introduction to OOP — Part 2",
+    "Inheritance",
+    "Method Overriding"
+   ],
+   "notes": [
+    {
+     "slug": "python-basics-1",
+     "title": "Python Basics — Part 1",
+     "drive": "14ZKx9Ei2nTKVRsPxX8EZimqsVVnBgL089wfyE7mrOsA",
+     "code": "1rWvkkM8UJA-DCCFwVUzWR0M9RtnQ-8h5wBtToF-ltFU"
     },
     {
-      "slug": "python-fundamentals", "order": 6, "stage": "python", "icon": "🐍",
-      "title": "Python Fundamentals", "folder": "Python Fundamentals",
-      "summary": "Python from zero to object-oriented: variables and types, control flow, data structures, functions, modules, working with files and data, error handling, classes, inheritance and overriding.",
-      "notes": [
-        { "slug": "python-basics-1", "title": "Python Basics · Part 1", "drive": "14ZKx9Ei2nTKVRsPxX8EZimqsVVnBgL089wfyE7mrOsA", "code": "1rWvkkM8UJA-DCCFwVUzWR0M9RtnQ-8h5wBtToF-ltFU" },
-        { "slug": "python-basics-2", "title": "Python Basics · Part 2", "drive": "13KTAdv_l_-_d1IYOFAC9DSi_pGXfNs-f02ynSL40qo0", "code": "1dUccy36LJChWZKTIdceV8YQZcl6hT8IyOvzKfw1HTTU" },
-        { "slug": "control-flow", "title": "Control Flow", "drive": "1I6OxMXLj5mBPNkdwYtCWImRqMSyoYPQUlAjpC8ldipQ", "code": "1ZmGNxzWBAXnvJBw1A_VLx272eb7VJGAHtC36s-tkY4g" },
-        { "slug": "data-structures", "title": "Data Structures", "drive": "1sQupZ4jdcaeK6XvH1MdJIo6piYmkfGqQO_8kdFwxBYQ", "code": "12BL8XoQCpVVZPjGUIZWununAEwXypaRNk2t8fZOLN6s" },
-        { "slug": "functions", "title": "Functions", "drive": "1UGrONBYjQcltdwKUxsRKjBYTJmJrpQ43KiRgvXVae4c", "code": "1QyJwBjxkJ6w_Uya_4cqlC3bCVM-3YwAP00iNTX0EaMc" },
-        { "slug": "modules-packages", "title": "Modules & Packages", "drive": "17U9tbVrW3HZ6byDiGrY_5G25HaTWt7Hf1FIMsQzLIW8", "code": "1kEDyEFM9n0iViOqFBX5CQAxYgJtH-Tjnf2w1t-BlUq0" },
-        { "slug": "working-with-data", "title": "Working with Data", "drive": "1F5jA2ESuLMAyz1mX4L6nz8zjw5RajM_lmkCo5ZWGYcI", "code": "1cG9AjkHE4YYq09tBjdYk41L-XJhQAwwDKhU991TizKc" },
-        { "slug": "error-handling", "title": "Error Handling", "drive": "1CyJYI0gbHvAy9WyBsVcwABN6as7MZAemhZhBV5bTBt8", "code": "1duuH7oZn_l6-t5s_WF3hi3xYQsAri0eddc-ysETAF3I" },
-        { "slug": "oops-1", "title": "Intro to OOP · Part 1", "drive": "1ViaWM-SsGz5xuuH5VodoNNkq2l4oHx3Pnoc_Py2emE8", "code": "1dSZVOvy7iU8CbUO04ukok_z7F7k_r6oVmmfMvl2pyjE" },
-        { "slug": "oops-2", "title": "Intro to OOP · Part 2", "drive": "1oDLYBjlrafCaRo-3Uz3aJ1tCh9EopkA4lcCZNTag7EE", "code": "16-8dFnSRsfQrbmVpbHettb6Phv6rdVRq7WEa9V5SR7k" },
-        { "slug": "inheritance", "title": "Inheritance", "drive": "1GbVsqWjm3Ak-YRz05HjuZGktbfrgwld-lBnSJAZ23uo", "code": "1xuIWTd98O5pbpkZZZCgjaReCuehnlevsM_TnreKJWAI" },
-        { "slug": "method-overriding", "title": "Method Overriding", "drive": "1n4dNRRq8GBblKKcKyMdI07OsE5MHis-eiifm2tukPQg", "code": "1IOV5FTiCoPNv6lmV0g6KLCnlvjHZbAOCLMhOZJTD11A" }
-      ]
+     "slug": "python-basics-2",
+     "title": "Python Basics — Part 2",
+     "drive": "13KTAdv_l_-_d1IYOFAC9DSi_pGXfNs-f02ynSL40qo0",
+     "code": "1dUccy36LJChWZKTIdceV8YQZcl6hT8IyOvzKfw1HTTU"
     },
     {
-      "slug": "python-advanced", "order": 7, "stage": "python", "icon": "⚡",
-      "title": "Python Advanced & FastAPI", "folder": "Python Advanced",
-      "summary": "From scripts to services: structuring real Python projects, how APIs work, FastAPI setup, Pydantic validation, path operations, HTTP methods, path and query parameters.",
-      "notes": [
-        { "slug": "project-development", "title": "Python Project Development", "drive": "1i1l55HLG3JQfiVcPlppXS6keDnrOA__UatSotRGiQ0g" },
-        { "slug": "api-basics", "title": "API Basics", "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM" },
-        { "slug": "fastapi-fundamentals", "title": "FastAPI Fundamentals, Setup & Project Structure", "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA" },
-        { "slug": "pydantic", "title": "Pydantic: Validating Data", "drive": "1uSBnwTpwPGJS2wqKobXmMFqCMQFK9y6dH8HLYJJDyG0" },
-        { "slug": "path-operations-http-methods", "title": "Path Operations & HTTP Methods", "drive": "1QpNGo32aynyfTHiTlcvUIJQsI3U5jPqtN0Y7aDY_X40" },
-        { "slug": "path-query-parameters", "title": "Path & Query Parameters", "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E" }
-      ]
+     "slug": "control-flow",
+     "title": "Control Flow",
+     "drive": "1I6OxMXLj5mBPNkdwYtCWImRqMSyoYPQUlAjpC8ldipQ",
+     "code": "1ZmGNxzWBAXnvJBw1A_VLx272eb7VJGAHtC36s-tkY4g"
     },
     {
-      "slug": "sql", "order": 8, "stage": "python", "icon": "🗄️",
-      "title": "SQL", "folder": "SQL", "status": "soon",
-      "summary": "Querying relational data like an investigator: SELECT, filtering, joins, aggregation and real case-study projects.",
-      "upcoming": ["Tables, keys & relationships", "SELECT, WHERE, ORDER BY", "GROUP BY & aggregates", "Joins", "Subqueries & CTEs", "Investigation projects"],
-      "notes": []
+     "slug": "data-structures",
+     "title": "Data Structures",
+     "drive": "1sQupZ4jdcaeK6XvH1MdJIo6piYmkfGqQO_8kdFwxBYQ",
+     "code": "12BL8XoQCpVVZPjGUIZWununAEwXypaRNk2t8fZOLN6s"
     },
     {
-      "slug": "llm-engineering", "order": 9, "stage": "genai", "icon": "🧠",
-      "title": "LLM Engineering", "folder": "LLM ENGINEERING",
-      "summary": "How large language models work from an engineer's point of view: tokens, context windows, sampling, APIs, costs and building reliable LLM features.",
-      "notes": [
-        { "slug": "llm-engineering", "title": "LLM Engineering", "drive": "1vQPVegWYDtmeN406pMejn7heef2TISDaKRfdduFO4Yo" }
-      ]
+     "slug": "functions",
+     "title": "Functions",
+     "drive": "1UGrONBYjQcltdwKUxsRKjBYTJmJrpQ43KiRgvXVae4c",
+     "code": "1QyJwBjxkJ6w_Uya_4cqlC3bCVM-3YwAP00iNTX0EaMc"
     },
     {
-      "slug": "prompt-context", "order": 10, "stage": "genai", "icon": "✍️",
-      "title": "Prompt & Context Engineering", "folder": "PROMPT & CONTEXT ENGINEERING",
-      "summary": "Writing instructions models follow: prompt patterns, structure, examples, and engineering the whole context window the model sees.",
-      "notes": [
-        { "slug": "prompt-context-engineering", "title": "Prompt & Context Engineering", "drive": "1BSR8p--HS3l0pHNNGYqbsq7_xXmq1uj6aGiUaE-xXtQ" }
-      ]
+     "slug": "modules-packages",
+     "title": "Modules & Packages",
+     "drive": "17U9tbVrW3HZ6byDiGrY_5G25HaTWt7Hf1FIMsQzLIW8",
+     "code": "1kEDyEFM9n0iViOqFBX5CQAxYgJtH-Tjnf2w1t-BlUq0"
     },
     {
-      "slug": "langchain", "order": 11, "stage": "genai", "icon": "🔗",
-      "title": "LangChain", "folder": "Langchain",
-      "summary": "Composing LLM apps with LangChain: models, prompts, chains, output parsers and the building blocks behind agents and RAG.",
-      "notes": [
-        { "slug": "langchain-fundamentals", "title": "LangChain Fundamentals", "drive": "1Gwg9eLyT_BqdSiODfRPQI4xUt1V3yAifC5iuRVjs-GQ" }
-      ]
+     "slug": "working-with-data",
+     "title": "Working with Data",
+     "drive": "1F5jA2ESuLMAyz1mX4L6nz8zjw5RajM_lmkCo5ZWGYcI",
+     "code": "1cG9AjkHE4YYq09tBjdYk41L-XJhQAwwDKhU991TizKc"
     },
     {
-      "slug": "model-selection", "order": 12, "stage": "genai", "icon": "⚖️",
-      "title": "Model Selection", "folder": "Model Selection",
-      "summary": "Choosing the right model for the job: capability, latency, cost, context length, open vs closed models and how to evaluate the trade-offs.",
-      "notes": [
-        { "slug": "model-selection", "title": "Model Selection", "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I" }
-      ]
+     "slug": "error-handling",
+     "title": "Error Handling",
+     "drive": "1CyJYI0gbHvAy9WyBsVcwABN6as7MZAemhZhBV5bTBt8",
+     "code": "1duuH7oZn_l6-t5s_WF3hi3xYQsAri0eddc-ysETAF3I"
     },
-    { "slug": "rag", "order": 13, "stage": "next", "icon": "📚", "title": "RAG & Knowledge AI", "status": "soon",
-      "summary": "Grounding models in your own documents.",
-      "upcoming": ["Embeddings", "Vector databases", "Document ingestion & chunking", "Semantic, BM25 & hybrid search", "Re-ranking"], "notes": [] },
-    { "slug": "agents", "order": 14, "stage": "next", "icon": "🤖", "title": "AI Agents", "status": "soon",
-      "summary": "Models that plan, call tools and act.",
-      "upcoming": ["Agent workflows", "LangGraph: state & memory", "Planning, ReAct & routers", "Multi-agent systems", "Human-in-the-loop"], "notes": [] },
-    { "slug": "mcp", "order": 15, "stage": "next", "icon": "🔌", "title": "Model Context Protocol (MCP)", "status": "soon",
-      "summary": "A standard plug for connecting models to tools and data.",
-      "upcoming": ["MCP client & server", "Tools, resources & prompts", "Tool schemas"], "notes": [] },
-    { "slug": "data-engineering", "order": 16, "stage": "next", "icon": "🏗️", "title": "Data Engineering", "status": "soon",
-      "summary": "Moving and shaping data at scale.",
-      "upcoming": ["PostgreSQL", "ETL vs ELT", "PySpark", "dbt"], "notes": [] },
-    { "slug": "enterprise-integration", "order": 17, "stage": "next", "icon": "🏢", "title": "Enterprise AI Integration", "status": "soon",
-      "summary": "Wiring AI into the systems companies already run.",
-      "upcoming": ["REST, SOAP & XML", "Webhooks, OAuth 2.0 & JWT", "CRM, Jira & ticketing", "Slack & email", "Knowledge bases"], "notes": [] },
-    { "slug": "frontend", "order": 18, "stage": "next", "icon": "🖥️", "title": "Frontend for AI Apps", "status": "soon",
-      "summary": "Interfaces for streaming AI products.",
-      "upcoming": ["JavaScript", "React", "WebSockets & SSE"], "notes": [] },
-    { "slug": "cloud", "order": 19, "stage": "next", "icon": "☁️", "title": "Cloud & Deployment", "status": "soon",
-      "summary": "Shipping it to production on AWS.",
-      "upcoming": ["Docker", "EC2, ECS & RDS", "S3, VPC & IAM", "Load balancers", "CloudWatch & Secrets Manager"], "notes": [] }
-  ]
+    {
+     "slug": "oops-1",
+     "title": "Introduction to OOP — Part 1",
+     "drive": "1ViaWM-SsGz5xuuH5VodoNNkq2l4oHx3Pnoc_Py2emE8",
+     "code": "1dSZVOvy7iU8CbUO04ukok_z7F7k_r6oVmmfMvl2pyjE"
+    },
+    {
+     "slug": "oops-2",
+     "title": "Introduction to OOP — Part 2",
+     "drive": "1oDLYBjlrafCaRo-3Uz3aJ1tCh9EopkA4lcCZNTag7EE",
+     "code": "16-8dFnSRsfQrbmVpbHettb6Phv6rdVRq7WEa9V5SR7k"
+    },
+    {
+     "slug": "inheritance",
+     "title": "Inheritance",
+     "drive": "1GbVsqWjm3Ak-YRz05HjuZGktbfrgwld-lBnSJAZ23uo",
+     "code": "1xuIWTd98O5pbpkZZZCgjaReCuehnlevsM_TnreKJWAI"
+    },
+    {
+     "slug": "method-overriding",
+     "title": "Method Overriding",
+     "drive": "1n4dNRRq8GBblKKcKyMdI07OsE5MHis-eiifm2tukPQg",
+     "code": "1IOV5FTiCoPNv6lmV0g6KLCnlvjHZbAOCLMhOZJTD11A"
+    }
+   ],
+   "upcoming": [],
+   "summary": "Python from zero to object-oriented: variables and types, control flow, data structures, functions, modules, working with files and data, error handling, classes, inheritance and overriding.",
+   "order": 3
+  },
+  {
+   "kind": "module",
+   "stage": "p1",
+   "number": "1.4",
+   "slug": "python-advanced",
+   "title": "Python Advanced",
+   "topics": [
+    "Python Project Development",
+    "Pydantic",
+    "API Basics",
+    "FastAPI Fundamentals, Setup & Project Structure",
+    "Path & Query Parameters",
+    "Path Operations & HTTP Methods",
+    "Pydantic Models, Status Codes & Error Handling",
+    "Dependency Injection & API Documentation",
+    "Running, Configuration & API Testing",
+    "Async Programming",
+    "FastAPI Mini Project — Complete API"
+   ],
+   "notes": [
+    {
+     "slug": "project-development",
+     "title": "Python Project Development",
+     "drive": "1i1l55HLG3JQfiVcPlppXS6keDnrOA__UatSotRGiQ0g"
+    },
+    {
+     "slug": "pydantic",
+     "title": "Pydantic",
+     "drive": "1uSBnwTpwPGJS2wqKobXmMFqCMQFK9y6dH8HLYJJDyG0"
+    },
+    {
+     "slug": "api-basics",
+     "title": "API Basics",
+     "drive": "1ykcwZro3sjCd67DPe_vKpP5a-PRpRJVKi68aIrcTEoM"
+    },
+    {
+     "slug": "fastapi-fundamentals",
+     "title": "FastAPI Fundamentals, Setup & Project Structure",
+     "drive": "16zcc-q3ZL2COTLsTyuKKwAhb2ioMw64ASaINwjoHJwA"
+    },
+    {
+     "slug": "path-query-parameters",
+     "title": "Path & Query Parameters",
+     "drive": "14w3rsh7qWUv4whfJw-suYlxvRcYLaV3FFnioi6vvs3E"
+    },
+    {
+     "slug": "path-operations-http-methods",
+     "title": "Path Operations & HTTP Methods",
+     "drive": "1QpNGo32aynyfTHiTlcvUIJQsI3U5jPqtN0Y7aDY_X40"
+    }
+   ],
+   "upcoming": [
+    "Pydantic Models, Status Codes & Error Handling",
+    "Dependency Injection & API Documentation",
+    "Running, Configuration & API Testing",
+    "Async Programming",
+    "FastAPI Mini Project — Complete API"
+   ],
+   "summary": "From scripts to services: structuring real Python projects, Pydantic validation, how APIs work, FastAPI setup, path and query parameters, path operations and HTTP methods.",
+   "order": 4
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.1",
+   "slug": "llm-engineering",
+   "title": "LLM Engineering",
+   "topics": [
+    "LLM fundamentals",
+    "Tokens",
+    "Context windows",
+    "Transformers — conceptual understanding",
+    "Embeddings",
+    "Inference",
+    "Model capabilities",
+    "Open vs proprietary models"
+   ],
+   "notes": [
+    {
+     "slug": "llm-engineering",
+     "title": "LLM Engineering",
+     "drive": "1vQPVegWYDtmeN406pMejn7heef2TISDaKRfdduFO4Yo"
+    }
+   ],
+   "upcoming": [],
+   "summary": "How large language models work from an engineer's point of view: tokens, context windows, sampling, APIs, costs and building reliable LLM features.",
+   "show_topics": true,
+   "order": 5
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.2",
+   "slug": "prompt-context",
+   "title": "Prompt & Context Engineering",
+   "topics": [
+    "Prompt Engineering Fundamentals",
+    "Prompt Structure & Instructions",
+    "Prompting Techniques",
+    "Structured Prompts",
+    "Prompting Frameworks",
+    "Context Engineering Fundamentals",
+    "Building Effective Context",
+    "Output Control & Structured Outputs",
+    "Prompt & Context Testing",
+    "Prompt Optimization",
+    "Engineering Practices",
+    "Basic Prompt Security Awareness",
+    "End-to-End Practice"
+   ],
+   "notes": [
+    {
+     "slug": "prompt-context-engineering",
+     "title": "Prompt & Context Engineering",
+     "drive": "1BSR8p--HS3l0pHNNGYqbsq7_xXmq1uj6aGiUaE-xXtQ"
+    }
+   ],
+   "upcoming": [],
+   "summary": "Writing instructions models follow: prompt patterns, structure, examples, and engineering the whole context window the model sees.",
+   "show_topics": true,
+   "order": 6
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.3",
+   "slug": "model-selection",
+   "title": "Model Selection",
+   "topics": [
+    "Model Selection Fundamentals",
+    "Understanding Model Requirements",
+    "Key Factors in Model Selection",
+    "Model Evaluation and Comparison",
+    "Selecting the Right Model",
+    "Practical Model Selection"
+   ],
+   "notes": [
+    {
+     "slug": "model-selection",
+     "title": "Model Selection",
+     "drive": "1FWNUlys3W2IKsGBrTZoYZ4H5rCVNlPoOgHwV2vgp26I"
+    }
+   ],
+   "upcoming": [],
+   "summary": "Choosing the right model for the job: capability, latency, cost, context length, open vs closed models and how to evaluate the trade-offs.",
+   "show_topics": true,
+   "order": 7
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.4",
+   "slug": "langchain",
+   "title": "LangChain",
+   "topics": [
+    "LangChain Fundamentals",
+    "Chat Models & Messages",
+    "Prompt Templates",
+    "Structured Output & Output Parsers",
+    "LCEL & Runnables",
+    "Tool Calling",
+    "Chat History & Context Management",
+    "Cost, Caching & Debugging",
+    "Streaming, Serving & Testing"
+   ],
+   "notes": [
+    {
+     "slug": "langchain-fundamentals",
+     "title": "LangChain Fundamentals",
+     "drive": "1Gwg9eLyT_BqdSiODfRPQI4xUt1V3yAifC5iuRVjs-GQ"
+    }
+   ],
+   "upcoming": [
+    "Chat History & Context Management",
+    "Cost, Caching & Debugging",
+    "Streaming, Serving & Testing"
+   ],
+   "summary": "Composing LLM apps with LangChain: models, prompts, chains, output parsers and the building blocks behind agents and RAG.",
+   "show_topics": true,
+   "order": 8
+  },
+  {
+   "kind": "module",
+   "stage": "p2",
+   "number": "2.5",
+   "slug": "rag",
+   "title": "RAG Engineering",
+   "topics": [
+    "RAG Fundamentals",
+    "Document Ingestion and Preparation",
+    "Embeddings and Vector Foundations",
+    "Vector Stores and Vector Databases",
+    "Building a Basic RAG Pipeline",
+    "Retrieval Engineering",
+    "RAG Evaluation and Iteration",
+    "Advanced RAG Techniques and Architectures",
+    "Enterprise RAG: Security, Access, and Data Management"
+   ],
+   "notes": [],
+   "upcoming": [
+    "RAG Fundamentals",
+    "Document Ingestion and Preparation",
+    "Embeddings and Vector Foundations",
+    "Vector Stores and Vector Databases",
+    "Building a Basic RAG Pipeline",
+    "Retrieval Engineering",
+    "RAG Evaluation and Iteration",
+    "Advanced RAG Techniques and Architectures",
+    "Enterprise RAG: Security, Access, and Data Management"
+   ],
+   "summary": "Grounding LLMs in your own documents: ingestion, embeddings, vector stores, retrieval, evaluation, advanced architectures and enterprise-grade security.",
+   "order": 9,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p2",
+   "slug": "labs-p2",
+   "title": "Phase 02 labs",
+   "topics": [
+    "Northstar AI Support Copilot",
+    "RAG Failure Lab",
+    "AI Red-Team Lab"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar AI Support Copilot",
+    "RAG Failure Lab",
+    "AI Red-Team Lab"
+   ],
+   "summary": "Hands-on FDE challenges for LLM, LangChain and RAG systems.",
+   "order": 10,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.1",
+   "slug": "workflows-vs-agents",
+   "title": "Workflows vs Agents",
+   "topics": [
+    "What is an agent?",
+    "What is a workflow?",
+    "Agent vs chatbot",
+    "Agent vs deterministic workflow",
+    "When to use an agent",
+    "When NOT to use an agent",
+    "Reliability vs flexibility"
+   ],
+   "notes": [],
+   "upcoming": [
+    "What is an agent?",
+    "What is a workflow?",
+    "Agent vs chatbot",
+    "Agent vs deterministic workflow",
+    "When to use an agent",
+    "When NOT to use an agent",
+    "Reliability vs flexibility"
+   ],
+   "summary": "What an agent really is, how it differs from a chatbot or a deterministic workflow, and when (and when not) to use one.",
+   "order": 11,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.2",
+   "slug": "agent-architecture",
+   "title": "Agent Architecture",
+   "topics": [
+    "State",
+    "Memory",
+    "Planning",
+    "ReAct",
+    "Router",
+    "Planner/executor",
+    "Supervisor",
+    "Sequential agents",
+    "Parallel agents",
+    "Multi-agent systems",
+    "Human-in-the-loop"
+   ],
+   "notes": [],
+   "upcoming": [
+    "State",
+    "Memory",
+    "Planning",
+    "ReAct",
+    "Router",
+    "Planner/executor",
+    "Supervisor",
+    "Sequential agents",
+    "Parallel agents",
+    "Multi-agent systems",
+    "Human-in-the-loop"
+   ],
+   "summary": "The building blocks and patterns of agents: state, memory, planning, ReAct, routers, planner/executor, supervisors, sequential, parallel and multi-agent systems.",
+   "order": 12,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.3",
+   "slug": "langgraph",
+   "title": "LangGraph",
+   "topics": [
+    "Graph architecture",
+    "State",
+    "Nodes",
+    "Edges",
+    "Conditional routing",
+    "Persistence",
+    "Human approval",
+    "Error recovery",
+    "Retry",
+    "Agent evaluation"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Graph architecture",
+    "State",
+    "Nodes",
+    "Edges",
+    "Conditional routing",
+    "Persistence",
+    "Human approval",
+    "Error recovery",
+    "Retry",
+    "Agent evaluation"
+   ],
+   "summary": "Building reliable agents as graphs: state, nodes, edges, conditional routing, persistence, human approval, error recovery, retry and evaluation.",
+   "order": 13,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.4",
+   "slug": "mcp",
+   "title": "MCP",
+   "topics": [
+    "MCP fundamentals",
+    "MCP architecture",
+    "MCP client",
+    "MCP server",
+    "Tools",
+    "Resources",
+    "Prompts",
+    "Tool schemas",
+    "Authentication",
+    "Authorization",
+    "Secure tool execution"
+   ],
+   "notes": [],
+   "upcoming": [
+    "MCP fundamentals",
+    "MCP architecture",
+    "MCP client",
+    "MCP server",
+    "Tools",
+    "Resources",
+    "Prompts",
+    "Tool schemas",
+    "Authentication",
+    "Authorization",
+    "Secure tool execution"
+   ],
+   "summary": "The Model Context Protocol: connecting models to tools and data through clients and servers, with tools, resources, prompts, schemas and secure execution.",
+   "order": 14,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.5",
+   "slug": "enterprise-agent-integration",
+   "title": "Enterprise Agent Integration",
+   "topics": [
+    "CRM",
+    "Jira",
+    "Slack",
+    "PostgreSQL",
+    "Email",
+    "REST APIs",
+    "SOAP",
+    "Knowledge base"
+   ],
+   "notes": [],
+   "upcoming": [
+    "CRM",
+    "Jira",
+    "Slack",
+    "PostgreSQL",
+    "Email",
+    "REST APIs",
+    "SOAP",
+    "Knowledge base"
+   ],
+   "summary": "Plugging agents into the systems companies already run: CRM, Jira, Slack, PostgreSQL, email, REST and SOAP APIs, and knowledge bases.",
+   "order": 15,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.6",
+   "slug": "sql",
+   "title": "Enterprise Data",
+   "topics": [
+    "SQL",
+    "Database Investigation",
+    "Data Modeling"
+   ],
+   "notes": [],
+   "upcoming": [
+    "SQL",
+    "Database Investigation",
+    "Data Modeling"
+   ],
+   "summary": "Querying and investigating enterprise data with SQL, and modelling it well.",
+   "order": 16,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.7",
+   "slug": "data-engineering",
+   "title": "Data Engineering for FDEs",
+   "topics": [
+    "ETL",
+    "ELT",
+    "Data ingestion",
+    "Data validation",
+    "Data cleaning",
+    "Deduplication",
+    "Schema mapping",
+    "Data transformation",
+    "Batch processing",
+    "Data pipelines",
+    "Failure recovery",
+    "PySpark",
+    "Distributed data processing",
+    "dbt concepts",
+    "Data warehouse concepts"
+   ],
+   "notes": [],
+   "upcoming": [
+    "ETL",
+    "ELT",
+    "Data ingestion",
+    "Data validation",
+    "Data cleaning",
+    "Deduplication",
+    "Schema mapping",
+    "Data transformation",
+    "Batch processing",
+    "Data pipelines",
+    "Failure recovery",
+    "PySpark",
+    "Distributed data processing",
+    "dbt concepts",
+    "Data warehouse concepts"
+   ],
+   "summary": "Moving and shaping customer data: ETL and ELT, ingestion, validation, cleaning, pipelines, failure recovery, PySpark, dbt and warehouses.",
+   "order": 17,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.8",
+   "slug": "git-basics",
+   "title": "Git & GitHub Basics",
+   "topics": [
+    "Git Fundamentals",
+    "Working with Changes",
+    "Branching",
+    "Remote Repository"
+   ],
+   "notes": [
+    {
+     "slug": "git-fundamentals",
+     "title": "Git Fundamentals",
+     "drive": "1LL8A90g1cKpjD8bWEXPUmE52CtW3fymaclYZ5QqvKXU"
+    }
+   ],
+   "upcoming": [],
+   "summary": "The everyday Git command set: staging and committing, reading history, undoing changes, branching, merging and rebasing, and working with remote repositories.",
+   "show_topics": true,
+   "order": 18
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.9",
+   "slug": "networking",
+   "title": "Networking Basics",
+   "topics": [
+    "Networking Fundamentals I: Physical Connectivity & Network Types",
+    "Networking Fundamentals II: Device Identification & Core Protocols",
+    "Networking Fundamentals III: OSI Model & Data Communication",
+    "IP Address Fundamentals",
+    "Subnetting & CIDR",
+    "Gateway & Practical IP Addressing",
+    "TCP & UDP",
+    "DNS",
+    "Network Troubleshooting"
+   ],
+   "notes": [
+    {
+     "slug": "physical-connectivity",
+     "title": "Networking Fundamentals I: Physical Connectivity & Network Types",
+     "drive": "1k7IVPGvXWHSmf557Rmo1UUQhnJENaAUu0pXHpSY3EBo"
+    },
+    {
+     "slug": "device-identification-protocols",
+     "title": "Networking Fundamentals II: Device Identification & Core Protocols",
+     "drive": "1ExZPIVztCVHPBEnvGpVtw61vJX40d4A29ephDMAYvVU"
+    },
+    {
+     "slug": "osi-model",
+     "title": "Networking Fundamentals III: OSI Model & Data Communication",
+     "drive": "1040eaRKjY_YA8CFL_vi7WntweaznDtVEmTf_9achiyk"
+    },
+    {
+     "slug": "ip-address-fundamentals",
+     "title": "IP Address Fundamentals",
+     "drive": "1FDYwr59XXKDTWRzGxm_Owm9kJrVT9SftWDVKRPgqNTQ"
+    },
+    {
+     "slug": "subnetting-cidr",
+     "title": "Subnetting & CIDR",
+     "drive": "1zPzHSur0nullH9MfNC7DEXJM-8BqLBqDhkDWRWA8Jwg"
+    }
+   ],
+   "upcoming": [
+    "Gateway & Practical IP Addressing",
+    "TCP & UDP",
+    "DNS",
+    "Network Troubleshooting"
+   ],
+   "summary": "How machines find and talk to each other: cables and network types, MAC and IP, core protocols, the OSI model, IP addressing, subnetting and CIDR.",
+   "order": 19
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.10",
+   "slug": "linux",
+   "title": "Linux Basics",
+   "topics": [
+    "Introduction to UNIX & Linux",
+    "Linux Architecture",
+    "Environment Setup",
+    "Linux terminal and shell concepts",
+    "Essential Linux Commands"
+   ],
+   "notes": [
+    {
+     "slug": "intro-unix-linux",
+     "title": "Introduction to UNIX & Linux",
+     "drive": "1Onjx-QeePhx7b-_FIsTZu9zMly4ycTiYz_C8h0uQSYY"
+    },
+    {
+     "slug": "linux-architecture",
+     "title": "Linux Architecture",
+     "drive": "1dE7gy9QtbNU9j3VaSgwSJ_L9xG9v6FvZf7hCSwfxojM"
+    },
+    {
+     "slug": "environment-setup",
+     "title": "Environment Setup",
+     "drive": "1Qw_9OI8ruePEk2UaK5cw9Gscpv-8H7tNCUVOH3KDUmI"
+    },
+    {
+     "slug": "terminal-and-shell",
+     "title": "Linux Terminal and Shell Concepts",
+     "drive": "1YyaFdvbRLiXrY_yrTfx0eT--UGROrPdYOuxlRbQilwg"
+    },
+    {
+     "slug": "file-system-structure",
+     "title": "Essential Commands: The Linux File System Structure",
+     "drive": "15WwbGiCPznmoQZ5BXmJZwHu9blqVZMOK1VP5knpfRDo"
+    },
+    {
+     "slug": "files-and-directories",
+     "title": "Essential Commands: Files & Directories",
+     "drive": "1xJNHx2ZOa6CoKUh28h9iV_V0TQh_cVOqwevn82A1H1M"
+    },
+    {
+     "slug": "reading-files",
+     "title": "Essential Commands: Reading Files",
+     "drive": "101ipcrowp4SNObS37EK0pjdfUS-RCQ2KmQPuvnCEecs"
+    },
+    {
+     "slug": "searching-files",
+     "title": "Essential Commands: Searching Files & Content",
+     "drive": "1Ivf5qxUNbA036kQke91o2XMaYvHiUrhScDS5FMy2AIo"
+    },
+    {
+     "slug": "text-filters",
+     "title": "Essential Commands: Text Filters",
+     "drive": "1OZ46f_ExO682tWfom-miLWQOj9XhPJOdb0POM7zFoVg"
+    },
+    {
+     "slug": "pipes-and-redirection",
+     "title": "Essential Commands: Pipes & Redirection",
+     "drive": "1LCLSlnyMx6-YH4OYmHu4oqR-Vr1syCJOe5pXUrPUdAk"
+    },
+    {
+     "slug": "command-chaining",
+     "title": "Essential Commands: Command Chaining",
+     "drive": "1pyE8sQmjkH5Wd7yyGMiRqdDSDSay1wOoMgdunF3U-tQ"
+    }
+   ],
+   "upcoming": [],
+   "summary": "Living in the terminal: what Linux is, how it is built, the file system tree, moving around, reading and searching files, text filters, pipes, redirection and command chaining.",
+   "order": 20
+  },
+  {
+   "kind": "module",
+   "stage": "p3",
+   "number": "3.11",
+   "slug": "web",
+   "title": "Web & APIs",
+   "topics": [
+    "Web Fundamentals",
+    "HTML Basics",
+    "CSS Basics",
+    "JavaScript Basics"
+   ],
+   "notes": [
+    {
+     "slug": "html-syntax-structure",
+     "title": "HTML Basics: Syntax and Structure",
+     "drive": "1YcIMjouA5XHNzf5rlFhmTm3IIerQqqzJMWJ2n02kYI4"
+    },
+    {
+     "slug": "common-html-elements",
+     "title": "HTML Basics: Common Elements",
+     "drive": "19bVbhvyiGHiaI3eEp0tf8um32UVOlwuV11A9atJAebo"
+    },
+    {
+     "slug": "html-lists-images",
+     "title": "HTML Basics: Lists, Images & Links",
+     "drive": "1T-d4mr6Ugk9e1fE4AfW4qPKBD7nsnFxZXOq8BgFpvPg"
+    },
+    {
+     "slug": "forms-and-inputs",
+     "title": "HTML Basics: Forms and Inputs",
+     "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw"
+    }
+   ],
+   "upcoming": [
+    "Web Fundamentals",
+    "CSS Basics",
+    "JavaScript Basics"
+   ],
+   "summary": "How the web works and the languages of the browser: HTML structure, elements, lists, images, links and forms, then CSS and JavaScript.",
+   "show_topics": true,
+   "order": 21
+  },
+  {
+   "kind": "lab",
+   "stage": "p3",
+   "slug": "labs-p3",
+   "title": "Phase 03 labs & project",
+   "topics": [
+    "Northstar Support Agent",
+    "MCP Enterprise Tools",
+    "Agent Failure Lab",
+    "Northstar Data Archaeology",
+    "Northstar Data Pipeline",
+    "Project: Autonomous Business Operations Agent"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar Support Agent",
+    "MCP Enterprise Tools",
+    "Agent Failure Lab",
+    "Northstar Data Archaeology",
+    "Northstar Data Pipeline",
+    "Project: Autonomous Business Operations Agent"
+   ],
+   "summary": "Agent and data challenges, plus the phase project: an Autonomous Business Operations Agent that automates support operations. It must include an agent, RAG, MCP, enterprise tools, human approval, security, evaluation, observability and failure handling.",
+   "order": 22,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.1",
+   "slug": "production-api-engineering",
+   "title": "Production API Engineering",
+   "topics": [
+    "REST API design",
+    "API contracts",
+    "OpenAPI",
+    "Authentication",
+    "Authorization",
+    "OAuth2",
+    "JWT",
+    "RBAC",
+    "Multi-tenancy",
+    "Pagination",
+    "Rate limiting",
+    "Retries",
+    "Timeouts",
+    "Idempotency",
+    "API versioning",
+    "Webhooks"
+   ],
+   "notes": [],
+   "upcoming": [
+    "REST API design",
+    "API contracts",
+    "OpenAPI",
+    "Authentication",
+    "Authorization",
+    "OAuth2",
+    "JWT",
+    "RBAC",
+    "Multi-tenancy",
+    "Pagination",
+    "Rate limiting",
+    "Retries",
+    "Timeouts",
+    "Idempotency",
+    "API versioning",
+    "Webhooks"
+   ],
+   "summary": "APIs that survive production: design and contracts, OpenAPI, authentication and authorization (OAuth2, JWT, RBAC), multi-tenancy, pagination, rate limits, retries, timeouts, idempotency, versioning and webhooks.",
+   "order": 23,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.2",
+   "slug": "enterprise-integration",
+   "title": "Enterprise Integration",
+   "topics": [
+    "REST APIs",
+    "SOAP",
+    "XML",
+    "Webhooks",
+    "Third-party APIs",
+    "Legacy systems",
+    "CRM systems",
+    "Ticketing systems",
+    "Slack-style integrations",
+    "Database integrations",
+    "Integration Patterns"
+   ],
+   "notes": [],
+   "upcoming": [
+    "REST APIs",
+    "SOAP",
+    "XML",
+    "Webhooks",
+    "Third-party APIs",
+    "Legacy systems",
+    "CRM systems",
+    "Ticketing systems",
+    "Slack-style integrations",
+    "Database integrations",
+    "Integration Patterns"
+   ],
+   "summary": "Connecting to the real enterprise: REST, SOAP and XML, webhooks, third-party and legacy systems, CRMs, ticketing, chat and database integrations, and integration patterns.",
+   "order": 24,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p4",
+   "number": "4.3",
+   "slug": "event-driven",
+   "title": "State & Event-Driven Systems",
+   "topics": [
+    "Order and Workflow State",
+    "Messaging Infrastructure",
+    "Event-Driven Basics",
+    "Kafka Basics"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Order and Workflow State",
+    "Messaging Infrastructure",
+    "Event-Driven Basics",
+    "Kafka Basics"
+   ],
+   "summary": "Order and workflow state, messaging infrastructure, event-driven design and Kafka basics.",
+   "order": 25,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p4",
+   "slug": "labs-p4",
+   "title": "Phase 04 labs",
+   "topics": [
+    "Northstar Orders API",
+    "Real-Time Order System",
+    "Enterprise Integration Challenge"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar Orders API",
+    "Real-Time Order System",
+    "Enterprise Integration Challenge"
+   ],
+   "summary": "Backend and enterprise integration challenges.",
+   "order": 26,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p5",
+   "number": "5.1",
+   "slug": "frontend",
+   "title": "Frontend for FDEs",
+   "topics": [
+    "React",
+    "API Integration",
+    "Authentication",
+    "Authorization",
+    "Error Handling"
+   ],
+   "notes": [],
+   "upcoming": [
+    "React",
+    "API Integration",
+    "Authentication",
+    "Authorization",
+    "Error Handling"
+   ],
+   "summary": "React front-ends wired to real APIs, with authentication, authorization and solid error handling.",
+   "order": 27,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p5",
+   "number": "5.2",
+   "slug": "dashboards",
+   "title": "Operational Dashboards",
+   "topics": [
+    "Dashboard Fundamentals",
+    "Business Views",
+    "Real-Time Operations",
+    "Role-Based Operations"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Dashboard Fundamentals",
+    "Business Views",
+    "Real-Time Operations",
+    "Role-Based Operations"
+   ],
+   "summary": "Dashboards operations teams actually use: business views, real-time operations and role-based operations.",
+   "order": 28,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p5",
+   "slug": "labs-p5",
+   "title": "Phase 05 lab",
+   "topics": [
+    "Northstar Operations Dashboard"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar Operations Dashboard"
+   ],
+   "summary": "Build a working operations dashboard.",
+   "order": 29,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.1",
+   "slug": "docker",
+   "title": "Docker",
+   "topics": [
+    "Docker images",
+    "Containers",
+    "Dockerfiles",
+    "Multi-container applications",
+    "Networking",
+    "Volumes",
+    "Secrets",
+    "Container security",
+    "Production hardening"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Docker images",
+    "Containers",
+    "Dockerfiles",
+    "Multi-container applications",
+    "Networking",
+    "Volumes",
+    "Secrets",
+    "Container security",
+    "Production hardening"
+   ],
+   "summary": "Packaging apps as containers: images, Dockerfiles, multi-container applications, networking, volumes, secrets, security and production hardening.",
+   "order": 30,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.2",
+   "slug": "aws",
+   "title": "AWS",
+   "topics": [
+    "IAM",
+    "VPC",
+    "Networking",
+    "EC2",
+    "ECS",
+    "RDS",
+    "S3",
+    "Load Balancer",
+    "CloudWatch",
+    "Secrets Manager"
+   ],
+   "notes": [],
+   "upcoming": [
+    "IAM",
+    "VPC",
+    "Networking",
+    "EC2",
+    "ECS",
+    "RDS",
+    "S3",
+    "Load Balancer",
+    "CloudWatch",
+    "Secrets Manager"
+   ],
+   "summary": "Running workloads on AWS: IAM, VPC and networking, EC2, ECS, RDS, S3, load balancers, CloudWatch and Secrets Manager.",
+   "order": 31,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.3",
+   "slug": "terraform",
+   "title": "Terraform",
+   "topics": [
+    "Infrastructure as Code",
+    "Providers",
+    "Resources",
+    "Variables",
+    "Outputs",
+    "State",
+    "Modules",
+    "Environment management"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Infrastructure as Code",
+    "Providers",
+    "Resources",
+    "Variables",
+    "Outputs",
+    "State",
+    "Modules",
+    "Environment management"
+   ],
+   "summary": "Infrastructure as code with Terraform: providers, resources, variables, outputs, state, modules and environment management.",
+   "order": 32,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.4",
+   "slug": "cicd",
+   "title": "CI/CD",
+   "topics": [
+    "GitHub Actions",
+    "Automated tests",
+    "Build",
+    "Docker image",
+    "Security scan",
+    "Deployment",
+    "Environment management",
+    "Rollback",
+    "Release strategy"
+   ],
+   "notes": [],
+   "upcoming": [
+    "GitHub Actions",
+    "Automated tests",
+    "Build",
+    "Docker image",
+    "Security scan",
+    "Deployment",
+    "Environment management",
+    "Rollback",
+    "Release strategy"
+   ],
+   "summary": "Automated delivery with GitHub Actions: tests, builds, Docker images, security scans, deployments, environments, rollbacks and release strategy.",
+   "order": 33,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p6",
+   "number": "6.5",
+   "slug": "llmops",
+   "title": "LLMOps",
+   "topics": [
+    "Prompt versioning",
+    "Model versioning",
+    "Evaluation",
+    "Tracing",
+    "Token monitoring",
+    "Cost monitoring",
+    "Latency",
+    "Model routing",
+    "Guardrails",
+    "AI regression",
+    "Drift"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Prompt versioning",
+    "Model versioning",
+    "Evaluation",
+    "Tracing",
+    "Token monitoring",
+    "Cost monitoring",
+    "Latency",
+    "Model routing",
+    "Guardrails",
+    "AI regression",
+    "Drift"
+   ],
+   "summary": "Operating LLM systems: prompt and model versioning, evaluation, tracing, token, cost and latency monitoring, model routing, guardrails, AI regression and drift.",
+   "order": 34,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p6",
+   "slug": "labs-p6",
+   "title": "Phase 06 lab",
+   "topics": [
+    "Full Northstar Deployment"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Full Northstar Deployment"
+   ],
+   "summary": "Deploy the whole Northstar system end to end.",
+   "order": 35,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.1",
+   "slug": "system-design",
+   "title": "System Design",
+   "topics": [
+    "Scalability",
+    "Availability",
+    "Load Balancing",
+    "Caching",
+    "Asynchronous Processing",
+    "Distributed Systems",
+    "API Reliability",
+    "Fault Tolerance",
+    "Architecture Trade-offs"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Scalability",
+    "Availability",
+    "Load Balancing",
+    "Caching",
+    "Asynchronous Processing",
+    "Distributed Systems",
+    "API Reliability",
+    "Fault Tolerance",
+    "Architecture Trade-offs"
+   ],
+   "summary": "Designing for scale: scalability, availability, load balancing, caching, asynchronous processing, distributed systems, API reliability, fault tolerance and trade-offs.",
+   "order": 36,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.2",
+   "slug": "database-scaling",
+   "title": "Database Scaling",
+   "topics": [
+    "Read replicas",
+    "Sharding",
+    "Partitioning",
+    "Indexing",
+    "Database bottlenecks",
+    "Distributed databases"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Read replicas",
+    "Sharding",
+    "Partitioning",
+    "Indexing",
+    "Database bottlenecks",
+    "Distributed databases"
+   ],
+   "summary": "Read replicas, sharding, partitioning, indexing, database bottlenecks and distributed databases.",
+   "order": 37,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.3",
+   "slug": "distributed-systems",
+   "title": "Distributed Systems",
+   "topics": [
+    "Distributed Identities",
+    "Message Guarantees",
+    "Distributed Transactions"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Distributed Identities",
+    "Message Guarantees",
+    "Distributed Transactions"
+   ],
+   "summary": "Identities, message guarantees and transactions across many machines.",
+   "order": 38,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.4",
+   "slug": "microservices",
+   "title": "Microservices",
+   "topics": [
+    "Architecture Evolution",
+    "Service Design",
+    "Reliability",
+    "Architecture Decisions"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Architecture Evolution",
+    "Service Design",
+    "Reliability",
+    "Architecture Decisions"
+   ],
+   "summary": "How architectures evolve into services, and how to design, run and make decisions about them.",
+   "order": 39,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p7",
+   "number": "7.5",
+   "slug": "ai-at-scale",
+   "title": "AI at Scale",
+   "topics": [
+    "Model gateways",
+    "Model routing",
+    "GPU capacity",
+    "Inference scaling",
+    "AI caching",
+    "Batch inference",
+    "Canary model releases",
+    "AI drift",
+    "AI reliability"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Model gateways",
+    "Model routing",
+    "GPU capacity",
+    "Inference scaling",
+    "AI caching",
+    "Batch inference",
+    "Canary model releases",
+    "AI drift",
+    "AI reliability"
+   ],
+   "summary": "Serving AI to many users: model gateways and routing, GPU capacity, inference scaling, AI caching, batch inference, canary releases, drift and reliability.",
+   "order": 40,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p7",
+   "slug": "labs-p7",
+   "title": "Phase 07 lab",
+   "topics": [
+    "Northstar Black Friday"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar Black Friday"
+   ],
+   "summary": "Survive a Black Friday-level traffic spike.",
+   "order": 41,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.1",
+   "slug": "app-security",
+   "title": "Application Security",
+   "topics": [
+    "OWASP Top 10",
+    "Authentication",
+    "Authorization",
+    "RBAC",
+    "Secrets",
+    "API security",
+    "Input validation",
+    "Data protection"
+   ],
+   "notes": [],
+   "upcoming": [
+    "OWASP Top 10",
+    "Authentication",
+    "Authorization",
+    "RBAC",
+    "Secrets",
+    "API security",
+    "Input validation",
+    "Data protection"
+   ],
+   "summary": "OWASP Top 10, authentication, authorization, RBAC, secrets, API security, input validation and data protection.",
+   "order": 42,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.2",
+   "slug": "ai-security",
+   "title": "AI Security Review & Agent Governance",
+   "topics": [
+    "Indirect injection",
+    "Excessive agency",
+    "Tool abuse",
+    "Secure RAG",
+    "Agent permissions"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Indirect injection",
+    "Excessive agency",
+    "Tool abuse",
+    "Secure RAG",
+    "Agent permissions"
+   ],
+   "summary": "Reviewing AI systems for indirect injection, excessive agency and tool abuse, securing RAG, and governing agent permissions.",
+   "order": 43,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.3",
+   "slug": "sre",
+   "title": "SRE & Reliability",
+   "topics": [
+    "SLAs",
+    "SLOs",
+    "SLIs",
+    "Availability",
+    "Reliability",
+    "Disaster recovery",
+    "Backups",
+    "Incident management",
+    "Postmortems"
+   ],
+   "notes": [],
+   "upcoming": [
+    "SLAs",
+    "SLOs",
+    "SLIs",
+    "Availability",
+    "Reliability",
+    "Disaster recovery",
+    "Backups",
+    "Incident management",
+    "Postmortems"
+   ],
+   "summary": "SLAs, SLOs and SLIs, availability and reliability, disaster recovery, backups, incident management and postmortems.",
+   "order": 44,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p8",
+   "number": "8.4",
+   "slug": "incident-response",
+   "title": "Incident Response",
+   "topics": [
+    "Incident detection",
+    "Severity",
+    "Incident commander",
+    "Communication",
+    "Mitigation",
+    "Root-cause analysis",
+    "Recovery",
+    "Postmortem",
+    "Prevention"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Incident detection",
+    "Severity",
+    "Incident commander",
+    "Communication",
+    "Mitigation",
+    "Root-cause analysis",
+    "Recovery",
+    "Postmortem",
+    "Prevention"
+   ],
+   "summary": "Running an incident: detection, severity, incident command, communication, mitigation, root-cause analysis, recovery, postmortem and prevention.",
+   "order": 45,
+   "status": "soon"
+  },
+  {
+   "kind": "lab",
+   "stage": "p8",
+   "slug": "labs-p8",
+   "title": "Phase 08 labs",
+   "topics": [
+    "Northstar Red Team",
+    "Production Incident Room",
+    "Client Discovery"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Northstar Red Team",
+    "Production Incident Room",
+    "Client Discovery"
+   ],
+   "summary": "Security, incident and client discovery challenges.",
+   "order": 46,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.1",
+   "slug": "technical-discovery",
+   "title": "Technical Discovery",
+   "topics": [
+    "Discovery frameworks",
+    "Stakeholder interviews",
+    "Business process mapping",
+    "Technical discovery",
+    "System discovery",
+    "Data discovery",
+    "Constraint discovery",
+    "Success metrics"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Discovery frameworks",
+    "Stakeholder interviews",
+    "Business process mapping",
+    "Technical discovery",
+    "System discovery",
+    "Data discovery",
+    "Constraint discovery",
+    "Success metrics"
+   ],
+   "summary": "Running discovery with a customer: frameworks, stakeholder interviews, business process mapping, technical, system, data and constraint discovery, and success metrics.",
+   "order": 47,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.2",
+   "slug": "problem-framing",
+   "title": "Problem Framing",
+   "topics": [
+    "Problem statement",
+    "User personas",
+    "Current state",
+    "Future state",
+    "Pain points",
+    "Requirements",
+    "Assumptions",
+    "Constraints",
+    "Risks",
+    "Success metrics"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Problem statement",
+    "User personas",
+    "Current state",
+    "Future state",
+    "Pain points",
+    "Requirements",
+    "Assumptions",
+    "Constraints",
+    "Risks",
+    "Success metrics"
+   ],
+   "summary": "Turning ambiguity into a clear problem: problem statement, personas, current and future state, pain points, requirements, assumptions, constraints, risks and success metrics.",
+   "order": 48,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.3",
+   "slug": "solution-architecture",
+   "title": "Solution Architecture",
+   "topics": [
+    "Architecture diagrams",
+    "Data flows",
+    "Sequence diagrams",
+    "API architecture",
+    "AI architecture",
+    "Security architecture",
+    "Infrastructure architecture",
+    "ADRs",
+    "Technology selection"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Architecture diagrams",
+    "Data flows",
+    "Sequence diagrams",
+    "API architecture",
+    "AI architecture",
+    "Security architecture",
+    "Infrastructure architecture",
+    "ADRs",
+    "Technology selection"
+   ],
+   "summary": "Architecture, data-flow and sequence diagrams; API, AI, security and infrastructure architecture; ADRs and technology selection.",
+   "order": 49,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.4",
+   "slug": "scope-sow",
+   "title": "Scope & SOW",
+   "topics": [
+    "POC",
+    "Prototype",
+    "MVP",
+    "Production",
+    "Scope definition",
+    "Milestones",
+    "Dependencies",
+    "Estimates",
+    "Risks",
+    "Statement of Work",
+    "Acceptance criteria"
+   ],
+   "notes": [],
+   "upcoming": [
+    "POC",
+    "Prototype",
+    "MVP",
+    "Production",
+    "Scope definition",
+    "Milestones",
+    "Dependencies",
+    "Estimates",
+    "Risks",
+    "Statement of Work",
+    "Acceptance criteria"
+   ],
+   "summary": "From POC to production: scope definition, milestones, dependencies, estimates, risks, the statement of work and acceptance criteria.",
+   "order": 50,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.5",
+   "slug": "customer-communication",
+   "title": "Customer Communication",
+   "topics": [
+    "Technical communication",
+    "Executive communication",
+    "Architecture presentation",
+    "Demo",
+    "Incident communication",
+    "Stakeholder updates",
+    "Expectation management",
+    "Scope negotiation",
+    "Handling objections",
+    "Explaining AI limitations"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Technical communication",
+    "Executive communication",
+    "Architecture presentation",
+    "Demo",
+    "Incident communication",
+    "Stakeholder updates",
+    "Expectation management",
+    "Scope negotiation",
+    "Handling objections",
+    "Explaining AI limitations"
+   ],
+   "summary": "Technical and executive communication, architecture presentations and demos, incident communication, stakeholder updates, expectations, scope negotiation, objections and explaining AI limitations.",
+   "order": 51,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.6",
+   "slug": "business-value",
+   "title": "Business Value & ROI",
+   "topics": [
+    "Business KPIs",
+    "Technical KPIs",
+    "Baseline",
+    "Target",
+    "ROI",
+    "Cost savings",
+    "Time savings",
+    "Revenue impact",
+    "Productivity",
+    "Error reduction",
+    "Adoption"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Business KPIs",
+    "Technical KPIs",
+    "Baseline",
+    "Target",
+    "ROI",
+    "Cost savings",
+    "Time savings",
+    "Revenue impact",
+    "Productivity",
+    "Error reduction",
+    "Adoption"
+   ],
+   "summary": "Proving value: business and technical KPIs, baselines and targets, ROI, cost and time savings, revenue impact, productivity, error reduction and adoption.",
+   "order": 52,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.7",
+   "slug": "adoption-handoff",
+   "title": "Adoption & Handoff",
+   "topics": [
+    "UAT",
+    "User training",
+    "Documentation",
+    "Operational handoff",
+    "Change management",
+    "Adoption measurement",
+    "Support model",
+    "Knowledge transfer",
+    "Post-deployment roadmap"
+   ],
+   "notes": [],
+   "upcoming": [
+    "UAT",
+    "User training",
+    "Documentation",
+    "Operational handoff",
+    "Change management",
+    "Adoption measurement",
+    "Support model",
+    "Knowledge transfer",
+    "Post-deployment roadmap"
+   ],
+   "summary": "UAT, user training, documentation, operational handoff, change management, adoption measurement, support model, knowledge transfer and the post-deployment roadmap.",
+   "order": 53,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.8",
+   "slug": "discovery-design",
+   "title": "Discovery & Design",
+   "topics": [
+    "Discover",
+    "Define",
+    "Design",
+    "Deliverables"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Discover",
+    "Define",
+    "Design",
+    "Deliverables"
+   ],
+   "summary": "Putting the craft together: discover, define and design a real solution, and produce the deliverables.",
+   "order": 54,
+   "status": "soon"
+  },
+  {
+   "kind": "module",
+   "stage": "p9",
+   "number": "9.9",
+   "slug": "build-deploy",
+   "title": "Build & Deploy",
+   "topics": [
+    "Backend",
+    "Frontend",
+    "AI",
+    "RAG",
+    "Agent",
+    "Integration",
+    "Dockerize",
+    "Deploy",
+    "Monitor",
+    "Evaluate",
+    "Secure"
+   ],
+   "notes": [],
+   "upcoming": [
+    "Backend",
+    "Frontend",
+    "AI",
+    "RAG",
+    "Agent",
+    "Integration",
+    "Dockerize",
+    "Deploy",
+    "Monitor",
+    "Evaluate",
+    "Secure"
+   ],
+   "summary": "Build and ship the full system: backend, frontend, AI, RAG, agent and integrations, then dockerize, deploy, monitor, evaluate and secure it.",
+   "order": 55,
+   "status": "soon"
+  }
+ ]
 }
