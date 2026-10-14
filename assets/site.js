@@ -8,6 +8,8 @@
   var ROOT = body.getAttribute('data-root') || './';
   var PAGE = body.getAttribute('data-page') || '';
   var KEY = 'aifde:';
+  var VER = ((document.currentScript && document.currentScript.src.match(/[?&]v=(\w+)/)) || [])[1] || '';
+  var Q = VER ? '?v=' + VER : '';
 
   /* ---------- helpers ---------- */
   function esc(s) {
@@ -212,15 +214,6 @@
           (soon || kind !== 'module' ? '' : '<a class="btn small" href="' + modUrl(m) + '">Open module →</a>') + '</details></li>';
       }).join('');
 
-      var nav = $('#phase-nav');
-      if (nav) nav.innerHTML = D.stages.map(function (s, k) {
-        var mm = ordered.filter(function (x) { return x.stage === s.id && (x.kind || 'module') === 'module'; });
-        var ready = mm.filter(function (x) { return x.status !== 'soon'; }).length;
-        var parts = s.title.split(' · ');
-        return '<li><a href="#phase-' + s.id + '" class="' + (mm.length && ready === mm.length ? 'full' : ready ? 'part' : '') + '">' +
-          '<b>' + (k + 1) + '</b><span>' + esc(parts.slice(1).join(' · ') || s.title) + '</span>' +
-          '<small>' + mm.length + ' modules · ' + ready + ' ready</small></a></li>';
-      }).join('');
     }
     var bar = $('#road-progress');
     if (bar) {
@@ -297,7 +290,7 @@
     function ensureIndex() {
       if (index || loading) return;
       loading = true;
-      loadScript(ROOT + 'assets/search.js').then(function () { index = window.AIFDE_SEARCH || []; draw(); }).catch(function () { index = []; });
+      loadScript(ROOT + 'assets/search.js' + Q).then(function () { index = window.AIFDE_SEARCH || []; draw(); }).catch(function () { index = []; });
     }
     filters.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
@@ -543,7 +536,7 @@
      GLOSSARY + FLASHCARDS
      ========================================================= */
   function glossaryPage(D) {
-    loadScript(ROOT + 'assets/glossary.js').then(function () {
+    loadScript(ROOT + 'assets/glossary.js' + Q).then(function () {
       var G = (window.AIFDE_GLOSSARY || []).slice().sort(function (a, b) { return a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }); });
       var list = $('#gl'), q = $('#gq'), filt = $('#gfilters'), letters = $('#letters'), mod = 'all';
       var byId = {}; D.notes.forEach(function (n) { byId[n.id] = n; });
@@ -625,7 +618,7 @@
     else if (PAGE === 'glossary') glossaryPage(D);
   }
   if (window.AIFDE_DATA) boot();
-  else loadScript(ROOT + 'assets/data.js').then(boot).catch(function () {
+  else loadScript(ROOT + 'assets/data.js' + Q).then(boot).catch(function () {
     $$('#roadmap-list,#all-notes,#latest,#m-notes,#modules').forEach(function (el) { el.innerHTML = '<li class="empty">Couldn’t load the notes list. Refresh the page to try again.</li>'; });
   });
 })();

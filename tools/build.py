@@ -167,7 +167,7 @@ MODULE_PAGE = '''<!doctype html>
 <meta name="description" content="{desc}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/style.css?v=0">
 <script>try{{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}}catch(e){{}}</script>
 </head>
 <body data-root="../../" data-page="module" data-module="{slug}">
@@ -189,7 +189,7 @@ MODULE_PAGE = '''<!doctype html>
     <nav class="pager" id="m-pager" aria-label="Other modules"></nav>
   </section>
 </main>
-<script src="../../assets/site.js"></script>
+<script src="../../assets/site.js?v=0"></script>
 </body>
 </html>
 '''
@@ -244,6 +244,22 @@ def main():
     js('data.js', 'AIFDE_DATA', data)
     js('search.js', 'AIFDE_SEARCH', index)
     js('glossary.js', 'AIFDE_GLOSSARY', glossary)
+
+    # cache-busting: stamp every page's style.css / site.js link with this build's version
+    ver = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    for dp, _, fs in os.walk(ROOT):
+        if any(x in dp for x in ('_source', '.git', 'tools')):
+            continue
+        for fn in fs:
+            if fn.endswith('.html'):
+                fp = os.path.join(dp, fn)
+                with open(fp, encoding='utf-8') as f:
+                    h = f.read()
+                h2 = re.sub(r'(assets/(?:style\.css|site\.js))(\?v=\w+)?"', lambda m: m.group(1) + '?v=' + ver + '"', h)
+                if h2 != h:
+                    with open(fp, 'w', encoding='utf-8', newline='
+') as f:
+                        f.write(h2)
 
     pub = [m for m in modules if m['status'] == 'published' and m['kind'] == 'module']
     print('Built: %d modules published, %d notes, %d sections, %d glossary terms, %d quiz questions, ~%d min reading'
