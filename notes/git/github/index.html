@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-13">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="git/github">
@@ -34,34 +34,13 @@
   <div class="sticky info l"><strong>Git vs GitHub</strong> Git is the version control <i>tool</i> that runs on your machine. GitHub is a <i>website</i> that hosts Git repositories and adds teamwork features. You can use Git without GitHub, but not the other way round.</div>
   <h3>The GitHub flow</h3>
   <p>Almost every team on GitHub follows the same simple loop, called the <b>GitHub flow</b>:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="GitHub flow: create a branch off main, add commits, open a pull request for review, merge the branch back into main, then deploy">
-      <g class="rough">
-        <path class="ln" d="M30 60 L 594 60" marker-end="url(#ah)"/>
-        <path class="lr" d="M80 74 C 100 150, 130 170, 180 170 L 480 170 C 520 170, 545 120, 556 80" marker-end="url(#ahr)"/>
-        <circle class="box f-blue" cx="70" cy="60" r="16"/>
-        <circle class="box f-blue" cx="560" cy="60" r="16"/>
-        <circle class="box f-purple" cx="230" cy="170" r="16"/>
-        <circle class="box f-purple" cx="310" cy="170" r="16"/>
-        <rect class="box f-yellow" x="395" y="150" width="80" height="40" rx="10"/>
-        <rect class="box f-green" x="600" y="40" width="100" height="40" rx="10"/>
-      </g>
-      <text class="tm" x="30" y="36">main</text>
-      <text class="th" x="435" y="179" text-anchor="middle">PR</text>
-      <text class="tr" x="548" y="34" text-anchor="end">4 · merge</text>
-      <text class="t" x="650" y="66" text-anchor="middle">5 · deploy</text>
-      <text class="ts" x="130" y="220" text-anchor="middle">1 · create branch</text>
-      <text class="ts" x="270" y="220" text-anchor="middle">2 · add commits</text>
-      <text class="ts" x="435" y="220" text-anchor="middle">3 · open PR + review</text>
-    </svg></div>
-    <figcaption>Branch, commit, open a pull request, get it reviewed, merge into <code>main</code>, deploy. Then start again.</figcaption>
-  </figure>
+  <figure class="shot"><img src="../git-workflows/img/01.webp" alt="GitHub Flow diagram: from the master branch, create a feature branch; commit changes; submit a pull request; discuss proposed changes and make more commits (speech-bubble icons); then merge the feature branch into master." width="1400" height="371"><figcaption>GitHub flow: branch off <code>master</code> (today usually <code>main</code>), commit, open a pull request, discuss and add commits, then merge back.</figcaption></figure>
 </section>
 
 <!-- 2 -->
 <section class="ch" id="why-github">
   <h2>Why use GitHub?</h2>
-  <p>GitHub is much more than a place to store repositories. It gives you:</p>
+  <p>GitHub is much more than just a place to store your Git repositories. It provides a number of additional benefits:</p>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>1 · Version control</h4><p>Built on Git, a powerful distributed version control system: track changes, collaborate and manage project versions effectively.</p></div>
     <div class="card t3 tilt-b"><h4>2 · Documented requirements</h4><p>Use <b>Issues</b> to record bugs or describe new features you want the team to build.</p></div>
@@ -77,12 +56,12 @@
 <section class="ch" id="account">
   <h2>Setting up a GitHub account</h2>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Visit the official website</b>Open your browser and go to <code>https://github.com/</code>.</div></li>
+    <li><span class="dot">1</span><div><b>Visit the official website</b>Open your browser and go to <code>https://github.com/</code>.<figure class="shot"><img src="../git-workflows/img/02.webp" alt="The github.com home page header with a search box, Sign in, and the Sign up button in the top-right corner highlighted by an arrow." width="1378" height="726"><figcaption>The <b>Sign up</b> button sits in the top-right corner.</figcaption></figure></div></li>
     <li><span class="dot">2</span><div><b>Sign up</b>Click the <b>Sign up</b> button in the top-right corner.</div></li>
-    <li><span class="dot">3</span><div><b>Complete the sign-up form</b>Enter your email, a password and a username, then click <b>Create account</b>. <span class="tag">→ pick a professional username</span></div></li>
+    <li><span class="dot">3</span><div><b>Complete the sign-up form</b>Fill in the required details. The form starts with your email (click <b>Continue</b>), then asks for a password and a username; finish with <b>Create account</b>. <span class="tag">→ pick a professional username</span><figure class="shot"><img src="../git-workflows/img/03.webp" alt="GitHub sign-up page: Welcome to GitHub! Let&#39;s begin the adventure. Enter your email field with a Continue button, and the Terms of Service and Privacy Statement note." width="1400" height="875"><figcaption>The sign-up form asks one thing at a time, starting with your email.</figcaption></figure></div></li>
     <li><span class="dot">4</span><div><b>Verify your email address</b>GitHub sends a verification email (or code). Open it and confirm your address.</div></li>
     <li><span class="dot">5</span><div><b>Set up your account</b>A few onboarding steps personalise your experience: preferences, interests and some introductory options.</div></li>
-    <li><span class="dot">6</span><div><b>Welcome to GitHub</b>You land on your <b>dashboard</b> and can start creating and exploring repositories.</div></li>
+    <li><span class="dot">6</span><div><b>Welcome to GitHub</b>After completing the onboarding process, you are taken to your GitHub <b>dashboard</b>, where you can start using GitHub.</div></li>
   </ol>
   <div class="sticky tip"><strong>Turn on two-factor authentication</strong> Under Settings → Password and authentication, enable 2FA. GitHub asks code contributors to do this anyway, and it protects every repo you can push to.</div>
 </section>
@@ -91,9 +70,9 @@
 <section class="ch" id="vscode">
   <h2>Linking your GitHub account with VS Code</h2>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Download and install VS Code</b>From <code>https://code.visualstudio.com/Download</code>; pick the version for your operating system.</div></li>
-    <li><span class="dot">2</span><div><b>Make sure Git is installed</b>Check in the terminal with <code>git --version</code>. If not installed, download it from <code>https://git-scm.com/downloads</code>.</div></li>
-    <li><span class="dot">3</span><div><b>Enable Git in VS Code</b>Settings (<kbd>Ctrl</kbd> + <kbd>,</kbd>, or <kbd>Cmd</kbd> + <kbd>,</kbd> on Mac) → search “Git” → make sure <b>Git: Enabled</b> is ticked.</div></li>
+    <li><span class="dot">1</span><div><b>Download and install VS Code</b>From <code>https://code.visualstudio.com/Download</code>; pick the version for your operating system.<figure class="shot"><img src="../git-workflows/img/04.webp" alt="Download Visual Studio Code page: Windows (Windows 10, 11), Linux .deb (Debian, Ubuntu) and .rpm (Red Hat, Fedora, SUSE), and Mac (macOS 10.11+) download buttons, with installer variants for x64, x86, Arm32 and Arm64." width="1264" height="802"><figcaption>Pick the button for your operating system.</figcaption></figure></div></li>
+    <li><span class="dot">2</span><div><b>Make sure Git is installed</b>Check in the terminal with <code>git --version</code>. If not installed, download it from <code>https://git-scm.com/downloads</code>.<figure class="shot"><img src="../git-workflows/img/05.webp" alt="git-scm.com Downloads page: macOS, Windows and Linux/Unix links, and a monitor showing Latest source Release 2.42.0 with a Download for Windows button." width="1310" height="558"><figcaption>Git’s official download page offers installers for macOS, Windows and Linux/Unix.</figcaption></figure></div></li>
+    <li><span class="dot">3</span><div><b>Enable Git in VS Code</b>Settings (<kbd>Ctrl</kbd> + <kbd>,</kbd>, or <kbd>Cmd</kbd> + <kbd>,</kbd> on Mac) → search “Git” → make sure <b>Git: Enabled</b> is ticked.<figure class="shot"><img src="../git-workflows/img/06.webp" alt="VS Code Settings searched for git: the Git: Enabled checkbox, Whether git is enabled, is ticked and circled, between Git: Enable Commit Signing and Git: Enable Smart Commit." width="1032" height="680"><figcaption><b>Git: Enabled</b> must be ticked.</figcaption></figure></div></li>
     <li><span class="dot">4</span><div><b>Have a GitHub account and configure Git</b>Sign up at <code>https://github.com/signup</code> if needed, then set your name and email in Git.</div></li>
     <li><span class="dot">5</span><div><b>Verify the configuration</b>List your global settings to confirm. <span class="tag">→ git config --global --list</span></div></li>
     <li><span class="dot">6</span><div><b>Sign in to GitHub from VS Code</b>Click the <b>Accounts</b> icon (bottom-left) → <b>Sign in with GitHub</b>, and approve in the browser. VS Code also prompts you on your first push.</div></li>
@@ -117,13 +96,14 @@ user.name=your_user_name</code></pre>
 <section class="ch" id="create-repo">
   <h2>Creating a repository on GitHub</h2>
   <p>Click the <b>+</b> sign at the top right of any GitHub page (next to your profile picture) and choose <b>New repository</b>. The new-repository form asks for six things:</p>
+  <figure class="shot"><img src="../git-workflows/img/07.webp" alt="GitHub Create a new repository form: Owner (PRABIR07) and Repository name, Description (optional), Public or Private, Initialize this repository with Add a README file, Add .gitignore template None, and Choose a license None." width="1400" height="1150"><figcaption>The whole form: owner and name, description, visibility, README, .gitignore and license.</figcaption></figure>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Owner</b>Create the repo under your own username or under an organisation. If you have no organisation access, leave it as your username.</div></li>
+    <li><span class="dot">1</span><div><b>Owner</b>Create the repo under your own username or under an organisation. If you have no organisation access, leave it as your username.<figure class="shot"><img src="../git-workflows/img/08.webp" alt="The Owner drop-down of the new-repository form open, listing the personal account PRABIR07 (ticked) and the organisations GenieWizards and sigma-webdev." width="946" height="774"><figcaption>The Owner drop-down lists your username and any organisations you belong to.</figcaption></figure></div></li>
     <li><span class="dot">2</span><div><b>Repository name</b>Use letters, numbers, hyphens, underscores and periods. Any other character is replaced with a hyphen. <span class="tag">→ e.g. project_html</span></div></li>
     <li><span class="dot">3</span><div><b>Description (optional)</b>A few words about what the repository is for.</div></li>
     <li><span class="dot">4</span><div><b>Public or Private</b>Public repos can be viewed by anyone. Private repos can be viewed only by people you invite as collaborators.</div></li>
-    <li><span class="dot">5</span><div><b>Add a README file</b>Tick the checkbox to start the repo with a <code>README.md</code> that explains the project.</div></li>
-    <li><span class="dot">6</span><div><b>.gitignore and license</b>Pick a <code>.gitignore</code> template for your language and a license (such as MIT), then click <b>Create repository</b>.</div></li>
+    <li><span class="dot">5</span><div><b>Add a README file</b>Tick the checkbox to start the repo with a <code>README.md</code> that explains the project.<figure class="shot"><img src="../git-workflows/img/09.webp" alt="Initialize this repository with: an unticked Add a README file checkbox. This is where you can write a long description for your project." width="1400" height="204"><figcaption>Tick this to start the repository with a README.</figcaption></figure></div></li>
+    <li><span class="dot">6</span><div><b>.gitignore and license</b>Pick a <code>.gitignore</code> template for your language and a license (such as MIT), then click <b>Create repository</b>.<figure class="shot"><img src="../git-workflows/img/10.webp" alt="Two drop-downs: the .gitignore template list (None, AL, Actionscript, Ada, Agda, Android, AppEngine, with Node selected) and the License list (Apache 2.0, GNU GPL v3.0, MIT ticked, BSD 2-Clause, BSD 3-Clause, Boost, Creative Commons Zero, Eclipse 2.0)." width="1400" height="857"><figcaption>Choose a <code>.gitignore</code> template (here Node) and a license (here MIT).</figcaption></figure></div></li>
   </ol>
   <div class="sticky warn"><strong>Pushing an existing project?</strong> Leave README, <code>.gitignore</code> and license <b>unticked</b>. Otherwise the GitHub repo starts with a commit your laptop doesn’t have, and your first push is rejected until you pull and merge it.</div>
   <p>For more on what goes in <code>.gitignore</code>, see <a href="../git-workflows/index.html#gitignore-samples">the samples in the previous note</a>.</p>
@@ -186,8 +166,8 @@ git push -u origin main</code></pre></div>
   <p><b>Forking</b> creates a copy of someone else’s repository (the <b>upstream</b> repository) under <b>your own</b> GitHub account. This copy, the <b>fork</b>, is an independent repository: <mark>you can change, add to and experiment with the code in your fork without affecting the original.</mark></p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Open the repository you want to fork</b>On GitHub, go to the project’s page.</div></li>
-    <li><span class="dot">2</span><div><b>Click Fork</b>The button is at the top right of the repository page. Choose your account as owner and click <b>Create fork</b>.</div></li>
-    <li><span class="dot">3</span><div><b>Find your copy</b>The fork now appears in your repositories as <code>your-username/project</code>, with a note “forked from owner/project”.</div></li>
+    <li><span class="dot">2</span><div><b>Click Fork</b>The button is at the top right of the repository page. Choose your account as owner and click <b>Create fork</b>.<figure class="shot"><img src="../git-workflows/img/11.webp" alt="Top-right buttons of a GitHub repository page: Unwatch 24, Fork 76 (highlighted with an arrow) and Starred 151, above Go to file, Add file and the green Code button." width="1400" height="247"><figcaption>The <b>Fork</b> button, top right of the repository page.</figcaption></figure></div></li>
+    <li><span class="dot">3</span><div><b>Find your copy</b>After a successful fork, the copy is available in your repositories section. It appears in your repositories as <code>your-username/project</code>, with a note “forked from owner/project”.</div></li>
   </ol>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="The upstream repo (owner/project) is forked on GitHub into origin (you/project). You clone origin to your laptop and push back to it. You pull updates from upstream, and a pull request goes from origin back to upstream">
@@ -267,7 +247,7 @@ git push -u origin &lt;branch_name&gt;</code></pre>
 
   <h3>6 · Open a pull request</h3>
   <ol class="path">
-    <li><span class="dot">a</span><div><b>Go to your fork on GitHub</b>A yellow banner usually offers <b>Compare &amp; pull request</b> for the branch you just pushed. Otherwise open the <b>Pull requests</b> tab and click <b>New pull request</b>.</div></li>
+    <li><span class="dot">a</span><div><b>Go to your fork on GitHub</b>A yellow banner usually offers <b>Compare &amp; pull request</b> for the branch you just pushed. Otherwise open the <b>Pull requests</b> tab and click <b>New pull request</b>.<figure class="shot"><img src="../git-workflows/img/12.webp" alt="The Pull requests tab of a GitHub repository with the green New pull request button highlighted by an arrow, next to Labels and Milestones." width="1400" height="297"><figcaption><b>Pull requests</b> tab → <b>New pull request</b>.</figcaption></figure></div></li>
     <li><span class="dot">b</span><div><b>Pick the branches</b><b>base</b> = where the changes should go (e.g. <code>owner/project : main</code>); <b>compare</b> = your branch with the changes.</div></li>
     <li><span class="dot">c</span><div><b>Describe it</b>Give a descriptive title and a detailed description: what changed, why, and how to test it. Then click <b>Create pull request</b>.</div></li>
   </ol>
@@ -275,7 +255,7 @@ git push -u origin &lt;branch_name&gt;</code></pre>
   <h3>7 · Review and discuss</h3>
   <p>Invite relevant teammates or the maintainers as reviewers. Discuss the changes and respond to feedback and concerns in the PR’s comments.</p>
   <h3>8 · Make necessary changes</h3>
-  <p>If reviewers ask for changes, make them on the <b>same branch</b>, commit and push again. The PR updates automatically.</p>
+  <p>If requested, make any required changes based on the feedback received: work on the <b>same branch</b>, commit and push again. The PR updates automatically.</p>
   <h3>9 · Merge the pull request</h3>
   <p>Once the PR is approved and all discussions are resolved, a maintainer clicks <b>Merge pull request</b>, and your changes join the original repository.</p>
   <h3>10 · Delete the branch</h3>
@@ -288,7 +268,7 @@ git push -u origin &lt;branch_name&gt;</code></pre>
 <!-- 9 -->
 <section class="ch" id="conflicts">
   <h2>Handling merge conflicts</h2>
-  <p>A <b>merge conflict</b> happens when two branches change the <b>same lines</b> of a file (or one deletes a file the other edits) and Git cannot decide which version to keep. It shows up during a merge, when Git integrates changes from one branch into another, for example during <code>git pull</code> or <code>git merge</code>. <mark>Git stops and asks you, a human, to choose.</mark></p>
+  <p>A <b>merge conflict</b> happens when two branches change the <b>same lines</b> of a file (or one deletes a file the other edits) and Git cannot decide which version to keep. It typically happens during a merge operation, when Git is trying to integrate changes from one branch into another, for example during <code>git pull</code> or <code>git merge</code>. <mark>Git stops and asks you, a human, to choose.</mark></p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 245" role="img" aria-label="A conflicted file: the line with seven less-than signs and HEAD starts your side; the content from the current branch follows; seven equals signs divide the two; the content from the incoming branch follows; seven greater-than signs and the branch name end the conflict">
       <g class="rough">
@@ -367,12 +347,12 @@ git push</code></pre></div>
     <li><span class="dot">2</span><div><b>Push your website files</b>Add all the HTML, CSS and JavaScript files your site needs. The home page must be called <code>index.html</code>.</div></li>
     <li><span class="dot">3</span><div><b>Set up and enable GitHub Pages</b>
       <ol class="path">
-        <li><span class="dot">a</span><div><b>Open Settings</b>Click the <b>Settings</b> tab of the repository you want to host.</div></li>
-        <li><span class="dot">b</span><div><b>Select Pages</b>In the <b>left</b> sidebar, under “Code and automation”.</div></li>
-        <li><span class="dot">c</span><div><b>Choose the source</b>Under “Build and deployment”, set Source to <b>Deploy from a branch</b>.</div></li>
-        <li><span class="dot">d</span><div><b>Pick the branch and folder</b>Select the branch (e.g. <code>main</code>) and the folder <code>/ (root)</code>, then click <b>Save</b>. Wait a few minutes for the site to build.</div></li>
+        <li><span class="dot">a</span><div><b>Open Settings</b>Click the <b>Settings</b> tab of the repository you want to host.<figure class="shot"><img src="../git-workflows/img/13.webp" alt="Repository personal-site tab bar: Code, Issues, Pull requests, Actions, Projects, Wiki, Security, Insights and Settings, with Settings highlighted by an arrow." width="1302" height="294"><figcaption>Click the <b>Settings</b> tab.</figcaption></figure></div></li>
+        <li><span class="dot">b</span><div><b>Select Pages</b>In the <b>left</b> sidebar, under “Code and automation”.<figure class="shot"><img src="../git-workflows/img/14.webp" alt="Repository Settings page: the left sidebar lists General, Collaborators, Branches, Tags, Rules, Actions, Webhooks, Environments, Codespaces and Pages, with Pages highlighted by an arrow." width="910" height="808"><figcaption><b>Pages</b> is in the left sidebar under “Code and automation”.</figcaption></figure></div></li>
+        <li><span class="dot">c</span><div><b>Choose the source</b>Under “Build and deployment”, set Source to <b>Deploy from a branch</b>.<figure class="shot"><img src="../git-workflows/img/15.webp" alt="GitHub Pages settings, Build and deployment: the Source drop-down open with GitHub Actions (Beta, best for using frameworks and customizing your build process) and Deploy from a branch (classic Pages experience) ticked." width="962" height="966"><figcaption>Source → <b>Deploy from a branch</b>.</figcaption></figure></div></li>
+        <li><span class="dot">d</span><div><b>Pick the branch and folder</b>Select the branch (e.g. <code>main</code>) and the folder <code>/ (root)</code>, then click <b>Save</b>. Wait a few minutes for the site to build.<figure class="shot"><img src="../git-workflows/img/16.webp" alt="Two crops of the Branch setting: the Select branch drop-down (main ticked, dev, None) and the Select folder drop-down (/ (root) ticked, /docs), next to a Save button." width="1308" height="548"><figcaption>Choose the branch (<code>main</code>) and the folder (<code>/ (root)</code>), then <b>Save</b>.</figcaption></figure></div></li>
       </ol></div></li>
-    <li><span class="dot">4</span><div><b>Open your web page</b>The live link appears at the top of the <b>Pages</b> section: <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code>.</div></li>
+    <li><span class="dot">4</span><div><b>Access your web page</b>Once you have completed all the steps, your web page is live, and the link is displayed at the top of the <b>Pages</b> section. The real address has the form <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code>.<figure class="shot"><img src="../git-workflows/img/17.webp" alt="GitHub Pages section: Your site is live at https://&lt;username&gt;/&lt;webpage-site-name/ with a Visit site button." width="1374" height="302"><figcaption>The live link and the <b>Visit site</b> button. (The screenshot hides the real URL; it looks like <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code>.)</figcaption></figure></div></li>
   </ol>
   <div class="sticky tip"><strong>Every push redeploys</strong> Once Pages is on, each push to the chosen branch republishes the site automatically. A repo named exactly <code>&lt;username&gt;.github.io</code> is served at the root URL <code>https://&lt;username&gt;.github.io/</code>.</div>
   <div class="sticky fde"><strong>In the field (FDE)</strong> Pages is perfect for a quick customer demo, a product prototype or your own portfolio. It cannot run server code (Python, databases); for anything with a backend you will need a real host.</div>
@@ -403,10 +383,10 @@ git push</code></pre></div>
   </div>
   <h3>Installation</h3>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Download</b>Visit <code>https://desktop.github.com</code> and download the version for your operating system (Windows or macOS). The download button is pre-selected for your OS.</div></li>
+    <li><span class="dot">1</span><div><b>Download</b>Visit <code>https://desktop.github.com</code> and download the version for your operating system (Windows or macOS). The download button is pre-selected for your OS.<figure class="shot"><img src="../git-workflows/img/18.webp" alt="GitHub Desktop download page: Focus on what matters instead of fighting with Git, with a Download for Windows (64bit) button." width="1204" height="648"><figcaption>The download button is pre-selected for your operating system.</figcaption></figure></div></li>
     <li><span class="dot">2</span><div><b>Install</b>Run the installer and follow the on-screen instructions.</div></li>
     <li><span class="dot">3</span><div><b>Launch GitHub Desktop</b>Open the app after installation.</div></li>
-    <li><span class="dot">4</span><div><b>Sign in</b>Sign in with your GitHub account to access your repositories. You can continue without signing in, but then you can’t publish to GitHub. <span class="tag">→ you land on the home screen</span></div></li>
+    <li><span class="dot">4</span><div><b>Sign in</b>Sign in with your GitHub account to access your repositories. You can continue without signing in, but then you can’t publish to GitHub. <span class="tag">→ you land on the home screen</span><figure class="shot"><img src="../git-workflows/img/19.webp" alt="GitHub Desktop home screen, Let&#39;s get started!: quick action buttons on the left (Create a tutorial repository, Clone a repository from the Internet, Create a New Repository on your hard drive, Add an Existing Repository from your hard drive) and the list of all available GitHub repositories on the right." width="1400" height="705"><figcaption>The home screen: quick action buttons on the left, your GitHub repositories on the right.</figcaption></figure></div></li>
   </ol>
 </section>
 
@@ -415,14 +395,14 @@ git push</code></pre></div>
   <h2>How to use GitHub Desktop</h2>
   <p>With a GitHub account and the app installed and signed in, here is the everyday loop, and the Git command each button runs for you:</p>
   <ol class="path">
-    <li><span class="dot">1</span><div><b>Create a new repository</b>File → <b>New repository</b> (or “Create a New Repository on your hard drive” on the home screen). Fill in the name, folder and options, then click <b>Create repository</b>. <span class="tag">→ git init</span></div></li>
-    <li><span class="dot">2</span><div><b>Clone a repository</b>Click <b>Clone a repository from the Internet</b>. Search your repositories, select one and click <b>Clone</b>, or open the <b>URL</b> tab and paste a repo link. <span class="tag">→ git clone</span></div></li>
-    <li><span class="dot">3</span><div><b>Create a new branch</b>Click <b>Current Branch</b> at the top to see all branches, then <b>New Branch</b>. Enter the name and click <b>Create branch</b>. <span class="tag">→ git checkout -b</span></div></li>
-    <li><span class="dot">4</span><div><b>Make changes and commit</b>Open the repo in your editor, edit and save. The changed files and their diffs appear in the <b>Changes</b> list. Type a summary in the box at the <b>bottom left</b> and click <b>Commit to &lt;branch&gt;</b>. <span class="tag">→ git add + git commit</span></div></li>
-    <li><span class="dot">5</span><div><b>Publish to GitHub</b>After committing, click <b>Publish branch</b> (first time) or <b>Push origin</b> in the top bar. <span class="tag">→ git push</span></div></li>
-    <li><span class="dot">6</span><div><b>Pull changes from GitHub</b>When others have pushed, click <b>Fetch origin</b> to check, then <b>Pull origin</b> to bring the updates in. <span class="tag">→ git fetch / git pull</span></div></li>
+    <li><span class="dot">1</span><div><b>Create a new repository</b>File → <b>New repository</b> (or “Create a New Repository on your hard drive” on the home screen). Fill in the name, folder and options, then click <b>Create repository</b>. <span class="tag">→ git init</span><figure class="shot sm"><img src="../git-workflows/img/20.webp" alt="Clicking Create a New Repository on your hard drive opens the Create a new repository dialog with Name, Description, Local path with a Choose button, Initialize this repository with a README, Git ignore, License, and the Create repository button." width="733" height="889"><figcaption>Fill in the fields and click <b>Create repository</b>.</figcaption></figure></div></li>
+    <li><span class="dot">2</span><div><b>Clone a repository</b>Click <b>Clone a repository from the Internet</b>. Search your repositories, select one and click <b>Clone</b>, or open the <b>URL</b> tab and paste a repo link. <span class="tag">→ git clone</span><figure class="shot sm"><img src="../git-workflows/img/21.webp" alt="Clicking Clone a repository from the Internet opens the Clone a repository dialog with GitHub.com, GitHub Enterprise and URL tabs, a filter box, your repositories list, the Local path, and the Clone button." width="1128" height="1216"><figcaption>Search, select and click <b>Clone</b>; the <b>URL</b> tab (top right) takes a pasted link.</figcaption></figure></div></li>
+    <li><span class="dot">3</span><div><b>Create a new branch</b>Click <b>Current Branch</b> at the top to see all branches, then <b>New Branch</b>. Enter the name and click <b>Create branch</b>. <span class="tag">→ git checkout -b</span><div class="shots"><figure class="shot"><img src="../git-workflows/img/22.webp" alt="Current branch main drop-down open with Branches and Pull requests tabs, a filter box and the New branch button highlighted by an arrow; the default branch main is listed." width="1400" height="891"><figcaption><b>Current Branch</b> → <b>New branch</b>.</figcaption></figure><figure class="shot"><img src="../git-workflows/img/23.webp" alt="Create a branch dialog: a Name field, the note that your new branch will be based on your currently checked out branch (main), and Create branch and Cancel buttons." width="1294" height="762"><figcaption>Type the name and click <b>Create branch</b>.</figcaption></figure></div></div></li>
+    <li><span class="dot">4</span><div><b>Make changes and commit</b>Open the repo in your preferred editor, then edit, add or fix a file and save it. The file changes are displayed next to the file in the <b>Changes</b> list. Then type a summary message in the box at the <b>bottom left</b> and click <b>Commit to &lt;branch&gt;</b>. <span class="tag">→ git add + git commit</span><div class="shots"><figure class="shot"><img src="../git-workflows/img/24.webp" alt="GitHub Desktop on branch hello showing the diff of README.md: line 5 removed in red and replaced in green with the same sentence plus hello world. The top bar offers Publish branch." width="1400" height="570"><figcaption>The changed file and its diff: red line out, green line in.</figcaption></figure><figure class="shot"><img src="../git-workflows/img/25.webp" alt="The commit box at the bottom left: summary add hello world, an empty Description field, and the Commit to hello button." width="964" height="820"><figcaption>Write a summary, then <b>Commit to hello</b>.</figcaption></figure></div></div></li>
+    <li><span class="dot">5</span><div><b>Publish to GitHub</b>After committing, click <b>Publish branch</b> (first time) or <b>Push origin</b> in the top bar. <span class="tag">→ git push</span><figure class="shot"><img src="../git-workflows/img/26.webp" alt="GitHub Desktop top bar: current repository desktop-tutorial, current branch hello, and Push origin with 1 commit to push, highlighted by an arrow." width="1400" height="210"><figcaption><b>Push origin</b> shows how many commits are waiting to go up.</figcaption></figure></div></li>
+    <li><span class="dot">6</span><div><b>Pull changes from GitHub</b>When others have pushed, click <b>Fetch origin</b> to check, then <b>Pull origin</b> to bring the updates in. <span class="tag">→ git fetch / git pull</span><figure class="shot sm"><img src="../git-workflows/img/27.webp" alt="GitHub Desktop Fetch origin button, last fetched just now." width="972" height="320"><figcaption><b>Fetch origin</b> checks GitHub for teammates’ new commits.</figcaption></figure></div></li>
   </ol>
-  <p>Repeat this loop until the project is done: edit, commit, push, and pull your teammates’ work as you go.</p>
+  <p>This process repeats until the project is completed: edit, commit, push, and pull your teammates’ work as you go, allowing continuous progress and updates until the project reaches its conclusion.</p>
   <div class="tbl"><table>
     <tr><th>GitHub Desktop button</th><th>Same as</th></tr>
     <tr><td>New repository</td><td><code>git init</code></td></tr>
@@ -498,6 +478,6 @@ git push</code></pre></div>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

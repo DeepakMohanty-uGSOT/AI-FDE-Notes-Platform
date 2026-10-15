@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-13">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="networking/ip-address-fundamentals">
@@ -48,6 +48,8 @@
     <figcaption>Local delivery works with MACs. Delivery <i>across</i> networks needs a logical address.</figcaption>
   </figure>
   <h3>Two questions every delivery must answer</h3>
+  <p>A MAC address identifies a network interface, but its knowledge stops at the local network: a switch knows which MAC is on which port, not which larger network the device belongs to. For communication across the Internet we must answer:</p>
+  <figure class="shot"><img src="img/01.webp" alt="The need for logical addressing: Sandeep at Trident Softwares Bengaluru (MAC 00:1A:2B:3C:4D:5E, switch, router 192.168.1.1) and Deepa at Meghna Info Systems Bhubaneswar (MAC 00:1A:2B:3C:9F:8A, switch, router 10.0.0.1) connected through the Internet; a MAC address identifies a device on the local network; for the Internet we must know which network and which device; logical addressing (IP) identifies networks and devices across networks and can change when the device moves" width="1400" height="788"><figcaption>Switches know MACs on their own ports. Data crossing the Internet needs an address that says <i>which network</i> and <i>which device</i>: an IP address.</figcaption></figure>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Which network?</h4><p>Out of millions of networks on the Internet, which one is the device on?</p></div>
     <div class="card t2 tilt-b"><h4>Which device?</h4><p>Inside that network, which exact device is the destination?</p></div>
@@ -55,6 +57,7 @@
   <p>A MAC address cannot answer the first question, so we need <b>logical addressing</b>. Unlike a MAC address (burned into the hardware), a logical address is <b>assigned according to the network a device is connected to</b>, and it can change when the device moves to another network.</p>
   <h3>What is an IP address?</h3>
   <p>An <mark>IP address is a logical address given to a device so it can be identified and reached within a network or across the Internet.</mark> Think of a house address: it tells you <i>where</i> to find something, not <i>what</i> it physically is. The MAC identifies the hardware; the IP identifies the device’s current location.</p>
+  <figure class="shot"><img src="img/02.webp" alt="What is an IP address: a home network 192.168.1.0/24 with a router 192.168.1.1, laptop 192.168.1.10, phone 192.168.1.11, PC 192.168.1.12 and printer 192.168.1.13; an IP packet carries source IP 192.168.1.10 and destination IP 203.0.113.25 across the Internet to a web server 203.0.113.25; an IP address is not hardware, identifies location, and is like a house address" width="1400" height="788"><figcaption>Every packet carries a source IP (where it came from) and a destination IP (where it must go).</figcaption></figure>
   <p>Every piece of data sent over IP carries two of them:</p>
   <ul><li><b>Source IP</b>: where the data came from.</li><li><b>Destination IP</b>: where the data needs to go.</li></ul>
   <p>For example, your home router might give your laptop <code>192.168.1.10</code>. That identifies the laptop inside your home network so other devices can talk to it.</p>
@@ -92,36 +95,12 @@
   <h3>How many IPv4 addresses can exist?</h3>
   <p>Each of the 32 bits has 2 possible values, so the number of different addresses is 2 multiplied by itself 32 times:</p>
   <div class="notes"><div class="note"><b>2³²</b>possible patterns</div><div class="note"><b>4,294,967,296</b>IPv4 addresses</div><div class="note"><b>≈ 4.29 bn</b>seemed huge in the 1980s</div></div>
-  <p>That seemed enormous when IPv4 was designed. The Internet’s growth later made it too small, which is the whole story behind IPv6.</p>
+  <p>That seemed enormous when IPv4 was designed.</p>
+  <figure class="shot"><img src="img/03.webp" alt="192.168.1.10 split into four 8-bit octets, 11000000, 10101000, 00000001 and 00001010, totalling 32 bits; 2 to the power 32 equals 4,294,967,296 unique addresses" width="1400" height="700"><figcaption>32 bits in total, so 2³² = 4,294,967,296 possible IPv4 addresses.</figcaption></figure>
+  <p> The Internet’s growth later made it too small, which is the whole story behind IPv6.</p>
   <h3>Octets: four groups of eight</h3>
   <p>32 bits in a row are hard for humans to read, so they are cut into <b>four groups of 8 bits</b>. Each 8-bit group is an <b>octet</b> (8 + 8 + 8 + 8 = 32).</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The address 192.168.1.10 as four boxes of eight bits each: 11000000, 10101000, 00000001, 00001010. Together they make 32 bits.">
-      <g class="rough">
-        <rect class="box f-blue" x="20" y="58" width="155" height="56" rx="12"/>
-        <rect class="box f-green" x="195" y="58" width="155" height="56" rx="12"/>
-        <rect class="box f-orange" x="370" y="58" width="155" height="56" rx="12"/>
-        <rect class="box f-pink" x="545" y="58" width="155" height="56" rx="12"/>
-        <path class="ln" d="M20 160 L 700 160"/>
-        <path class="ln" d="M20 150 L 20 170"/>
-        <path class="ln" d="M700 150 L 700 170"/>
-      </g>
-      <text class="th" x="97" y="42" text-anchor="middle">192</text>
-      <text class="th" x="272" y="42" text-anchor="middle">168</text>
-      <text class="th" x="447" y="42" text-anchor="middle">1</text>
-      <text class="th" x="622" y="42" text-anchor="middle">10</text>
-      <text class="tm" x="97" y="91" text-anchor="middle">11000000</text>
-      <text class="tm" x="272" y="91" text-anchor="middle">10101000</text>
-      <text class="tm" x="447" y="91" text-anchor="middle">00000001</text>
-      <text class="tm" x="622" y="91" text-anchor="middle">00001010</text>
-      <text class="ts" x="97" y="138" text-anchor="middle">octet 1 · 8 bits</text>
-      <text class="ts" x="272" y="138" text-anchor="middle">octet 2 · 8 bits</text>
-      <text class="ts" x="447" y="138" text-anchor="middle">octet 3 · 8 bits</text>
-      <text class="ts" x="622" y="138" text-anchor="middle">octet 4 · 8 bits</text>
-      <text class="t" x="360" y="196" text-anchor="middle">4 octets × 8 bits = 32 bits</text>
-    </svg></div>
-    <figcaption>The same 32 bits, chopped into four readable pieces.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/04.webp" alt="192.168.1.10 as first, second, third and fourth octet, each 8 bits: 11000000 (192), 10101000 (168), 00000001 (1), 00001010 (10); each octet follows the same rule, a value from 0 to 255, and all four octets are independent" width="1400" height="788"><figcaption>Four independent 8-bit octets. Each follows the same 0–255 rule.</figcaption></figure>
   <h3>Why each octet is 0–255</h3>
   <p>One octet has 8 bits, and each bit has 2 values, so:</p>
   <pre class="out"><code>2⁸ = 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 = 256 different values</code></pre>
@@ -142,7 +121,8 @@
   <p>All eight added together: 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = <b>255</b>, the biggest octet value.</p>
 
   <h3>Decimal → binary: convert 192</h3>
-  <p>Go left to right. If the place value fits into what is left, write <code>1</code> and subtract it; otherwise write <code>0</code>.</p>
+  <p>Converting decimal to binary means finding which place values must be switched on (1) to make the number. Go left to right: if the place value fits into what is left, write <code>1</code> and subtract it; otherwise write <code>0</code>.</p>
+  <figure class="shot"><img src="img/05.webp" alt="Converting 192 to binary with place values 128, 64, 32, 16, 8, 4, 2, 1: step 1, 128 fits in 192, 192 minus 128 is 64, bit 1; step 2, 64 fits in 64, 64 minus 64 is 0, bit 1; steps 3 to 8, 32, 16, 8, 4, 2 and 1 do not fit in 0, bit 0; so 192 decimal equals 11000000" width="1400" height="700"><figcaption>192 = 128 + 64: two bits on, six bits off, giving 11000000.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Start with 128</b>Does 128 fit into 192? Yes. 192 − 128 = 64, so the 128 bit is <code>1</code>. <span class="tag">→ left: 64</span></div></li>
     <li><span class="dot">2</span><div><b>Next, 64</b>Does 64 fit into 64? Yes. 64 − 64 = 0, so the 64 bit is <code>1</code>. <span class="tag">→ left: 0</span></div></li>
@@ -515,7 +495,7 @@
     <div class="card t7 tilt-b"><h4>NAT</h4><p>Whole networks share one public address.</p></div>
     <div class="card t1 tilt-a"><h4>CIDR &amp; subnetting</h4><p>Blocks sized to real needs instead of wasteful classes.</p></div>
   </div>
-  <p>These conserve addresses but <mark>can never raise the 2³² ceiling</mark>. They only delayed the problem. A bigger address was needed.</p>
+  <p>Together these are real <b>address conservation</b>, squeezing far more use out of IPv4’s fixed ceiling than the classful design could. But they <mark>can never raise the 2³² ceiling</mark>. They only delayed the problem. A bigger address was needed.</p>
 
   <h3>IPv6: 128 bits</h3>
   <p><b>IPv6</b> (Internet Protocol version 6) is a completely new addressing system with <b>128-bit</b> addresses. Every extra bit doubles the count:</p>
@@ -592,7 +572,7 @@
     <li><b>Unicast</b>: exactly one device, one-to-one.</li>
     <li><b>Multicast</b>: a group of interested devices (the same job Class D did in IPv4).</li>
     <li><b>Anycast</b>: one address shared by several devices; the nearest or most suitable one receives.</li>
-    <li>There is <b>no broadcast</b> in IPv6, on purpose. Multicast does that job more efficiently.</li>
+    <li>There is <b>no traditional broadcast</b> in IPv6. This is a deliberate design decision, not an oversight: multicast does that job more efficiently, so IPv6 relies on multicast as its main group-communication tool, while IPv4 offers both broadcast and multicast.</li>
   </ul>
   <h3>Basic IPv6 special addresses</h3>
   <div class="tbl"><table>
@@ -607,6 +587,7 @@
 <!-- 15 -->
 <section class="ch" id="v4-vs-v6">
   <h2>IPv4 vs IPv6, side by side</h2>
+  <p>With both versions understood on their own, here they are together. The single difference in size (32 vs 128 bits) is the root cause of almost every other difference. At this level, it is enough to know that IPv6 devices can also get their addresses automatically, without necessarily using the same DHCP process as IPv4.</p>
   <div class="tbl"><table>
     <tr><th>Aspect</th><th>IPv4</th><th>IPv6</th></tr>
     <tr><td>Address size</td><td>32 bits</td><td>128 bits (the root of every other difference)</td></tr>
@@ -688,6 +669,6 @@
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

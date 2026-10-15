@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-08">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="langchain/langchain-fundamentals">
@@ -37,6 +37,7 @@
 
   <h3>OpenAI SDK: the basic template</h3>
   <p>This is the basic template from the official OpenAI documentation (developers.openai.com → Libraries → Python): install the SDK, create a client, and send a request with the <b>Responses API</b>. We add two lines to load our API key from a <code>.env</code> file.</p>
+  <figure class="shot"><img src="img/01.webp" alt="OpenAI Developers documentation, API overview: Install the OpenAI SDK with pip (pip install openai), then create example.py with the Test a basic API request code: from openai import OpenAI, client = OpenAI(), response = client.responses.create(model=&quot;gpt-6-astra&quot;, input=&quot;Write a one-sentence bedtime story about a unicorn.&quot;), print(response.output_text)." width="1400" height="792"><figcaption>The official template from the OpenAI docs. Our file is the same, plus <code>load_dotenv()</code> (the docs show their current model name; we use <code>"gpt-5"</code>).</figcaption></figure>
   <pre><code class="language-bash">pip install openai python-dotenv</code></pre>
   <div class="codebox"><span class="cap">openai_basic.py</span><pre><code class="language-python">from dotenv import load_dotenv
 from openai import OpenAI
@@ -52,7 +53,7 @@ response = client.responses.create(
 
 print(response.output_text)</code></pre></div>
   <pre><code class="language-bash">python openai_basic.py</code></pre>
-  <pre class="out"><code>Under a silver moon, a little unicorn named Luna wished every child sweet dreams.</code></pre>
+  <figure class="shot"><img src="img/02.webp" alt="VS Code with openai_basic.py open in a langchain-project folder. The terminal runs python openai_basic.py and prints: Under a sky full of sleepy stars, a little unicorn named Luna tiptoed across a moonlit meadow and curled up on a soft cloud to dream of rainbows." width="1400" height="648"><figcaption>Output: a one-sentence bedtime story. Yours will be different, because the model writes a new one each time.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th style="width:38%">Line</th><th>What it does</th></tr>
     <tr><td><code>from openai import OpenAI</code></td><td>Imports the OpenAI client class from the SDK.</td></tr>
@@ -64,6 +65,9 @@ print(response.output_text)</code></pre></div>
 
   <h3>Gemini SDK: the basic template</h3>
   <p>Now the same job with Google’s Gemini, using the official <code>google-genai</code> SDK and an API key from Google AI Studio. This time we also ask the user for the question.</p>
+  <p>Here is the basic template from the official Gemini API documentation (ai.google.dev → Get started). It uses the newer <b>Interactions API</b> (<code>client.interactions.create(...)</code> and <code>interaction.output_text</code>) with an AI Studio API key:</p>
+  <figure class="shot"><img src="img/03.webp" alt="Gemini API documentation, 2. Install the SDK and make your first call, Python tab: pip install -U google-genai; then from google import genai, client = genai.Client(), interaction = client.interactions.create(model=&quot;gemini-3.8-flash&quot;, input=&quot;Explain how AI works in a few words&quot;), print(interaction.output_text)." width="1400" height="1151"><figcaption>The official Gemini template, from the Python tab of the docs.</figcaption></figure>
+  <p>Our <code>gemini_basic.py</code> adds the two <code>.env</code> lines and uses the SDK’s long-standing <code>client.models.generate_content(...)</code> call, which reads the answer from <code>response.text</code>. Both calls are part of the same <code>google-genai</code> SDK.</p>
   <pre><code class="language-bash">pip install google-genai python-dotenv</code></pre>
   <div class="codebox"><span class="cap">gemini_basic.py</span><pre><code class="language-python">import os
 from dotenv import load_dotenv
@@ -81,8 +85,7 @@ response = client.models.generate_content(
 
 print(response.text)</code></pre></div>
   <pre><code class="language-bash">python gemini_basic.py</code></pre>
-  <pre class="out"><code>Ask Gemini: What is the capital of Karnataka?
-The capital of Karnataka is Bengaluru (formerly Bangalore).</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code with the same Gemini code saved as main.py. The terminal runs python .\main.py; the program asks Ask Gemini:, the user types hii, the SDK prints a notice that direct use of automatic function calling (AFC) in Models.generate_content is not recommended, and Gemini replies Hello! How can I help you today?" width="1042" height="708"><figcaption>Output: the program asks for a question (here “hii”) and prints Gemini’s reply. The grey AFC lines are only an SDK notice, not an error.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th style="width:38%">Line</th><th>What it does</th></tr>
     <tr><td><code>from google import genai</code></td><td>Imports Google’s Gen AI SDK.</td></tr>
@@ -169,6 +172,8 @@ The capital of Karnataka is Bengaluru (formerly Bangalore).</code></pre>
     <div class="card t1 tilt-b"><h4>Building blocks</h4><p>Ready components you combine into an app: models, prompts, tools, chains and more.</p></div>
     <div class="card t2 tilt-a"><h4>Chains</h4><p>Connect multiple steps together so the output of one feeds the next.</p></div>
   </div>
+  <p>Think of LangChain as a <b>universal travel adapter</b>: your charger (your app) stays the same, and the adapter handles each country’s socket (each AI provider).</p>
+  <figure class="shot"><img src="img/05.webp" alt="Illustration: Your Python App (chatbot, summarizer, Q&amp;A assistant) talks through one interface to LangChain (prompts, models, parsers, memory, tools, chains), which connects to OpenAI GPT models, Google Gemini models, Anthropic Claude models, Ollama local models, and many more." width="1400" height="782"><figcaption>One interface from your app; LangChain fans out to every provider.</figcaption></figure>
   <h3>Why LLM apps need it</h3>
   <p>An LLM on its own is a text-in, text-out brain. On its own it:</p>
   <ul>
@@ -179,6 +184,7 @@ The capital of Karnataka is Bengaluru (formerly Bangalore).</code></pre>
     <li>and multi-step workflows get messy to code by hand.</li>
   </ul>
   <p><b>LangChain solves each of these with a ready-made component:</b></p>
+  <figure class="shot"><img src="img/06.webp" alt="Two rows. LLM alone: Question What is Docker? goes to an LLM (e.g. GPT-4o) and an answer comes back. LLM + LangChain: Question How to deploy a Next.js app using Docker? goes through Prompts (templates, instructions) to LangChain, which uses Memory (chat history, context) and sends it to Models (GPT-4o, Gemini, Claude, Ollama local) that use Indexes + Tools (documents, web search, APIs, custom tools)." width="1400" height="782"><figcaption>An LLM alone answers one question. With LangChain it gets prompts, memory, models of your choice, documents and tools.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Problem</th><th>LangChain solution</th></tr>
     <tr><td>Different APIs for each provider</td><td><b>Models</b>: one standard interface</td></tr>
@@ -226,7 +232,9 @@ Gemini : An API is a contract that lets different software systems talk to each 
 <!-- 6 -->
 <section class="ch" id="workflow">
   <h2>A basic LangChain workflow</h2>
+  <figure class="shot sm"><img src="img/07.webp" alt="Whiteboard flow: User asks a question, the Prompt goes to LangChain, which uses the LLM, Data and Tools; their outputs go to Process Result, then Response, back to the User." width="348" height="406"><figcaption>User → prompt → LangChain → LLM, data, tools → process result → response → user.</figcaption></figure>
   <p>Suppose an employee asks your company assistant: <b>“What is the leave policy in my company?”</b> LangChain <mark>manages the flow between the components</mark>:</p>
+  <figure class="shot"><img src="img/08.webp" alt="Whiteboard flow: the query What is the leave policy? goes to LangChain, then Search company PDF, then Find relevant information, then the LLM, which answers Employees get 20 days..." width="709" height="121"><figcaption>The leave-policy question: LangChain searches the company PDF, finds the relevant part, and the LLM writes the answer.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="Five steps left to right: receive the question, prepare the prompt with instructions, get information from a PDF, database or website, send question plus information to the LLM, return the answer to the user">
       <g class="rough">
@@ -288,6 +296,7 @@ Gemini : An API is a contract that lets different software systems talk to each 
 <section class="ch" id="components">
   <h2>LangChain components: the building blocks</h2>
   <p>LangChain gives you a small kit of <b>components</b>. <mark>Each component does one job, and you join them like LEGO bricks to make an LLM app.</mark> There are seven you must know:</p>
+  <figure class="shot sm"><img src="img/09.webp" alt="Whiteboard mind map with LangChain in the centre and six components around it: 1. Models, 2. Prompts, 3. Chains, 4. Memory, 5. Indexes, 6. Agents." width="550" height="343"><figcaption>The classic map of LangChain’s components. In this note we work with seven hands-on blocks: models, messages, prompts, output parsers, chains, retrievers (the modern “indexes”) and tools (used by agents).</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="Seven LEGO bricks: bottom row Models, Prompts, Output parsers, Messages; top row Chains, Retrievers, Tools">
       <g class="rough">
@@ -741,6 +750,7 @@ multiply.invoke(msg.tool_calls[0]["args"])   # → 100.0  (your code runs it)</c
 <section class="ch" id="ecosystem">
   <h2>The LangChain ecosystem</h2>
   <p>LangChain is not just one package: it is a <b>family of tools</b> that work together, from basic building blocks up to full agents and monitoring.</p>
+  <p>The official LangChain documentation describes how these parts relate to each other:</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="Stack: LangChain Core at the bottom, integrations for openai, google-genai, anthropic and ollama in the middle, LangChain and LangGraph on top, and LangSmith at the side tracing everything">
       <g class="rough">
@@ -828,7 +838,7 @@ LANGSMITH_API_KEY=your_langsmith_key</code></pre>
     <li><span class="dot">1</span><div><b>Create a project folder</b>Make a folder called <code>langchain-project</code> and open it in VS Code.</div></li>
     <li><span class="dot">2</span><div><b>Open the terminal</b>In VS Code: <b>Terminal → New Terminal</b>. You should be inside the project folder (<code>langchain-project&gt;</code>).</div></li>
     <li><span class="dot">3</span><div><b>Create a virtual environment</b><code>python -m venv .venv</code>. The <code>.venv</code> folder keeps this project’s packages separate from other projects.</div></li>
-    <li><span class="dot">4</span><div><b>Activate it</b>Windows: <code>.venv\Scripts\activate</code> · macOS/Linux: <code>source .venv/bin/activate</code>. Your prompt now starts with <code>(.venv)</code>.</div></li>
+    <li><span class="dot">4</span><div><b>Activate it</b>Windows: <code>.venv\Scripts\activate</code> · macOS/Linux: <code>source .venv/bin/activate</code>. Your prompt now starts with the environment’s name in brackets, such as <code>(.venv)</code>.</div></li>
     <li><span class="dot">5</span><div><b>Install packages</b><code>pip install langchain langchain-google-genai python-dotenv</code></div></li>
     <li><span class="dot">6</span><div><b>Create <code>main.py</code></b>An empty Python file in the project folder.</div></li>
     <li><span class="dot">7</span><div><b>Get a Gemini API key</b>From Google AI Studio. Then create a file named <code>.env</code>.</div></li>
@@ -838,7 +848,8 @@ LANGSMITH_API_KEY=your_langsmith_key</code></pre>
   <pre><code class="language-bash">python -m venv .venv
 .venv\Scripts\activate
 pip install langchain langchain-google-genai python-dotenv</code></pre></div>
-  <pre class="out"><code>(.venv) PS C:\Users\you\langchain-project&gt;</code></pre>
+  <p>After activation, you should see something like this (the name in brackets is your environment folder, here <code>venv</code>):</p>
+  <figure class="shot"><img src="img/10.webp" alt="VS Code terminal prompt after activation: (venv) PS C:\Users\Chandrakanta\Desktop\New folder (2)\student_project&gt;" width="831" height="90"><figcaption>The environment name in brackets at the start of the prompt means it is active.</figcaption></figure>
   <p>Your project should now look like this:</p>
   <pre class="out"><code>langchain-project/
 │
@@ -856,7 +867,8 @@ response = model.invoke("Explain LangChain in one sentence.")
 
 print(response.text)</code></pre></div>
   <pre><code class="language-bash">python main.py</code></pre>
-  <pre class="out"><code>LangChain is an open-source framework for building apps powered by large language models.</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal output of python .\main.py when main.py prints response.content: after the AFC notice, a Python list is printed, [{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;**LangChain** is an open-source framework designed to help developers build applications powered by large language models by seamlessly connecting them to external data sources, tools, and APIs.&#39;, &#39;extras&#39;: {&#39;signature&#39;: ...}}], followed by a very long signature string. The text part is boxed in red." width="1393" height="435"><figcaption>This run printed <code>response.content</code>: the answer (boxed) arrives inside a list of content blocks, followed by a long signature.</figcaption></figure>
+  <div class="sticky info"><strong><code>.content</code> vs <code>.text</code></strong> The source program ended with <code>print(response.content)</code>. With newer Gemini models, <code>content</code> is a <b>list of content blocks</b> (type, text and extras such as a signature), which is what the screenshot shows. <code>response.text</code>, used in the code above, gives you just the answer string: “LangChain is an open-source framework designed to help developers build applications powered by large language models…”.</div>
   <div class="sticky warn l"><strong>Never commit <code>.env</code></strong> Add <code>.env</code> and <code>.venv/</code> to <code>.gitignore</code> before your first commit. A leaked API key can be used by anyone, on your bill.</div>
   <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer’s machine, pin versions (<code>pip freeze &gt; requirements.txt</code>). LangChain moves fast, and an unpinned install next month can break imports that worked today.</div>
 </section>
@@ -924,6 +936,6 @@ print(response.text)</code></pre></div>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

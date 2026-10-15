@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-06">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-advanced/pydantic">
@@ -32,16 +32,22 @@
     print(f"{sender_name} is shipping {packages_count} package(s)")
 
 register_shipment("Rohan Mehta", "three")</code></pre>
-  <pre class="out"><code>Rohan Mehta is shipping three package(s)</code></pre>
-  <p>Python runs this without complaint, even though <code>"three"</code> is text, not a number. If a later part of the program does maths with <code>packages_count</code> (say, adding up packages across many shipments), it crashes there, and it is hard to trace the problem back to here.</p>
+  <figure class="shot">
+    <img src="img/01.webp" alt="VS Code: register_shipment called with the text three; the terminal prints Rohan Mehta is shipping three package(s)" width="1348" height="540">
+    <figcaption>Nothing complains: <code>"three"</code> goes straight through.</figcaption>
+  </figure>
+  <p>This function expects <code>packages_count</code> to be a number, but nothing forces the caller to send one. Python runs this without complaint, even though <code>"three"</code> is text, not a number. If a later part of the program does maths with <code>packages_count</code> (say, adding up packages across many shipments), it crashes there, and it is hard to trace the problem back to here.</p>
 
   <h3>Type hints don't fix it</h3>
   <pre><code class="language-python">def register_shipment(sender_name: str, packages_count: int):
     print(f"{sender_name} is shipping {packages_count} package(s)")
 
 register_shipment("Rohan Mehta", "three")</code></pre>
-  <pre class="out"><code>Rohan Mehta is shipping three package(s)</code></pre>
-  <p>Same result. Type hints in plain Python are <b>notes for humans and code editors</b>. Python ignores them while running the code.</p>
+  <figure class="shot">
+    <img src="img/02.webp" alt="VS Code: the same function with type hints str and int; the terminal still prints Rohan Mehta is shipping three package(s)" width="1228" height="516">
+    <figcaption>Same output, even with <code>packages_count: int</code> in the signature.</figcaption>
+  </figure>
+  <p>This looks like it should stop the mistake, but it does not. Same result: the hint <code>packages_count: int</code> was completely ignored. Type hints in plain Python are <b>notes for humans and code editors</b>. Python ignores them while running the code.</p>
 
   <h3>Manual checks work, but don't scale</h3>
   <pre><code class="language-python">def register_shipment(sender_name, packages_count):
@@ -50,7 +56,10 @@ register_shipment("Rohan Mehta", "three")</code></pre>
     print(f"{sender_name} is shipping {packages_count} package(s)")
 
 register_shipment("Rohan Mehta", "three")</code></pre>
-  <pre class="out"><code>TypeError: Invalid data type</code></pre>
+  <figure class="shot">
+    <img src="img/03.webp" alt="VS Code: register_shipment with isinstance checks; the terminal shows a traceback ending in TypeError: Invalid data type" width="1125" height="667">
+    <figcaption>The manual check catches it: <code>TypeError: Invalid data type</code>.</figcaption>
+  </figure>
   <p>This works, but every function that uses shipment data would need the same checks copied in, which makes the code messy and easy to break. And there is a second problem: <code>packages_count</code> could be <code>-5</code>. It is an <code>int</code>, but it makes no real-world sense.</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Type checking</h4><p>Is it the <b>right kind</b> of value? <code>"three"</code> is not an int.</p></div>
@@ -101,6 +110,10 @@ register_shipment("Rohan Mehta", "three")</code></pre>
   <h3>Installing Pydantic</h3>
   <pre><code class="language-bash">pip install pydantic                # first install
 pip install --upgrade pydantic      # if you already have an old version</code></pre>
+  <figure class="shot">
+    <img src="img/04.webp" alt="Terminal: pip install pydantic downloads and installs pydantic 2.13.5 and pydantic-core 2.46.5, replacing pydantic_core 2.46.4" width="1234" height="591">
+    <figcaption>Installing Pydantic: here version 2.13.5 is installed.</figcaption>
+  </figure>
   <div class="sticky info"><strong>Always use version 2.</strong> Pydantic has two major versions. Version 2 is much faster (its core is written in Rust) and its method names differ from v1 (<code>model_dump()</code> instead of <code>dict()</code>, <code>field_validator</code> instead of <code>validator</code>). Every example here is Pydantic v2. Check yours with <code>python -c "import pydantic; print(pydantic.VERSION)"</code>.</div>
 </section>
 
@@ -118,21 +131,28 @@ class ShipmentBooking(BaseModel):
   <pre><code class="language-python">data = {"sender_name": "Rohan Mehta", "packages_count": 3}
 shipment1 = ShipmentBooking(**data)     # ** unpacks the dict into keyword arguments
 print(shipment1)</code></pre>
-  <pre class="out"><code>sender_name='Rohan Mehta' packages_count=3</code></pre>
+  <figure class="shot">
+    <img src="img/05.webp" alt="VS Code: ShipmentBooking model with sender_name and packages_count; printing shipment1 shows sender_name='Rohan Mehta' packages_count=3" width="823" height="583">
+    <figcaption>A valid object: <code>sender_name='Rohan Mehta' packages_count=3</code>.</figcaption>
+  </figure>
   <p>Now send bad data:</p>
   <pre><code class="language-python">bad_data = {"sender_name": "Rohan Mehta", "packages_count": "three"}
 shipment2 = ShipmentBooking(**bad_data)</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-packages_count
-  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='three', input_type=str]</code></pre>
+  <figure class="shot">
+    <img src="img/06.webp" alt="VS Code: bad_data with packages_count three; the terminal shows ValidationError: 1 validation error for ShipmentBooking, packages_count, Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='three', input_type=str]" width="1400" height="741">
+    <figcaption>Pydantic stops the bad data with a <code>ValidationError</code> that names the field, the problem and the input.</figcaption>
+  </figure>
   <p>We wrote no checking code. Pydantic did it automatically, just from the type in the class.</p>
-  <div class="sticky tip l"><strong>Reading a ValidationError</strong> Line 1 says how many errors and which model. Then, for each error: the <b>field name</b>, a plain-English <b>message</b>, and in brackets the error <b>type</b> and the bad <b>input</b>. Real output also ends with a link to the Pydantic docs for that error type; we leave it out in these notes.</div>
+  <div class="sticky tip l"><strong>Reading a ValidationError</strong> Line 1 says how many errors and which model. Then, for each error: the <b>field name</b>, a plain-English <b>message</b>, and in brackets the error <b>type</b> and the bad <b>input</b>. Real output also ends with a link to the Pydantic docs for that error type; you can see it on the last line of the screenshot above.</div>
   <h3>Use the checked object</h3>
   <pre><code class="language-python">def register_shipment(shipment: ShipmentBooking):
     print(f"Registered: {shipment.sender_name}, {shipment.packages_count} package(s)")
 
 register_shipment(shipment1)</code></pre>
-  <pre class="out"><code>Registered: Rohan Mehta, 3 package(s)</code></pre>
+  <figure class="shot">
+    <img src="img/07.webp" alt="VS Code: register_shipment takes a ShipmentBooking and prints Registered: Rohan Mehta, 3 package(s)" width="1149" height="628">
+    <figcaption>The function just uses the checked object: <code>Registered: Rohan Mehta, 3 package(s)</code>.</figcaption>
+  </figure>
   <p><code>register_shipment()</code> checks nothing itself. It trusts <code>shipment</code> because Pydantic already validated it. An <code>update_shipment()</code> function could accept the same <code>ShipmentBooking</code> type, again with no repeated checking code.</p>
 </section>
 
@@ -154,7 +174,10 @@ data = {
 }
 shipment1 = ShipmentBooking(**data)
 print(shipment1)</code></pre>
-  <pre class="out"><code>sender_name='Rohan Mehta' packages_count=3 package_weight_kg=12.5 is_fragile=True</code></pre>
+  <figure class="shot">
+    <img src="img/08.webp" alt="VS Code: model with str, int, float and bool fields; output sender_name='Rohan Mehta' packages_count=3 package_weight_kg=12.5 is_fragile=True" width="1021" height="703">
+    <figcaption>Each field is checked against its own type.</figcaption>
+  </figure>
 
   <h3>Lists and dictionaries: say what goes inside</h3>
   <p>Sometimes a field holds several values, like a list of handling instructions or key-value details about the package. If you write plain <code>list</code> or <code>dict</code>, Pydantic only checks the <b>container</b>, not what is inside it:</p>
@@ -177,7 +200,10 @@ data = {
 }
 shipment1 = ShipmentBooking(**data)
 print(shipment1)</code></pre>
-  <pre class="out"><code>sender_name='Rohan Mehta' handling_notes=['Keep upright', 'Do not stack'] package_meta={'customs_code': 'CN2201', 'insurance_number': 'INS7788'}</code></pre>
+  <figure class="shot">
+    <img src="img/09.webp" alt="VS Code: handling_notes List[str] and package_meta Dict[str, str]; the output shows both the list and the dictionary" width="1400" height="555">
+    <figcaption>A typed list and a typed dictionary, both accepted.</figcaption>
+  </figure>
   <p><code>List[str]</code> means “a list where <b>every</b> item must be text”. Put a number inside and Pydantic rejects it, pointing at the exact position:</p>
   <pre class="out"><code>1 validation error for ShipmentBooking
 handling_notes.1
@@ -223,9 +249,11 @@ handling_notes.1
     "package_meta": {"customs_code": "CN2201"}
 }
 shipment1 = ShipmentBooking(**data)</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-handling_notes
-  Field required [type=missing, input_value={'sender_name': 'Rohan Me...ustoms_code': 'CN2201'}}, input_type=dict]</code></pre>
+  <p>In Pydantic every field is <b>required by default</b>. <code>handling_notes</code> is required but not provided, so Pydantic rejects the data:</p>
+  <figure class="shot">
+    <img src="img/10.webp" alt="VS Code: data without handling_notes; the terminal shows ValidationError, handling_notes, Field required [type=missing]" width="1400" height="701">
+    <figcaption><code>handling_notes</code>: <b>Field required</b> <code>[type=missing]</code>.</figcaption>
+  </figure>
   <p>This guarantees that <b>required information is always provided</b> before the object exists.</p>
   <h3>Making a field optional</h3>
   <p>Use <code>Optional</code> from <code>typing</code> <b>and</b> give the field a default of <code>None</code>:</p>
@@ -239,7 +267,10 @@ class ShipmentBooking(BaseModel):
 data = {"sender_name": "Rohan Mehta", "package_meta": {"customs_code": "CN2201"}}
 shipment1 = ShipmentBooking(**data)
 print(shipment1.handling_notes)</code></pre>
-  <pre class="out"><code>None</code></pre>
+  <figure class="shot">
+    <img src="img/11.webp" alt="VS Code: handling_notes: Optional[List[str]] = None; printing shipment1.handling_notes shows None" width="1400" height="448">
+    <figcaption>Left out, so it comes through as <code>None</code>.</figcaption>
+  </figure>
   <div class="sticky warn"><strong><code>Optional[...]</code> alone is not enough.</strong> <code>Optional[List[str]]</code> only means “a list of strings <i>or</i> None”. Without <code>= None</code>, the field is still <b>required</b> (you would have to pass <code>None</code> explicitly). The default is what makes it optional. <code>List[str] | None = None</code> is the newer spelling of the same thing.</div>
   <h3>A normal default value</h3>
   <pre><code class="language-python">class ShipmentBooking(BaseModel):
@@ -248,7 +279,10 @@ print(shipment1.handling_notes)</code></pre>
 
 shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
 print(shipment1.is_fragile)</code></pre>
-  <pre class="out"><code>False</code></pre>
+  <figure class="shot">
+    <img src="img/12.webp" alt="VS Code: is_fragile: bool = False; printing shipment1.is_fragile shows False" width="1400" height="340">
+    <figcaption>The default <code>False</code> is used.</figcaption>
+  </figure>
   <p><code>is_fragile</code> was not provided, so Pydantic used the default <code>False</code>.</p>
 </section>
 
@@ -266,11 +300,16 @@ class ShipmentBooking(BaseModel):
 
 shipment1 = ShipmentBooking(sender_name="Rohan Mehta", sender_email="rohan@cargolink.com")
 print(shipment1)</code></pre>
-  <pre class="out"><code>sender_name='Rohan Mehta' sender_email='rohan@cargolink.com'</code></pre>
+  <figure class="shot">
+    <img src="img/13.webp" alt="VS Code: sender_email: EmailStr with rohan@cargolink.com; output sender_name='Rohan Mehta' sender_email='rohan@cargolink.com'" width="1400" height="346">
+    <figcaption>A valid email is accepted.</figcaption>
+  </figure>
+  <p>If an invalid email is provided:</p>
   <pre><code class="language-python">shipment2 = ShipmentBooking(sender_name="Rohan Mehta", sender_email="rohan-cargolink.com")</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-sender_email
-  value is not a valid email address: An email address must have an @-sign. [type=value_error, input_value='rohan-cargolink.com', input_type=str]</code></pre>
+  <figure class="shot">
+    <img src="img/14.webp" alt="VS Code: sender_email rohan-cargolink.com; the terminal shows ValidationError, sender_email, value is not a valid email address: An email address must have an @-sign." width="1400" height="484">
+    <figcaption>No <code>@</code>, so the email is rejected.</figcaption>
+  </figure>
   <h3>Web addresses with <code>AnyUrl</code></h3>
   <pre><code class="language-python">from pydantic import BaseModel, AnyUrl
 
@@ -279,12 +318,17 @@ class ShipmentBooking(BaseModel):
 
 shipment1 = ShipmentBooking(courier_partner_url="https://cargolink.com/swift-express")
 print(shipment1)</code></pre>
-  <pre class="out"><code>courier_partner_url=AnyUrl('https://cargolink.com/swift-express')</code></pre>
+  <figure class="shot">
+    <img src="img/15.webp" alt="VS Code: courier_partner_url: AnyUrl; output courier_partner_url=AnyUrl('https://cargolink.com/swift-express')" width="1400" height="305">
+    <figcaption>A valid URL becomes a URL object.</figcaption>
+  </figure>
   <p>The value is now a URL object, not a plain string (older 2.x releases print it as <code>Url('…')</code>). A string without a scheme is rejected:</p>
   <pre><code class="language-python">shipment2 = ShipmentBooking(courier_partner_url="cargolink.com")</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-courier_partner_url
-  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='cargolink.com', input_type=str]</code></pre>
+  <figure class="shot">
+    <img src="img/16.webp" alt="VS Code: courier_partner_url cargolink.com; the terminal shows ValidationError, courier_partner_url, Input should be a valid URL, relative URL without a base [type=url_parsing]" width="1400" height="534">
+    <figcaption><code>cargolink.com</code> has no scheme, so it is “a relative URL without a base”.</figcaption>
+  </figure>
+  <p>Without writing any regular expressions yourself, Pydantic validates both email addresses and web addresses.</p>
   <div class="sticky tip"><strong>Need only web links?</strong> <code>AnyUrl</code> accepts any scheme (<code>ftp://</code>, <code>postgres://</code>…). Pydantic also has <code>HttpUrl</code>, which accepts only <code>http</code> and <code>https</code>.</div>
 </section>
 
@@ -299,9 +343,16 @@ class ShipmentBooking(BaseModel):
 
 ShipmentBooking(package_weight_kg=5.5)          # valid
 shipment1 = ShipmentBooking(package_weight_kg=-4.5)</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-package_weight_kg
-  Input should be greater than 0 [type=greater_than, input_value=-4.5, input_type=float]</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/17.webp" alt="VS Code: package_weight_kg: float = Field(gt=0) with 5.5; output package_weight_kg=5.5" width="1400" height="383">
+      <figcaption><code>5.5</code> is greater than 0: valid.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/18.webp" alt="VS Code: the same model with -4.5; the terminal shows ValidationError, package_weight_kg, Input should be greater than 0 [type=greater_than]" width="1400" height="453">
+      <figcaption><code>-4.5</code>: “Input should be greater than 0”.</figcaption>
+    </figure>
+  </div>
   <h3>The four comparison constraints</h3>
   <div class="tbl"><table>
     <tr><th>Constraint</th><th>Meaning</th><th>Example</th><th>Same as</th></tr>
@@ -316,15 +367,26 @@ package_weight_kg
     delivery_priority_level: int = Field(gt=0, le=5)   # value &gt; 0 AND value &lt;= 5
 
 shipment1 = ShipmentBooking(delivery_priority_level=6)</code></pre>
-  <pre class="out"><code>pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-delivery_priority_level
-  Input should be less than or equal to 5 [type=less_than_equal, input_value=6, input_type=int]</code></pre>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/19.webp" alt="VS Code: delivery_priority_level: int = Field(gt=0, le=5) with 3; output delivery_priority_level=3" width="1400" height="407">
+      <figcaption><code>3</code> is inside the range: valid.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/20.webp" alt="VS Code: the same model with 6; the terminal shows ValidationError, delivery_priority_level, Input should be less than or equal to 5 [type=less_than_equal]" width="1400" height="455">
+      <figcaption><code>6</code>: “Input should be less than or equal to 5”.</figcaption>
+    </figure>
+  </div>
   <h3><code>Field()</code> with text and lists</h3>
   <pre><code class="language-python">from typing import List, Optional
 
 class ShipmentBooking(BaseModel):
     sender_name: str = Field(max_length=50)
     handling_notes: Optional[List[str]] = Field(default=None, max_length=5)</code></pre>
+  <figure class="shot">
+    <img src="img/21.webp" alt="VS Code: sender_name Field(max_length=50) and handling_notes Field(default=None, max_length=5) with Kumar Deepak and three notes; the output shows both values accepted" width="1400" height="509">
+    <figcaption>A short name and three notes are within the limits, so the object is created.</figcaption>
+  </figure>
   <ul>
     <li><code>max_length=50</code> on a string: at most 50 characters.</li>
     <li><code>max_length=5</code> on a list: at most 5 items.</li>
@@ -352,6 +414,11 @@ class ShipmentBooking(BaseModel):
             examples=["Rohan Mehta", "Ananya Iyer"]
         )
     ]</code></pre>
+  <figure class="shot">
+    <img src="img/22.webp" alt="VS Code: sender_name Annotated with Field max_length, title, description and examples; output sender_name='My name is Rohan Mehta .'" width="1400" height="552">
+    <figcaption>The metadata does not change validation: any name up to 50 characters is accepted.</figcaption>
+  </figure>
+  <p>Here <code>max_length=50</code> validates the value, while <code>title</code>, <code>description</code> and <code>examples</code> provide documentation only.</p>
   <div class="sticky fde"><strong>In the field (FDE)</strong> When you wrap a customer’s system in an API, <code>description</code> and <code>examples</code> are what their developers read in <code>/docs</code>. A one-line description on each field saves you a dozen “what does this field mean?” emails.</div>
 
   <h3>When Pydantic auto-converts data (and how to stop it)</h3>
@@ -361,7 +428,10 @@ class ShipmentBooking(BaseModel):
 
 shipment1 = ShipmentBooking(package_weight_kg="25.5")
 print(shipment1.package_weight_kg, type(shipment1.package_weight_kg))</code></pre>
-  <pre class="out"><code>25.5 &lt;class 'float'&gt;</code></pre>
+  <figure class="shot">
+    <img src="img/23.webp" alt="VS Code: package_weight_kg passed as the string 25.5; output 25.5 &lt;class 'float'&gt;" width="1400" height="351">
+    <figcaption>The string <code>"25.5"</code> comes out as a <code>float</code>.</figcaption>
+  </figure>
   <p>The string <code>"25.5"</code> became the float <code>25.5</code>. (This is why <code>"3"</code> is accepted for an <code>int</code> field, while <code>"three"</code> is not.) To accept <b>only</b> a real number, add <code>strict=True</code>:</p>
   <pre><code class="language-python">class ShipmentBooking(BaseModel):
     package_weight_kg: Annotated[float, Field(gt=0, strict=True)]
@@ -394,12 +464,18 @@ class ShipmentBooking(BaseModel):
     <div class="card t2 tilt-b"><h4>Returns if valid</h4><p>Receives the value and <b>returns</b> it (the returned value is what gets stored).</p></div>
     <div class="card t3 tilt-a"><h4>Raises if invalid</h4><p><code>raise ValueError("…")</code>. Pydantic turns it into a ValidationError.</p></div>
   </div>
-  <pre><code class="language-python">print(ShipmentBooking(sender_email="rohan@cargolink.com"))
-shipment2 = ShipmentBooking(sender_email="rohan@gmail.com")</code></pre>
-  <pre class="out"><code>sender_email='rohan@cargolink.com'
-pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-sender_email
-  Value error, email must belong to a registered partner domain [type=value_error, input_value='rohan@gmail.com', input_type=str]</code></pre>
+  <pre><code class="language-python">shipment1 = ShipmentBooking(sender_email="rohan@cargolink.com")
+print(shipment1)</code></pre>
+  <figure class="shot">
+    <img src="img/24.webp" alt="VS Code: field_validator check_partner_domain; rohan@cargolink.com prints sender_email='rohan@cargolink.com'" width="1400" height="688">
+    <figcaption>A partner domain passes.</figcaption>
+  </figure>
+  <p>An email from another domain:</p>
+  <pre><code class="language-python">shipment2 = ShipmentBooking(sender_email="rohan@gmail.com")</code></pre>
+  <figure class="shot">
+    <img src="img/25.webp" alt="VS Code: rohan@gmail.com; the terminal shows ValidationError, sender_email, Value error, email must belong to a registered partner domain" width="1400" height="647">
+    <figcaption>Your <code>ValueError</code> message appears inside the ValidationError, after “Value error,”.</figcaption>
+  </figure>
   <h3>A field validator can also change the value</h3>
   <p>Because the returned value is what gets stored, a validator can <b>transform</b> data, for example store every sender name in uppercase:</p>
   <pre><code class="language-python">class ShipmentBooking(BaseModel):
@@ -412,7 +488,10 @@ sender_email
 
 shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
 print(shipment1.sender_name)</code></pre>
-  <pre class="out"><code>ROHAN MEHTA</code></pre>
+  <figure class="shot">
+    <img src="img/26.webp" alt="VS Code: field_validator to_uppercase returns value.upper(); printing sender_name shows ROHAN MEHTA" width="1400" height="396">
+    <figcaption>The stored value is the one the validator returned: <code>ROHAN MEHTA</code>.</figcaption>
+  </figure>
 
   <h3>Before or after: when does the validator run?</h3>
   <figure>
@@ -466,11 +545,11 @@ print(shipment1.sender_name)</code></pre>
         raise ValueError("must be between 1 and 5")
 
 shipment1 = ShipmentBooking(delivery_priority_level="3")</code></pre>
-  <pre class="out"><code>Traceback (most recent call last):
-  ...
-  File "main.py", line 7, in check_range
-    if 0 &lt; value &lt; 6:
-TypeError: '&lt;' not supported between instances of 'int' and 'str'</code></pre>
+  <figure class="shot">
+    <img src="img/27.webp" alt="VS Code: field_validator with mode before receives the string 3; the traceback ends at if 0 &lt; value &lt; 6 with TypeError: '&lt;' not supported between instances of 'int' and 'str'" width="1400" height="521">
+    <figcaption>The real run: a plain <code>TypeError</code> traceback from inside <code>check_range</code>.</figcaption>
+  </figure>
+  <div class="sticky info l"><strong>Note on the original text</strong> The original notes printed this as a <code>ValidationError</code> (“Value error, '&lt;' not supported…”). The screenshot shows what really happens: a raw <code>TypeError</code>, because Pydantic wraps only <code>ValueError</code> and <code>AssertionError</code>.</div>
   <p>The validator received the <b>string</b> <code>"3"</code>, and Python cannot compare a number with a string. Notice that this is a raw <code>TypeError</code> that crashes the program, <b>not</b> a neat ValidationError: <mark>Pydantic only converts <code>ValueError</code> (and <code>AssertionError</code>) raised in a validator into a ValidationError.</mark> Switch to <code>mode="after"</code> and it works:</p>
   <pre><code class="language-python">class ShipmentBooking(BaseModel):
     delivery_priority_level: int
@@ -484,7 +563,10 @@ TypeError: '&lt;' not supported between instances of 'int' and 'str'</code></pre
 
 shipment1 = ShipmentBooking(delivery_priority_level="3")
 print(shipment1.delivery_priority_level)</code></pre>
-  <pre class="out"><code>3</code></pre>
+  <figure class="shot">
+    <img src="img/28.webp" alt="VS Code: the same validator with mode after; printing delivery_priority_level shows 3" width="1400" height="563">
+    <figcaption>With <code>mode="after"</code> the validator gets the integer <code>3</code>.</figcaption>
+  </figure>
   <p>Pydantic first converted <code>"3"</code> into <code>3</code>, then the validator checked it.</p>
   <div class="sticky tip l"><strong>When is <code>before</code> useful?</strong> For cleaning raw input before the type check, e.g. stripping spaces or turning <code>"1,200"</code> into <code>"1200"</code>. Just remember the value can be of any type at that point.</div>
 </section>
@@ -510,9 +592,15 @@ class ShipmentBooking(BaseModel):
 print(shipment1)
 
 shipment2 = ShipmentBooking(package_value=75000, package_meta={"customs_code": "CN2201"})</code></pre>
-  <pre class="out"><code>package_value=30000.0 package_meta={'customs_code': 'CN2201'}
-pydantic_core._pydantic_core.ValidationError: 1 validation error for ShipmentBooking
-  Value error, packages over 50,000 must include an insurance_number [type=value_error, input_value={'package_value': 75000, ...ustoms_code': 'CN2201'}}, input_type=dict]</code></pre>
+  <figure class="shot">
+    <img src="img/29.webp" alt="VS Code: model_validator(mode='after') written as a classmethod check_insurance(cls, model); the output starts with a PydanticDeprecatedSince212 warning, then package_value=30000.0 package_meta={'customs_code': 'CN2201'}" width="1400" height="521">
+    <figcaption><code>30000</code> passes. Note the <b>deprecation warning</b> at the top of the output.</figcaption>
+  </figure>
+  <figure class="shot">
+    <img src="img/30.webp" alt="VS Code: the same model with package_value 75000; after the deprecation warning, ValidationError: Value error, packages over 50,000 must include an insurance_number" width="1400" height="545">
+    <figcaption><code>75000</code> without an insurance number fails.</figcaption>
+  </figure>
+  <div class="sticky info"><strong>Why the screenshots look different</strong> They use the older style from the original notes, <code>@classmethod</code> with <code>check_insurance(cls, model)</code>. Their output shows the cost: <code>PydanticDeprecatedSince212 … Instead, use an instance method</code>. The <code>self</code> version on this page gives the same results without the warning.</div>
   <p>Note that <code>30000</code> was stored as <code>30000.0</code> (coerced to <code>float</code>), and that the error has no field name above it, because it belongs to the whole model.</p>
   <div class="sticky warn"><strong>Version note</strong> Older tutorials write an after-mode model validator as a <code>@classmethod</code> taking <code>(cls, model)</code>. Since Pydantic 2.12 that style is <b>deprecated</b> and prints a warning; use an ordinary method with <code>self</code>, as above.</div>
   <div class="flow"><span class="hl">one field on its own</span><span class="op">field_validator</span></div>
@@ -535,10 +623,14 @@ class DeliveryTrip(BaseModel):
         return round(self.distance_km / self.fuel_used_liters, 2)
 
 trip1 = DeliveryTrip(distance_km=180, fuel_used_liters=15)
-print(trip1.fuel_efficiency)
-print(trip1.model_dump())</code></pre>
-  <pre class="out"><code>12.0
-{'distance_km': 180.0, 'fuel_used_liters': 15.0, 'fuel_efficiency': 12.0}</code></pre>
+print(trip1.fuel_efficiency)</code></pre>
+  <figure class="shot">
+    <img src="img/31.webp" alt="VS Code: DeliveryTrip with a computed_field fuel_efficiency; printing trip1.fuel_efficiency shows 12.0" width="1400" height="396">
+    <figcaption><code>fuel_efficiency</code> was never given as input, yet it is <code>12.0</code>.</figcaption>
+  </figure>
+  <p>A computed field is also part of the exported data:</p>
+  <pre><code class="language-python">print(trip1.model_dump())</code></pre>
+  <pre class="out"><code>{'distance_km': 180.0, 'fuel_used_liters': 15.0, 'fuel_efficiency': 12.0}</code></pre>
   <ul>
     <li>Two decorators, in this order: <code>@computed_field</code> on top, <code>@property</code> right below.</li>
     <li><code>-&gt; float</code> tells Pydantic the type of the result.</li>
@@ -564,12 +656,18 @@ class ShipmentBooking(BaseModel):
 
 address1 = ShipmentAddress(city="Gurugram", state="Haryana", pincode="122001")
 shipment1 = ShipmentBooking(sender_name="Rohan Mehta", delivery_address=address1)
-print(shipment1)
-print(shipment1.delivery_address.city)
+print(shipment1)</code></pre>
+  <figure class="shot">
+    <img src="img/32.webp" alt="VS Code: ShipmentAddress nested inside ShipmentBooking; output sender_name='Rohan Mehta' delivery_address=ShipmentAddress(city='Gurugram', state='Haryana', pincode='122001')" width="1400" height="480">
+    <figcaption>The inner model prints as <code>ShipmentAddress(...)</code>.</figcaption>
+  </figure>
+  <p>You reach the inner fields by chaining dots:</p>
+  <pre><code class="language-python">print(shipment1.delivery_address.city)
 print(shipment1.delivery_address.pincode)</code></pre>
-  <pre class="out"><code>sender_name='Rohan Mehta' delivery_address=ShipmentAddress(city='Gurugram', state='Haryana', pincode='122001')
-Gurugram
-122001</code></pre>
+  <figure class="shot">
+    <img src="img/33.webp" alt="VS Code: printing shipment1.delivery_address.city and .pincode shows Gurugram and 122001" width="1400" height="521">
+    <figcaption><code>Gurugram</code> and <code>122001</code>.</figcaption>
+  </figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="A ShipmentBooking box containing sender_name and a nested ShipmentAddress box with city, state and pincode. You reach inner fields with chained dots.">
       <g class="rough">
@@ -605,18 +703,42 @@ Gurugram
 <section class="ch" id="export">
   <h2>Turning a model into a dictionary or JSON</h2>
   <p>A validated object often has to go somewhere else: an API response, a log file, a database. Every model has two built-in export methods. Using <code>shipment1</code> from the nested example:</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">to a Python dict</span><pre><code class="language-python">shipment_dict = shipment1.model_dump()
+  <h3><code>model_dump()</code>: convert to a Python dictionary</h3>
+  <pre><code class="language-python">shipment_dict = shipment1.model_dump()
 print(shipment_dict)
-print(type(shipment_dict))</code></pre></div>
-    <div class="codebox"><span class="cap">to a JSON string</span><pre><code class="language-python">shipment_json = shipment1.model_dump_json()
-print(shipment_json)</code></pre></div>
-  </div>
-  <pre class="out"><code>{'sender_name': 'Rohan Mehta', 'delivery_address': {'city': 'Gurugram', 'state': 'Haryana', 'pincode': '122001'}}
-&lt;class 'dict'&gt;
-{"sender_name":"Rohan Mehta","delivery_address":{"city":"Gurugram","state":"Haryana","pincode":"122001"}}</code></pre>
+print(type(shipment_dict))</code></pre>
+  <figure class="shot">
+    <img src="img/34.webp" alt="VS Code: shipment1.model_dump() prints a nested dictionary and &lt;class 'dict'&gt;" width="1400" height="542">
+    <figcaption>A plain Python <code>dict</code>, with the nested address as an inner dict.</figcaption>
+  </figure>
+  <h3><code>model_dump_json()</code>: convert to a JSON string</h3>
+  <pre><code class="language-python">shipment_json = shipment1.model_dump_json()
+print(shipment_json)</code></pre>
+  <figure class="shot">
+    <img src="img/35.webp" alt="VS Code: shipment1.model_dump_json() prints a compact JSON string with double quotes" width="1400" height="521">
+    <figcaption>A compact JSON string.</figcaption>
+  </figure>
   <p>Note the difference: the dict uses Python’s single quotes; the JSON string uses double quotes and no spaces, ready to send over the network.</p>
   <h3>Choosing exactly what gets exported</h3>
+  <p><code>include</code> keeps only the fields you name:</p>
+  <pre><code class="language-python">shipment1.model_dump(include={"sender_name"})</code></pre>
+  <figure class="shot">
+    <img src="img/36.webp" alt="VS Code: model_dump(include={'sender_name'}) prints {'sender_name': 'Rohan Mehta'}" width="1400" height="500">
+    <figcaption>Only <code>sender_name</code> is kept.</figcaption>
+  </figure>
+  <p><code>exclude</code> keeps everything except the fields you name:</p>
+  <pre><code class="language-python">shipment1.model_dump(exclude={"sender_name"})</code></pre>
+  <figure class="shot">
+    <img src="img/37.webp" alt="VS Code: model_dump(exclude={'sender_name'}) prints only the delivery_address dictionary" width="1400" height="500">
+    <figcaption>Everything except <code>sender_name</code>.</figcaption>
+  </figure>
+  <p>You can even exclude a field inside a nested model:</p>
+  <pre><code class="language-python">shipment1.model_dump(exclude={"delivery_address": {"state"}})</code></pre>
+  <figure class="shot">
+    <img src="img/38.webp" alt="VS Code: model_dump(exclude={'delivery_address': {'state'}}) prints sender_name and an address without state" width="1400" height="521">
+    <figcaption><code>state</code> is gone from inside the address.</figcaption>
+  </figure>
+  <p>In short:</p>
   <div class="tbl"><table>
     <tr><th>Call</th><th>Result</th></tr>
     <tr><td><code>model_dump(include={"sender_name"})</code></td><td><code>{'sender_name': 'Rohan Mehta'}</code></td></tr>
@@ -631,7 +753,10 @@ print(shipment_json)</code></pre></div>
 
 shipment1 = ShipmentBooking(sender_name="Rohan Mehta")
 print(shipment1.model_dump(exclude_unset=True))</code></pre>
-  <pre class="out"><code>{'sender_name': 'Rohan Mehta'}</code></pre>
+  <figure class="shot">
+    <img src="img/39.webp" alt="VS Code: model_dump(exclude_unset=True) prints {'sender_name': 'Rohan Mehta'}" width="1400" height="307">
+    <figcaption><code>is_fragile</code> is left out.</figcaption>
+  </figure>
   <p><code>is_fragile</code> was never passed in, so it is left out, even though the object still holds <code>is_fragile = False</code>. This is exactly what a PATCH-style update needs: “only the fields the client actually sent”.</p>
   <div class="sticky fde l"><strong>In the field (FDE)</strong> Before writing customer data into logs, use <code>exclude</code> to drop sensitive fields (phone numbers, insurance numbers, tokens). One line keeps personal data out of places it should never be.</div>
 </section>
@@ -789,6 +914,6 @@ class ShipmentBooking(BaseModel):
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

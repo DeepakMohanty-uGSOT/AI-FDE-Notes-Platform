@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-10">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="linux/terminal-and-shell">
@@ -29,6 +29,8 @@
     <div class="card t1 tilt-a"><h4>GUI · Graphical User Interface</h4><p><b>How it works:</b> you click icons, open windows and navigate menus with a mouse.</p><p><b>Why use it:</b> intuitive and beginner-friendly. You explore visually without memorising anything.</p></div>
     <div class="card t6 tilt-b"><h4>CLI · Command-Line Interface</h4><p><b>How it works:</b> you type precise text commands into a terminal.</p><p><b>Why use it:</b> much faster for complex tasks, precise, and easy to automate. Linux servers are built around CLI control to save resources.</p></div>
   </div>
+  <p>The basic idea:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Illustration: the user reaches the operating system either through a GUI (desktop with windows and icons) or a CLI (terminal with ls and mkdir commands); the OS then uses system resources: CPU, memory, storage, input devices, output devices" width="1400" height="933"><figcaption>Two roads to the same OS: click through a GUI or type into a CLI. Either way, the OS drives the hardware.</figcaption></figure>
   <div class="story"><b class="lbl">Pointing at the menu vs ordering by name</b>At a busy dhaba you can point at pictures on the menu card (GUI): easy, but slow if you want twelve things. Or you can say “two masala dosa, one filter coffee, no sugar” (CLI): <mark>you need to know the words, but once you do, it is fast, exact and repeatable.</mark></div>
 </section>
 
@@ -63,6 +65,7 @@
 <section class="ch" id="terminal">
   <h2>What is a terminal?</h2>
   <p>A <mark>terminal</mark> is a text-based interface where you <b>enter commands and see the results</b>. Open one and you see a prompt where you can type something like <code>ls</code>. The terminal takes your keyboard input and displays whatever the command prints. Its job is <b>input and output</b>:</p>
+  <figure class="shot sm"><img src="img/02.webp" alt="Terminal window with the prompt ubuntu@ip-172-31-15-170:~$ and the command ls typed after it" width="514" height="169"><figcaption>A terminal with <code>ls</code> typed at the prompt, waiting for Enter.</figcaption></figure>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>Input</h4><p>Receives what you type on the keyboard.</p></div>
     <div class="card t2 tilt-b"><h4>Output</h4><p>Displays the results on screen.</p></div>
@@ -146,6 +149,8 @@
     <tr><td></td><td>Handles built-in features such as changing directories</td></tr>
     <tr><td></td><td>Displays the results of the command</td></tr>
   </table></div>
+  <h3>The complete relationship</h3>
+  <figure class="shot"><img src="img/03.webp" alt="Illustration in two flows. Command flow: 1 keyboard (you type ls), 2 terminal accepts keystrokes and sends them to the shell, 3 shell interprets the command, 4 command processing: shell prepares and executes it, then the operating system manages CPU, memory, storage and devices. Result flow: 5 result generated (list of files), 6 shell receives and formats it, 7 terminal displays it on screen." width="1400" height="933"><figcaption>Command flow down to the OS (steps 1–4), result flow back up to your screen (steps 5–7).</figcaption></figure>
 </section>
 
 <!-- 7 -->
@@ -182,10 +187,10 @@
     <li><span class="dot">1</span><div><b>You enter a command</b>You type <code>ls</code> and press Enter.</div></li>
     <li><span class="dot">2</span><div><b>The terminal receives the input</b>It collects each character and passes the finished line to the shell running inside it.</div></li>
     <li><span class="dot">3</span><div><b>The shell reads the command</b>Bash (our example shell) receives the text <code>ls</code>.</div></li>
-    <li><span class="dot">4</span><div><b>The shell interprets it</b>Which command is it? Is it a <b>built-in</b> (handled inside Bash) or an <b>external</b> program on disk? Which options and arguments came with it?</div></li>
+    <li><span class="dot">4</span><div><b>The shell interprets it</b>Which command is it? Is it a <b>built-in</b> (handled inside Bash) or an <b>external</b> program on disk? What arguments or options were supplied along with it?</div></li>
     <li><span class="dot">5</span><div><b>The shell starts the program</b><code>ls</code> is external, so Bash asks the OS to create a new <b>process</b> and run that program.</div></li>
     <li><span class="dot">6</span><div><b>System calls</b>To do anything real (start a process, read a file, use memory) a program must ask the kernel through a <b>system call</b>, because ordinary programs may not perform privileged operations. You don’t write syscall code; just know every command relies on calls like “create a new process” or “open this file”. <span class="tag">→ shell → system call → kernel</span></div></li>
-    <li><span class="dot">7</span><div><b>The kernel does the work</b>Only the kernel may control hardware and core resources, so it works with the file system, memory, devices and processes.</div></li>
+    <li><span class="dot">7</span><div><b>The kernel performs the requested operation</b>Only the kernel may control hardware and core resources, so it works with the file system, memory, devices and processes.</div></li>
     <li><span class="dot">8</span><div><b>The result comes back</b>Kernel → shell / process → terminal → you. The list of files appears on your screen.</div></li>
   </ol>
 </section>
@@ -220,21 +225,29 @@
     </svg></div>
     <figcaption>Two families. Scripts for one family usually don’t run unchanged in the other.</figcaption>
   </figure>
+  <p>To start any of them (if installed), type its name and press Enter. Then <code>echo $0</code> prints the name of the shell you are now in, and <code>exit</code> takes you back.</p>
   <div class="two">
-    <div class="card t7 tilt-a"><h4>1 · Bourne shell (<code>sh</code>)</h4><p>By Stephen Bourne at AT&amp;T Bell Labs, late 1970s. The grandfather of modern shells; it introduced core ideas all shells still use.</p><p><b>Experience:</b> simple and lightweight, but old: no Up-arrow history, no advanced completion.</p><p><b>Why it matters:</b> portability. <code>sh</code> exists on virtually every UNIX/Linux system, so scripts written for it run anywhere. (On Ubuntu, <code>sh</code> is actually <b>dash</b>, a small modern Bourne-compatible shell.)</p></div>
-    <div class="card t2 tilt-b"><h4>2 · Bash (<code>bash</code>)</h4><p>By Brian Fox for the GNU Project: the “<b>Bourne Again SHell</b>”, a compatible, feature-rich replacement for <code>sh</code>.</p><p><b>Key features:</b> command history (<kbd>↑</kbd>/<kbd>↓</kbd>), <kbd>Tab</kbd> completion, aliases (short names for long commands), and powerful scripting with variables and control structures.</p><p><b>Why it matters:</b> the industry standard and the default shell on most Linux distributions and servers.</p></div>
-    <div class="card t1 tilt-a"><h4>3 · Korn shell (<code>ksh</code>)</h4><p>By David Korn at Bell Labs, built to be great at both interactive use and advanced scripting.</p><p><b>Experience:</b> big productivity and scripting improvements over earlier shells.</p><p><b>Why it matters:</b> rarely pre-installed on desktop Linux, but a heavyweight in enterprise UNIX such as IBM AIX.</p></div>
-    <div class="card t4 tilt-b"><h4>4 · C shell (<code>csh</code>)</h4><p>By Bill Joy at the University of California, Berkeley, for programmers.</p><p><b>Experience:</b> introduced interactive features like command history early on. Its syntax is modelled on the C language and differs from Bourne-style shells.</p><p><b>Why it matters:</b> comfortable for developers who already wrote C.</p></div>
-    <div class="card t5 tilt-a"><h4>5 · T shell (<code>tcsh</code>)</h4><p>An enhanced C shell with the same C-like syntax.</p><p><b>Key features:</b> command-line editing (fix typos before Enter), command history and auto-completion.</p><p><b>Why it matters:</b> the go-to on many UNIX systems for people who liked C syntax but wanted a friendlier experience.</p></div>
-    <div class="card t8 tilt-b"><h4>6 · Z shell (<code>zsh</code>)</h4><p>A powerful modern shell for daily use and scripting.</p><p><b>Key features:</b> excellent completion, advanced history, programmable visual prompts, and plugins and themes (e.g. <b>Oh My Zsh</b>).</p><p><b>Why it matters:</b> loved by developers; the default login shell on modern macOS.</p></div>
+    <div class="card t7 tilt-a"><h4>1 · Bourne shell (<code>sh</code>)</h4><p>Created by Stephen Bourne at AT&amp;T Bell Labs in the late 1970s. The grandfather of modern Linux shells; it introduced many core concepts all modern shells still rely on.</p><p><b>Experience:</b> extremely simple and lightweight, but old: you cannot press Up-arrow to recall previous commands, and there is no advanced auto-completion.</p><p><b>Why it still matters (portability):</b> its biggest strength today is universal compatibility. Because <code>sh</code> exists on virtually every UNIX and Linux system in the world, developers often write automated scripts in <code>sh</code> to guarantee the script will run on any machine without modifications. (On Ubuntu, <code>sh</code> is actually <b>dash</b>, a small modern Bourne-compatible shell.)</p><p><b>Start it:</b> <code>sh</code></p>
+      <figure class="shot"><img src="img/04.webp" alt="Terminal: typing sh gives a bare $ prompt; echo $0 prints sh" width="459" height="159"><figcaption>The prompt shrinks to a bare <code>$</code>; <code>echo $0</code> says <code>sh</code>.</figcaption></figure></div>
+    <div class="card t2 tilt-b"><h4>2 · Bash (<code>bash</code>)</h4><p>Developed by Brian Fox for the GNU Project: the “<b>Bourne Again SHell</b>”, built as a direct, feature-rich replacement for the older Bourne shell, maintaining strict compatibility while adding big quality-of-life improvements.</p><p><b>Key features:</b> command history (<kbd>↑</kbd>/<kbd>↓</kbd> to reuse previous commands), <kbd>Tab</kbd> completion (finishes long commands, file names and paths), aliases (your own short names for long, frequently used commands), and powerful scripting with variables and control structures.</p><p><b>Why it matters:</b> the undisputed industry standard and the default shell on the vast majority of Linux distributions and servers.</p><p><b>Start it:</b> <code>bash</code></p>
+      <figure class="shot"><img src="img/05.webp" alt="Terminal: echo $0 prints -bash" width="516" height="117"><figcaption>Your normal login shell: <code>echo $0</code> prints <code>-bash</code> (the leading <code>-</code> marks a login shell).</figcaption></figure></div>
+    <div class="card t1 tilt-a"><h4>3 · Korn shell (<code>ksh</code>)</h4><p>Developed by David Korn at Bell Labs to bridge usability and programming: a powerful environment for both interactive command-line use and advanced shell scripting.</p><p><b>Experience:</b> it introduced features that significantly improved command-line productivity and expanded what was possible with automated shell scripts compared with earlier, simpler shells.</p><p><b>Why it matters (enterprise UNIX):</b> it might not come pre-installed on your average desktop Linux, but it is a heavyweight in traditional large-scale enterprise environments, used extensively on corporate UNIX systems such as IBM AIX.</p><p><b>Start it:</b> <code>ksh</code></p>
+      <figure class="shot"><img src="img/06.webp" alt="Terminal: typing ksh gives a $ prompt; echo $0 prints ksh" width="466" height="145"><figcaption><code>echo $0</code> confirms <code>ksh</code>.</figcaption></figure></div>
+    <div class="card t4 tilt-b"><h4>4 · C shell (<code>csh</code>)</h4><p>Developed by Bill Joy at the University of California, Berkeley, with a specific audience in mind: programmers.</p><p><b>Experience:</b> introduced useful interactive features such as command history early on. Its defining trait is a syntax heavily influenced by the C language; its scripting rules are quite different from Bourne-style shells (sh and Bash).</p><p><b>Why it matters (the programmer’s choice):</b> because its language structure mirrored C, it became attractive and comfortable for developers and early UNIX users who were already used to writing C code.</p><p><b>Start it:</b> <code>csh</code></p>
+      <figure class="shot"><img src="img/07.webp" alt="Terminal: typing csh changes the prompt to ip-172-31-13-245:~% ; echo $0 prints csh" width="502" height="139"><figcaption>The prompt now ends in <code>%</code>; <code>echo $0</code> says <code>csh</code>.</figcaption></figure></div>
+    <div class="card t5 tilt-a"><h4>5 · T shell (<code>tcsh</code>)</h4><p>An enhanced, upgraded version of the original C shell (csh). It keeps the familiar C-like programming style and syntax while adding crucial quality-of-life improvements.</p><p><b>Key features:</b> command-line editing (navigate and fix typos on the prompt before pressing Enter), command history (the ability to recall previously typed commands) and auto-completion (complete long commands and file names automatically).</p><p><b>Why it matters:</b> the go-to choice on many UNIX systems for users who preferred C syntax but needed a more convenient, user-friendly experience.</p><p><b>Start it:</b> <code>tcsh</code></p>
+      <figure class="shot"><img src="img/08.webp" alt="Terminal: typing tcsh changes the prompt to ip-172-31-13-245:~> ; echo $0 prints tcsh" width="492" height="151"><figcaption>The prompt ends in <code>&gt;</code>; <code>echo $0</code> says <code>tcsh</code>.</figcaption></figure></div>
+    <div class="card t8 tilt-b"><h4>6 · Z shell (<code>zsh</code>)</h4><p>A powerful, modern shell designed for both interactive daily use and advanced scripting.</p><p><b>Key features:</b> it provides top-tier usability and deep customization, taking standard features and elevating them: powerful command, file name and path auto-completion; advanced command history management; programmable, highly visual prompts; and extensive support for external plugins and custom themes.</p><p><b>Why it matters (the modern favourite):</b> hugely popular with developers and power users who want full control of their terminal. Frameworks like <b>Oh My Zsh</b> make it easy to configure and theme, and it has replaced Bash as the default login shell on modern macOS.</p><p><b>Start it:</b> <code>zsh</code></p>
+      <figure class="shot"><img src="img/09.webp" alt="Terminal: zsh prompt ip-172-31-13-245% ; echo $0 prints zsh" width="544" height="189"><figcaption>In zsh the prompt ends in <code>%</code>; <code>echo $0</code> says <code>zsh</code>.</figcaption></figure></div>
   </div>
-  <p>To try any of them (if installed), type its name and press Enter:</p>
   <pre><code class="language-bash">sh      # Bourne-compatible shell
 bash    # Bourne Again Shell
 ksh     # Korn shell
 csh     # C shell
 tcsh    # T shell
-zsh     # Z shell</code></pre>
+zsh     # Z shell
+echo $0 # which shell am I in right now?
+exit    # leave it and return to the previous shell</code></pre>
 </section>
 
 <!-- 9 -->
@@ -245,7 +258,7 @@ zsh     # Z shell</code></pre>
     <div class="card t2 tilt-a"><h4>Interactive command interpreter</h4><p>The shell you type commands into directly.</p></div>
     <div class="card t1 tilt-b"><h4>Scripting language</h4><p>Save a sequence of commands in a file and run them together as a script.</p></div>
   </div>
-  <p>It is everywhere in professional work: <b>Linux administration</b> (users, files, services), <b>automation</b> of repetitive tasks, <b>DevOps</b> build and deployment scripts, <b>server management</b>, and reusable <b>shell scripts</b>.</p>
+  <p>It is everywhere in professional work: <b>Linux administration</b> (users, files, services), <b>automation</b> of repetitive tasks, <b>DevOps</b> build and deployment scripts, <b>server management</b>, and <b>shell scripting</b> (writing reusable, shareable command sequences).</p>
   <h3>Opening a terminal</h3>
   <p>When you launch a terminal (or log in over SSH), a shell session, usually Bash, starts automatically inside it.</p>
   <h3>Which shell is my default?</h3>
@@ -280,7 +293,9 @@ exit     # leave it (or press Ctrl+D) and return to the shell before</code></pre
 <!-- 10 -->
 <section class="ch" id="prompt">
   <h2>The command prompt, explained</h2>
-  <p>Open a terminal on your EC2 server and you see a line like this, the <mark>command prompt</mark>. It isn’t decoration: it tells you <b>who you are, where you are, and how much power you have</b> before you run anything.</p>
+  <p>Whenever you open a terminal on your EC2 server, you see a line like this:</p>
+  <figure class="shot sm"><img src="img/10.webp" alt="Terminal window showing the prompt ubuntu@ip-172-31-8-5:~$" width="592" height="134"><figcaption>The command prompt, waiting for you.</figcaption></figure>
+  <p>This line is called the <mark>command prompt</mark>. It isn’t decoration: it tells you <b>who you are, where you are, and how much power you have</b> before you run anything.</p>
   <div class="anatomy"><span class="a1">ubuntu</span>@<span class="a2">ip-172-31-8-5</span>:<span class="a3">~</span><span class="a4">$</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p><b>username</b>: who is logged in.</p></div>
@@ -288,26 +303,32 @@ exit     # leave it (or press Ctrl+D) and return to the shell before</code></pre
     <div><span class="sw a3"></span><p><b>current directory</b>: where you are (<code>~</code> = home).</p></div>
     <div><span class="sw a4"></span><p><b>permission indicator</b>: <code>$</code> normal user, <code>#</code> root.</p></div>
   </div>
-  <p>The general structure is <code>username@hostname:current_directory$</code>.</p>
+  <h3>General structure of the prompt</h3>
+  <figure class="shot"><img src="img/11.webp" alt="Illustration: Components of the command prompt. ubuntu@ip-172-31-8-5:~$ with arrows to four labels: Username, Hostname, Current Directory, Permission Indicator" width="1400" height="933"><figcaption>Four components in one line.</figcaption></figure>
+  <p>The standard format is <code>username@hostname:current_directory$</code>. Your actual prompt, <code>ubuntu@ip-172-31-8-5:~$</code>, can be divided into four components: username, hostname, current directory and permission indicator. Each part has a specific meaning.</p>
   <h3>1 · Username → <code>ubuntu</code></h3>
   <p>You are logged in with the user account <b>ubuntu</b>. Linux is <b>multi-user</b>: many users can exist on one system, each with their own files, permissions and settings, and everything you do is tied to your account. On AWS EC2 Ubuntu servers, <code>ubuntu</code> is the default user created at launch.</p>
   <pre><code class="language-bash">whoami</code></pre>
-  <pre class="out"><code>ubuntu</code></pre>
+  <figure class="shot sm"><img src="img/12.webp" alt="Terminal: whoami prints ubuntu" width="584" height="138"><figcaption><code>whoami</code> confirms your identity: <code>ubuntu</code>.</figcaption></figure>
   <h3>2 · Hostname → <code>ip-172-31-8-5</code></h3>
-  <p>The name of the computer you’re connected to. AWS builds it from the server’s <b>private IP address</b> <code>172.31.8.5</code>: dots become dashes and <code>ip-</code> goes in front. It identifies the server inside the AWS network, which is very handy when you juggle several servers.</p>
+  <p>The name of the computer you’re connected to. On an EC2 cloud server, AWS assigns it automatically, deriving it from the server’s <b>private IP address</b>, <code>172.31.8.5</code>, which you can see in the EC2 console:</p>
+  <figure class="shot"><img src="img/13.webp" alt="AWS EC2 console: instance aws_instance running, t2.micro in ap-south-1b; the Details tab highlights Private IPv4 addresses 172.31.8.5" width="1400" height="642"><figcaption>EC2 console → instance → Details: the <b>Private IPv4 address</b> is <code>172.31.8.5</code>.</figcaption></figure>
+  <p>AWS converts the dots into dashes and adds the prefix <code>ip-</code>, resulting in <code>ip-172-31-8-5</code>. This hostname uniquely identifies your server inside the AWS network, which is very handy when you work with several servers: you always know exactly which one you are controlling.</p>
   <pre><code class="language-bash">hostname</code></pre>
-  <pre class="out"><code>ip-172-31-8-5</code></pre>
+  <figure class="shot sm"><img src="img/14.webp" alt="Terminal: hostname prints ip-172-31-8-5" width="582" height="131"><figcaption><code>hostname</code> prints <code>ip-172-31-8-5</code>.</figcaption></figure>
   <h3>3 · Current directory → <code>~</code></h3>
   <p><code>~</code> is the shortcut for your <b>home directory</b>, your personal working area. For <code>ubuntu</code> that’s <code>/home/ubuntu</code>.</p>
   <pre><code class="language-bash">pwd</code></pre>
-  <pre class="out"><code>/home/ubuntu</code></pre>
-  <p>Move somewhere else and the prompt follows you:</p>
+  <figure class="shot sm"><img src="img/15.webp" alt="Terminal: pwd prints /home/ubuntu" width="586" height="127"><figcaption><code>~</code> really is <code>/home/ubuntu</code>.</figcaption></figure>
+  <p>If you move to another directory, the prompt changes accordingly:</p>
   <pre><code class="language-bash">cd /etc</code></pre>
-  <pre class="out"><code>ubuntu@ip-172-31-8-5:/etc$</code></pre>
+  <figure class="shot sm"><img src="img/16.webp" alt="Terminal: after cd /etc/ the prompt becomes ubuntu@ip-172-31-8-5:/etc$" width="589" height="162"><figcaption>The prompt now shows <code>/etc</code> instead of <code>~</code>.</figcaption></figure>
+  <p>This shows your current location is now <code>/etc</code>, so you always know your exact position in the file system.</p>
   <h3>4 · Permission indicator → <code>$</code></h3>
   <p><code>$</code> means a <b>normal user</b> with limited permissions, which protects the system from accidental damage: you can’t change critical system files without special administrative privileges. Switch to the <b>root</b> user (for example with <code>sudo -i</code>) and the symbol becomes <code>#</code>:</p>
   <pre><code class="language-bash">sudo -i</code></pre>
-  <pre class="out"><code>root@ip-172-31-8-5:~#</code></pre>
+  <figure class="shot sm"><img src="img/17.webp" alt="Terminal: sudo -i changes the prompt from ubuntu@ip-172-31-8-5:~$ to root@ip-172-31-8-5:~#" width="589" height="143"><figcaption>The user becomes <code>root</code> and the <code>$</code> becomes <code>#</code>.</figcaption></figure>
+  <p>The <code>#</code> symbol means you are logged in as the <b>root</b> user, with full administrative control over the system.</p>
   <p>Root has full control: it can change system files, install software, manage users and control the whole system.</p>
   <div class="sticky warn"><strong>See a <code>#</code>? Slow down.</strong> As root there is no safety net; one wrong <code>rm</code> can break the server. Type <code>exit</code> to return to your normal user as soon as the admin task is done.</div>
   <h3>What the whole prompt means</h3>
@@ -319,7 +340,7 @@ exit     # leave it (or press Ctrl+D) and return to the shell before</code></pre
     <tr><td><code>$</code></td><td>You are a normal user with standard permissions</td><td><code>id</code></td></tr>
   </table></div>
   <div class="sticky info l"><strong>This is a cloud server</strong> The <code>ip-…</code> hostname tells you you’re on an AWS EC2 instance in an AWS data centre, not your laptop. Such servers host websites, run applications, databases and backend services, and are great for learning administration. Every command you run affects <b>that</b> server.</div>
-  <p><b>Why it matters:</b> commands act on files based on your <b>location</b> and <b>permissions</b>. Glancing at the prompt (identity, system, location, power level) before pressing Enter prevents a lot of mistakes.</p>
+  <p><b>Why it matters:</b> commands act on files based on your <b>location</b> and <b>permissions</b>. Glancing at the prompt (identity, system, location, power level) before pressing Enter prevents a lot of mistakes: understanding the prompt ensures safe and correct system usage.</p>
 </section>
 
 <!-- 11 -->
@@ -492,6 +513,6 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

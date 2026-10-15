@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-23">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-fundamentals/data-structures">
@@ -24,7 +24,8 @@
 <!-- 1 -->
 <section class="ch" id="why">
   <h2>Why one variable per value stops working</h2>
-  <p>So far you have worked with <b>individual values</b>: <code>name = "Rahul"</code>, <code>age = 21</code>, <code>marks = 85</code>. Now a teacher wants to store the marks of five students: 85, 72, 91, 68 and 79. One way:</p>
+  <p>So far you have worked with <b>individual values</b>: <code>name = "Rahul"</code>, <code>age = 21</code>, <code>marks = 85</code>. You can also take input, perform calculations, make decisions using conditions, and display the result.</p>
+  <p>Now a different problem. A teacher wants to store the marks of five students: 85, 72, 91, 68 and 79. How can you store all these marks in Python? Let’s try to solve the problem. One way is a separate variable for every student:</p>
   <pre><code class="language-python">marks1 = 85
 marks2 = 72
 marks3 = 91
@@ -42,6 +43,7 @@ print(marks5)</code></pre>
 68
 79</code></pre>
   <p>It works. But with 100 students you’d need <code>marks1</code> … <code>marks100</code>, which is clearly not practical. And how would the teacher add a student’s marks, remove one, check whether a mark exists, get the third student’s marks, or count how many are stored? <mark>We need a way to store multiple related values together.</mark></p>
+  <h3>Think about how we organise things in real life</h3>
   <div class="story"><b class="lbl">The teacher’s marks register</b>Instead of five loose chits of paper, the teacher writes all five marks in one row of her register. One register, one row, five marks in order. <mark>That row is exactly what a Python list is.</mark></div>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]</code></pre>
   <figure>
@@ -92,7 +94,9 @@ print(student)</code></pre>
   <pre class="out"><code>['Rahul', 21, 85.5, True]</code></pre>
   <p><code>"Rahul"</code> is a string, <code>21</code> an integer, <code>85.5</code> a float and <code>True</code> a Boolean, all happily in one list. In practice, though, a list usually holds values of the <b>same kind</b>, like <code>marks = [85, 72, 91, 68, 79]</code>.</p>
   <h3>Accessing elements by index</h3>
-  <p>To get just 91 out of <code>marks</code>, you need its position. Lists use an <b>index</b>, and like strings, <mark>indexing starts at 0, not 1</mark>: 85 is index 0, 72 is index 1, 91 is index 2, 68 is index 3, 79 is index 4.</p>
+  <p>To get just 91 out of <code>marks</code>, you need to identify where that value is located. Lists use an <b>index</b> to identify each element:</p>
+  <figure class="shot"><img src="img/01.webp" alt="Index diagram: marks = [85, 72, 91, 68, 79] with indexes 0, 1, 2, 3, 4 above the five boxes" width="1400" height="467"><figcaption>Every element has a position number, starting from 0.</figcaption></figure>
+  <p>Like strings, <mark>indexing starts at 0, not 1</mark>: 85 is index 0, 72 is index 1, 91 is index 2, 68 is index 3, 79 is index 4. So to get 91 you don’t ask for “the third value”, you ask for the value at index 2.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">list_name[index]</code></pre></div>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 
@@ -108,13 +112,14 @@ print("Latest transaction:", transactions[-1])</code></pre>
   <pre class="out"><code>Latest transaction: -750</code></pre>
   <div class="sticky warn l"><strong>Off the end</strong> <code>marks[5]</code> on a 5-item list raises <code>IndexError: list index out of range</code>. The last index is always <code>len(list) - 1</code>.</div>
   <h3>Modifying an element</h3>
-  <p>The second student’s 72 should have been 75. You don’t need a new list; just assign to that index:</p>
+  <p>Now suppose the student’s mark was entered incorrectly: the second student’s 72 should have been 75. You don’t need a new list; just assign to that index:</p>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 
 marks[1] = 75
 print(marks)</code></pre>
-  <pre class="out"><code>[85, 75, 91, 68, 79]</code></pre>
-  <p>This shows an important idea: <mark>lists are mutable</mark>, which means their elements can be changed after the list is created. (Strings, remember, are immutable.)</p>
+  <figure class="shot sm"><img src="img/02.webp" alt="Colab cell: marks = [85, 72, 91, 68, 79]; marks[1] = 75; print(marks) outputs [85, 75, 91, 68, 79]" width="588" height="258"><figcaption>Index 1 now holds 75.</figcaption></figure>
+  <p>This shows an important idea: <mark>lists are mutable</mark>, which means their elements can be changed after the list is created. (Strings, remember, are immutable.) Visually:</p>
+  <figure class="shot"><img src="img/03.webp" alt="Before and after diagram: index 1 holds 72 (incorrect value), after marks[1] = 75 it holds 75; the code, the output [85, 75, 91, 68, 79], and a key takeaway that lists are mutable and a value can be updated at an index without creating a new list" width="1400" height="700"><figcaption>Same list, one box changed: no new list was created.</figcaption></figure>
 </section>
 
 <!-- 3 -->
@@ -136,46 +141,42 @@ print(marks)</code></pre>
 
 marks.append(88)
 print(marks)</code></pre>
-  <pre class="out"><code>[85, 75, 91, 68, 79, 88]</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/04.webp" alt="Colab cell: marks.append(88) then print(marks) outputs [85, 75, 91, 68, 79, 88]" width="504" height="318"><figcaption>88 lands at the end.</figcaption></figure>
+    <figure class="shot"><img src="img/05.webp" alt="Before and after diagram: append(88) adds a new box 88 at index 5, after 79" width="1400" height="700"><figcaption><code>append()</code> adds an element to the end of the list.</figcaption></figure>
+  </div>
   <h3>Adding at a position: <code>insert()</code></h3>
   <p>Put “Banana” between “Apple” and “Mango”:</p>
   <pre><code class="language-python">fruits = ["Apple", "Mango", "Orange"]
 
 fruits.insert(1, "Banana")
 print(fruits)</code></pre>
-  <pre class="out"><code>['Apple', 'Banana', 'Mango', 'Orange']</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 225" role="img" aria-label="Before: Apple, Mango, Orange. After insert(1, Banana): Apple, Banana, Mango, Orange. Mango and Orange shift one place right">
-      <g class="rough">
-        <rect class="box f-card" x="70" y="20" width="110" height="50" rx="4"/>
-        <rect class="box f-card" x="180" y="20" width="110" height="50" rx="4"/>
-        <rect class="box f-card" x="290" y="20" width="110" height="50" rx="4"/>
-        <rect class="box f-card" x="70" y="140" width="110" height="50" rx="4"/>
-        <rect class="box f-green" x="180" y="140" width="110" height="50" rx="4"/>
-        <rect class="box f-card" x="290" y="140" width="110" height="50" rx="4"/>
-        <rect class="box f-card" x="400" y="140" width="110" height="50" rx="4"/>
-        <path class="lr dash" d="M235 74 L 340 134" marker-end="url(#ahr)"/>
-        <path class="lr dash" d="M345 74 L 450 134" marker-end="url(#ahr)"/>
-        <path class="ln" d="M125 74 L 125 134" marker-end="url(#ah)"/>
-      </g>
-      <text class="ts" x="10" y="50">before</text>
-      <text class="ts" x="10" y="170">after</text>
-      <text class="t" x="125" y="50" text-anchor="middle">Apple</text><text class="t" x="235" y="50" text-anchor="middle">Mango</text><text class="t" x="345" y="50" text-anchor="middle">Orange</text>
-      <text class="t" x="125" y="170" text-anchor="middle">Apple</text><text class="t" x="235" y="170" text-anchor="middle">Banana</text><text class="t" x="345" y="170" text-anchor="middle">Mango</text><text class="t" x="455" y="170" text-anchor="middle">Orange</text>
-      <text class="ts" x="125" y="210" text-anchor="middle">0</text><text class="ts" x="235" y="210" text-anchor="middle">1</text><text class="ts" x="345" y="210" text-anchor="middle">2</text><text class="ts" x="455" y="210" text-anchor="middle">3</text>
-      <text class="tm" x="530" y="110">insert(1, "Banana")</text>
-      <text class="ts" x="530" y="132">later items shift right</text>
-    </svg></div>
-    <figcaption><code>insert()</code> doesn’t overwrite anything: it makes room.</figcaption>
-  </figure>
+  <!-- the earlier hand-drawn insert() SVG was replaced by the original image 07 -->
+  <div class="shots">
+    <figure class="shot sm"><img src="img/06.webp" alt="Colab cell: fruits = [Apple, Mango, Orange]; fruits.insert(1, Banana); print(fruits) outputs ['Apple', 'Banana', 'Mango', 'Orange']" width="574" height="286"><figcaption>Banana is now at index 1.</figcaption></figure>
+    <figure class="shot"><img src="img/07.webp" alt="Before and after diagram: insert(1, Banana) puts Banana at index 1; Mango and Orange move to indexes 2 and 3" width="1400" height="700"><figcaption>Nothing is overwritten: Mango and Orange shift one place right.</figcaption></figure>
+  </div>
+  <p>Notice that <code>insert()</code> doesn’t overwrite anything: Mango and Orange simply shift one position to the right to make room for Banana at index 1.</p>
   <h3>Removing by value: <code>remove()</code></h3>
   <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
 
 fruits.remove("Banana")
 print(fruits)</code></pre>
-  <pre class="out"><code>['Apple', 'Mango', 'Orange']</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/08.webp" alt="Colab cell: starting from Apple, Mango, Orange, insert(1, Banana) then remove(Banana); print(fruits) outputs ['Apple', 'Mango', 'Orange']" width="571" height="307"><figcaption>In this run Banana was inserted first, then removed: it’s gone again.</figcaption></figure>
+    <figure class="shot"><img src="img/09.webp" alt="Before and after diagram: remove(Banana) takes Banana out of Apple, Banana, Mango, Orange, leaving Apple, Mango, Orange at indexes 0 to 2" width="1400" height="700"><figcaption>The items after Banana shift left to close the gap.</figcaption></figure>
+  </div>
   <h3>Removing by position: <code>pop()</code></h3>
-  <p>When you know the <b>position</b> rather than the value, use <code>pop()</code>. It also hands back the removed item:</p>
+  <p>When you know the <b>position</b> rather than the value, use <code>pop()</code>. Remove the element at index 2:</p>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
+
+fruits.pop(2)
+print(fruits)</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/10.webp" alt="Colab cell: fruits.pop(2) then print(fruits) outputs ['Apple', 'Banana', 'Orange']" width="669" height="325"><figcaption>Mango (index 2) is removed.</figcaption></figure>
+    <figure class="shot"><img src="img/11.webp" alt="Before and after diagram: pop(2) removes Mango, the element at index 2, leaving Apple, Banana, Orange" width="1400" height="700"><figcaption><code>pop(2)</code> removes whatever sits at index 2.</figcaption></figure>
+  </div>
+  <p><code>pop()</code> also hands back the removed item, and with no index it removes the last one:</p>
   <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
 print(fruits.pop(2))
 print(fruits)
@@ -188,18 +189,27 @@ print(numbers)</code></pre>
 ['Apple', 'Banana', 'Orange']
 40
 [10, 20, 30]</code></pre>
-  <h3>Is it there? <code>in</code> · Where is it? <code>index()</code> · How many? <code>len()</code></h3>
+  <h3>Finding elements: <code>in</code></h3>
+  <p>Is “Mango” present in the list? The <code>in</code> operator answers with <code>True</code> or <code>False</code>:</p>
   <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
 print("Mango" in fruits)
-print("Grapes" in fruits)
-print(fruits.index("Mango"))
-
-students = ["Rahul", "Priya", "Amit", "Sneha"]
+print("Grapes" in fruits)</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/12.webp" alt="Colab cell: print(Mango in fruits) outputs True" width="639" height="220"><figcaption>“Mango” is in the list: <code>True</code>.</figcaption></figure>
+    <figure class="shot sm"><img src="img/13.webp" alt="Colab cell: print(Grapes in fruits) outputs False" width="649" height="214"><figcaption>“Grapes” isn’t: <code>False</code>.</figcaption></figure>
+  </div>
+  <h3>Finding the position: <code>index()</code></h3>
+  <p>Sometimes you want to know not just whether an element exists, but <b>where</b> it is:</p>
+  <pre><code class="language-python">fruits = ["Apple", "Banana", "Mango", "Orange"]
+print(fruits.index("Mango"))</code></pre>
+  <h3>Finding the length: <code>len()</code></h3>
+  <p>How many students are in the list? Use the built-in function <code>len()</code>:</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit", "Sneha"]
 print(len(students))</code></pre>
-  <pre class="out"><code>True
-False
-2
-4</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/14.webp" alt="Colab cell: print(fruits.index(Mango)) outputs 2" width="636" height="181"><figcaption><code>index()</code>: Mango sits at index 2.</figcaption></figure>
+    <figure class="shot sm"><img src="img/15.webp" alt="Colab cell: students list of four names; print(len(students)) outputs 4" width="621" height="168"><figcaption><code>len()</code>: 4 students.</figcaption></figure>
+  </div>
   <div class="sticky info l"><strong><code>len()</code> is not the last index</strong> <code>len()</code> counts items (4 here); the last index is 3. Also note: <code>remove()</code> and <code>index()</code> raise <code>ValueError</code> if the value isn’t in the list, so check with <code>in</code> first when unsure.</div>
   <h3>Real-world practice</h3>
   <p><b>Online shopping cart:</b> add “Webcam”, remove “Mouse”, print the cart.</p>
@@ -245,8 +255,11 @@ print(transactions)</code></pre>
 <!-- 4 -->
 <section class="ch" id="tuples">
   <h2>Tuples: collections that can’t be changed</h2>
-  <p>A student profile holds a name, age and roll number. A list works: <code>student = ["Rahul", 21, 101]</code>. But then <code>student[1] = 25</code> silently changes the age. Some data <b>should not change by accident</b>: coordinates of a location, RGB colour values, days of the week, a database record. For that, Python has the <b>tuple</b>.</p>
+  <p>With lists you can access, modify, add, remove and search values. But now a different problem. Suppose you are building a student profile system, and each student has some basic information: a name, age and roll number. These values belong together because they describe one student. A list works: <code>student = ["Rahul", 21, 101]</code>. But think carefully: should these values be changed accidentally? <code>student[1] = 25</code> silently changes the age. Some data <b>should not change by accident</b>: coordinates of a location, RGB colour values, days of the week, a database record. For that, Python has the <b>tuple</b>.</p>
   <p>A <b>tuple</b> stores multiple values together, like a list, with one key difference: <mark>a tuple cannot be modified after it is created</mark>.</p>
+  <pre><code class="language-python">student = ("Rahul", 21, 101)</code></pre>
+  <p>Three values stored together:</p>
+  <figure class="shot"><img src="img/16.webp" alt="Diagram: student points to the tuple (Rahul, 21, 101); student[0] gives 'Rahul', student[1] gives 21, student[2] gives 101; student[0] = Amit fails: cannot be changed (TypeError)" width="1400" height="700"><figcaption>Read by index, yes. Change, no: that’s a <code>TypeError</code>.</figcaption></figure>
   <h3>Creating a tuple</h3>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">tuple_name = (value1, value2, value3)</code></pre></div>
   <pre><code class="language-python">weekend = ("Saturday", "Sunday")
@@ -262,37 +275,34 @@ print(student)</code></pre>
 ('Rahul', 21, 85.5, True)</code></pre>
   <h3>The single-element trap</h3>
   <p>Parentheses alone don’t make a tuple; <b>the comma does</b>:</p>
-  <pre><code class="language-python">a = (5)
-b = (5,)
-
-print(type(a))
-print(type(b))</code></pre>
-  <pre class="out"><code>&lt;class 'int'&gt;
-&lt;class 'tuple'&gt;</code></pre>
-  <p><code>(5)</code> is just the number 5 in brackets, like <code>(2 + 3)</code>. <code>(5,)</code> is a one-item tuple.</p>
+  <pre><code class="language-python">value = (10)
+print(type(value))
+value1 = (10,)
+print(type(value1))</code></pre>
+  <figure class="shot sm"><img src="img/17.webp" alt="Colab cell: type of (10) prints class int; type of (10,) prints class tuple" width="489" height="223"><figcaption>No comma: an <code>int</code>. With a comma: a <code>tuple</code>.</figcaption></figure>
+  <p><code>(10)</code> is just the number 10 in brackets, like <code>(2 + 3)</code>: Python treats it as a normal integer expression. <code>(10,)</code> is a one-item tuple.</p>
   <h3>Accessing elements</h3>
-  <p>Tuples use indexing exactly like lists, including negative indexes:</p>
-  <pre><code class="language-python">point = (10, 20)            # x and y of a point on a graph
-print(point[0])
-print(point[1])
-
-weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri")
-print(weekdays[-1])
-
-fruits = ("Apple", "Banana", "Mango", "Orange")
-print(fruits[2])
+  <p>Tuples use indexing exactly like lists. To get “Mango”:</p>
+  <pre><code class="language-python">fruits = ("Apple", "Banana", "Mango", "Orange")
+print(fruits[2])</code></pre>
+  <h3>Negative indexing</h3>
+  <p>Tuples also support negative indexing. The last element is <code>-1</code>:</p>
+  <pre><code class="language-python">fruits = ("Apple", "Banana", "Mango", "Orange")
 print(fruits[-1])</code></pre>
-  <pre class="out"><code>10
-20
-Fri
-Mango
-Orange</code></pre>
-  <p>A point is a natural tuple: x and y only mean something as a fixed pair, and nothing should add a third value or swap one out.</p>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/18.webp" alt="Colab cell: print(fruits[2]) on the fruits tuple outputs Mango" width="658" height="156"><figcaption><code>fruits[2]</code> → Mango.</figcaption></figure>
+    <figure class="shot sm"><img src="img/19.webp" alt="Colab cell: print(fruits[-1]) on the fruits tuple outputs Orange" width="631" height="160"><figcaption><code>fruits[-1]</code> → Orange, the last item.</figcaption></figure>
+  </div>
+  <figure class="shot"><img src="img/20.webp" alt="Diagram: Apple, Banana, Mango, Orange with positive indexes 0, 1, 2, 3 above and negative indexes -4, -3, -2, -1 below" width="1400" height="700"><figcaption>Two ways to number the same items: from the front, or backwards from the end.</figcaption></figure>
+  <p><code>-1</code> always refers to the last item, <code>-2</code> to the second-last, and so on, exactly as with lists.</p>
+  <pre><code class="language-python">weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri")
+print(weekdays[-1])</code></pre>
+  <pre class="out"><code>Fri</code></pre>
   <h3>Immutability: the important difference</h3>
   <div class="two">
     <div><pre><code class="language-python">fruits = ("Apple", "Banana", "Mango")
 fruits[1] = "Orange"</code></pre>
-    <pre class="out"><code>TypeError: 'tuple' object does not support item assignment</code></pre></div>
+    <figure class="shot"><img src="img/21.webp" alt="Colab cell: fruits[1] = Orange on a tuple raises TypeError: 'tuple' object does not support item assignment, with a traceback pointing at line 3" width="963" height="409"><figcaption>With a list this works; with a tuple Python stops with a <code>TypeError</code>.</figcaption></figure></div>
     <div><pre><code class="language-python">numbers = (10, 20, 30)
 numbers.append(40)</code></pre>
     <pre class="out"><code>AttributeError: 'tuple' object has no attribute 'append'</code></pre></div>
@@ -306,13 +316,22 @@ numbers.append(40)</code></pre>
 numbers = (10, 25, 30)
 print(numbers)</code></pre>
   <pre class="out"><code>(10, 25, 30)</code></pre>
+  <h3>A practical example: a point on a graph</h3>
+  <p>A point on a 2D graph is represented by two values, the X coordinate and the Y coordinate:</p>
+  <pre><code class="language-python">point = (10, 20)</code></pre>
+  <figure class="shot sm"><img src="img/22.webp" alt="Graph with X and Y axes and a red point labelled (10,20)" width="1400" height="933"><figcaption>The point (10, 20): x = 10, y = 20.</figcaption></figure>
+  <pre><code class="language-python">print(point[0])
+print(point[1])</code></pre>
+  <pre class="out"><code>10
+20</code></pre>
+  <p>A point is a natural tuple: x and y only mean something as a fixed pair, and nothing should ever add a third value or swap one out.</p>
   <h3>Packing and unpacking</h3>
-  <p><b>Packing</b> means putting several values into one tuple. The parentheses are optional:</p>
+  <p><b>Packing</b> means putting several values into one tuple: <code>student = ("Rahul", 21, 101)</code>.</p>
+  <figure class="shot"><img src="img/23.webp" alt="Diagram: the separate values Rahul, 21 and 101 merge into one tuple (Rahul, 21, 101), labelled Tuple Packing" width="1400" height="700"><figcaption>Several values go in, one tuple comes out.</figcaption></figure>
+  <p>The parentheses are optional in many tuple-packing situations. Python automatically creates a tuple:</p>
   <pre><code class="language-python">student = "Rahul", 21, 101
-print(student)
-print(type(student))</code></pre>
-  <pre class="out"><code>('Rahul', 21, 101)
-&lt;class 'tuple'&gt;</code></pre>
+type(student)      # a notebook displays the last expression's value</code></pre>
+  <figure class="shot sm"><img src="img/24.webp" alt="Colab cell: student = Rahul, 21, 101 then type(student) displays tuple" width="427" height="172"><figcaption>No brackets, still a <code>tuple</code>.</figcaption></figure>
   <p><b>Unpacking</b> takes the values back out into separate variables in one line:</p>
   <pre><code class="language-python">student = ("Rahul", 21, 101)
 
@@ -320,9 +339,7 @@ name, age, roll_number = student
 print(name)
 print(age)
 print(roll_number)</code></pre>
-  <pre class="out"><code>Rahul
-21
-101</code></pre>
+  <figure class="shot sm"><img src="img/25.webp" alt="Colab cell: unpacking student into name, age, roll_number and printing them outputs Rahul, 21, 101" width="540" height="313"><figcaption>Each variable got the value in its position.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="The tuple student holding Rahul, 21, 101 is unpacked: Rahul goes to name, 21 to age, 101 to roll_number">
       <g class="rough">
@@ -349,19 +366,20 @@ print(roll_number)</code></pre>
     </svg></div>
     <figcaption><code>name, age, roll_number = student</code>: values are matched by position.</figcaption>
   </figure>
+  <p>So:</p>
+  <figure class="shot"><img src="img/26.webp" alt="Side by side: Packing turns multiple values into a tuple; Unpacking turns the tuple (Rahul, 21, 101) back into variables name, age and roll_no" width="1400" height="700"><figcaption>Packing and unpacking are two directions of the same idea.</figcaption></figure>
   <div class="sticky warn l"><strong>Counts must match</strong> <code>a, b = (1, 2, 3)</code> fails with <code>ValueError: too many values to unpack (expected 2, got 3)</code>. You already used unpacking in Part 1: <code>name, age = "Rahul", 21</code> is packing and unpacking in one line.</div>
   <h3>What you <i>can</i> do with a tuple</h3>
+  <p>Although tuples cannot be modified, you can still access, check membership, find and count:</p>
   <pre><code class="language-python">numbers = (10, 20, 30, 40)
-
-print(numbers[2])          # access
-print(20 in numbers)       # membership
-print(numbers.index(20))   # position of 20
-print(numbers.index(30))   # position of 30
-print(len(numbers))        # length</code></pre>
-  <pre class="out"><code>30
-True
-1
-2
+print(numbers[2])          # access</code></pre>
+  <pre class="out"><code>30</code></pre>
+  <pre><code class="language-python">numbers = (10, 20, 30, 40)
+print(20 in numbers)       # checking membership</code></pre>
+  <figure class="shot sm"><img src="img/27.webp" alt="Colab cell: print(20 in numbers) on the tuple (10, 20, 30, 40) outputs True" width="436" height="229"><figcaption>Membership works on tuples too.</figcaption></figure>
+  <pre><code class="language-python">print(numbers.index(30))   # finding an element: 2
+print(len(numbers))        # finding length: 4</code></pre>
+  <pre class="out"><code>2
 4</code></pre>
   <h3>Real-world practice</h3>
   <pre><code class="language-python">location = (20.2961, 85.8245)            # GPS latitude, longitude
@@ -405,44 +423,16 @@ Amount: 5000</code></pre>
 <!-- 5 -->
 <section class="ch" id="dictionaries">
   <h2>Dictionaries: look things up by name</h2>
-  <p>A student has a name (Rahul), age (21), roll number (101) and course (Python). Separate variables explode with 100 students (<code>student1_name</code>, <code>student1_age</code>, …). A list keeps them together:</p>
+  <p>A student has a name (Rahul), age (21), roll number (101) and course (Python). Separate variables explode with 100 students (<code>student1_name</code>, <code>student1_age</code>, …). This quickly becomes difficult to manage. So we might think: “Can we store all the information about one student together?” A list keeps them together:</p>
   <pre><code class="language-python">student = ["Rahul", 21, 101, "Python"]
 print(student[1])</code></pre>
   <pre class="out"><code>21</code></pre>
   <p>But what does <code>student[1]</code> <i>mean</i>? Everyone reading the code has to remember that 0 is name, 1 is age, 2 is roll number, 3 is course. With seven fields (city, marks, grade…) you’d be memorising seven position numbers. It would be far better to ask for a value <b>by a meaningful name</b>.</p>
   <div class="story"><b class="lbl">An English dictionary</b>You don’t look up a word by page 0, 1, 2. You look it up by the <b>word</b> itself, and it gives you the <b>meaning</b>. <mark>A Python dictionary works the same way: you give it a key, it gives you the value.</mark></div>
   <p>A <b>dictionary</b> stores data as <b>key-value pairs</b>: <code>key → value</code>. Instead of <code>student[1]</code> you write <code>student["age"]</code>.</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The student dictionary: key name maps to Rahul, age to 21, roll_number to 101, course to Python">
-      <g class="rough">
-        <rect class="box f-yellow" x="120" y="36" width="170" height="40" rx="10"/>
-        <rect class="box f-yellow" x="120" y="88" width="170" height="40" rx="10"/>
-        <rect class="box f-yellow" x="120" y="140" width="170" height="40" rx="10"/>
-        <rect class="box f-yellow" x="120" y="192" width="170" height="40" rx="10"/>
-        <rect class="box f-blue" x="380" y="36" width="170" height="40" rx="10"/>
-        <rect class="box f-blue" x="380" y="88" width="170" height="40" rx="10"/>
-        <rect class="box f-blue" x="380" y="140" width="170" height="40" rx="10"/>
-        <rect class="box f-blue" x="380" y="192" width="170" height="40" rx="10"/>
-        <path class="lr" d="M292 56 L 374 56" marker-end="url(#ahr)"/>
-        <path class="lr" d="M292 108 L 374 108" marker-end="url(#ahr)"/>
-        <path class="lr" d="M292 160 L 374 160" marker-end="url(#ahr)"/>
-        <path class="lr" d="M292 212 L 374 212" marker-end="url(#ahr)"/>
-      </g>
-      <text class="th" x="12" y="142">student</text>
-      <text class="tr" x="205" y="24" text-anchor="middle">key</text>
-      <text class="tb" x="465" y="24" text-anchor="middle">value</text>
-      <text class="tm" x="205" y="61" text-anchor="middle">"name"</text>
-      <text class="tm" x="205" y="113" text-anchor="middle">"age"</text>
-      <text class="tm" x="205" y="165" text-anchor="middle">"roll_number"</text>
-      <text class="tm" x="205" y="217" text-anchor="middle">"course"</text>
-      <text class="tm" x="465" y="61" text-anchor="middle">"Rahul"</text>
-      <text class="tm" x="465" y="113" text-anchor="middle">21</text>
-      <text class="tm" x="465" y="165" text-anchor="middle">101</text>
-      <text class="tm" x="465" y="217" text-anchor="middle">"Python"</text>
-      <text class="ts" x="566" y="113">student["age"] → 21</text>
-    </svg></div>
-    <figcaption>Ask with a key, get the value back. No position numbers to remember.</figcaption>
-  </figure>
+  <p>You can visualise it like this:</p>
+  <!-- img 28 replaces the earlier hand-drawn key/value SVG -->
+  <figure class="shot"><img src="img/28.webp" alt="Tree diagram: Student branches to Name, Age and Roll Number, whose values are Rahul, 21 and 101" width="1400" height="700"><figcaption>Each piece of information has a name (the key) and a value.</figcaption></figure>
   <h3>Creating a dictionary</h3>
   <p>Curly braces <code>{ }</code>, with <code>key: value</code> pairs separated by commas:</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">dictionary_name = {
@@ -462,70 +452,91 @@ print(student)</code></pre>
   <p>Far more descriptive than <code>["Rahul", 21, 101, "Python"]</code>.</p>
   <h3>Accessing values by key</h3>
   <p>A list uses an index, <code>student[0]</code>; a dictionary uses the key, <code>student["name"]</code>:</p>
-  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "roll_number": 101,
+    "course": "Python"
+}
 
 print(student["name"])
+print(student["age"])
 print(student["course"])</code></pre>
-  <pre class="out"><code>Rahul
-Python</code></pre>
+  <figure class="shot sm"><img src="img/29.webp" alt="Colab cell: printing student[name], student[age] and student[course] outputs Rahul, 21, Python" width="529" height="454"><figcaption>Ask by key, get the value.</figcaption></figure>
   <div class="sticky warn l"><strong>Missing keys raise KeyError</strong> <code>student["city"]</code> on a dictionary without that key fails with <code>KeyError: 'city'</code>. Check with <code>in</code> first, or use <code>student.get("city")</code>, which returns <code>None</code> (or a default you pass, like <code>student.get("city", "Unknown")</code>) instead of crashing.</div>
   <h3>Adding and updating</h3>
   <p>Assigning to a key <b>adds</b> it if it’s new, and <b>updates</b> it if it already exists:</p>
-  <div class="two">
-    <div><pre><code class="language-python">student = {"name": "Rahul", "age": 21, "roll_number": 101}
+  <p>The student dictionary has no city yet. Add a new key-value pair:</p>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "roll_number": 101
+}
 
 student["city"] = "Bhubaneswar"     # new key: added
 print(student)</code></pre>
-    <pre class="out"><code>{'name': 'Rahul', 'age': 21, 'roll_number': 101, 'city': 'Bhubaneswar'}</code></pre></div>
-    <div><pre><code class="language-python">student = {"name": "Rahul", "age": 21}
+  <figure class="shot"><img src="img/30.webp" alt="Colab cell: student[city] = Bhubaneswar then print(student) outputs the dictionary with city: Bhubaneswar at the end" width="903" height="363"><figcaption>The new key goes in at the end.</figcaption></figure>
+  <p>Now the student’s age changes from 21 to 22. Use the same key:</p>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21
+}
 
 student["age"] = 22                 # existing key: updated
 print(student)</code></pre>
-    <pre class="out"><code>{'name': 'Rahul', 'age': 22}</code></pre></div>
-  </div>
+  <figure class="shot sm"><img src="img/31.webp" alt="Colab cell: student[age] = 22 then print(student) outputs {'name': 'Rahul', 'age': 22}" width="454" height="370"><figcaption>Same key, new value.</figcaption></figure>
   <h3>Removing with <code>pop()</code></h3>
-  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "city": "Bhubaneswar"}
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "city": "Bhubaneswar"
+}
 
 student.pop("city")
 print(student)</code></pre>
-  <pre class="out"><code>{'name': 'Rahul', 'age': 21}</code></pre>
+  <figure class="shot sm"><img src="img/32.webp" alt="Colab cell: student.pop(city) then print(student) outputs {'name': 'Rahul', 'age': 21}" width="453" height="340"><figcaption>The city pair is gone.</figcaption></figure>
   <p>Like a list’s <code>pop()</code>, it also returns the removed value (<code>"Bhubaneswar"</code> here).</p>
   <h3>Does a key exist?</h3>
   <p><code>in</code> checks the <b>keys</b> (not the values):</p>
-  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "course": "Python"
+}
 
-print("course" in student)
-print("Rahul" in student)       # a value, not a key</code></pre>
-  <pre class="out"><code>True
-False</code></pre>
-  <p>Combined with <code>if</code>, from the Control Flow note:</p>
-  <pre><code class="language-python">student = {"name": "Rahul", "marks": 85}
+print("course" in student)</code></pre>
+  <figure class="shot sm"><img src="img/33.webp" alt="Colab cell: print(course in student) outputs True" width="402" height="324"><figcaption>The key <code>"course"</code> exists.</figcaption></figure>
+  <p>Because <code>in</code> looks at keys, <code>print("Rahul" in student)</code> prints <code>False</code>: “Rahul” is a value, not a key.</p>
+  <h3>Combining dictionaries with conditional statements</h3>
+  <p>This is a good point to connect with the previous topic, Control Flow:</p>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "marks": 85
+}
 
 if "marks" in student:
     print("Marks are available")
 else:
     print("Marks are not available")</code></pre>
-  <pre class="out"><code>Marks are available</code></pre>
+  <figure class="shot sm"><img src="img/34.webp" alt="Colab cell: if marks in student prints Marks are available" width="520" height="366"><figcaption>The key exists, so the <code>if</code> branch runs.</figcaption></figure>
   <h3><code>keys()</code>, <code>values()</code> and <code>items()</code></h3>
-  <pre><code class="language-python">student = {"name": "Rahul", "age": 21, "course": "Python"}
-
+  <p><code>keys()</code> gives all the keys, <code>values()</code> all the values, and <code>items()</code> the keys and values together. You can loop over each:</p>
+  <pre><code class="language-python">student = {
+    "name": "Rahul",
+    "age": 21,
+    "course": "Python"
+}
 for key in student.keys():
-    print(key)
-
-for value in student.values():
-    print(value)
-
-for key, value in student.items():
+    print(key)</code></pre>
+  <pre><code class="language-python">for value in student.values():
+    print(value)</code></pre>
+  <pre><code class="language-python">for key, value in student.items():
     print(key, ":", value)</code></pre>
-  <pre class="out"><code>name
-age
-course
-Rahul
-21
-Python
-name : Rahul
-age : 21
-course : Python</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/35.webp" alt="Colab cell: looping over student.keys() prints name, age, course" width="429" height="358"><figcaption><code>keys()</code></figcaption></figure>
+    <figure class="shot sm"><img src="img/36.webp" alt="Colab cell: looping over student.values() prints Rahul, 21, Python" width="511" height="358"><figcaption><code>values()</code></figcaption></figure>
+    <figure class="shot sm"><img src="img/37.webp" alt="Colab cell: looping over student.items() prints name : Rahul, age : 21, course : Python" width="483" height="387"><figcaption><code>items()</code></figcaption></figure>
+  </div>
   <p><code>items()</code> hands out <code>(key, value)</code> pairs, which the loop unpacks into two variables, just like <code>enumerate()</code>.</p>
   <h3>Real-world practice</h3>
   <p><b>Hospital appointment:</b> change the time, confirm the doctor, show everything.</p>
@@ -614,7 +625,7 @@ condition : Cloudy</code></pre>
   <p>Which fruits were mentioned, without repeats? The list keeps “Apple” three times and “Banana” twice; you’d need extra logic to strip duplicates. A <b>set</b> <mark>automatically keeps only unique values</mark>.</p>
   <pre><code class="language-python">fruits = {"Apple", "Banana", "Apple", "Mango", "Banana", "Apple", "Orange"}
 print(fruits)</code></pre>
-  <pre class="out"><code>{'Mango', 'Banana', 'Orange', 'Apple'}</code></pre>
+  <figure class="shot"><img src="img/38.webp" alt="Colab cell: a set literal with repeated fruits prints {'Mango', 'Orange', 'Banana', 'Apple'}" width="949" height="217"><figcaption>Seven answers in, four unique fruits out, in no particular order.</figcaption></figure>
   <p>Notice the order doesn’t match what you typed. For sets of strings it can even <b>change from one run to the next</b>, so the set outputs on this page are one possible order; yours may differ. <b>Sets are unordered</b>: items have no fixed position and <b>no index</b>, so <code>fruits[0]</code> is a <code>TypeError: 'set' object is not subscriptable</code>.</p>
   <h3>Creating sets</h3>
   <p>Curly braces, like a dictionary, but plain values instead of <code>key: value</code> pairs:</p>
@@ -624,28 +635,28 @@ print(colors)</code></pre>
   <pre class="out"><code>{'Blue', 'Red', 'Green'}</code></pre>
   <div class="sticky warn"><strong>The empty-braces trap</strong> <code>{}</code> creates an empty <b>dictionary</b>, not a set. For an empty set write <code>set()</code>: <code>type({})</code> is <code>&lt;class 'dict'&gt;</code>, <code>type(set())</code> is <code>&lt;class 'set'&gt;</code>.</div>
   <h3>Duplicates disappear</h3>
-  <pre><code class="language-python">numbers = {10, 20, 20, 30, 30, 30}
-print(numbers)
-
-numbers = {1, 2, 3, 2, 1}
+  <p>Because a set can never contain duplicates, adding a value that’s already present simply has no effect:</p>
+  <pre><code class="language-python">numbers = {1, 2, 3, 2, 1}
 print(numbers)</code></pre>
-  <pre class="out"><code>{10, 20, 30}
-{1, 2, 3}</code></pre>
+  <figure class="shot sm"><img src="img/39.webp" alt="Colab cell: numbers = {1, 2, 3, 2, 1} prints {1, 2, 3}" width="409" height="225"><figcaption>The repeated 2 and 1 vanish.</figcaption></figure>
+  <pre><code class="language-python">numbers = {10, 20, 20, 30, 30, 30}
+print(numbers)</code></pre>
+  <pre class="out"><code>{10, 20, 30}</code></pre>
   <h3>Adding and removing</h3>
   <p><code>add()</code> inserts one value; adding one that’s already there changes nothing.</p>
   <pre><code class="language-python">colors = {"Red", "Green"}
-
-colors.add("Yellow")
+colors.add("Blue")
 print(colors)</code></pre>
-  <pre class="out"><code>{'Red', 'Yellow', 'Green'}</code></pre>
+  <figure class="shot sm"><img src="img/40.webp" alt="Colab cell: colors.add(Blue) then print(colors) outputs {'Red', 'Green', 'Blue'}" width="405" height="180"><figcaption>Blue is added.</figcaption></figure>
   <div class="two">
     <div class="card t4 tilt-a"><h4><code>remove(value)</code></h4><p>Removes it. <b>Error</b> (<code>KeyError</code>) if it’s missing.</p></div>
     <div class="card t2 tilt-b"><h4><code>discard(value)</code></h4><p>Removes it. Quietly does <b>nothing</b> if it’s missing: the safer choice when unsure.</p></div>
   </div>
   <pre><code class="language-python">colors = {"Red", "Green", "Blue"}
-
 colors.remove("Green")
-colors.discard("Pink")      # not there: no error
+print(colors)</code></pre>
+  <figure class="shot sm"><img src="img/41.webp" alt="Colab cell: colors.remove(Green) then print(colors) outputs {'Red', 'Blue'}" width="496" height="165"><figcaption>Green is removed.</figcaption></figure>
+  <pre><code class="language-python">colors.discard("Pink")      # not there: no error
 print(colors)</code></pre>
   <pre class="out"><code>{'Red', 'Blue'}</code></pre>
   <h3>Membership testing</h3>
@@ -653,8 +664,7 @@ print(colors)</code></pre>
 
 print("Red" in colors)
 print("Yellow" in colors)</code></pre>
-  <pre class="out"><code>True
-False</code></pre>
+  <figure class="shot sm"><img src="img/42.webp" alt="Colab cell: print(Red in colors) outputs True and print(Yellow in colors) outputs False" width="504" height="226"><figcaption>Red is in the set; Yellow isn’t.</figcaption></figure>
   <h3>Union, intersection and difference</h3>
   <p>Sets come from mathematics, so you can combine them like a Venn diagram:</p>
   <pre><code class="language-python">set_a = {1, 2, 3, 4}
@@ -663,9 +673,11 @@ set_b = {3, 4, 5, 6}
 print(set_a | set_b)     # union: everything from both
 print(set_a &amp; set_b)     # intersection: only what's in both
 print(set_a - set_b)     # difference: in a but not in b</code></pre>
-  <pre class="out"><code>{1, 2, 3, 4, 5, 6}
-{3, 4}
-{1, 2}</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/43.webp" alt="Colab cell: print(set_a | set_b) outputs {1, 2, 3, 4, 5, 6}" width="358" height="186"><figcaption>Union <code>|</code>: all values, no duplicates.</figcaption></figure>
+    <figure class="shot sm"><img src="img/44.webp" alt="Colab cell: print(set_a & set_b) outputs {3, 4}" width="358" height="180"><figcaption>Intersection <code>&amp;</code>: only values in both.</figcaption></figure>
+    <figure class="shot sm"><img src="img/45.webp" alt="Colab cell: print(set_a - set_b) outputs {1, 2}" width="366" height="180"><figcaption>Difference <code>-</code>: in the first set, not the second.</figcaption></figure>
+  </div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 320" role="img" aria-label="Venn diagram: set_a holds 1 2 3 4, set_b holds 3 4 5 6; 3 and 4 are in the overlap. Union is 1 to 6, intersection is 3 and 4, difference a minus b is 1 and 2">
       <g class="rough">
@@ -784,17 +796,16 @@ False</code></pre>
 
 print(matrix[1])         # the whole second row
 print(matrix[1][2])      # second row, third column</code></pre>
-  <pre class="out"><code>[4, 5, 6]
-6</code></pre>
+  <figure class="shot sm"><img src="img/46.webp" alt="Colab cell: matrix of three rows; print(matrix[1]) outputs [4, 5, 6] and print(matrix[1][2]) outputs 6" width="421" height="318"><figcaption>One index picks a row, a second picks an item in it.</figcaption></figure>
   <h3>Dictionaries inside dictionaries</h3>
   <p>Many students, each identified by roll number, with their details grouped underneath:</p>
   <pre><code class="language-python">students = {
-    101: {"name": "Rahul", "age": 21},
-    102: {"name": "Priya", "age": 20}
+    "101": {"name": "Rahul", "age": 21},
+    "102": {"name": "Priya", "age": 22}
 }
-
-print(students[102]["name"])</code></pre>
-  <pre class="out"><code>Priya</code></pre>
+print(students["101"]["name"])</code></pre>
+  <p>The value for each key is itself a dictionary. To reach an inner value, you chain the keys:</p>
+  <figure class="shot sm"><img src="img/47.webp" alt="Colab cell: students dictionary keyed by 101 and 102; print(students[101][name]) outputs Rahul" width="556" height="238"><figcaption>Outer key <code>"101"</code>, then inner key <code>"name"</code>.</figcaption></figure>
   <h3>Lists inside dictionaries</h3>
   <p>One key holding several values, like a student’s marks across subjects:</p>
   <pre><code class="language-python">student = {
@@ -804,8 +815,7 @@ print(students[102]["name"])</code></pre>
 
 print(student["marks"])
 print(student["marks"][1])</code></pre>
-  <pre class="out"><code>[85, 90, 78]
-90</code></pre>
+  <figure class="shot sm"><img src="img/48.webp" alt="Colab cell: print(student[marks]) outputs [85, 90, 78] and print(student[marks][1]) outputs 90" width="483" height="285"><figcaption>Access the list by key, then index into it.</figcaption></figure>
   <h3>Dictionaries inside lists</h3>
   <p>One of the most common real-world patterns: <b>a list of records</b>, each record a dictionary. It finally solves the opening problem of storing many students:</p>
   <pre><code class="language-python">students = [
@@ -816,8 +826,7 @@ print(student["marks"][1])</code></pre>
 
 print(students[0])
 print(students[0]["name"])</code></pre>
-  <pre class="out"><code>{'name': 'Rahul', 'age': 21}
-Rahul</code></pre>
+  <figure class="shot sm"><img src="img/49.webp" alt="Colab cell: list of three student dictionaries; print(students[0]) outputs {'name': 'Rahul', 'age': 21} and print(students[0][name]) outputs Rahul" width="489" height="307"><figcaption>A list index picks the record; a key picks the field.</figcaption></figure>
   <h3>Reaching deep inside</h3>
   <pre><code class="language-python">students = [
     {"name": "Rahul", "marks": [85, 90, 78]},
@@ -825,7 +834,7 @@ Rahul</code></pre>
 ]
 
 print(students[1]["marks"][2])</code></pre>
-  <pre class="out"><code>95</code></pre>
+  <figure class="shot sm"><img src="img/50.webp" alt="Colab cell: print(students[1][marks][2]) outputs 95" width="610" height="261"><figcaption>Three steps in: Priya’s record, her marks, the third mark.</figcaption></figure>
   <div class="anatomy"><span class="a7">students</span><span class="a1">[1]</span><span class="a2">["marks"]</span><span class="a3">[2]</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p><code>[1]</code>: list index, picks Priya’s record (a dictionary)</p></div>
@@ -899,31 +908,43 @@ print(guests)</code></pre>
   <h2>Slicing lists</h2>
   <p>Indexing gives one value; slicing gives a <b>range</b> of values. It works on lists (and tuples) exactly as you learned for strings: <code>sequence[start:stop:step]</code>, with <mark>start included and stop excluded</mark>, the same rule as <code>range()</code>.</p>
   <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
-
-print(numbers[1:4])
-print(numbers[1:3])</code></pre>
-  <pre class="out"><code>[20, 30, 40]
-[20, 30]</code></pre>
-  <h3>Leaving start or stop empty</h3>
+print(numbers[1:4])</code></pre>
+  <figure class="shot sm"><img src="img/51.webp" alt="Colab cell: print(numbers[1:4]) outputs [20, 30, 40]" width="472" height="160"><figcaption>Indexes 1, 2 and 3; index 4 is excluded.</figcaption></figure>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/52.webp" alt="Diagram: numbers 10 to 50 with indexes 0 to 4; a dashed box around 20, 30, 40 (indexes 1 to 3) becomes numbers[1:4] = [20, 30, 40]" width="1400" height="700"><figcaption>The slice takes everything from start up to, not including, stop.</figcaption></figure>
+  <h3><code>start:stop</code></h3>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">sequence[start:stop]</code></pre></div>
+  <p>This returns items from index <code>start</code> up to, but not including, index <code>stop</code>:</p>
   <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
-
+print(numbers[1:3])</code></pre>
+  <figure class="shot sm"><img src="img/53.webp" alt="Colab cell: print(numbers[1:3]) outputs [20, 30]" width="445" height="147"><figcaption>Indexes 1 and 2 only.</figcaption></figure>
+  <h3>Leaving start or stop empty</h3>
+  <p>Leaving start or stop empty fills in a sensible default:</p>
+  <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
+print(numbers[1:3])
 print(numbers[:3])     # start defaults to the beginning
 print(numbers[2:])     # stop defaults to the end
 print(numbers[:])      # a full copy of the list</code></pre>
-  <pre class="out"><code>[10, 20, 30]
-[30, 40, 50]
-[10, 20, 30, 40, 50]</code></pre>
-  <h3>Steps, and reversing</h3>
+  <figure class="shot sm"><img src="img/54.webp" alt="Colab cell: numbers[1:3] gives [20, 30], numbers[:3] gives [10, 20, 30], numbers[2:] gives [30, 40, 50], numbers[:] gives [10, 20, 30, 40, 50]" width="469" height="337"><figcaption>Empty start means “from the beginning”; empty stop means “to the end”.</figcaption></figure>
+  <h3><code>start:stop:step</code></h3>
+  <p>A third value controls the step: how many positions to move each time, exactly like the step in <code>range()</code>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">sequence[start:stop:step]</code></pre></div>
   <pre><code class="language-python">numbers = [10, 20, 30, 40, 50, 60]
-print(numbers[0:6:2])        # every second element
-
-numbers = [10, 20, 30, 40, 50]
-word = "Python"
-print(numbers[::-1])         # the standard way to reverse
+print(numbers[0:6:2])        # every second element</code></pre>
+  <figure class="shot sm"><img src="img/55.webp" alt="Colab cell: print(numbers[0:6:2]) outputs [10, 30, 50]" width="495" height="154"><figcaption>Step 2: every second element.</figcaption></figure>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/56.webp" alt="Diagram: numbers 10 to 60 with indexes 0 to 5; 10, 30 and 50 are marked picked (step of 2); numbers[::2] gives [10, 30, 50]" width="1400" height="700"><figcaption>Pick one, skip one. (The diagram writes the same slice as <code>numbers[::2]</code>.)</figcaption></figure>
+  <h3>Positive and negative steps</h3>
+  <p>A positive step moves forward through the sequence; a negative step moves backward.</p>
+  <pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
+print(numbers[::-1])         # the standard way to reverse</code></pre>
+  <p><code>numbers[::-1]</code> is a very common idiom: with start and stop left empty and step <code>-1</code>, it walks the whole sequence back to front. That is why it’s the standard way to reverse a list or a string:</p>
+  <pre><code class="language-python">word = "Python"
 print(word[::-1])</code></pre>
-  <pre class="out"><code>[10, 30, 50]
-[50, 40, 30, 20, 10]
-nohtyP</code></pre>
+  <div class="shots">
+    <figure class="shot sm"><img src="img/57.webp" alt="Colab cell: print(numbers[::-1]) outputs [50, 40, 30, 20, 10]" width="441" height="153"><figcaption>A reversed list.</figcaption></figure>
+    <figure class="shot sm"><img src="img/58.webp" alt="Colab cell: word = Python; print(word[::-1]) outputs nohtyP" width="349" height="153"><figcaption>A reversed string.</figcaption></figure>
+  </div>
   <h3>Splitting data into chunks</h3>
   <pre><code class="language-python">scores = [55, 62, 71, 85, 90, 45, 30]
 
@@ -932,8 +953,7 @@ bottom_half = scores[4:]
 
 print(top_half)
 print(bottom_half)</code></pre>
-  <pre class="out"><code>[55, 62, 71, 85]
-[90, 45, 30]</code></pre>
+  <figure class="shot sm"><img src="img/59.webp" alt="Colab cell: scores[:4] gives [55, 62, 71, 85] and scores[4:] gives [90, 45, 30]" width="522" height="318"><figcaption>The first four, and everything after.</figcaption></figure>
   <h3>Slicing creates a new list</h3>
   <pre><code class="language-python">original = [1, 2, 3, 4, 5]
 
@@ -941,8 +961,7 @@ copy = original[1:4]
 copy[0] = 99
 print(original)
 print(copy)</code></pre>
-  <pre class="out"><code>[1, 2, 3, 4, 5]
-[99, 3, 4]</code></pre>
+  <figure class="shot sm"><img src="img/60.webp" alt="Colab cell: copy = original[1:4]; copy[0] = 99; original prints [1, 2, 3, 4, 5] and copy prints [99, 3, 4]" width="429" height="321"><figcaption><code>original</code> is untouched.</figcaption></figure>
   <p>Changing <code>copy</code> left <code>original</code> untouched, because the slice built a brand-new list.</p>
   <div class="sticky warn"><strong><code>b = a</code> is not a copy</strong> Plain assignment only adds a second name tag to the <b>same</b> list (remember Part 1). After <code>a = [1, 2, 3]</code>, <code>b = a</code>, <code>b[0] = 99</code>, printing <code>a</code> gives <code>[99, 2, 3]</code>. Use <code>a[:]</code> when you want an independent copy.</div>
   <h3>Real-world practice</h3>
@@ -983,9 +1002,9 @@ Morning shift: ['Rahul', 'Priya', 'Amit', 'Kiran']</code></pre>
 <!-- 10 -->
 <section class="ch" id="list-comprehensions">
   <h2>List comprehensions</h2>
-  <p>A situation that comes up constantly: you <b>have a collection and want to build a new one from it</b>: add grace marks to every mark, keep only passing marks, capitalise every name, map each student to a result. Python has a short, clean way to do this: <b>comprehensions</b>.</p>
+  <p>A situation that comes up constantly: you <b>have a collection and want to build a new one from it</b>: add grace marks to every student’s marks, keep only the marks above the passing score, turn every name into capital letters, create a dictionary of each student and their result. Python has a short, clean way to do this: <b>comprehensions</b>.</p>
   <h3>Why: the loop-and-append pattern</h3>
-  <p>The teacher adds 5 grace marks to everyone. With what you know:</p>
+  <p>The teacher decides to give 5 grace marks to every student, and you need a new list where every mark is increased by 5. Let’s try to solve the problem with what you already know: an empty list, a loop and <code>append()</code>:</p>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 
 new_marks = []
@@ -993,16 +1012,20 @@ for mark in marks:
     new_marks.append(mark + 5)
 
 print(new_marks)</code></pre>
-  <pre class="out"><code>[90, 77, 96, 73, 84]</code></pre>
+  <figure class="shot"><img src="img/61.webp" alt="Colab cell: building new_marks with a for loop and append(mark + 5) prints [90, 77, 96, 73, 84]" width="860" height="620"><figcaption>It works: every mark is 5 higher.</figcaption></figure>
   <div class="flow"><span>create an empty list</span><span>loop through the original</span><span>append() each new value</span></div>
   <p>Three steps for a simple idea. A <b>list comprehension</b> writes the same thing in one line:</p>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 
 new_marks = [mark + 5 for mark in marks]
 print(new_marks)</code></pre>
-  <pre class="out"><code>[90, 77, 96, 73, 84]</code></pre>
+  <figure class="shot"><img src="img/62.webp" alt="Colab cell: new_marks = [mark + 5 for mark in marks] prints [90, 77, 96, 73, 84]" width="1080" height="446"><figcaption>Same result, in one line.</figcaption></figure>
+  <p>No empty list, no <code>append()</code>: Python builds the list for you.</p>
+  <figure class="shot"><img src="img/63.webp" alt="Comparison: Using a for loop takes 3 lines (create, loop, append); using a list comprehension takes 1 line with the same result; key takeaway: both give [90, 77, 96, 73, 84]" width="1400" height="382"><figcaption>A comprehension is a shorter way to write the create, loop, append pattern.</figcaption></figure>
   <h3>Syntax</h3>
+  <p>A list comprehension is written inside square brackets because the result is a list.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[expression for item in iterable]</code></pre></div>
+  <figure class="shot"><img src="img/64.webp" alt="Syntax diagram: [ expression for item in iterable ]; square brackets mean the result is a new list; expression is what to put in the new list for each item (mark + 5); the for loop goes through the original collection (for mark in marks)" width="1400" height="350"><figcaption>Three parts: the brackets, the expression, the loop.</figcaption></figure>
   <div class="anatomy"><span class="a7">[</span><span class="a1">mark + 5</span> <span class="a2">for mark</span> <span class="a3">in marks</span><span class="a7">]</span></div>
   <div class="legend">
     <div><span class="sw a1"></span><p>expression: what goes into the new list</p></div>
@@ -1014,8 +1037,7 @@ print(new_marks)</code></pre>
 new_marks = [mark + 5 for mark in marks]
 print(marks)
 print(new_marks)</code></pre>
-  <pre class="out"><code>[85, 72, 91, 68, 79]
-[90, 77, 96, 73, 84]</code></pre>
+  <figure class="shot"><img src="img/65.webp" alt="Colab cell: printing marks gives [85, 72, 91, 68, 79] and new_marks gives [90, 77, 96, 73, 84]" width="1080" height="562"><figcaption>The original list is unchanged.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>mark</th><th>expression</th><th>goes into new list</th></tr>
     <tr><td>85</td><td>85 + 5</td><td>90</td></tr>
@@ -1024,21 +1046,24 @@ print(new_marks)</code></pre>
     <tr><td>68</td><td>68 + 5</td><td>73</td></tr>
     <tr><td>79</td><td>79 + 5</td><td>84</td></tr>
   </table></div>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/66.webp" alt="Diagram: each of 85, 72, 91, 68, 79 passes through mark + 5 to give 90, 77, 96, 73, 84 in new_marks" width="1400" height="426"><figcaption>Every item goes through the expression, and the result goes into a brand-new list.</figcaption></figure>
   <p>Same number of items, same order, each one transformed.</p>
   <h3>More expressions</h3>
+  <p>The expression can be anything that gives a value. <b>Squares of numbers</b> from 1 to 5, looping through <code>range()</code>:</p>
   <pre><code class="language-python">squares = [n * n for n in range(1, 6)]
-print(squares)
-
-students = ["rahul", "priya", "amit"]
+print(squares)</code></pre>
+  <figure class="shot"><img src="img/67.webp" alt="Colab cell: squares = [n * n for n in range(1, 6)] prints [1, 4, 9, 16, 25]" width="1036" height="330"><figcaption>Squares of 1 to 5.</figcaption></figure>
+  <p><b>Changing strings:</b> suppose you have student names in small letters and want them in capital letters:</p>
+  <pre><code class="language-python">students = ["rahul", "priya", "amit"]
 upper_names = [name.upper() for name in students]
-print(upper_names)
-
-students = ["Rahul", "Priya", "Amit"]
-name_lengths = [len(name) for name in students]     # find something about each item
+print(upper_names)</code></pre>
+  <figure class="shot"><img src="img/68.webp" alt="Colab cell: upper_names = [name.upper() for name in students] prints ['RAHUL', 'PRIYA', 'AMIT']" width="1278" height="446"><figcaption>Every name in capitals.</figcaption></figure>
+  <p><b>Getting information from each item:</b> the expression doesn’t have to change the item; it can find something about it, like the number of letters in each name:</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
+name_lengths = [len(name) for name in students]
 print(name_lengths)</code></pre>
-  <pre class="out"><code>[1, 4, 9, 16, 25]
-['RAHUL', 'PRIYA', 'AMIT']
-[5, 5, 4]</code></pre>
+  <figure class="shot"><img src="img/69.webp" alt="Colab cell: name_lengths = [len(name) for name in students] prints [5, 5, 4]" width="1234" height="446"><figcaption>The length of each name.</figcaption></figure>
   <p>Whatever you write <b>before</b> <code>for</code> is what goes into the new list.</p>
   <h3>Adding a condition: filtering</h3>
   <p>Now the teacher only wants marks of 75 or more. With a loop you need an <code>if</code> inside:</p>
@@ -1050,29 +1075,33 @@ for mark in marks:
         high_marks.append(mark)
 
 print(high_marks)</code></pre>
-  <pre class="out"><code>[85, 91, 79]</code></pre>
+  <figure class="shot"><img src="img/70.webp" alt="Colab cell: a for loop with if mark >= 75 appending to high_marks prints [85, 91, 79]" width="882" height="678"><figcaption>Only marks of 75 or more were appended.</figcaption></figure>
   <p>In a comprehension, put the <code>if</code> at the end:</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[expression for item in iterable if condition]</code></pre></div>
+  <figure class="shot"><img src="img/71.webp" alt="Syntax diagram: [ expression for item in iterable if condition ]; expression is what to put in the new list (mark); for loop goes through every item (for mark in marks); condition (filter) keeps only items where it is True (if mark >= 75)" width="1400" height="350"><figcaption>The <code>if</code> at the end is the filter.</figcaption></figure>
   <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 
 high_marks = [mark for mark in marks if mark &gt;= 75]
 print(high_marks)</code></pre>
-  <pre class="out"><code>[85, 91, 79]</code></pre>
-  <div class="flow"><span class="ok">85 ✓</span><span class="skip">72</span><span class="ok">91 ✓</span><span class="skip">68</span><span class="ok">79 ✓</span><span class="hl">[85, 91, 79]</span></div>
+  <figure class="shot"><img src="img/72.webp" alt="Colab cell: high_marks = [mark for mark in marks if mark >= 75] prints [85, 91, 79]" width="1322" height="446"><figcaption>Same result as the loop, in one line.</figcaption></figure>
+  <p>Visually:</p>
+  <!-- img 73 replaces the earlier kept/skipped flow chips -->
+  <figure class="shot"><img src="img/73.webp" alt="Diagram: 85 kept, 72 skipped, 91 kept, 68 skipped, 79 kept by the condition if mark >= 75, giving [85, 91, 79]" width="1400" height="491"><figcaption>Only items where the condition is True make it into the new list.</figcaption></figure>
   <p>The new list is shorter: 72 and 68 were skipped because the condition was False for them.</p>
+  <p><b>More filtering examples.</b> Even numbers from 1 to 10:</p>
   <pre><code class="language-python">evens = [n for n in range(1, 11) if n % 2 == 0]
-print(evens)
-
-students = ["Rahul", "Priya", "Amit", "Sneha", "Ravi"]
+print(evens)</code></pre>
+  <figure class="shot"><img src="img/74.webp" alt="Colab cell: evens = [n for n in range(1, 11) if n % 2 == 0] prints [2, 4, 6, 8, 10]" width="1234" height="330"><figcaption>Only the even numbers.</figcaption></figure>
+  <p>Names that have more than 4 letters:</p>
+  <pre><code class="language-python">students = ["Rahul", "Priya", "Amit", "Sneha", "Ravi"]
 long_names = [name for name in students if len(name) &gt; 4]
-print(long_names)
-
-marks = [85, 72, 91, 68, 79]                       # filter AND change:
+print(long_names)</code></pre>
+  <figure class="shot"><img src="img/75.webp" alt="Colab cell: long_names = [name for name in students if len(name) > 4] prints ['Rahul', 'Priya', 'Sneha']" width="1400" height="429"><figcaption>Amit and Ravi (4 letters) are skipped.</figcaption></figure>
+  <p>Filter and change at the same time: grace marks only for students below 75:</p>
+  <pre><code class="language-python">marks = [85, 72, 91, 68, 79]
 low_marks_with_grace = [mark + 5 for mark in marks if mark &lt; 75]
 print(low_marks_with_grace)</code></pre>
-  <pre class="out"><code>[2, 4, 6, 8, 10]
-['Rahul', 'Priya', 'Sneha']
-[77, 73]</code></pre>
+  <figure class="shot"><img src="img/76.webp" alt="Colab cell: low_marks_with_grace = [mark + 5 for mark in marks if mark < 75] prints [77, 73]" width="1400" height="388"><figcaption>72 and 68 were kept, then raised by 5.</figcaption></figure>
   <h3>if-else inside a comprehension</h3>
   <p>Sometimes you don’t skip anything; you choose <b>one value or another</b> for every item. “Pass” for 75 or more, otherwise “Fail”:</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">[value_if_true if condition else value_if_false for item in iterable]</code></pre></div>
@@ -1080,7 +1109,9 @@ print(low_marks_with_grace)</code></pre>
 
 results = ["Pass" if mark &gt;= 75 else "Fail" for mark in marks]
 print(results)</code></pre>
-  <pre class="out"><code>['Pass', 'Fail', 'Pass', 'Fail', 'Pass']</code></pre>
+  <figure class="shot"><img src="img/77.webp" alt="Colab cell: results = [Pass if mark >= 75 else Fail for mark in marks] prints ['Pass', 'Fail', 'Pass', 'Fail', 'Pass']" width="1400" height="399"><figcaption>One result for every mark.</figcaption></figure>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/78.webp" alt="Diagram: each mark goes through Pass if mark >= 75 else Fail, giving Pass, Fail, Pass, Fail, Pass" width="1400" height="423"><figcaption>Nothing is skipped: every item gives a value, either Pass or Fail.</figcaption></figure>
   <div class="two">
     <div class="card t1 tilt-a"><h4><code>if</code> AFTER <code>for</code> → filter</h4><p><code>[mark for mark in marks if mark &gt;= 75]</code><br>Decides <b>whether</b> an item goes in. Some items are skipped; the list can be shorter.</p></div>
     <div class="card t3 tilt-b"><h4><code>if-else</code> BEFORE <code>for</code> → choose</h4><p><code>["Pass" if mark &gt;= 75 else "Fail" for mark in marks]</code><br>Decides <b>which value</b> goes in. Nothing is skipped; same length.</p></div>
@@ -1093,19 +1124,20 @@ print(results)</code></pre>
   <h2>Dictionary comprehensions, and when to use comprehensions</h2>
   <p>The same one-line idea builds a <b>dictionary</b>. Two differences: curly braces <code>{ }</code>, and each item produces a <code>key: value</code> pair.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">{key: value for item in iterable}</code></pre></div>
+  <figure class="shot"><img src="img/79.webp" alt="Syntax diagram: { key : value for item in iterable }; curly braces mean the result is a new dictionary; key (name); value (len(name)); for loop goes through the original collection (for name in students)" width="1400" height="350"><figcaption>Curly braces, and a <code>key: value</code> pair per item.</figcaption></figure>
   <h3>From a list</h3>
+  <p>Each student’s name as the key, and the number of letters in the name as the value:</p>
   <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
-
 name_lengths = {name: len(name) for name in students}
-print(name_lengths)
-
-squares = {n: n * n for n in range(1, 6)}
-print(squares)
-print(squares[4])</code></pre>
-  <pre class="out"><code>{'Rahul': 5, 'Priya': 5, 'Amit': 4}
-{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
-16</code></pre>
-  <p>For each name, the key is <code>name</code> and the value is <code>len(name)</code>. Now <code>squares[4]</code> looks up the square of 4 directly.</p>
+print(name_lengths)</code></pre>
+  <figure class="shot"><img src="img/80.webp" alt="Colab cell: name_lengths = {name: len(name) for name in students} prints {'Rahul': 5, 'Priya': 5, 'Amit': 4}" width="1366" height="446"><figcaption>A new dictionary from a list.</figcaption></figure>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/81.webp" alt="Diagram: the students list Rahul, Priya, Amit passes through name : len(name) to give the name_lengths dictionary with keys Rahul, Priya, Amit and values 5, 5, 4" width="1400" height="329"><figcaption>For each name, the key is <code>name</code> and the value is <code>len(name)</code>.</figcaption></figure>
+  <p><b>Numbers and their squares:</b></p>
+  <pre><code class="language-python">squares = {n: n * n for n in range(1, 6)}
+print(squares)</code></pre>
+  <figure class="shot"><img src="img/82.webp" alt="Colab cell: squares = {n: n * n for n in range(1, 6)} prints {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}" width="1102" height="330"><figcaption>Each number maps to its square.</figcaption></figure>
+  <p>Now you can look up the square of any number directly: <code>squares[4]</code> gives 16.</p>
   <h3>Combining two lists into a dictionary</h3>
   <p>Names and marks sit in two lists, in the same order. Loop through the positions with <code>range(len(students))</code>:</p>
   <pre><code class="language-python">students = ["Rahul", "Priya", "Amit"]
@@ -1113,7 +1145,7 @@ marks = [85, 72, 91]
 
 report = {students[i]: marks[i] for i in range(len(students))}
 print(report)</code></pre>
-  <pre class="out"><code>{'Rahul': 85, 'Priya': 72, 'Amit': 91}</code></pre>
+  <figure class="shot"><img src="img/83.webp" alt="Colab cell: report = {students[i]: marks[i] for i in range(len(students))} prints {'Rahul': 85, 'Priya': 72, 'Amit': 91}" width="1400" height="451"><figcaption>Each student is connected to their mark.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>i</th><th>key</th><th>value</th><th>pair</th></tr>
     <tr><td>0</td><td><code>students[0]</code></td><td><code>marks[0]</code></td><td><code>"Rahul": 85</code></td></tr>
@@ -1122,22 +1154,25 @@ print(report)</code></pre>
   </table></div>
   <div class="sticky tip"><strong>A shortcut you’ll meet later</strong> <code>dict(zip(students, marks))</code> builds the same dictionary by pairing the two lists directly.</div>
   <h3>From an existing dictionary, using <code>items()</code></h3>
+  <p>Very often you build a new dictionary from an existing one. <code>items()</code> gives the keys and values together, so you can loop through both at once.</p>
+  <p><b>Changing every value:</b> grace marks again, but stored in a dictionary:</p>
   <pre><code class="language-python">marks = {"Rahul": 85, "Priya": 72, "Amit": 91, "Sneha": 68}
-
-new_marks = {name: mark + 5 for name, mark in marks.items()}           # change every value
-print(new_marks)
-
-toppers = {name: mark for name, mark in marks.items() if mark &gt;= 75}   # filter
-print(toppers)
-
+new_marks = {name: mark + 5 for name, mark in marks.items()}
+print(new_marks)</code></pre>
+  <figure class="shot"><img src="img/84.webp" alt="Colab cell: new_marks = {name: mark + 5 for name, mark in marks.items()} prints {'Rahul': 90, 'Priya': 77, 'Amit': 96, 'Sneha': 73}" width="1400" height="411"><figcaption>The keys stay the same; only the values change.</figcaption></figure>
+  <p><b>Filtering a dictionary:</b> only the toppers, students with 75 or more:</p>
+  <pre><code class="language-python">marks = {"Rahul": 85, "Priya": 72, "Amit": 91, "Sneha": 68}
+toppers = {name: mark for name, mark in marks.items() if mark &gt;= 75}
+print(toppers)</code></pre>
+  <figure class="shot"><img src="img/85.webp" alt="Colab cell: toppers = {name: mark for name, mark in marks.items() if mark >= 75} prints {'Rahul': 85, 'Amit': 91}" width="1400" height="368"><figcaption>Priya and Sneha are filtered out.</figcaption></figure>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/86.webp" alt="Diagram: Rahul 85 kept, Priya 72 skipped, Amit 91 kept, Sneha 68 skipped by the condition if value >= 75, giving toppers Rahul 85 and Amit 91" width="1400" height="365"><figcaption>Only pairs that pass the condition are copied.</figcaption></figure>
+  <p><b>Using if-else in a dictionary comprehension:</b> the Pass/Fail result for every student:</p>
+  <pre><code class="language-python">marks = {"Rahul": 85, "Priya": 72, "Amit": 91, "Sneha": 68}
 results = {name: "Pass" if mark &gt;= 75 else "Fail" for name, mark in marks.items()}
-print(results)
-print(results["Priya"])</code></pre>
-  <pre class="out"><code>{'Rahul': 90, 'Priya': 77, 'Amit': 96, 'Sneha': 73}
-{'Rahul': 85, 'Amit': 91}
-{'Rahul': 'Pass', 'Priya': 'Fail', 'Amit': 'Pass', 'Sneha': 'Fail'}
-Fail</code></pre>
-  <p>The keys stay the same; only the values change (or get filtered). And <code>results["Priya"]</code> is exactly the kind of lookup dictionaries are made for.</p>
+print(results)</code></pre>
+  <figure class="shot"><img src="img/87.webp" alt="Colab cell: results dictionary comprehension prints {'Rahul': 'Pass', 'Priya': 'Fail', 'Amit': 'Pass', 'Sneha': 'Fail'}" width="1400" height="312"><figcaption>Every student gets a result.</figcaption></figure>
+  <p>Now you can directly ask <code>results["Priya"]</code> and get <code>"Fail"</code>: exactly the kind of lookup dictionaries are made for.</p>
   <h3>When should you use a comprehension?</h3>
   <div class="two">
     <div class="card t2 tilt-a"><h4>Use a comprehension when…</h4><p>you’re building a new list or dictionary from an existing collection; each item needs a simple change or a simple condition; the whole idea fits comfortably on one line.</p></div>
@@ -1146,6 +1181,8 @@ Fail</code></pre>
   <p>This works, but is hard to understand at a glance:</p>
   <pre><code class="language-python">grades = ["A" if m &gt;= 90 else "B" if m &gt;= 75 else "C" if m &gt;= 60 else "D" for m in marks]</code></pre>
   <p>A normal loop with <code>if</code>/<code>elif</code>/<code>else</code> would be much clearer. <mark>The goal is always readable code, not the shortest code.</mark></p>
+  <p>To summarise:</p>
+  <figure class="shot"><img src="img/88.webp" alt="Comparison: list comprehension uses square brackets, one expression per item, gives a new list, e.g. [mark + 5 for mark in marks] gives [90, 77, 96, 73, 84]; dictionary comprehension uses curly braces, a key : value pair per item, gives a new dictionary, e.g. {name: len(name) for name in students} gives {'Rahul': 5, ...}" width="1400" height="371"><figcaption>Square brackets build a list; curly braces with <code>key: value</code> build a dictionary.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Pattern</th><th>Builds</th></tr>
     <tr><td><code>[expression for item in iterable]</code></td><td>a new list</td></tr>
@@ -1222,6 +1259,6 @@ Fail</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

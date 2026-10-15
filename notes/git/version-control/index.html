@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-13">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="git/version-control">
@@ -61,7 +61,7 @@
 <!-- 2 -->
 <section class="ch" id="types">
   <h2>Three kinds of version control</h2>
-  <p>Version control systems come in three common designs. They differ in <b>where the history lives</b>.</p>
+  <p>There are different types of version control systems; the most widely and commonly used come in three designs. They differ in <b>where the history lives</b>.</p>
 
   <h3>1. Local version control</h3>
   <p>The simplest form, designed for <b>one person or a small project</b>. A database of versions sits on your own computer, and you check out the version you want to work on.</p>
@@ -127,12 +127,12 @@
     <div class="card t1 tilt-a"><h4>Tracking history</h4><p>Every change is recorded with when and why, which makes debugging and understanding the project far easier.</p></div>
     <div class="card t2 tilt-b"><h4>Parallel development</h4><p>Team members work at the same time on <b>branches</b>, and the VCS helps combine their changes.</p></div>
     <div class="card t3 tilt-a"><h4>Backup &amp; recovery</h4><p>If your laptop is lost or damaged, the project and its history still exist on the server (and, with Git, in every other clone).</p></div>
-    <div class="card t4 tilt-b"><h4>Code review &amp; quality</h4><p>Teammates review changes for quality and standards <b>before</b> they are merged.</p></div>
+    <div class="card t4 tilt-b"><h4>Code reviews &amp; quality assurance</h4><p>Teammates assess code quality, adherence to standards and possible issues <b>before</b> changes are merged.</p></div>
     <div class="card t5 tilt-a"><h4>Experiment &amp; roll back</h4><p>Try an idea on a separate branch. If it fails, throw the branch away and the main project is untouched.</p></div>
     <div class="card t8 tilt-b"><h4>Release management</h4><p><b>Tag</b> the exact version you shipped, so releases are consistent and repeatable.</p></div>
     <div class="card t6 tilt-a"><h4>Traceability</h4><p>An audit trail: every change documents who did what, and the message explains the decision.</p></div>
     <div class="card t7 tilt-b"><h4>Conflict resolution</h4><p>When two people edit the same code, the VCS highlights the clash so it can be resolved systematically.</p></div>
-    <div class="card t1 tilt-a"><h4>Open source</h4><p>Thousands of strangers across the world collaborate on one codebase while keeping quality high.</p></div>
+    <div class="card t1 tilt-a"><h4>Open source &amp; collaboration beyond teams</h4><p>VCS tools are vital for open-source projects: thousands of strangers across the world collaborate on one codebase while maintaining code quality.</p></div>
   </div>
   <div class="sticky fde"><strong>In the field (FDE)</strong> On a customer engagement, the repo history is your memory. When a customer asks “what changed since the demo last week?”, <code>git log</code> answers in seconds, and a tag on the demo version lets you rebuild exactly what they saw.</div>
 </section>
@@ -140,6 +140,7 @@
 <!-- 4 -->
 <section class="ch" id="how">
   <h2>How a version control system works</h2>
+  <p>Here is a simple explanation of how a VCS operates.</p>
   <div class="story"><b class="lbl">The class register</b>Think of a shared attendance register. Each teacher keeps a photocopy (local copy), marks today’s attendance (changes), signs and dates the page (commit), and hands it to the office to update the master register (push). Next morning they collect the updated copy (pull). <mark>A VCS is that routine, done perfectly by software.</mark></div>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Repository</b>A storage location that holds all the project files and their <b>entire history</b>.</div></li>
@@ -305,6 +306,6 @@ man git-&lt;verb&gt;         # e.g. man git-config (Linux/macOS)</code></pre></d
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

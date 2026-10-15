@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-13">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="git/git-workflows">
@@ -137,7 +137,7 @@ git commit -m "initial commit"</code></pre>
 <!-- 4 -->
 <section class="ch" id="joining">
   <h2>Joining an existing Git project</h2>
-  <p>Imagine your friend has invited you to contribute to their Git project. Their repository lives on a hosting platform, and you need a copy on your laptop, a branch of your own, and a way to send your work back.</p>
+  <p>Imagine your friend has invited you to contribute to their Git project. Their repository lives on a hosting platform, and you need a copy on your laptop, a branch of your own, and a way to send your work back. To proceed with this contribution, follow the steps outlined below.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 290" role="img" aria-label="The GitHub repo is cloned to your laptop's main branch. You create the branch feat/hero-section, edit, add and commit there, git pull to get the latest work, then git push the branch back to GitHub">
       <g class="rough">
@@ -265,8 +265,8 @@ build/</code></pre></div>
   <h2>Why .gitignore matters</h2>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>1 · No versioning of unnecessary files</h4><p>Compiled binaries, log files and temporary files are created during development. They are not needed in version control and can be large. Ignoring them avoids storing useless versions and <b>saves space</b>.</p></div>
-    <div class="card t2 tilt-b"><h4>2 · A cleaner repository</h4><p>With non-essential files left out, the repo stays focused on <b>source code and configuration</b>, so it is easier to navigate and manage.</p></div>
-    <div class="card t4 tilt-a"><h4>3 · No leaked secrets</h4><p>It helps stop sensitive data such as <b>API keys, passwords</b> and other confidential information from being accidentally committed and shared.</p></div>
+    <div class="card t2 tilt-b"><h4>2 · Enhancing repository cleanliness</h4><p>With non-essential files left out, the repo stays focused on <b>source code and configuration</b>, so it is easier to navigate and manage.</p></div>
+    <div class="card t4 tilt-a"><h4>3 · Avoiding sensitive data exposure</h4><p>It helps stop sensitive data such as <b>API keys, passwords</b> and other confidential information from being accidentally committed and shared.</p></div>
     <div class="card t5 tilt-b"><h4>4 · Consistency across platforms</h4><p>Each OS and IDE creates its own files (<code>.DS_Store</code>, <code>Thumbs.db</code>, <code>.idea/</code>). Ignoring them keeps the repo the same for developers on <b>different machines</b>.</p></div>
     <div class="card t3 tilt-a"><h4>5 · Better performance</h4><p>Leaving out large or numerous files makes Git operations such as <b>clone, pull, push and branching</b> faster.</p></div>
   </div>
@@ -400,6 +400,6 @@ git status --ignored          # lists ignored files too</code></pre></div>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

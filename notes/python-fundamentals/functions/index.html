@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-25">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-fundamentals/functions">
@@ -39,12 +39,21 @@ print("Good morning")
 print("Hello, Rahul")
 print("Welcome to Python")
 print("Good morning")</code></pre></div>
+  <p>Now imagine the program becomes very large. We may have the same logic again and again:</p>
+  <figure class="shot"><img src="img/01.webp" alt="The same three print lines (Hello, Rahul / Welcome to Python / Good morning) copied a 1st, 2nd, 3rd and 4th time; on the right, Code followed by Repeated, Repeated, Repeated, Repeated" width="1400" height="788"><figcaption>The same block, copied over and over as the program grows.</figcaption></figure>
+  <p>This causes several problems:</p>
   <div class="grid">
     <div class="card t3 tilt-a"><h4>Problem 1 · More code</h4><p>The same lines appear again and again, so the program grows for no reason.</p></div>
     <div class="card t4 tilt-b"><h4>Problem 2 · Hard to maintain</h4><p>Want to change the message? You must find and edit <b>every</b> copy.</p></div>
     <div class="card t6 tilt-a"><h4>Problem 3 · More mistakes</h4><p>Miss one copy, or edit one slightly differently, and the program behaves inconsistently.</p></div>
   </div>
   <div class="story"><b class="lbl">The restaurant recipe</b>A restaurant doesn’t re-teach the chef how to make a dosa every time someone orders one. There is one <b>recipe</b>. Each order simply says “make a dosa”, and the chef follows the same recipe: prepare, cook, serve. <mark>A function is a recipe for your program: written once, used as many times as you like.</mark></div>
+  <p>Imagine a restaurant. It has a common process for preparing a particular dish. Instead of teaching the chef the entire process every time a customer orders it, the restaurant has a defined procedure:</p>
+  <div class="two">
+    <div class="flow v"><span>Customer orders dish</span><span class="hl">Follow recipe</span><span>Prepare dish</span><span class="ok">Serve dish</span></div>
+    <div class="flow v"><span>Another customer orders the same dish</span><span class="hl">Use the same recipe</span><span>Prepare dish</span><span class="ok">Serve dish</span></div>
+  </div>
+  <p>The recipe is created once but can be used many times. A Python function works in a similar way.</p>
   <div class="flow"><span>Repeated code</span><span class="hl">Write it once</span><span class="hl">Give it a name</span><span class="ok">Reuse by calling the name</span></div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 260" role="img" aria-label="One function box at the top, defined once, with three arrows down to three separate calls, each of which executes the same code">
@@ -84,12 +93,15 @@ print("Good morning")</code></pre></div>
   <div class="legend">
     <div><span class="sw a1"></span><p><b><code>def</code></b> is short for <i>define</i>. It tells Python: “I am not asking you to run anything now. I am teaching you a new recipe to use later.”</p></div>
     <div><span class="sw a2"></span><p><b><code>greet</code></b> is the name we chose. Same rules as a variable name: no spaces, descriptive, lowercase with underscores by convention (<code>show_welcome</code>, <code>calculate_average</code>).</p></div>
-    <div><span class="sw a3"></span><p><b><code>(</code></b> opens the parameter list: this is where inputs go later.</p></div>
+    <div><span class="sw a3"></span><p><b><code>(</code></b> the opening parenthesis: where inputs (parameters) will go later.</p></div>
     <div><span class="sw a4"></span><p><b><code>)</code></b> closes it. Empty parentheses mean the function takes no input yet.</p></div>
     <div><span class="sw a5"></span><p><b><code>:</code></b> the colon, just like in <code>if condition:</code> or <code>for item in sequence:</code>, says an indented block follows.</p></div>
   </div>
   <p>The indented lines below the header are the function’s <b>body</b>: the instructions that run, but only once the function is <i>called</i>.</p>
   <div class="sticky info l"><strong>Defining is not running.</strong> If your whole program is just the two lines above, it prints <b>nothing at all</b>, not even a blank line. Python reads the <code>def</code>, remembers the recipe under the name <code>greet</code>, and moves on. <mark>Nobody asked for a dosa yet.</mark></div>
+  <figure class="shot"><img src="img/02.webp" alt="Colab cell containing only def greet(): print(&quot;Hello, welcome to the course.&quot;) and no output area" width="640" height="141"><figcaption>Run it: the cell finishes with no output at all, not even a blank line.</figcaption></figure>
+  <p>Tracing through it:</p>
+  <figure class="shot"><img src="img/03.webp" alt="Five steps: 1 Python reads the code; 2 Python recognises def, a function definition, not an instruction to run anything; 3 Python stores the name greet and its body in memory; 4 Python moves on to the next line; 5 the print() inside greet was never executed, so the console shows no output at all" width="1400" height="700"><figcaption>Defining stores the recipe in memory; nothing inside it runs.</figcaption></figure>
 </section>
 
 <!-- 3 -->
@@ -97,22 +109,27 @@ print("Good morning")</code></pre></div>
   <h2>Calling a function</h2>
   <p>To run the code inside a function, you <b>call</b> it: write its name followed by parentheses <code>()</code>.</p>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">function_name()</code></pre></div>
-  <pre><code class="language-python">def greet():
+  <div class="shots">
+    <pre><code class="language-python">def greet():
     print("Hello, welcome to the course.")
 
 greet()</code></pre>
-  <pre class="out"><code>Hello, welcome to the course.</code></pre>
+    <figure class="shot"><img src="img/04.webp" alt="Colab cell: def greet() then greet(); output Hello, welcome to the course." width="562" height="210"><figcaption>The call <code>greet()</code> runs the body.</figcaption></figure>
+  </div>
+  <p>Tracing through it:</p>
+  <figure class="shot"><img src="img/05.webp" alt="Five steps: 1 the function is already defined and stored in memory; 2 we write a call greet(); 3 Python looks up the recipe stored under the name greet; 4 Python jumps into the indented body; 5 the print() inside greet executes and the console shows Hello, welcome to the course." width="1400" height="700"><figcaption>A call looks up the stored function and runs its body.</figcaption></figure>
   <h3>Calling the same function many times</h3>
   <p>The real benefit shows when you call it more than once. The same block runs again without retyping it:</p>
-  <pre><code class="language-python">def greet():
+  <div class="shots">
+    <pre><code class="language-python">def greet():
     print("Hello, welcome to the course.")
 
 greet()
 greet()
 greet()</code></pre>
-  <pre class="out"><code>Hello, welcome to the course.
-Hello, welcome to the course.
-Hello, welcome to the course.</code></pre>
+    <figure class="shot"><img src="img/06.webp" alt="Colab cell: def greet() then three greet() calls; output Hello, welcome to the course. three times" width="565" height="318"><figcaption>Three calls, three executions.</figcaption></figure>
+  </div>
+  <p>The <code>def</code> block was written only once, but its body ran three separate times, once for each call.</p>
   <div class="flow"><span>One definition</span><span class="hl">Three calls</span><span class="ok">Three executions</span></div>
   <h3>A common mistake: forgetting the parentheses</h3>
   <pre><code class="language-python">def greet():
@@ -130,15 +147,17 @@ greet          # no output!</code></pre>
 <section class="ch" id="flow">
   <h2>Function execution flow</h2>
   <p>Let’s trace exactly what order things happen in when a call sits between other code:</p>
-  <pre><code class="language-python">def greet():
-    print("Inside the function")
+  <div class="shots">
+    <pre><code class="language-python">def greet():
+    print("Hello, welcome to the course.")
 
 print("Before calling the function")
 greet()
 print("After calling the function")</code></pre>
-  <pre class="out"><code>Before calling the function
-Inside the function
-After calling the function</code></pre>
+    <figure class="shot"><img src="img/07.webp" alt="Colab cell output: Before calling the function, Hello, welcome to the course., After calling the function" width="576" height="318"><figcaption>The function’s line prints between the two outer prints.</figcaption></figure>
+  </div>
+  <p>Tracing through it, step by step:</p>
+  <figure class="shot"><img src="img/08.webp" alt="Six steps beside the code: 1 Python reads def greet() and stores it in memory, nothing printed; 2 runs print Before calling the function; 3 greet() is called, Python looks it up and jumps into its body; 4 runs print Hello, welcome to the course.; 5 the function body ends and Python jumps back to the line after the call; 6 runs print After calling the function" width="1400" height="933"><figcaption>Each step and what it adds to the console.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 300" role="img" aria-label="Main program runs line 1, jumps into the greet function at the call, runs its body, then returns to the line after the call">
       <g class="rough">
@@ -155,7 +174,7 @@ After calling the function</code></pre>
       <text class="tm" x="56" y="157">2 greet()</text>
       <text class="tm" x="56" y="217">4 print("After…")</text>
       <text class="th" x="570" y="136" text-anchor="middle">greet()</text>
-      <text class="tm" x="570" y="172" text-anchor="middle">3 print("Inside…")</text>
+      <text class="tm" x="570" y="172" text-anchor="middle">3 print("Hello…")</text>
       <text class="tr" x="400" y="108" text-anchor="middle">jump in</text>
       <text class="tb" x="390" y="236" text-anchor="middle">come back</text>
     </svg></div>
@@ -164,7 +183,7 @@ After calling the function</code></pre>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Read the <code>def</code></b>Python stores the function under the name <code>greet</code>. Nothing prints. <span class="tag">→ recipe saved</span></div></li>
     <li><span class="dot">2</span><div><b>First print</b>“Before calling the function” appears.</div></li>
-    <li><span class="dot">3</span><div><b>The call <code>greet()</code></b>Python jumps into the function body and prints “Inside the function”.</div></li>
+    <li><span class="dot">3</span><div><b>The call <code>greet()</code></b>Python jumps into the function body and prints “Hello, welcome to the course.”</div></li>
     <li><span class="dot">4</span><div><b>Back to the caller</b>When the body ends, Python returns to the line after the call and prints “After calling the function”.</div></li>
   </ol>
 </section>
@@ -176,64 +195,58 @@ After calling the function</code></pre>
   <div class="flow"><span class="op">greet()</span><span>always does exactly the same thing</span><span class="bad">no way to customise it per call</span></div>
   <p>We need a way to <b>send information into</b> a function when we call it. That is what <b>parameters</b> give us.</p>
   <div class="story"><b class="lbl">The Swiggy order form</b>The order form has blank fields: <i>dish</i>, <i>address</i>. Those blanks are the <b>parameters</b>. When you actually order, you fill them with “paneer roll” and “Flat 4B”: those values are the <b>arguments</b>. <mark>Parameters are named in the definition; arguments are supplied at the call.</mark></div>
-  <pre><code class="language-python">def greet(name):          # name is a PARAMETER
+  <p>The words <i>parameter</i> and <i>argument</i> are often used interchangeably, but they refer to two different things, at two different moments.</p>
+  <div class="shots">
+    <pre><code class="language-python">def greet(name):          # name is a PARAMETER
     print("Hello,", name)
 
 greet("Rahul")            # "Rahul" is an ARGUMENT</code></pre>
+    <figure class="shot"><img src="img/09.webp" alt="Colab cell: def greet(name) with comment name is a PARAMETER, greet(&quot;Rahul&quot;) with comment Rahul is an ARGUMENT; output Hello, Rahul" width="654" height="207"><figcaption>The argument fills the parameter for this call.</figcaption></figure>
+  </div>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Parameter</h4><p>The variable name listed inside the parentheses of the <code>def</code> line. A placeholder waiting for a value.</p></div>
     <div class="card t2 tilt-b"><h4>Argument</h4><p>The actual value you pass inside the parentheses when you call the function.</p></div>
   </div>
+  <figure class="shot"><img src="img/10.webp" alt="Parameter: the placeholder variable listed inside the function’s own definition, pointing at name in def greet(name). Argument: the actual value we send in when we call the function, pointing at &quot;Rahul&quot; in greet(&quot;Rahul&quot;)" width="1400" height="700"><figcaption>Parameters are named in the definition; arguments are supplied at the call.</figcaption></figure>
   <h3>Passing values to functions</h3>
   <p>When you call <code>greet("Rahul")</code>, Python assigns the argument to the parameter, exactly like <code>name = "Rahul"</code>, for the duration of that call. Now the same function serves every student without touching its definition:</p>
   <pre><code class="language-python">def greet(name):
     print("Hello,", name, "! Welcome to the course.")
 
-greet("Rahul")
+greet("Rahul")</code></pre>
+  <p>Now reuse it for different students:</p>
+  <div class="shots">
+    <pre><code class="language-python">greet("Rahul")
 greet("Priya")
 greet("Amit")</code></pre>
-  <pre class="out"><code>Hello, Rahul ! Welcome to the course.
-Hello, Priya ! Welcome to the course.
-Hello, Amit ! Welcome to the course.</code></pre>
+    <figure class="shot"><img src="img/11.webp" alt="Colab cell with def greet(name) and calls greet Rahul, Rahul, Priya, Amit; output Hello, Rahul ! Welcome to the course. twice, then the same for Priya and Amit" width="703" height="367"><figcaption>Both snippets ran in one cell, so Rahul is greeted twice.</figcaption></figure>
+  </div>
   <div class="sticky tip l"><strong>Why the space before “!”?</strong> <code>print()</code> puts a space between each comma-separated item. For tight punctuation use an f-string: <code>print(f"Hello, {name}! Welcome to the course.")</code>.</div>
   <h3>Multiple parameters</h3>
   <p>A function can take several parameters, separated by commas. Problem: greet a student <b>and</b> mention their course.</p>
-  <pre><code class="language-python">def greet(name, course):
+  <div class="shots">
+    <pre><code class="language-python">def greet(name, course):
     print("Hello,", name, "! Welcome to", course)
 
-greet("Rahul", "Python")
-greet("Priya", "Java")</code></pre>
-  <pre class="out"><code>Hello, Rahul ! Welcome to Python
-Hello, Priya ! Welcome to Java</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="The call greet with Rahul and Python: Rahul flows into parameter name, Python flows into parameter course">
-      <g class="rough">
-        <rect class="box f-green" x="40" y="20" width="180" height="50" rx="12"/>
-        <rect class="box f-green" x="260" y="20" width="180" height="50" rx="12"/>
-        <rect class="box f-blue" x="40" y="146" width="180" height="50" rx="12"/>
-        <rect class="box f-blue" x="260" y="146" width="180" height="50" rx="12"/>
-        <path class="lr" d="M130 74 L 130 140" marker-end="url(#ahr)"/>
-        <path class="lr" d="M350 74 L 350 140" marker-end="url(#ahr)"/>
-      </g>
-      <text class="tm" x="130" y="50" text-anchor="middle">"Rahul"</text>
-      <text class="tm" x="350" y="50" text-anchor="middle">"Python"</text>
-      <text class="tm" x="130" y="176" text-anchor="middle">name</text>
-      <text class="tm" x="350" y="176" text-anchor="middle">course</text>
-      <text class="tr" x="470" y="50">arguments</text>
-      <text class="ts" x="470" y="72">values at the call</text>
-      <text class="tb" x="470" y="172">parameters</text>
-      <text class="ts" x="470" y="194">names in the def line</text>
-      <text class="ts" x="140" y="112">1st → 1st</text>
-      <text class="ts" x="360" y="112">2nd → 2nd</text>
-    </svg></div>
-    <figcaption>Each parameter receives its own matching argument, and both can be used anywhere in the body.</figcaption>
-  </figure>
+greet("Rahul", "Python")</code></pre>
+    <figure class="shot"><img src="img/12.webp" alt="Colab cell: def greet(name, course), greet(&quot;Rahul&quot;, &quot;Python&quot;); output Hello, Rahul ! Welcome to Python" width="646" height="210"><figcaption>Two parameters, two arguments.</figcaption></figure>
+  </div>
+  <p>Visually:</p>
+  <figure class="shot"><img src="img/13.webp" alt="def greet(name, course): name is param 1, course is param 2; greet(&quot;Rahul&quot;, &quot;Python&quot;): &quot;Rahul&quot; is arg 1, &quot;Python&quot; is arg 2" width="849" height="508"><figcaption>Each parameter receives its own matching argument.</figcaption></figure>
+  <p>Each parameter receives its own corresponding argument, and both are available anywhere inside the function’s body.</p>
 </section>
 
 <!-- 6 -->
 <section class="ch" id="positional">
   <h2>Positional arguments: order matters</h2>
   <p>In <code>greet("Rahul", "Python")</code>, Python matches arguments to parameters <b>by position</b>: first argument to first parameter, second to second. These are <b>positional arguments</b>, the default way of matching.</p>
+  <pre><code class="language-python">def greet(name, course):
+    print("Hello,", name, "! Welcome to", course)
+
+greet("Rahul", "Python")</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="def greet(name, course) with param 1 and param 2; greet(&quot;Rahul&quot;, &quot;Python&quot;): 1st position goes to name, 2nd position goes to course" width="597" height="387"><figcaption>1st position → 1st parameter, 2nd position → 2nd parameter.</figcaption></figure>
+  <h3>Order of positional arguments</h3>
+  <figure class="shot"><img src="img/15.webp" alt="Colab cell: greet(&quot;Rahul&quot;, &quot;Python&quot;); output Hello, Rahul ! Welcome to Python" width="651" height="202"><figcaption>In the right order, each value lands in the right parameter.</figcaption></figure>
   <p>Because only the position counts, <mark>swapping the order silently swaps the values</mark>, even though the call looks fine:</p>
   <pre><code class="language-python">def introduce(name, age):
     print(name, "is", age, "years old")
@@ -255,23 +268,22 @@ introduce(21, "Rahul")     # WRONG order - values get swapped</code></pre>
 add(5, 3)</code></pre>
   <pre class="out"><code>8</code></pre>
   <p>It looks like it works, but there is a hidden limit. What if you want to <b>use</b> that sum afterwards?</p>
-  <pre><code class="language-python">result = add(5, 3)
-print(result)          # None - the function did not return anything
+  <div class="shots">
+    <pre><code class="language-python">result = add(5, 3)
 print(result + 10)</code></pre>
-  <pre class="out"><code>8
-None
-TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'</code></pre>
+    <figure class="shot"><img src="img/16.webp" alt="Colab cell: def add(a, b) printing a + b, result = add(5, 3), print(result + 10); output 8, then TypeError: unsupported operand type(s) for +: NoneType and int" width="769" height="387"><figcaption>8 is printed, then <code>result + 10</code> fails because <code>result</code> is <code>None</code>.</figcaption></figure>
+  </div>
   <p><code>add()</code> printed 8 on the screen but never <b>handed the value back</b>. A function without <code>return</code> gives back <code>None</code>, so <code>result</code> is <code>None</code>, and <code>None + 10</code> crashes.</p>
   <h3>The <code>return</code> statement</h3>
   <p><code>return</code> sends a value back to wherever the function was called from.</p>
-  <pre><code class="language-python">def add(a, b):
+  <div class="shots">
+    <pre><code class="language-python">def add(a, b):
     return a + b
 
 result = add(5, 3)
-print(result)
-print(result + 10)</code></pre>
-  <pre class="out"><code>8
-18</code></pre>
+print(result)</code></pre>
+    <figure class="shot"><img src="img/17.webp" alt="Colab cell: def add returning a + b, result = add(5, 3), print(result); output 8" width="400" height="228"><figcaption>Now <code>result</code> really holds 8, so <code>result + 10</code> would give 18.</figcaption></figure>
+  </div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="A function drawn as a machine: arguments 5 and 3 go into the add machine, the body computes a plus b, and the return value 8 comes out to the caller">
       <g class="rough">
@@ -296,37 +308,55 @@ print(result + 10)</code></pre>
     <figcaption>A function is a machine: arguments go in, the body works, and <code>return</code> hands one result back out.</figcaption>
   </figure>
   <div class="sticky info l"><strong><code>return</code> exits immediately.</strong> The moment Python runs a <code>return</code>, the function stops. Nothing after it, inside that function, runs.</div>
-  <pre><code class="language-python">def square(x):
-    return x ** 2
+  <div class="shots">
+    <pre><code class="language-python">def add(a, b):
+    return a + b
     print("This will never run")
 
+add(5, 3)</code></pre>
+    <figure class="shot"><img src="img/18.webp" alt="Colab cell: def add with return a + b followed by print(&quot;This will never run&quot;), add(5, 3); output 8 only" width="402" height="193"><figcaption>The <code>print()</code> after <code>return</code> never runs.</figcaption></figure>
+  </div>
+  <p>The <code>print()</code> line is never reached, because <code>return</code> already exited the function on the line before it.</p>
+  <h3>Returning a single value</h3>
+  <p>The simplest use of <code>return</code> sends back exactly one value:</p>
+  <div class="shots">
+    <pre><code class="language-python">def square(x):
+    return x ** 2
+
 print(square(5))</code></pre>
-  <pre class="out"><code>25</code></pre>
+    <figure class="shot"><img src="img/19.webp" alt="Colab cell: def square(x) returning x ** 2, print(square(5)); output 25" width="355" height="202"><figcaption>One value goes back: 25.</figcaption></figure>
+  </div>
   <p>The expression after <code>return</code> is evaluated first; <i>its result</i> (25), not the expression <code>x ** 2</code>, is what goes back.</p>
   <h3>Returning multiple values</h3>
   <p>Separate several values with commas and Python packs them into a <b>tuple</b>, the same tuple packing you saw with tuples.</p>
-  <pre><code class="language-python">def get_min_max(numbers):
+  <div class="shots">
+    <pre><code class="language-python">def get_min_max(numbers):
     return min(numbers), max(numbers)
 
 result = get_min_max([4, 9, 2, 7])
-print(result)
-
-smallest, largest = get_min_max([4, 9, 2, 7])   # unpack the tuple
+print(result)</code></pre>
+    <figure class="shot"><img src="img/20.webp" alt="Colab cell: get_min_max returns min and max; print(result) shows (2, 9)" width="499" height="220"><figcaption>Two values come back packed as a tuple.</figcaption></figure>
+  </div>
+  <p>Since it’s just a tuple, you can unpack it into separate variables, exactly as in the Tuples section:</p>
+  <div class="shots">
+    <pre><code class="language-python">smallest, largest = get_min_max([4, 9, 2, 7])
 print(smallest)
 print(largest)</code></pre>
-  <pre class="out"><code>(2, 9)
-2
-9</code></pre>
+    <figure class="shot"><img src="img/21.webp" alt="Colab cell: smallest, largest = get_min_max([4, 9, 2, 7]); prints 2 and 9" width="492" height="193"><figcaption>Unpacked into two variables.</figcaption></figure>
+  </div>
   <h3>Using returned values in expressions</h3>
   <p>A returned value can be used directly, inline, in a condition or calculation:</p>
-  <pre><code class="language-python">def calculate_total(price, quantity):
+  <div class="shots">
+    <pre><code class="language-python">def calculate_total(price, quantity):
     return price * quantity
 
 if calculate_total(150, 3) &gt; 400:
     print("This qualifies for free delivery")</code></pre>
-  <pre class="out"><code>This qualifies for free delivery</code></pre>
+    <figure class="shot"><img src="img/22.webp" alt="Colab cell: if calculate_total(150, 3) &gt; 400 prints This qualifies for free delivery" width="511" height="195"><figcaption>450 is greater than 400, so the message prints.</figcaption></figure>
+  </div>
   <p>You can even feed one function’s result straight into another:</p>
-  <pre><code class="language-python">def square(x):
+  <div class="shots">
+    <pre><code class="language-python">def square(x):
     return x ** 2
 
 def add(a, b):
@@ -334,7 +364,8 @@ def add(a, b):
 
 result = add(square(2), square(3))
 print(result)</code></pre>
-  <pre class="out"><code>13</code></pre>
+    <figure class="shot"><img src="img/23.webp" alt="Colab cell: square and add functions, result = add(square(2), square(3)), output 13" width="439" height="265"><figcaption>4 + 9 = 13.</figcaption></figure>
+  </div>
   <div class="flow"><span class="op">square(2) → 4</span><span class="op">square(3) → 9</span><span class="hl">add(4, 9)</span><span class="ok">13</span></div>
   <p>This chaining only works <b>because</b> these functions return their results instead of printing them.</p>
   <div class="sticky fde"><strong>In the field (FDE)</strong> Production code almost always <b>returns</b> and lets the caller decide what to do: log it, send it as an API response, store it in a database. A function that only prints is a dead end you can’t test or reuse.</div>
@@ -398,7 +429,8 @@ print(result)</code></pre></div>
   <pre><code class="language-python">greet("Rahul", "Python")
 greet("Priya", "Python")
 greet("Amit", "Python")</code></pre>
-  <p>The name changes, but the course is always <code>"Python"</code>. With 100 students you would type <code>"Python"</code> 100 times.</p>
+  <p>The function works perfectly, but look carefully at our function calls: the student’s name changes, but the course is always <code>"Python"</code>. We keep writing the same value. Imagine we have 100 students:</p>
+  <figure class="shot"><img src="img/24.webp" alt="greet calls for Rahul, Priya, Amit, Neha, Ravi and more: the student’s name changes each time, the course is always &quot;Python&quot;" width="780" height="565"><figcaption>You would type <code>"Python"</code> 100 times.</figcaption></figure>
   <div class="flow"><span>Every call</span><span>must provide every argument</span><span>even when one value is almost always the same</span><span class="bad">repeated values, unnecessary work</span></div>
   <p>What if we could tell Python: <i>“Use Python automatically unless I give another course”</i>? That is what <b>default parameters</b> do.</p>
   <h3>Default parameters</h3>
@@ -406,32 +438,36 @@ greet("Amit", "Python")</code></pre>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">def function_name(parameter=default_value):
     # code</code></pre></div>
   <pre><code class="language-python">def greet(name, course="Python"):
+    print("Hello,", name, "! Welcome to", course)</code></pre>
+  <h3>Using default arguments</h3>
+  <p>Now we can call <code>greet()</code> in two different ways:</p>
+  <pre><code class="language-python">greet("Priya")             # without the optional argument: the default kicks in
+greet("Rahul", "Java")     # with it: our value overrides the default</code></pre>
+  <figure class="shot"><img src="img/25.webp" alt="def greet(name, course=&quot;Python&quot;) with name the required parameter and course the optional parameter with default Python. greet(&quot;Rahul&quot;, &quot;Java&quot;) prints Hello, Rahul! Welcome to Java. greet(&quot;Priya&quot;) prints Hello, Priya! Welcome to Python." width="1400" height="700"><figcaption>Leave <code>course</code> out and “Python” is used. (The diagram prints with an f-string, so there is no space before “!”.)</figcaption></figure>
+  <div class="sticky warn l"><strong>Rule: defaults go last.</strong> A parameter with a default must come <b>after</b> all parameters without one. Otherwise, in <code>greet("Rahul")</code>, Python couldn’t tell whether “Rahul” fills <code>course</code> or <code>name</code>.</div>
+  <div class="shots">
+    <pre><code class="language-python"># WRONG - default parameter before a normal parameter
+def greet(course="Python", name):
     print("Hello,", name, "! Welcome to", course)
 
-greet("Rahul")             # default kicks in
-greet("Priya", "Java")     # our value overrides the default</code></pre>
-  <pre class="out"><code>Hello, Rahul ! Welcome to Python
-Hello, Priya ! Welcome to Java</code></pre>
-  <div class="sticky warn l"><strong>Rule: defaults go last.</strong> A parameter with a default must come <b>after</b> all parameters without one. Otherwise, in <code>greet("Rahul")</code>, Python couldn’t tell whether “Rahul” fills <code>course</code> or <code>name</code>.</div>
-  <pre><code class="language-python"># WRONG - default parameter before a normal parameter
-def greet(course="Python", name):
-    print("Hello,", name, "! Welcome to", course)</code></pre>
-  <pre class="out"><code>    def greet(course="Python", name):
-                               ^^^^
-SyntaxError: parameter without a default follows parameter with a default</code></pre>
+greet("Priya")</code></pre>
+    <figure class="shot"><img src="img/26.webp" alt="Colab cell: def greet(course=&quot;Python&quot;, name) fails with SyntaxError: parameter without a default follows parameter with a default" width="739" height="225"><figcaption>Python rejects the definition before anything runs.</figcaption></figure>
+  </div>
   <div class="two">
     <div class="flow v"><span class="op">def greet(name, course="Python"):</span><span class="ok">correct order</span></div>
     <div class="flow v"><span class="op">def greet(course="Python", name):</span><span class="bad">SyntaxError</span></div>
   </div>
   <h3>Keyword arguments</h3>
   <p>Instead of matching by position, you can pass arguments <b>by name</b>, saying exactly which parameter each value belongs to. Then <mark>the order no longer matters</mark>.</p>
-  <pre><code class="language-python">def greet(name, course):
+  <div class="shots">
+    <pre><code class="language-python">def greet(name, course):
     print("Hello,", name, "! Welcome to", course)
 
-greet(name="Rahul", course="Python")
-greet(course="Java", name="Priya")</code></pre>
-  <pre class="out"><code>Hello, Rahul ! Welcome to Python
-Hello, Priya ! Welcome to Java</code></pre>
+greet(name="Rahul", course="Python")</code></pre>
+    <figure class="shot"><img src="img/27.webp" alt="Colab cell: greet(name=&quot;Rahul&quot;, course=&quot;Python&quot;); output Hello, Rahul ! Welcome to Python" width="553" height="187"><figcaption>Each value is matched by name.</figcaption></figure>
+  </div>
+  <figure class="shot"><img src="img/28.webp" alt="greet(name=&quot;Rahul&quot;, course=&quot;Python&quot;): each keyword points to its parameter, which explicitly tells Python which value goes to which parameter" width="1101" height="472"><figcaption>Keywords say exactly where each value goes.</figcaption></figure>
+  <p>So the order can even be swapped: <code>greet(course="Java", name="Priya")</code> prints <code>Hello, Priya ! Welcome to Java</code>.</p>
   <p>These are called <b>keyword arguments</b> because each value is paired with the parameter’s name.</p>
 </section>
 
@@ -439,28 +475,32 @@ Hello, Priya ! Welcome to Java</code></pre>
 <section class="ch" id="args-kwargs">
   <h2><code>*args</code> and <code>**kwargs</code> (basics)</h2>
   <p>Every function so far has a <b>fixed</b> number of parameters. But what if you don’t know how many values someone will pass? Problem: add up any number of values, sometimes 2, sometimes 5, sometimes 10.</p>
-  <pre><code class="language-python">def add(a, b):
+  <div class="shots">
+    <pre><code class="language-python">def add(a, b):
     return a + b
 
 print(add(2, 3))
 print(add(2, 3, 4))     # ERROR - too many arguments</code></pre>
-  <pre class="out"><code>5
-TypeError: add() takes 2 positional arguments but 3 were given</code></pre>
+    <figure class="shot"><img src="img/29.webp" alt="Colab cell: print(add(2, 3)) prints 5, print(add(2, 3, 4)) raises TypeError: add() takes 2 positional arguments but 3 were given" width="771" height="354"><figcaption>Two arguments work; three raise a <code>TypeError</code>.</figcaption></figure>
+  </div>
+  <div class="flow"><span class="op">add(a, b)</span><span>only ever accepts EXACTLY two arguments</span><span class="bad">calling it with 3 arguments → TypeError</span></div>
   <p>We would need <code>add_two()</code>, <code>add_three()</code>, <code>add_four()</code>… That is exactly the repetition functions were meant to remove. Python offers two tools:</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4><code>*args</code></h4><p>Any number of <b>positional</b> arguments, collected into a <b>tuple</b>.</p></div>
     <div class="card t5 tilt-b"><h4><code>**kwargs</code></h4><p>Any number of <b>keyword</b> arguments, collected into a <b>dictionary</b>.</p></div>
   </div>
   <h3><code>*args</code> for many positional arguments</h3>
-  <pre><code class="language-python">def add(*args):
+  <div class="shots">
+    <pre><code class="language-python">def add(*args):
     print(args)
 
 add(2, 3)
 add(2, 3, 4, 5)</code></pre>
-  <pre class="out"><code>(2, 3)
-(2, 3, 4, 5)</code></pre>
+    <figure class="shot"><img src="img/30.webp" alt="Colab cell: def add(*args) printing args; add(2, 3) and add(2, 3, 4, 5) print (2, 3) and (2, 3, 4, 5)" width="420" height="213"><figcaption>Every value lands in one tuple.</figcaption></figure>
+  </div>
   <p>The name <code>args</code> is only a convention; the <b><code>*</code></b> is what matters. <code>*values</code> or <code>*numbers</code> would work too, but <code>*args</code> is the standard everyone recognises. Now we can finish <code>add()</code> with a loop:</p>
-  <pre><code class="language-python">def add(*args):
+  <div class="shots">
+    <pre><code class="language-python">def add(*args):
     total = 0
     for num in args:
         total = total + num
@@ -468,76 +508,68 @@ add(2, 3, 4, 5)</code></pre>
 
 print(add(2, 3))
 print(add(2, 3, 4, 5))</code></pre>
-  <pre class="out"><code>5
-14</code></pre>
-  <p>One function now works for 2, 4 or 20 values, because <code>args</code> is simply a longer or shorter tuple each time. Since it’s a tuple, you can also index it: <code>args[0]</code> is the first value and <code>len(args)</code> counts them.</p>
+    <figure class="shot"><img src="img/31.webp" alt="Colab cell: def add(*args) summing with a loop; prints 5 and 14" width="432" height="312"><figcaption>One function, any number of values.</figcaption></figure>
+  </div>
+  <p>One function now works for 2, 4 or 20 values, because <code>args</code> is simply a longer or shorter tuple each time.</p>
   <h3><code>**kwargs</code> for many keyword arguments</h3>
-  <pre><code class="language-python">def show_details(**kwargs):
+  <div class="shots">
+    <pre><code class="language-python">def show_details(**kwargs):
     print(kwargs)
 
 show_details(name="Rahul", age=21)
 show_details(name="Priya", age=22, course="Python")</code></pre>
-  <pre class="out"><code>{'name': 'Rahul', 'age': 21}
-{'name': 'Priya', 'age': 22, 'course': 'Python'}</code></pre>
-  <p><code>kwargs</code> is short for <b>k</b>ey<b>w</b>ord <b>arg</b>ument<b>s</b>; again, the double <code>**</code> is what counts. Because it is a plain dictionary, use <code>.items()</code>, <code>.keys()</code> or <code>.values()</code> just like in the Dictionaries section:</p>
-  <pre><code class="language-python">def show_details(**kwargs):
-    for key, value in kwargs.items():
-        print(key, "-&gt;", value)
+    <figure class="shot"><img src="img/32.webp" alt="Colab cell: def show_details(**kwargs) printing kwargs; outputs the dictionaries for Rahul (name, age) and Priya (name, age, course)" width="574" height="214"><figcaption>Named values are collected into a dictionary.</figcaption></figure>
+  </div>
+  <p><code>kwargs</code> is short for <b>k</b>ey<b>w</b>ord <b>arg</b>ument<b>s</b>; again, it is just a convention, and the double <code>**</code> is what actually matters.</p>
+  <h3>Accessing values from <code>args</code> and <code>kwargs</code></h3>
+  <p>Since <code>args</code> is a plain tuple, you can index it or loop through it exactly as in the Tuples section:</p>
+  <div class="shots">
+    <pre><code class="language-python">def add(*args):
+    print("First value:", args[0])
+    for num in args:
+        print(num)
 
-show_details(name="Priya", age=22, course="Python")</code></pre>
-  <pre class="out"><code>name -&gt; Priya
-age -&gt; 22
-course -&gt; Python</code></pre>
+add(10, 20, 30)</code></pre>
+    <figure class="shot"><img src="img/33.webp" alt="Colab cell: add(*args) prints First value: 10, then 10, 20, 30 from a loop" width="463" height="276"><figcaption><code>args[0]</code> is the first value; a loop visits them all.</figcaption></figure>
+  </div>
+  <p>Since <code>kwargs</code> is a plain dictionary, you can use <code>.items()</code>, <code>.keys()</code> or <code>.values()</code> exactly as in the Dictionaries section:</p>
+  <div class="shots">
+    <pre><code class="language-python">def show_details(**kwargs):
+    for key, value in kwargs.items():
+        print(key, ":", value)
+
+show_details(name="Rahul", age=21, course="Python")</code></pre>
+    <figure class="shot"><img src="img/34.webp" alt="Colab cell: show_details loops over kwargs.items(); output name : Rahul, age : 21, course : Python" width="586" height="238"><figcaption><code>.items()</code> gives each key with its value.</figcaption></figure>
+  </div>
   <h3>Combining regular parameters, <code>*args</code> and <code>**kwargs</code></h3>
   <p>All three can appear together, but <mark>the order is fixed: regular parameters, then <code>*args</code>, then <code>**kwargs</code></mark>.</p>
-  <pre><code class="language-python">def student_report(name, *args, **kwargs):
+  <div class="shots">
+    <pre><code class="language-python">def student_report(name, *args, **kwargs):
     print("Name:", name)
     print("Marks:", args)
     print("Other details:", kwargs)
 
 student_report("Rahul", 85, 90, 78, city="Bhubaneswar", course="Python")</code></pre>
-  <pre class="out"><code>Name: Rahul
-Marks: (85, 90, 78)
-Other details: {'city': 'Bhubaneswar', 'course': 'Python'}</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="The call's values are sorted: Rahul goes to name, the loose numbers 85 90 78 are packed into the args tuple, and the named values city and course are packed into the kwargs dictionary">
-      <g class="rough">
-        <rect class="box f-card" x="20" y="16" width="680" height="52" rx="12"/>
-        <rect class="box f-blue" x="20" y="150" width="150" height="80" rx="14"/>
-        <rect class="box f-green" x="200" y="150" width="200" height="80" rx="14"/>
-        <rect class="box f-purple" x="430" y="150" width="270" height="80" rx="14"/>
-        <path class="ln" d="M95 72 L 95 144" marker-end="url(#ah)"/>
-        <path class="lb" d="M240 72 L 300 144" marker-end="url(#ahb)"/>
-        <path class="lr" d="M520 72 L 565 144" marker-end="url(#ahr)"/>
-      </g>
-      <text class="tm" x="360" y="47" text-anchor="middle">"Rahul", 85, 90, 78, city="Bhubaneswar", course="Python"</text>
-      <text class="th" x="95" y="186" text-anchor="middle">name</text>
-      <text class="tm" x="95" y="214" text-anchor="middle">"Rahul"</text>
-      <text class="th" x="300" y="186" text-anchor="middle">*args</text>
-      <text class="tm" x="300" y="214" text-anchor="middle">(85, 90, 78)</text>
-      <text class="th" x="565" y="186" text-anchor="middle">**kwargs</text>
-      <text class="tm" x="565" y="214" text-anchor="middle">{'city': …, 'course': …}</text>
-      <text class="ts" x="108" y="114">first</text>
-      <text class="ts" x="285" y="108">extra positional → tuple</text>
-      <text class="ts" x="555" y="108">named → dict</text>
-    </svg></div>
-    <figcaption>Python fills the regular parameter first, packs leftover positional values into <code>args</code>, and named values into <code>kwargs</code>.</figcaption>
-  </figure>
+    <figure class="shot"><img src="img/35.webp" alt="Colab cell: student_report(name, *args, **kwargs) called with Rahul, 85, 90, 78, city and course; output Name: Rahul, Marks: (85, 90, 78), Other details with city Bhubaneswar and course Python" width="751" height="253"><figcaption>The regular parameter, the tuple and the dictionary.</figcaption></figure>
+  </div>
+  <figure class="shot"><img src="img/36.webp" alt="The call student_report(&quot;Rahul&quot;, 85, 90, 78, city=&quot;Bhubaneswar&quot;, course=&quot;Python&quot;): Rahul goes to name, 85, 90, 78 to *args as extra positional values, city and course to **kwargs as extra keyword values" width="1180" height="405"><figcaption>How Python sorts the values of one call.</figcaption></figure>
   <div class="sticky fde"><strong>In the field (FDE)</strong> You’ll meet <code>**kwargs</code> constantly in SDKs and API clients, e.g. a wrapper that forwards extra options like <code>timeout=30</code> or <code>temperature=0.2</code> to the library underneath without listing every option itself.</div>
 </section>
 
 <!-- 11 -->
 <section class="ch" id="scope">
   <h2>Variable scope</h2>
-  <pre><code class="language-python">def calculate_total():
+  <div class="shots">
+    <pre><code class="language-python">def calculate_total():
     total = 100
     print(total)
 
 calculate_total()
 print(total)</code></pre>
-  <pre class="out"><code>100
-NameError: name 'total' is not defined</code></pre>
-  <p>Inside the function, <code>total</code> prints fine. Outside, Python has no idea what <code>total</code> is. This isn’t a bug; it is a deliberate rule called <b>variable scope</b>: <mark>where a variable is created decides where it can be used</mark>.</p>
+    <figure class="shot"><img src="img/37.webp" alt="Colab cell: calculate_total() prints 100, then print(total) raises NameError: name total is not defined" width="783" height="364"><figcaption>Inside: 100. Outside: <code>NameError</code>.</figcaption></figure>
+  </div>
+  <p>Inside the function, <code>total</code> prints fine. Outside, Python has no idea what <code>total</code> is. This isn’t a bug; it is a deliberate rule called <b>variable scope</b>: <mark>where a variable is created decides where it can be used</mark>. Understanding it explains behaviour that otherwise looks like Python “forgetting” a variable that was clearly defined.</p>
+  <figure class="shot"><img src="img/38.webp" alt="Four steps: 1 total is created inside calculate_total(); 2 it only exists while the function is running (calculate_total(5, 3) gives total = 8); 3 once the function finishes, total disappears completely; 4 trying to use it outside gives NameError: name total is not defined" width="1180" height="406"><figcaption>The life of a local variable.</figcaption></figure>
   <div class="story"><b class="lbl">The train compartment</b>A conversation inside your train compartment (a <b>local</b> variable) stays in that compartment and ends when you get off. The station announcement (a <b>global</b> variable) is heard by everyone in every compartment for as long as the station is running.</div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="A big global box containing college_name and count; inside it a smaller function box containing the local variable total. The function can see outward into global, but global cannot see into the function">
@@ -559,8 +591,18 @@ NameError: name 'total' is not defined</code></pre>
     <figcaption>Code inside a function can read globals; code outside can never see a function’s locals.</figcaption>
   </figure>
   <h3>Local variables</h3>
-  <p>A variable created <b>inside</b> a function is a <b>local variable</b>. It belongs only to that function and exists only while the function runs. Each call gets a <b>fresh</b> one; calls don’t share or remember values:</p>
-  <pre><code class="language-python">def add_one():
+  <p>A variable created <b>inside</b> a function is a <b>local variable</b>. It belongs only to that function and exists only while the function runs.</p>
+  <div class="shots">
+    <pre><code class="language-python">def calculate_total():
+    total = 100          # local variable
+    print(total)
+
+calculate_total()</code></pre>
+    <figure class="shot"><img src="img/39.webp" alt="Colab cell: calculate_total() with local total = 100; output 100" width="463" height="181"><figcaption>Used inside its own function, a local works fine.</figcaption></figure>
+  </div>
+  <p>Each call gets a <b>fresh</b> local variable; calls don’t share or remember values:</p>
+  <div class="shots">
+    <pre><code class="language-python">def add_one():
     count = 0
     count = count + 1
     print(count)
@@ -568,32 +610,36 @@ NameError: name 'total' is not defined</code></pre>
 add_one()
 add_one()
 add_one()</code></pre>
-  <pre class="out"><code>1
-1
-1</code></pre>
+    <figure class="shot"><img src="img/40.webp" alt="Colab cell: add_one() called three times; output 1, 1, 1" width="442" height="285"><figcaption>Always 1: <code>count</code> restarts at 0 on every call.</figcaption></figure>
+  </div>
   <p><code>count</code> starts at 0 on every call. It never “remembers” the previous call, because a brand-new local <code>count</code> is created each time and the old one is gone.</p>
   <h3>Global variables</h3>
   <p>A variable created <b>outside</b> any function, at the top level of the program, is a <b>global variable</b>. It lives as long as the program runs and can be <b>read</b> from anywhere, including inside functions.</p>
-  <pre><code class="language-python">college_name = "ABC Institute"     # global variable
+  <div class="shots">
+    <pre><code class="language-python">college_name = "ABC Institute"     # global variable
 
 def show_college():
     print("Welcome to", college_name)
 
 show_college()</code></pre>
-  <pre class="out"><code>Welcome to ABC Institute</code></pre>
+    <figure class="shot"><img src="img/41.webp" alt="Colab cell: global college_name = ABC Institute read inside show_college(); output Welcome to ABC Institute" width="579" height="219"><figcaption>The function reads the global freely.</figcaption></figure>
+  </div>
   <div class="flow"><span class="op">college_name = "ABC Institute"</span><span>defined at the top level → GLOBAL</span><span class="ok">visible everywhere, including inside show_college()</span></div>
   <h3>The <code>global</code> keyword</h3>
   <p>Reading a global is fine. <b>Changing</b> one directly from inside a function fails:</p>
-  <pre><code class="language-python">count = 0
+  <div class="shots">
+    <pre><code class="language-python">count = 0
 
 def increment():
     count = count + 1     # ERROR
     print(count)
 
 increment()</code></pre>
-  <pre class="out"><code>UnboundLocalError: cannot access local variable 'count' where it is not associated with a value</code></pre>
+    <figure class="shot"><img src="img/42.webp" alt="Colab cell: increment() doing count = count + 1 on a global; traceback ending in UnboundLocalError: cannot access local variable count where it is not associated with a value" width="1006" height="511"><figcaption>Assigning makes <code>count</code> local, so reading it first fails.</figcaption></figure>
+  </div>
   <p>The moment Python sees <code>count = ...</code> inside a function, it decides <code>count</code> is a <b>new local variable</b> for the whole function. Then <code>count + 1</code> fails, because that local has no value yet. To say “I mean the global one”, use <code>global</code>:</p>
-  <pre><code class="language-python">count = 0
+  <div class="shots">
+    <pre><code class="language-python">count = 0
 
 def increment():
     global count
@@ -603,9 +649,8 @@ def increment():
 increment()
 increment()
 increment()</code></pre>
-  <pre class="out"><code>1
-2
-3</code></pre>
+    <figure class="shot"><img src="img/43.webp" alt="Colab cell: increment() with global count called three times; output 1, 2, 3" width="432" height="355"><figcaption>With <code>global</code>, the same variable keeps counting.</figcaption></figure>
+  </div>
   <div class="sticky warn l"><strong>Use <code>global</code> sparingly.</strong> Functions that quietly change globals are hard to test and debug. Prefer passing values in as arguments and returning the new value.</div>
 </section>
 
@@ -629,27 +674,36 @@ print(square(5))</code></pre>
     <div><span class="sw a4"></span><p>separates parameters from the body</p></div>
     <div><span class="sw a5"></span><p>one expression, whose result is returned automatically</p></div>
   </div>
-  <pre><code class="language-python">square = lambda x: x ** 2
+  <figure class="shot"><img src="img/44.webp" alt="lambda x : x ** 2 labelled: lambda is the keyword, x the parameter, the colon, and x ** 2 the expression, automatically returned" width="1095" height="388"><figcaption>The four parts of a lambda.</figcaption></figure>
+  <div class="shots">
+    <pre><code class="language-python">square = lambda x: x ** 2
 
 print(square(5))</code></pre>
-  <pre class="out"><code>25</code></pre>
-  <p>Calling <code>square(5)</code> works exactly like calling a function made with <code>def</code>.</p>
+    <figure class="shot"><img src="img/45.webp" alt="Colab cell: square = lambda x: x ** 2, print(square(5)); output 25" width="385" height="154"><figcaption>Same result as the <code>def</code> version.</figcaption></figure>
+  </div>
+  <p><code>square</code> is just a normal variable that happens to hold a lambda function, rather than a number or a string. Calling <code>square(5)</code> works exactly like calling a function made with <code>def</code>.</p>
   <h3>Multiple parameters</h3>
-  <pre><code class="language-python">add = lambda a, b: a + b
-multiply = lambda a, b: a * b
-
-print(add(5, 3))
-print(multiply(4, 5))</code></pre>
-  <pre class="out"><code>8
-20</code></pre>
+  <div class="shots">
+    <pre><code class="language-python">add = lambda a, b: a + b
+print(add(5, 3))</code></pre>
+    <figure class="shot"><img src="img/46.webp" alt="Colab cell: add = lambda a, b: a + b, print(add(5, 3)); output 8" width="342" height="150"><figcaption>Two parameters, one expression.</figcaption></figure>
+  </div>
   <h3>Returning an expression (no <code>return</code> keyword)</h3>
-  <p>A lambda never uses <code>return</code>. It holds a <b>single expression</b>, and that expression’s value is sent back automatically. So it <b>cannot</b> contain multiple statements, loops, or normal <code>if/else</code> blocks. It <i>can</i> use a one-line conditional expression:</p>
-  <pre><code class="language-python">check_pass = lambda marks: "PASS" if marks &gt;= 50 else "FAIL"
+  <p>A lambda never uses <code>return</code>. It holds a <b>single expression</b>, and that expression’s value is sent back automatically.</p>
+  <div class="shots">
+    <pre><code class="language-python">multiply = lambda a, b: a * b
+print(multiply(4, 5))</code></pre>
+    <figure class="shot"><img src="img/47.webp" alt="Colab cell: multiply = lambda a, b: a * b, print(multiply(4, 5)); output 20" width="363" height="148"><figcaption>4 × 5 comes back as 20.</figcaption></figure>
+  </div>
+  <figure class="shot"><img src="img/48.webp" alt="When we call multiply(4, 5): inside the lambda a = 4 and b = 5, the expression a * b becomes 4 * 5, it is evaluated automatically to 20, and the result 20 is returned" width="1162" height="268"><figcaption>No <code>return</code> needed: the expression’s value is the result.</figcaption></figure>
+  <p><b>Important restriction:</b> because a lambda is limited to one expression, it <b>cannot</b> contain multiple statements, loops, or normal <code>if/else</code> blocks. It <i>can</i> use a one-line conditional expression:</p>
+  <div class="shots">
+    <pre><code class="language-python">check_pass = lambda marks: "PASS" if marks &gt;= 50 else "FAIL"
 
 print(check_pass(65))
 print(check_pass(30))</code></pre>
-  <pre class="out"><code>PASS
-FAIL</code></pre>
+    <figure class="shot"><img src="img/49.webp" alt="Colab cell: check_pass lambda; check_pass(65) gives PASS, check_pass(30) gives FAIL" width="639" height="178"><figcaption>A one-line conditional expression is allowed.</figcaption></figure>
+  </div>
   <h3>Normal function vs lambda function</h3>
   <pre><code class="language-python">def square_normal(x):
     return x ** 2
@@ -827,6 +881,6 @@ print(message)</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

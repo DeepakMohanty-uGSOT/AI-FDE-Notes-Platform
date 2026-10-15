@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-09">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="networking/osi-model">
@@ -24,6 +24,9 @@
 <!-- 1 -->
 <section class="ch" id="why-layers">
   <h2>Why networking needs layers</h2>
+  <p>This is the third and final Networking Fundamentals note. You now hold a long list of pieces: interfaces, cables and Wi-Fi, hubs, switches, routers, MAC and IP addresses, ports and several protocols, each solving one problem. This note shows how they are organised into <b>layers</b>, walks through the <b>OSI Model</b>, shows how data is built up and broken down through those layers, and ends with one complete example: what happens when you open a website.</p>
+  <figure class="shot"><img src="img/01.webp" alt="Title banner: Networking Fundamentals III, OSI Model and Data Communication, with a coloured stack of the seven OSI layers (7 Application, 6 Presentation, 5 Session, 4 Transport, 3 Network, 2 Data Link, 1 Physical) beside a globe and a stream of bits travelling from a sender laptop to a receiver laptop" width="1400" height="788"><figcaption>The seven layers, and data travelling from sender to receiver.</figcaption></figure>
+  <div class="sticky info l"><strong>Scope</strong> The OSI Model itself is covered fully here, since how networking is organised is a core fundamentals topic. The deeper internals of individual protocols (the TCP three-way handshake, detailed IPv4/IPv6 addressing, advanced DNS) still wait for their own modules.</div>
   <p>Sending one message involves many jobs at once: turning data into physical signals, delivering it within the local network, addressing it across networks, choosing routes, making delivery reliable between applications, and presenting the data correctly at the other end. Handle all of that as one giant process and nobody could design, understand, fix or improve one part without risking everything else.</p>
   <div class="story"><b class="lbl">Departments in a company</b>A company doesn’t make every employee do sales, finance and engineering. It has departments, each doing one job well and trusting the others to do theirs. <mark>Layering splits networking into separate layers, each with one clear job, each relying on the layer below to have done its part.</mark></div>
   <figure>
@@ -102,6 +105,7 @@
 <section class="ch" id="story-setup">
   <h2>The story: a report from Bengaluru to Bhubaneswar</h2>
   <p>Instead of memorising names, follow one message. <b>Trident Softwares</b> in Bengaluru must send a huge <b>500-page project report</b> to <b>Debashish</b> at <b>Meghna Info Systems</b> in Bhubaneswar. The catch: the report is in <b>Kannada</b>, and Debashish reads only <b>Odia</b>. So it must be prepared, translated, split, addressed and delivered, then received, checked, reassembled and translated back.</p>
+  <figure class="shot"><img src="img/02.webp" alt="Setting the scene, two companies and one big report: a 500-page project report travels from Trident Softwares in Bengaluru, where seven employees prepare, translate, break into parts, address, package, check and send it, by truck across networks to Debashish at Meghna Info Systems in Bhubaneswar, who reads Odia" width="1400" height="788"><figcaption>Same information, seven different responsibilities, like the seven OSI layers working together to get information from one device to another.</figcaption></figure>
   <div class="story"><b class="lbl">Seven employees, seven jobs</b>At Trident, seven people each handle one step, in order. None of them needs to know the others’ jobs. <mark>That is exactly how the seven OSI layers work.</mark></div>
   <div class="tbl"><table>
     <tr><th>Layer</th><th>Person at Trident</th><th>What they do in the story</th></tr>
@@ -162,6 +166,8 @@
   <h2>Layers 7, 6, 5: application, presentation, session</h2>
   <h3>Layer 7 · Application</h3>
   <p>The top layer provides <b>network services to the applications</b> people use. It is where the user’s wish to communicate begins: opening a website, sending an email, uploading or downloading a file, looking up a domain name. It cares about <i>what</i> the app wants to send or receive, not how it travels.</p>
+  <figure class="shot"><img src="img/03.webp" alt="Layer 7 Application layer: a user at Trident Softwares types www.example.com in a browser; the application sends a request using an application-layer protocol such as HTTP across the Internet to the web server, which responds with the webpage over HTTP/HTTPS; common application-layer protocols HTTP/HTTPS for web browsing, FTP for file transfer, DNS to find IP addresses, DHCP to provide network configuration, SMTP for sending email" width="1400" height="788"><figcaption>Layer 7 starts the communication: the browser asks for the page using HTTP/HTTPS, and the server answers the same way.</figcaption></figure>
+  <p>Its main job is to <b>start the communication</b> by providing the needed network services to the application. When you request a webpage in a browser, Layer 7 is involved in the part where the application requests that page from the server. Its protocols are simply rules that applications follow when communicating over a network:</p>
   <div class="tbl"><table>
     <tr><th>Protocol</th><th>Used for</th></tr>
     <tr><td>HTTP / HTTPS</td><td>Communication between web browsers and web servers</td></tr>
@@ -172,31 +178,43 @@
   </table></div>
   <div class="sticky warn"><strong>App ≠ Application-layer protocol</strong> Gmail is an application/service; SMTP is a protocol (rules) for sending email. A browser is an application; HTTP/HTTPS is the protocol it speaks to web servers.</div>
   <p><b>In the story:</b> Ananya opens the company’s mailing application, prepares the 500-page Kannada report, and decides to send it to Debashish. No thought yet of routes, IPs, cables or signals. Those belong to other layers.</p>
+  <figure class="shot"><img src="img/04.webp" alt="Ananya, project head at Trident Softwares Bengaluru, writes an email to debashish@meghnainfosys.com with the subject Project Report and attaches Project_Report_Kannada.pdf (500 pages); the message is sending toward Debashish at Meghna Info Systems, Bhubaneswar" width="1400" height="788"><figcaption>Ananya starts the request in her mailing app: this is where Layer 7 begins.</figcaption></figure>
+  <p><b>Remember Layer 7:</b> it provides network services to applications and is where the user’s request to communicate begins.</p>
 
   <h3>Layer 6 · Presentation</h3>
-  <p>Makes sure the data is in a form the <b>receiving application can understand and use</b>. Three jobs:</p>
+  <p>Makes sure the data is in a form the <b>receiving application can understand and use</b>. It takes the data from Layer 7 and prepares it for communication.</p>
+  <figure class="shot"><img src="img/05.webp" alt="Layer 6 Presentation layer at Trident Softwares: the original data from the application layer is translated (Kannada to Odia), compressed to reduce file size and encrypted into a secure non-readable format, producing a prepared report for Debashish at Meghna Info Systems" width="1400" height="788"><figcaption>The three Presentation jobs: translate, compress, encrypt. (In the story the report is decrypted and turned into Odia on the receiving side.)</figcaption></figure>
+  <p>Three jobs:</p>
   <div class="grid">
     <div class="card t1 tilt-a"><h4>Translation</h4><p>Convert data from one format or representation to another.</p></div>
     <div class="card t5 tilt-b"><h4>Encryption / decryption</h4><p>Turn readable data into unreadable <b>ciphertext</b> before sending; decrypt at the other end.</p></div>
     <div class="card t2 tilt-a"><h4>Compression / decompression</h4><p>Shrink data to send it efficiently; restore it on arrival.</p></div>
   </div>
   <p>SSL/TLS are associated with this kind of secure communication. In modern TCP/IP systems these functions are usually done by the application or application-level protocols rather than a separate Layer 6, but the responsibilities still exist.</p>
-  <p><b>In the story:</b> Rakesh prepares the report into a suitable format and, because it is confidential, <b>encrypts</b> it so anyone intercepting it can’t read it.</p>
+  <p><b>In the story:</b> Rakesh prepares the report into a suitable format and, because it is confidential, <b>encrypts</b> it so anyone intercepting it can’t read it. On the receiving side the data is decrypted, and anything compressed is decompressed, so Debashish can finally use it.</p>
+  <p><b>Remember Layer 6:</b> it prepares data for communication through translation, encryption/decryption and compression/decompression.</p>
 
   <h3>Layer 5 · Session</h3>
-  <p>A <b>session</b> is an ongoing period of communication between two systems. This layer:</p>
+  <p>A <b>session</b> is an ongoing period of communication between two systems. This layer takes the prepared data from Layer 6 and manages the session between sender and receiver.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Layer 5 Session layer: Ananya at Trident Softwares Bengaluru and Debashish at Meghna Info Systems Bhubaneswar with a session established between them; the session layer establishes, manages and terminates sessions; a session is an ongoing period of communication between two systems" width="1400" height="788"><figcaption>Establish, manage, terminate: the Session layer keeps one conversation organised from start to end.</figcaption></figure>
+  <p>Three functions:</p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Creates sessions</b>Establishes communication so the two systems can start exchanging data.</div></li>
     <li><span class="dot">2</span><div><b>Manages sessions</b>Keeps the conversation organised from start to end, so data from one conversation doesn’t mix with another.</div></li>
     <li><span class="dot">3</span><div><b>Terminates sessions</b>Ends it properly, manually or automatically, like a banking site logging you out after inactivity.</div></li>
   </ol>
   <p><b>In the story:</b> Faizan contacts Meghna Info Systems, confirms they’re ready for a large report, fixes <b>6:30 pm</b> for the transfer, keeps it organised while it runs, and formally closes it once done.</p>
+  <figure class="shot"><img src="img/07.webp" alt="Faizan (operations and coordination) messages Debashish: are you ready to receive the 500-page report; Debashish replies yes, let us do it at 6:30 PM; file transfer scheduled today 6:30 PM; steps 1 establish session, 2 manage session while the report transfers (60 percent), 3 terminate session, transfer completed and session closed" width="1400" height="788"><figcaption>Faizan’s three steps: set up the 6:30 pm transfer, keep it organised while it runs, close it when done.</figcaption></figure>
+  <p>Like Layer 6, modern systems often handle these responsibilities in application software and higher-level protocols rather than in a separate Session layer, but establishing, managing and ending a session still matters.</p>
+  <p><b>Remember Layer 5:</b> it manages a session by establishing, maintaining and terminating communication between two systems.</p>
 </section>
 
 <!-- 5 -->
 <section class="ch" id="transport">
   <h2>Layer 4 · Transport: the heart</h2>
-  <p>The Transport layer manages <mark>end-to-end delivery between the two communicating devices</mark>. Upper layers care about <i>what</i> the communication is; lower layers care about <i>how</i> it moves. Transport sits in between, which is why it is nicknamed the “heart” of OSI.</p>
+  <p>The Transport layer manages <mark>end-to-end delivery between the two communicating devices</mark>. Upper layers care about <i>what</i> the communication is; lower layers care about <i>how</i> it moves. Transport sits in between, which is why it is nicknamed the “heart” of OSI (an informal description, not an official OSI name).</p>
+  <figure class="shot"><img src="img/08.webp" alt="Layer 4 Transport layer: Meera breaks the 500-page report into numbered segments 1, 2, 3 up to N that cross the Internet to Debashish; the receiver sends an acknowledgment (ACK) and anything lost is resent; functions: segmentation, sequencing, acknowledgment, retransmission and port numbers that deliver to the right application" width="1400" height="788"><figcaption>Segments go out numbered; ACKs come back; anything lost is resent. Port numbers pick the right application.</figcaption></figure>
+  <p>The data may be large, so it may need to be divided, identified, delivered, checked and, when necessary, sent again.</p>
   <div class="grid">
     <div class="card t3 tilt-a"><h4>Segmentation</h4><p>Break large data into smaller pieces (with TCP: <b>segments</b>).</p></div>
     <div class="card t1 tilt-b"><h4>Sequencing</h4><p>Number the pieces so the receiver can rebuild them in order.</p></div>
@@ -233,7 +251,8 @@
     </svg></div>
     <figcaption>Segmentation + sequencing: the parts can travel separately and still be rebuilt correctly.</figcaption>
   </figure>
-  <p><b>In the story:</b> Meera divides the 500 pages into <b>five parts of 100 pages</b> and numbers them 1 to 5. If parts arrive out of order, the numbers fix it; if one is lost and a reliable transport (TCP) is in use, that part is sent again.</p>
+  <p><b>In the story:</b> Meera divides the 500 pages into <b>five parts of 100 pages</b> and numbers them 1 to 5, so the receiving side knows which part comes first and which next. If parts arrive out of order, the numbers fix it; if one is lost and a reliable transport (TCP) is in use, that part is sent again.</p>
+  <p><b>Remember Layer 4:</b> it manages end-to-end delivery through segmentation, sequencing, acknowledgment, retransmission and port-based delivery.</p>
 </section>
 
 <!-- 6 -->
@@ -245,40 +264,17 @@
     <div class="card t2 tilt-b"><h4>Path determination</h4><p>Decides which path is <b>best</b> from the source network to the destination network.</p></div>
     <div class="card t3 tilt-a"><h4>Routing</h4><p>Forwards the packet network by network. Each <b>router</b> reads the destination IP and picks the next hop.</p></div>
   </div>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="A packet travels from the Bengaluru network through routers R1, R2 and R3 to the Bhubaneswar network. Each router reads the destination IP and forwards it to the next hop.">
-      <g class="rough">
-        <ellipse class="box f-blue" cx="90" cy="110" rx="72" ry="44"/>
-        <ellipse class="box f-green" cx="630" cy="110" rx="72" ry="44"/>
-        <circle class="box f-yellow" cx="240" cy="80" r="24"/>
-        <circle class="box f-yellow" cx="360" cy="140" r="24"/>
-        <circle class="box f-yellow" cx="480" cy="80" r="24"/>
-        <path class="lr" d="M162 104 L 214 86" marker-end="url(#ahr)"/>
-        <path class="lr" d="M262 92 L 336 130" marker-end="url(#ahr)"/>
-        <path class="lr" d="M384 130 L 458 92" marker-end="url(#ahr)"/>
-        <path class="lr" d="M504 86 L 556 104" marker-end="url(#ahr)"/>
-        <rect class="box f-orange" x="190" y="180" width="340" height="44" rx="10"/>
-      </g>
-      <text class="t" x="90" y="106" text-anchor="middle">Bengaluru</text>
-      <text class="ts" x="90" y="128" text-anchor="middle">Trident</text>
-      <text class="t" x="630" y="106" text-anchor="middle">Bhubaneswar</text>
-      <text class="ts" x="630" y="128" text-anchor="middle">Meghna</text>
-      <text class="t" x="240" y="86" text-anchor="middle">R1</text>
-      <text class="t" x="360" y="146" text-anchor="middle">R2</text>
-      <text class="t" x="480" y="86" text-anchor="middle">R3</text>
-      <text class="ts" x="360" y="34" text-anchor="middle">each router: “destination IP? → next hop”</text>
-      <text class="tm" x="360" y="207" text-anchor="middle">src 198.51.100.5 → dst 203.0.113.20</text>
-    </svg></div>
-    <figcaption>Packets are not sent “directly” from Bengaluru to Bhubaneswar; routers pass them network by network. (Example addresses.)</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/09.webp" alt="Network layer (Layer 3): Vikram at Trident Softwares Bengaluru (network A) sends an IP packet with source IP 192.168.1.10, destination IP 203.0.113.25 and data from the transport layer; the best path runs through several routers and the Internet to Debashish at Meghna Info Systems Bhubaneswar (network B); steps logical addressing, path determination, routing" width="1400" height="788"><figcaption>Source and destination IP go on the packet; routers forward it network by network along the best path. Packets are not sent “directly” from Bengaluru to Bhubaneswar.</figcaption></figure>
   <p><b>Path determination</b> is <i>deciding</i> the best path; <b>routing</b> is choosing and using that path to forward packets between networks.</p>
-  <p><b>In the story:</b> Vikram labels each of the five parts with the source IP (Trident) and destination IP (Meghna), works out the best route, and sends them off through a chain of routers.</p>
+  <p><b>In the story:</b> Vikram labels each of the five parts with the source IP (Trident) and destination IP (Meghna), works out the best route, and sends them off through a chain of routers. Each router looks at the destination IP and decides where to forward the packet next, until it reaches the network that contains Meghna Info Systems.</p>
+  <p><b>Remember Layer 3:</b> it adds source and destination IP addresses, determines the best path, and routes packets from network to network until they reach their destination.</p>
 </section>
 
 <!-- 7 -->
 <section class="ch" id="data-link">
   <h2>Layer 2 · Data Link: frames and the next hop</h2>
   <p>The Data Link layer delivers data from one device to the <b>next directly connected device</b> on the local network (home, office, building). The unit is a <b>frame</b>.</p>
+  <figure class="shot"><img src="img/10.webp" alt="Data Link layer (Layer 2): Sandeep at Trident Softwares builds a frame with source MAC AA:BB:CC:11:22:33, data from the network layer and destination MAC DD:EE:FF:44:55:66; the frame goes from the PC through the switch to the router, the next device; steps framing, addressing, node-to-node delivery, flow control, error detection" width="1400" height="788"><figcaption>The destination MAC is the <b>next device</b> on the local network (here the router), not the far-away server.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th style="width:26%">Function</th><th>What it means</th></tr>
     <tr><td>Framing</td><td>Puts the packet from Layer 3 inside a structured unit called a frame</td></tr>
@@ -289,6 +285,10 @@
     <tr><td>Local delivery</td><td>A switch reads the destination MAC and forwards the frame to the right port</td></tr>
   </table></div>
   <h3>The big idea: IP is the destination, MAC is the next hop</h3>
+  <ul>
+    <li><b>IP address:</b> identifies the overall destination the data ultimately needs to reach.</li>
+    <li><b>MAC address:</b> identifies the specific device that should receive the frame next on the current local network.</li>
+  </ul>
   <p>The laptop at Trident doesn’t put the Bhubaneswar server’s MAC in its frame; that server is on another network. The destination MAC is the <b>next device on the local network</b>, usually the company router. The router then builds a <b>new frame</b> for the next link. <mark>MAC addresses change at every hop; the IP addresses stay the same end to end.</mark></p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Laptop to Router A to Router B to Server. On each of the three links the frame carries different source and destination MAC addresses, but the source and destination IP addresses stay Laptop and Server.">
@@ -326,13 +326,16 @@
     </svg></div>
     <figcaption>Each router unwraps the frame, reads the IP, and wraps the packet in a fresh frame for the next link.</figcaption>
   </figure>
-  <p><b>In the story:</b> Sandeep puts each addressed part into a frame, writes the source MAC (his device) and destination MAC (the next device: the switch or the local router), handles flow control and adds error-check information, then passes the frame to the Physical layer.</p>
+  <p><b>In the story:</b> Sandeep puts each addressed part into a frame, writes the source MAC (his device) and destination MAC (the next device: the switch or the local router), handles flow control and adds error-check information, then sends it to the next device (node-to-node delivery) and passes it to the Physical layer for transmission.</p>
+  <p><b>Remember Layer 2:</b> it puts the packet in a frame, adds source and destination MACs, controls flow, detects errors, and delivers to the next device on the local network.</p>
 </section>
 
 <!-- 8 -->
 <section class="ch" id="physical">
   <h2>Layer 1 · Physical: bits become signals</h2>
   <p>The bottom layer deals with the actual medium: network cables, fiber, connectors, wireless antennas. It <b>doesn’t understand meaning</b>: no files, no IPs, no MACs. It just carries <b>bits</b> (0s and 1s) as physical signals.</p>
+  <figure class="shot"><img src="img/11.webp" alt="Physical layer (Layer 1): Om Prakash and Deepa at Trident Softwares take bits from the data link layer (0101010011) and convert them to physical signals: electrical signals over copper cables, light pulses over fiber-optic cables, radio waves over Wi-Fi; the signals leave Bengaluru and begin the journey to Bhubaneswar" width="1400" height="788"><figcaption>Bits from Layer 2 become electrical signals, light pulses or radio waves and leave the building.</figcaption></figure>
+  <p>It doesn’t decide where the data goes, which application gets it, or what it means; the higher layers handle that. Its only job is to represent the bits as the right physical signals and send them over the medium.</p>
   <div class="grid">
     <div class="card t3 tilt-a"><h4>Electrical signals</h4><p>Over copper network cables.</p></div>
     <div class="card t7 tilt-b"><h4>Light pulses</h4><p>Over fiber-optic cables.</p></div>
@@ -340,21 +343,30 @@
   </div>
   <div class="flow"><span class="hl">frame</span><span class="op">0100 1101 0110 …</span><span class="ok">signals on the medium</span></div>
   <p><b>In the story:</b> Om Prakash and Deepa run Trident’s cables, fiber links and Wi-Fi antennas. They convert everything into electrical signals, light pulses or radio waves, and the report physically leaves the Bengaluru building.</p>
+  <p><b>Remember Layer 1:</b> it converts bits into electrical signals, light pulses or radio waves so data can travel through cables, fiber or wireless links.</p>
 </section>
 
 <!-- 9 -->
 <section class="ch" id="receiver">
   <h2>The receiving side: back up the stack</h2>
-  <p>At Meghna Info Systems everything happens in reverse, from Layer 1 up to Layer 7. Each layer undoes what its partner did in Bengaluru.</p>
+  <p>By the time the signals reach Meghna Info Systems, the report has been translated once, encrypted, divided into five numbered parts, addressed, framed and turned into signals. Now everything happens in reverse, from Layer 1 up to Layer 7. Each layer undoes what its partner did in Bengaluru.</p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Physical</b>Cables, fiber or Wi-Fi receivers turn incoming signals back into digital data. No interpretation yet.</div></li>
     <li><span class="dot">2</span><div><b>Data Link</b>Rebuilds frames, checks the destination MAC (“is this for me?”) and checks for transmission errors. Not for this interface? The frame is ignored here. <span class="tag">→ MAC check</span></div></li>
     <li><span class="dot">3</span><div><b>Network</b>Checks the destination IP (“is this packet for Meghna?”). If it doesn’t match this device, the packet is not accepted and is dropped. <span class="tag">→ IP check</span></div></li>
-    <li><span class="dot">4</span><div><b>Transport</b>Uses Meera’s numbers to put parts 1 → 2 → 3 → 4 → 5 in order and rebuild the 500 pages. A missing part? TCP gets it resent. <span class="tag">→ reassemble</span></div></li>
-    <li><span class="dot">5</span><div><b>Session</b>Confirms Faizan’s session is still active and uninterrupted; closes it once the whole report has arrived.</div></li>
-    <li><span class="dot">6</span><div><b>Presentation</b>Decrypts Rakesh’s encryption, then translates the report into Odia. <span class="tag">→ readable</span></div></li>
-    <li><span class="dot">7</span><div><b>Application</b>The report lands in Debashish’s mailing app: complete, in order, decrypted, in Odia. He can finally read it.</div></li>
   </ol>
+  <figure class="shot"><img src="img/12.webp" alt="Data arrives at Meghna Info Systems: Layer 1 receives electrical signals, light pulses or radio waves and converts them back into bits; Layer 2 reconstructs frames and checks the destination MAC, is this frame for this device, yes pass to network layer, no ignore frame; Layer 3 checks the destination IP, is this packet for Meghna Info Systems, yes pass to transport layer, no drop packet" width="1400" height="788"><figcaption>Each layer checks its own addressing. Meant for this device? Accept and pass up. Otherwise ignore (L2) or drop (L3).</figcaption></figure>
+  <ol class="path">
+    <li><span class="dot">4</span><div><b>Transport</b>Uses Meera’s numbers to put parts 1 → 2 → 3 → 4 → 5 in order and rebuild the 500 pages. A missing part? TCP gets it resent. <span class="tag">→ reassemble</span></div></li>
+  </ol>
+  <figure class="shot"><img src="img/13.webp" alt="Transport layer on the receiving side: parts 3, 1, 4, 5 and 2 (100 pages each) arrive out of order; the receiving system uses the numbers to arrange them as part 1, 2, 3, 4, 5 and reconstructs the 500-page project report, then passes it to the session layer; sequencing, reordering, and if a part is missing TCP can detect it and request retransmission" width="1400" height="788"><figcaption>Out-of-order parts are put back as 1 → 2 → 3 → 4 → 5 and rebuilt into the 500-page report, then passed to the Session layer.</figcaption></figure>
+  <ol class="path">
+    <li><span class="dot">5</span><div><b>Session</b>Checks the session Faizan set up: is it still active, and has the communication continued without interruption? It is, so the transfer continues; once the whole report has arrived, the session is formally ended.</div></li>
+    <li><span class="dot">6</span><div><b>Presentation</b>Decrypts Rakesh’s encryption, then translates the report into Odia. <span class="tag">→ readable</span></div></li>
+    <li><span class="dot">7</span><div><b>Application</b>The report lands in Debashish’s mailing app: complete, in order, decrypted, in Odia. He can finally read it, as Ananya intended, now in Odia instead of Kannada.</div></li>
+  </ol>
+  <figure class="shot"><img src="img/14.webp" alt="Receiving side layers 5, 6 and 7: the Session layer checks the active session between Trident Softwares and Meghna Info Systems and ends it when the report is received; the Presentation layer decrypts the encrypted Kannada report and translates it into a readable Odia report; the Application layer delivers the complete 500-page report to Debashish; complete receiving flow 1 Physical, 2 Data Link, 3 Network, 4 Transport, 5 Session, 6 Presentation, 7 Application" width="1400" height="788"><figcaption>The receiving flow: Physical → Data Link → Network → Transport → Session → Presentation → Application.</figcaption></figure>
+  <p>This worked because each layer did its own job on the sending side and the matching processing on the receiving side. The data comes in as physical signals at Layer 1, is processed by each layer in turn, and reaches the application at Layer 7, where the user can access it.</p>
   <div class="story"><b class="lbl">Why bother with all seven?</b>Ananya never thought about MAC addresses; Om Prakash and Deepa never thought about translation. Each person trusted the previous one and did one job well. <mark>The OSI model turns one enormous task into seven small, independent responsibilities.</mark></div>
   <div class="sticky fde"><strong>In the field (FDE)</strong> Debug bottom-up, layer by layer. Is the cable/Wi-Fi up (L1)? Got an IP and gateway (L3)? Can you <code>ping</code> the host (L3)? Is the port open (L4)? Does TLS succeed (L6-ish)? Does the API return the right thing (L7)? Saying “it’s L4, the port is blocked” gets a customer’s network team moving fast.</div>
 </section>
@@ -408,6 +420,7 @@
     <tr><td>Layer 2</td><td><b>Frame</b></td><td>Source and destination MAC addresses, error-check trailer</td><td>Switches</td></tr>
     <tr><td>Layer 1</td><td><b>Bits</b></td><td>Turned into electrical, light or radio signals</td><td>Cables, fiber, radios</td></tr>
   </table></div>
+  <p>A <b>segment</b> is the Transport-layer unit when TCP is used. With <b>UDP</b>, the equivalent unit is usually called a <b>datagram</b>; at this stage it is enough to recognise the term and its link to UDP. A <b>packet</b> is what routers work with between networks; a <b>frame</b> is what switches work with inside one local network. Put together, it is one continuous transformation:</p>
   <div class="flow v"><span>Application data</span><span class="hl">Segment (TCP) or Datagram (UDP)</span><span class="hl">Packet · + IP</span><span class="hl">Frame · + MAC</span><span class="ok">Bits · on the wire</span></div>
 </section>
 
@@ -482,7 +495,10 @@ curl -v https://example.com    # steps 5-10: TCP to :443, TLS, HTTP request and 
     <div class="card t7 tilt-a"><h4>Organise</h4><p>The OSI model puts it all into seven layers.</p></div>
     <div class="card t8 tilt-b"><h4>Wrap &amp; unwrap</h4><p>Data → segment/datagram → packet → frame → bits, and back.</p></div>
   </div>
+  <p>Physical connections and network devices link devices together; network types explain how that scales from a room to the planet; addressing says exactly who gets the data, down to the application; protocols make sure it is understood; the OSI model organises it all; encapsulation shows how data is built up and broken down; and the web request ties every piece into one connected story. None of these ideas exists in isolation.</p>
+  <p>Detailed IPv4/IPv6 addressing and subnetting, the full mechanics of TCP and UDP, in-depth DNS and detailed routing were only introduced here; each gets full depth in its own module.</p>
   <h3>What comes next</h3>
+  <p>With this mental map in place, the deeper modules that follow build on a foundation that already makes sense as one connected whole:</p>
   <div class="tbl"><table>
     <tr><th>Module</th><th>Goes deep into</th></tr>
     <tr><td>IP Addressing</td><td>IPv4, public vs private, subnetting, CIDR, subnet masks, default gateways, network and broadcast addresses</td></tr>
@@ -490,6 +506,7 @@ curl -v https://example.com    # steps 5-10: TCP to :443, TLS, HTTP request and 
     <tr><td>DNS</td><td>Name resolution, record types such as A and CNAME, basic troubleshooting</td></tr>
     <tr><td>Network Troubleshooting</td><td>Hands-on: <code>ping</code>, <code>curl</code>, <code>ss</code>, <code>nslookup</code>/<code>dig</code>, <code>traceroute</code>, <code>ip addr</code>/<code>ip route</code></td></tr>
   </table></div>
+  <p>Each takes a concept this series only introduced and explores it in full technical depth, on the same foundation.</p>
 </section>
 
 <!-- 13 -->
@@ -554,6 +571,6 @@ curl -v https://example.com    # steps 5-10: TCP to :443, TLS, HTTP request and 
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

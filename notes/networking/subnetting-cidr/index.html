@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-19">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="networking/subnetting-cidr">
@@ -29,7 +29,9 @@
   <p>The previous note ended with a gap: classes came in only three sizes, Class A (huge), Class B (large) and Class C (254 usable). Anything in between either wasted thousands of addresses or didn’t fit.</p>
   <p>Take a small company with <b>100 employees</b>, one device each. The smallest classful option is a Class C:</p>
   <div class="flow"><span>2⁸ = 256 total</span><span>256 − 2 = 254 usable</span><span class="bad">254 − 100 = 154 unused</span></div>
+  <p>254 comfortably covers 100, so on the surface it looks fine. But 154 addresses sit unused: wasted, and unavailable to anyone else.</p>
   <p>Now make it realistic: the company has <b>4 departments</b> (Sales, Engineering, HR, Finance) and, for security and organisation, each should get its <b>own</b> network. One Class C is one network, with no built-in way to split it. That is exactly the problem <b>subnetting</b> solves.</p>
+  <figure class="shot"><img src="img/01.webp" alt="A small company network with 100 employees on one Class C network 192.168.1.0/24: 256 total addresses, 254 usable, 100 devices used and 154 addresses unused (wasted); the problem: the company has four departments, Sales 25, Engineering 40, HR 20 and Finance 15 employees, and wants each on its own network, which a single Class C network cannot provide" width="1400" height="700"><figcaption>154 addresses wasted, and still no way to give four departments four separate networks. That is the problem subnetting solves.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 250" role="img" aria-label="One 192.168.1.0/24 network is divided into four subnets for Sales, Engineering, HR and Finance. Each subnet has a network address, a range of host addresses and a broadcast address.">
       <g class="rough">
@@ -64,7 +66,7 @@
 <section class="ch" id="mask">
   <h2>The subnet mask: drawing the boundary</h2>
   <p>Every IPv4 address is 32 bits: a <b>network portion</b> followed by a <b>host portion</b>. Subnetting is just a precise, flexible way of deciding <i>where</i> that split happens.</p>
-  <p>The split is described by a second 32-bit value that travels with the address: the <b>subnet mask</b>. <mark>In a mask, 1 means “network bit” and 0 means “host bit”.</mark> The 1s always come first, all together, then the 0s.</p>
+  <p>The split is described by a second 32-bit value that travels with the address: the <b>subnet mask</b>. <mark>In a mask, 1 means “network bit” and 0 means “host bit”.</mark> The 1s always come first, all together, then the 0s. So whenever you see a mask, you can tell how many network and host bits it represents just by counting its 1s and 0s.</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Network bits = 1</h4><p>The bits that identify the network. Written as 1s in the mask.</p></div>
     <div class="card t2 tilt-b"><h4>Host bits = 0</h4><p>The bits that identify a device inside the network. Written as 0s in the mask.</p></div>
@@ -108,7 +110,7 @@
 <section class="ch" id="cidr">
   <h2>CIDR: any prefix you need</h2>
   <p>Classful addressing tied every network to one of three prefixes: Class A = /8, Class B = /16, Class C = /24. Nothing in between.</p>
-  <p><b>CIDR (Classless Inter-Domain Routing)</b> removes that restriction. <mark>A network can use any prefix length that fits its real size: /20, /25, /27, anything.</mark> This flexibility is what makes subnetting possible.</p>
+  <p><b>CIDR (Classless Inter-Domain Routing)</b> removes that restriction. <mark>A network can use any prefix length that fits its real size: /20, /25, /27, anything.</mark> This flexibility is what makes subnetting possible, and it is why CIDR replaced the old classful system as the modern way to allocate addresses.</p>
   <h3>CIDR notation</h3>
   <p>Write the address, a slash, then the <b>prefix length</b>, the number of network bits:</p>
   <div class="anatomy"><span class="a4">192.168.1.0</span><span class="a3">/24</span></div>
@@ -154,6 +156,7 @@
       </ol>
     </div>
   </div>
+  <figure class="shot"><img src="img/02.webp" alt="Given network 192.168.1.0/24: step 1, host bits 32 minus 24 equals 8; step 2, total addresses 2 to the 8 equals 256; step 3, usable hosts 256 minus 2 equals 254; address range 192.168.1.0 network address (reserved), 192.168.1.1 to 192.168.1.254 usable, 192.168.1.255 broadcast address (reserved)" width="1400" height="788"><figcaption>A /24 has 256 addresses, but only 254 can go to devices: the first (.0) and last (.255) are reserved.</figcaption></figure>
   <p><mark>A bigger prefix number means a smaller network</mark>: more bits go to the network, so fewer are left for hosts. /24 holds 254 devices; /26 only 62.</p>
   <h3>Total addresses vs usable hosts</h3>
   <p>Two different questions with two different answers. For a <b>/27</b>: host bits 32 − 27 = 5, so</p>
@@ -222,6 +225,7 @@
     <li><span class="dot">3</span><div><b>Usable</b>128 − 1 network − 1 broadcast = <b>126</b>.</div></li>
   </ol>
   <div class="flow"><span class="op">borrow 1 bit</span><span>2 subnets</span><span>7 host bits each</span><span>128 addresses each</span><span class="ok">126 usable each</span></div>
+  <figure class="shot"><img src="img/03.webp" alt="Borrowing 1 bit: the original network 192.168.1.0/24 with 254 usable hosts becomes two subnets, 192.168.1.0/25 and 192.168.1.128/25, each with 126 usable hosts" width="1400" height="700"><figcaption>One borrowed bit: one /24 (254 usable) becomes two /25s (126 usable each).</figcaption></figure>
   <div class="sticky info l"><strong>Where did 2 addresses go?</strong> 126 + 126 = 252, not 254. Each of the two new subnets needs its <i>own</i> network and broadcast address, so splitting costs one extra pair.</div>
 </section>
 
@@ -392,7 +396,7 @@ Result  00001010.00010100.00011110.00000000   10.20.30.0</code></pre>
 AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
 
   <h3>Method 2 · Block size (faster by hand)</h3>
-  <p>Same address, <code>192.168.1.70/26</code>, no binary needed:</p>
+  <p>Writing all 32 bits and ANDing them by hand is slow. The block-size method gives the exact same network address much faster. Same address, <code>192.168.1.70/26</code>, no binary needed; think of the addresses as divided into groups of 64:</p>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Block size</b>/26 → mask 255.255.255.192 → 256 − 192 = <b>64</b>. Each subnet is 64 addresses.</div></li>
     <li><span class="dot">2</span><div><b>List the blocks</b>0–63, 64–127, 128–191, 192–255.</div></li>
@@ -436,6 +440,7 @@ AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
   </ol>
   <p>In binary it is the network with all host bits set to 1: <code>01|000000</code> → <code>01|111111</code> = 64 + 63 = 127.</p>
   <h3>Usable host range: everything in between</h3>
+  <figure class="shot"><img src="img/04.webp" alt="192.168.1.64/26 with 64 total addresses and 62 usable hosts: 192.168.1.64 network address (not usable), 192.168.1.65 first usable host, usable host range 192.168.1.65 to 192.168.1.126 for devices 1 to N, 192.168.1.127 broadcast address (not usable); first usable host equals network address plus 1, last usable host equals broadcast address minus 1" width="1400" height="933"><figcaption>.64 and .127 are reserved; the 62 addresses in between (.65 – .126) go to devices.</figcaption></figure>
   <div class="notes"><div class="note"><b>network + 1</b>first usable host</div><div class="note"><b>broadcast − 1</b>last usable host</div></div>
   <div class="tbl"><table>
     <tr><th>Address</th><th>Role</th><th>Give to a device?</th></tr>
@@ -534,7 +539,8 @@ AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
   <p>In real work the question is often reversed: nobody gives you the prefix. You are told what is <i>needed</i> and must choose it.</p>
 
   <h3>A · By hosts: “a subnet for 50 employees”</h3>
-  <p>Find the <b>smallest</b> subnet with <b>at least</b> 50 usable addresses. Bigger would just waste addresses.</p>
+  <p>Your manager says: <i>“We need a subnet for a department with 50 employees.”</i> Nobody gives you /24, /25 or /26; you must work it out. Find the <b>smallest</b> subnet with <b>at least</b> 50 usable addresses. A bigger one would provide more addresses than needed and leave more unused.</p>
+  <figure class="shot"><img src="img/05.webp" alt="Designing for 50 hosts: 1, set up the condition 2 to the h minus 2 is at least 50 (subtract 2 for the network and broadcast addresses); 2, try host bits, 5 gives 30 (not enough), 6 gives 62 (enough); 3, convert to prefix, 32 minus 6 equals /26, mask 255.255.255.192; 4, verify 64 total and 62 usable; 5, example subnet 192.168.10.0/26 with network 192.168.10.0, usable 192.168.10.1 to .62, broadcast .63 and 12 unused for future devices; 6, final result /26" width="1400" height="933"><figcaption>Work backward from the requirement: hosts → host bits → prefix. 50 employees → 6 host bits → /26.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Set up the condition</b>2<sup>h</sup> − 2 ≥ 50, where h = host bits</div></li>
     <li><span class="dot">2</span><div><b>Try h = 5</b>2⁵ − 2 = 30. 30 &lt; 50 → not enough ❌</div></li>
@@ -549,6 +555,8 @@ AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
   </table></div>
 
   <h3>B · By subnets: “8 subnets from our /24”</h3>
+  <p>Now the number of subnets is what matters, not hosts per subnet.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Designing for 8 subnets: 1, condition 2 to the n is at least 8; 2, smallest n is 3 (1 gives 2, 2 gives 4, 3 gives 8, no bits wasted); 3, borrow 3 bits, new prefix 24 plus 3 equals /27; 4, each subnet has 5 host bits, 32 addresses and 30 usable hosts; example 8 subnets from 192.168.1.0/24: .0, .32, .64, .96, .128, .160, .192 and .224, each /27 with its usable range" width="1400" height="933"><figcaption>Borrow 3 bits: eight /27 subnets of 30 usable hosts each, starting every 32 addresses.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Condition</b>2<sup>n</sup> ≥ 8, where n = bits to borrow</div></li>
     <li><span class="dot">2</span><div><b>Smallest n</b>2³ = 8 → n = 3, no bits wasted</div></li>
@@ -557,6 +565,7 @@ AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
   </ol>
 
   <h3>C · Both: “4 subnets from 192.168.10.0/24, as many hosts each as possible”</h3>
+  <figure class="shot"><img src="img/07.webp" alt="4 subnets from 192.168.10.0/24: 2 to the n equals 4 so borrow 2 bits; /24 plus 2 equals /26; 6 host bits, 64 addresses, 62 usable; subnets 192.168.10.0/26 (hosts .1 to .62, broadcast .63), 192.168.10.64/26 (hosts .65 to .126, broadcast .127), 192.168.10.128/26 (hosts .129 to .190, broadcast .191), 192.168.10.192/26 (hosts .193 to .254, broadcast .255), each with 62 usable hosts" width="1400" height="933"><figcaption>Borrowing 2 bits gives four /26 subnets, 64 addresses apart, each with 62 usable hosts.</figcaption></figure>
   <ol class="path">
     <li><span class="dot">1</span><div><b>Bits for 4 subnets</b>2² = 4 → borrow 2</div></li>
     <li><span class="dot">2</span><div><b>New prefix</b>24 + 2 = /26</div></li>
@@ -571,6 +580,7 @@ AND     0100 0000   = 64   →  network 192.168.1.64</code></pre>
   <h2>VLSM: different sizes in one network</h2>
   <p>Real departments are never the same size. Suppose:</p>
   <div class="notes"><div class="note"><b>100</b>Dept A hosts</div><div class="note"><b>50</b>Dept B hosts</div><div class="note"><b>20</b>Dept C hosts</div><div class="note"><b>10</b>Dept D hosts</div></div>
+    <figure class="shot"><img src="img/08.webp" alt="VLSM subnetting example from 192.168.10.0/24: requirements Department A 100, B 50, C 20, D 10 hosts; required prefixes /25 (7 host bits), /26 (6), /27 (5), /28 (4); allocated largest to smallest without overlap: A 192.168.10.0/25 (.0 to .127, 126 usable), B 192.168.10.128/26 (.128 to .191, 62), C 192.168.10.192/27 (.192 to .223, 30), D 192.168.10.224/28 (.224 to .239, 14); remaining 192.168.10.240 to .255 (16 addresses) for future use" width="1400" height="933"><figcaption>Largest first, no overlaps, 16 addresses left for later. (Same layout as the table below, using 192.168.10.0/24.)</figcaption></figure>
   <p>With equal subnets you would size everything for A: four /25s. Department D would sit on 126 usable addresses while needing 10. Worse, four /25s need 4 × 128 = 512 addresses, which is <b>two whole /24s</b>.</p>
   <p><b>VLSM (Variable Length Subnet Masking)</b> fixes this: <mark>different subnet sizes coexist in the same address space</mark>, each sized with the “smallest prefix that fits” method.</p>
   <div class="tbl"><table>
@@ -761,6 +771,8 @@ Gateway    : 192.168.10.100</code></pre>
   </ol>
   <div class="sticky fde"><strong>In the field (FDE)</strong> On a Linux box, <code>ip -4 addr</code> shows the address with its prefix (e.g. <code>inet 192.168.10.75/27</code>) and <code>ip route</code> shows <code>default via …</code>, your gateway. Run the flow above on those two lines before blaming the app.</div>
   <h3>Practise in levels</h3>
+  <p>Real subnetting skill grows best in increasing order of difficulty, and it is most useful when applied to a real device’s configuration, not just a textbook question:</p>
+  <figure class="shot"><img src="img/09.webp" alt="Subnetting practice in six levels of progressive difficulty: 1 identify (prefix, mask, network and host bits, e.g. 192.168.1.0/24), 2 calculate (total addresses, usable hosts, block size, e.g. /26), 3 find (network, broadcast, first and last host, e.g. 192.168.10.130/26), 4 design (prefix for 50 hosts or 8 subnets), 5 VLSM (100, 50, 20, 10 hosts), 6 troubleshooting (invalid IP, wrong mask, wrong gateway)" width="1400" height="700"><figcaption>Six levels, from identifying a prefix to fixing a broken configuration.</figcaption></figure>
   <div class="tbl"><table>
     <tr><th>Level</th><th>Skill</th><th>Sections</th></tr>
     <tr><td>1 · Identify</td><td>Prefix, mask, network bits and host bits from an address and mask</td><td>Mask, CIDR</td></tr>
@@ -838,6 +850,6 @@ Gateway    : 192.168.10.100</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-07">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="linux/text-filters">
@@ -52,26 +52,34 @@
     <div class="card t7 tilt-b"><h4>2. Processes it</h4><p>Counts, sorts, removes duplicates, cuts out parts, or swaps characters.</p></div>
     <div class="card t2 tilt-a"><h4>3. Shows the result</h4><p>Prints to the screen. Your original file stays untouched.</p></div>
   </div>
+  <p>A text filter does not create text by itself. It only filters or modifies text that already exists.</p>
 </section>
 
 <!-- 2 -->
 <section class="ch" id="wc">
   <h2><code>wc</code> · measure your text</h2>
-  <p><code>wc</code> stands for <b>word count</b>, but that name is modest. Think of it as a quick <b>measuring tape</b> for text: it counts <b>lines</b>, <b>words</b>, <b>characters</b> and <b>bytes</b>.</p>
-  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">wc filename</code></pre></div>
-  <div class="two">
-    <div class="codebox"><span class="cap">file1.txt</span><pre><code class="language-plaintext">Linux is powerful
+  <p>Now that you know why filters exist and how they process text, meet your very first tool: <code>wc</code>. It stands for <b>word count</b>, but that name is modest; it does much more than count words. Think of it as a quick <b>calculator</b> (or measuring tape) for text. Hand it a file or a chunk of text and it instantly measures four things:</p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Lines</h4><p>The total number of lines in the document.</p></div>
+    <div class="card t2 tilt-b"><h4>Words</h4><p>The total number of individual words.</p></div>
+    <div class="card t7 tilt-a"><h4>Characters</h4><p>Every letter, number, space and punctuation mark.</p></div>
+    <div class="card t5 tilt-b"><h4>Bytes</h4><p>The actual physical size of the text data.</p></div>
+  </div>
+  <p>So while people call it the word count command, <code>wc</code> is really your go-to tool whenever you need to know exactly how long or how large a piece of text is.</p>
+  <div class="codebox"><span class="cap">basic syntax</span><pre><code class="language-bash">wc filename</code></pre></div>
+  <p><b>Example.</b> Suppose <code>file1.txt</code> contains:</p>
+  <div class="codebox"><span class="cap">file1.txt</span><pre><code class="language-plaintext">Linux is powerful
 Linux is secure
 Linux is fast</code></pre></div>
-    <div><pre><code class="language-bash">wc file1.txt</code></pre>
-    <pre class="out"><code> 3  9 48 file1.txt</code></pre></div>
-  </div>
+  <pre><code class="language-bash">wc file1.txt</code></pre>
+  <figure class="shot"><img src="img/01.webp" alt="Terminal: vim file1.txt, then wc file1.txt prints 3 9 48 file1.txt" width="715" height="298"><figcaption>Three numbers and the file name: <code>3  9 48 file1.txt</code>.</figcaption></figure>
+  <p>What does this mean?</p>
   <div class="anatomy"><span class="a1">3</span> <span class="a2">9</span> <span class="a3">48</span> <span class="a4">file1.txt</span></div>
   <div class="legend">
-    <div><span class="sw a1"></span><p>lines</p></div>
-    <div><span class="sw a2"></span><p>words</p></div>
-    <div><span class="sw a3"></span><p>bytes (17 + 15 + 13 visible characters, plus one invisible newline at the end of each line)</p></div>
-    <div><span class="sw a4"></span><p>file name</p></div>
+    <div><span class="sw a1"></span><p>3 → total number of lines</p></div>
+    <div><span class="sw a2"></span><p>9 → total number of words</p></div>
+    <div><span class="sw a3"></span><p>48 → total number of bytes (17 + 15 + 13 visible characters, plus one invisible newline at the end of each line)</p></div>
+    <div><span class="sw a4"></span><p>file1.txt → the file name</p></div>
   </div>
   <div class="sticky info l"><strong>The invisible newline</strong> Every time you press <kbd>Enter</kbd>, the file stores a hidden <b>newline</b> character (<code>\n</code>). It counts as one character and one byte. That is why byte counts are a little bigger than the letters you can see.</div>
 </section>
@@ -79,20 +87,48 @@ Linux is fast</code></pre></div>
 <!-- 3 -->
 <section class="ch" id="wc-options">
   <h2>Counting one thing at a time</h2>
-  <p>Options make <code>wc</code> print just one number:</p>
-  <div class="tbl"><table>
-    <tr><th>Option</th><th>Counts</th><th>Sample file</th><th>Command</th><th>Output</th></tr>
-    <tr><td><code>-l</code></td><td><b>lines</b> (how many times Enter was pressed)</td><td><code>todo.txt</code>: Buy milk / Clean room / Call Mom</td><td><code>wc -l todo.txt</code></td><td><code>3 todo.txt</code></td></tr>
-    <tr><td><code>-w</code></td><td><b>words</b> (groups of characters separated by spaces)</td><td><code>note.txt</code>: Linux is very cool</td><td><code>wc -w note.txt</code></td><td><code>4 note.txt</code></td></tr>
-    <tr><td><code>-m</code></td><td><b>characters</b> (letters, digits, spaces, punctuation, newlines)</td><td><code>hi.txt</code>: Hello World!</td><td><code>wc -m hi.txt</code></td><td><code>13 hi.txt</code></td></tr>
-    <tr><td><code>-c</code></td><td><b>bytes</b> (how much space the text takes)</td><td><code>data.txt</code>: Hello world</td><td><code>wc -c data.txt</code></td><td><code>12 data.txt</code></td></tr>
-  </table></div>
-  <p><code>Hello World!</code> has 12 visible characters (H-e-l-l-o, a space, W-o-r-l-d, !). <code>wc -m</code> says 13 because the newline at the end of the line counts too. Likewise <code>Hello world</code> is 10 letters and a space: 11 visible characters + newline = 12 bytes.</p>
-  <h3>Characters vs bytes</h3>
-  <p>They are not always a 1-to-1 match. <mark>One character on screen can need several bytes of storage.</mark></p>
+  <p>The <code>wc</code> command can count different things separately using options. Each option makes it print just one number.</p>
+
+  <h3>A) Count lines: <code>-l</code></h3>
+  <p><b>What it does:</b> counts how many lines are in a file. <b>Simple meaning:</b> how many times you pressed <kbd>Enter</kbd> to start a new line.</p>
+  <div class="codebox"><span class="cap">syntax · -l is short for lines</span><pre><code class="language-bash">wc -l filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>todo.txt</code> contains 3 separate lines:</p>
+  <div class="codebox"><span class="cap">todo.txt</span><pre><code class="language-plaintext">Buy milk
+Clean room
+Call Mom</code></pre></div>
+  <pre><code class="language-bash">wc -l todo.txt</code></pre>
+  <figure class="shot"><img src="img/02.webp" alt="Terminal: wc -l todo.txt prints 3 todo.txt" width="567" height="191"><figcaption><code>3 todo.txt</code>: three lines.</figcaption></figure>
+
+  <h3>B) Count words: <code>-w</code></h3>
+  <p><b>What it does:</b> counts the total number of words in a file. <b>Simple meaning:</b> it counts every group of letters separated by a space.</p>
+  <div class="codebox"><span class="cap">syntax · -w is short for words</span><pre><code class="language-bash">wc -w filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>note.txt</code> contains one line with 4 separate words:</p>
+  <div class="codebox"><span class="cap">note.txt</span><pre><code class="language-plaintext">Linux is very cool</code></pre></div>
+  <pre><code class="language-bash">wc -w note.txt</code></pre>
+  <figure class="shot"><img src="img/03.webp" alt="Terminal: wc -w note.txt prints 4 note.txt" width="578" height="193"><figcaption><code>4 note.txt</code>: four words.</figcaption></figure>
+
+  <h3>C) Count characters: <code>-m</code></h3>
+  <p><b>What it does:</b> counts every single character in a file. <b>Simple meaning:</b> every letter, number, space and punctuation mark you typed.</p>
+  <div class="codebox"><span class="cap">syntax · -m counts characters</span><pre><code class="language-bash">wc -m filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>hi.txt</code> contains:</p>
+  <div class="codebox"><span class="cap">hi.txt</span><pre><code class="language-plaintext">Hello World!</code></pre></div>
+  <p>You can see 12 characters: H, e, l, l, o, a space, W, o, r, l, d and !.</p>
+  <pre><code class="language-bash">wc -m hi.txt</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="Terminal: wc -m hi.txt prints 13 hi.txt" width="577" height="227"><figcaption><code>13 hi.txt</code>: the 12 visible characters plus the newline at the end of the line.</figcaption></figure>
+
+  <h3>D) Count bytes: <code>-c</code></h3>
+  <p><b>What it does:</b> counts the total size of the file in bytes. <b>Simple meaning:</b> how much memory or space the file takes up on your computer.</p>
+  <div class="codebox"><span class="cap">syntax · -c is short for count bytes</span><pre><code class="language-bash">wc -c filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>data.txt</code> contains some text. Most English letters use 1 byte of space.</p>
+  <div class="codebox"><span class="cap">data.txt</span><pre><code class="language-plaintext">Hello world</code></pre></div>
+  <pre><code class="language-bash">wc -c data.txt</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="Terminal: wc -c data.txt prints 12 data.txt" width="512" height="202"><figcaption><code>12 data.txt</code>: 10 letters + 1 space + 1 newline = 12 bytes.</figcaption></figure>
+
+  <h3>Important: characters vs bytes</h3>
+  <p>Characters and bytes are not always a 1-to-1 match. <mark>Even if you see only one character on your screen, the computer might need multiple bytes of memory to store it.</mark></p>
   <div class="two">
-    <div class="card t2 tilt-a"><h4>Normal English text</h4><p>A, b, 7, !, space: <b>1 character = 1 byte</b>, so <code>-m</code> and <code>-c</code> agree.</p></div>
-    <div class="card t4 tilt-b"><h4>Special text</h4><p>Accented letters, Hindi script, symbols and emojis (😀) take <b>2 to 4 bytes</b> each in UTF-8, so <code>-c</code> is bigger than <code>-m</code>.</p></div>
+    <div class="card t2 tilt-a"><h4>Normal text</h4><p>Standard English letters (A, B, C), digits, spaces: <b>1 character usually equals 1 byte</b>, so <code>-m</code> and <code>-c</code> agree.</p></div>
+    <div class="card t4 tilt-b"><h4>Special text</h4><p>Symbols, emojis (😊) and complex characters such as accented letters or Hindi script: <b>1 character can take up to 4 bytes</b> in UTF-8, so <code>-c</code> is bigger than <code>-m</code>.</p></div>
   </div>
   <pre><code class="language-bash">echo "😀" | wc -m     # 2  (the emoji + newline)
 echo "😀" | wc -c     # 5  (4 bytes for the emoji + 1 for newline)</code></pre>
@@ -102,51 +138,61 @@ echo "😀" | wc -c     # 5  (4 bytes for the emoji + 1 for newline)</code></pre
 <section class="ch" id="wc-more">
   <h2><code>wc</code> with several files and with pipes</h2>
   <h3>Several files at once</h3>
-  <p>Like putting items on a weighing scale one by one and reading the <b>total</b> at the end:</p>
+  <p><b>What it does:</b> measures two or more files at the same time and gives a summary. <b>Simple meaning:</b> like putting several items on a scale one by one, then reading the <b>total weight</b> of everything at the bottom. Just list the file names one after another:</p>
   <pre><code class="language-bash">wc file1.txt file2.txt</code></pre>
+  <p><b>Example.</b> Suppose you have two files: <code>file1.txt</code> (a small note) and <code>file2.txt</code> (a longer list). The output looks like this (illustrative numbers):</p>
   <pre class="out"><code>  10   50  300 file1.txt
   20   70  500 file2.txt
   30  120  800 total</code></pre>
-  <p>Each file gets its own row (lines, words, bytes), and the last row, <b>total</b>, adds them up.</p>
+  <ul>
+    <li><b>Individual file counts:</b> each file gets its own row with its own stats (lines, words, bytes).</li>
+    <li><b>The total row:</b> the very last line adds up the numbers from all the files above it.</li>
+  </ul>
 
   <h3>With a pipe <code>|</code></h3>
-  <p>The pipe acts like a tunnel that sends one command’s output straight into <code>wc</code> to be counted:</p>
-  <div class="flow"><span class="op">command</span><span class="op">|</span><span class="op">wc</span><span class="ok">result</span></div>
-  <div class="cmd"><p class="what">How many items are in this folder?</p>
+  <p><b>What it does:</b> combines <code>wc</code> with other commands. <b>Simple meaning:</b> the pipe acts like a tunnel that sends the results of one command directly into <code>wc</code> to be counted. So the flow becomes:</p>
+  <div class="flow"><span class="op">command</span><span class="op">pipe |</span><span class="op">wc</span><span class="ok">result</span></div>
+  <div class="cmd"><p class="what">Example: count the files in your current folder without counting by hand</p>
   <pre><code class="language-bash">ls | wc -l</code></pre></div>
   <ol class="path">
-    <li><span class="dot">1</span><div><b><code>ls</code></b>lists your files, one per line when sent into a pipe.</div></li>
+    <li><span class="dot">1</span><div><b><code>ls</code></b>lists all your files (one per line when sent into a pipe).</div></li>
     <li><span class="dot">2</span><div><b><code>|</code></b>sends that list to the counter instead of the screen.</div></li>
-    <li><span class="dot">3</span><div><b><code>wc -l</code></b>counts the lines, and each line is one file.</div></li>
+    <li><span class="dot">3</span><div><b><code>wc -l</code></b>counts the lines in the list, and each line is one file.</div></li>
   </ol>
-  <div class="two">
-    <div class="codebox"><span class="cap">file.txt</span><pre><code class="language-plaintext">Linux is powerful
+  <p><b>Full example.</b> Suppose a file contains these lines, and you want to read it with <code>cat</code> and immediately count the words:</p>
+  <div class="codebox"><span class="cap">file1.txt</span><pre><code class="language-plaintext">Linux is powerful
 Linux is secure</code></pre></div>
-    <div><pre><code class="language-bash">cat file.txt | wc -w</code></pre>
-    <pre class="out"><code>6</code></pre></div>
-  </div>
-  <p><code>cat</code> reads the text, <code>|</code> sends it through the tunnel, and <code>wc -w</code> counts every word. When <code>wc</code> reads from a pipe, it prints no file name.</p>
+  <pre><code class="language-bash">cat file1.txt | wc -w</code></pre>
+  <ul>
+    <li><code>cat file1.txt</code> opens and displays the text.</li>
+    <li><code>|</code> sends the text through the “tunnel”.</li>
+    <li><code>wc -w</code> counts every word in that text (6 here). When <code>wc</code> reads from a pipe, it prints no file name.</li>
+  </ul>
 </section>
 
 <!-- 5 -->
 <section class="ch" id="sort">
   <h2><code>sort</code> · put lines in order</h2>
-  <p>Data usually arrives in a messy, first-come-first-served order: names, prices, log events, user IDs. <code>sort</code> is the <b>“Sort A to Z” button</b> for your command line.</p>
-  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">sort filename</code></pre></div>
-  <div class="two">
-    <div class="codebox"><span class="cap">names.txt</span><pre><code class="language-plaintext">Zebra
+  <p><b>Why sort exists:</b> imagine a file full of names, numbers, logs or user IDs. This data is usually collected in a messy, “first-come, first-served” order. To find what you need quickly, you organise it alphabetically or numerically. <mark><code>sort</code> is the “Sort A to Z” button for your command line.</mark></p>
+  <div class="grid">
+    <div class="card t1 tilt-a"><h4>Names</h4><p>Putting a contact list in alphabetical order.</p></div>
+    <div class="card t2 tilt-b"><h4>Numbers</h4><p>Arranging prices from lowest to highest.</p></div>
+    <div class="card t7 tilt-a"><h4>Logs</h4><p>Organising events by their ID or timestamp.</p></div>
+    <div class="card t5 tilt-b"><h4>User IDs</h4><p>Sorting people by their member numbers.</p></div>
+  </div>
+  <p>The most basic version sorts a file alphabetically:</p>
+  <div class="codebox"><span class="cap">basic syntax</span><pre><code class="language-bash">sort filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>names.txt</code> is messy:</p>
+  <div class="codebox"><span class="cap">names.txt</span><pre><code class="language-plaintext">Zebra
 Apple
 Monkey
 Banana</code></pre></div>
-    <div><pre><code class="language-bash">sort names.txt</code></pre>
-    <pre class="out"><code>Apple
-Banana
-Monkey
-Zebra</code></pre></div>
-  </div>
+  <pre><code class="language-bash">sort names.txt</code></pre>
+  <figure class="shot"><img src="img/06.webp" alt="Terminal: sort names.txt prints Apple, Banana, Monkey, Zebra" width="551" height="162"><figcaption>Alphabetical: Apple, Banana, Monkey, Zebra.</figcaption></figure>
+  <p><b>Why is this helpful?</b> Data is often unordered when it is first created. You organise it because of:</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Human readability</h4><p>Finding “Banana” in an alphabetical list is much easier than in a random one.</p></div>
-    <div class="card t5 tilt-b"><h4>Other tools need it</h4><p>Many Linux tools, like <code>uniq</code> below, only work properly on sorted data.</p></div>
+    <div class="card t5 tilt-b"><h4>Computer efficiency</h4><p>Many other Linux tools, like <code>uniq</code> below, require the data to be sorted first before they can work properly.</p></div>
   </div>
 </section>
 
@@ -154,7 +200,8 @@ Zebra</code></pre></div>
 <section class="ch" id="sort-options">
   <h2>Numbers, reverse and unique: <code>-n</code>, <code>-r</code>, <code>-u</code></h2>
   <h3>Numeric sort <code>-n</code></h3>
-  <p>Plain <code>sort</code> compares text character by character, so it thinks <b>10</b> comes before <b>2</b> (because “1” comes before “2”). <code>-n</code> tells it to compare whole numbers by value.</p>
+  <p><b>What it does:</b> sorts numbers by their actual value (1, 2, 10, 20). <b>Simple meaning:</b> without it, the computer is “silly” and thinks <b>10</b> comes before <b>2</b>, because it only looks at the first character (“1” comes before “2”). <code>-n</code> tells it to look at the whole number.</p>
+  <div class="codebox"><span class="cap">syntax · -n is short for numeric sort</span><pre><code class="language-bash">sort -n filename</code></pre></div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Plain sort orders 10, 2, 50, 1 as 1, 10, 2, 50 by first character; sort -n orders them by value as 1, 2, 10, 50">
       <g class="rough">
@@ -164,7 +211,7 @@ Zebra</code></pre></div>
         <path class="lr" d="M155 90 L 284 90" marker-end="url(#ahr)"/>
         <path class="lb" d="M85 204 C 90 250, 630 250, 635 208" marker-end="url(#ahb)"/>
       </g>
-      <text class="tm" x="85" y="28" text-anchor="middle">numbers.txt</text>
+      <text class="tm" x="85" y="28" text-anchor="middle">names.txt</text>
       <text class="tm" x="85" y="80" text-anchor="middle">10</text>
       <text class="tm" x="85" y="112" text-anchor="middle">2</text>
       <text class="tm" x="85" y="144" text-anchor="middle">50</text>
@@ -184,55 +231,67 @@ Zebra</code></pre></div>
     </svg></div>
     <figcaption>Always add <code>-n</code> when sorting numbers.</figcaption>
   </figure>
-  <pre><code class="language-bash">sort numbers.txt       # 1 10 2 50  (text order)
-sort -n numbers.txt    # 1 2 10 50  (numeric order)</code></pre>
+  <p><b>Full example.</b> Suppose <code>names.txt</code> now contains numbers:</p>
+  <div class="codebox"><span class="cap">names.txt</span><pre><code class="language-plaintext">10
+2
+50
+1</code></pre></div>
+  <p>If you run a normal (alphabetical) sort:</p>
+  <pre><code class="language-bash">sort names.txt</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="Terminal: sort names.txt prints 1, 10, 2, 50" width="582" height="216"><figcaption>Text order: <code>10</code> lands before <code>2</code>.</figcaption></figure>
+  <p>Now the numerical command:</p>
+  <pre><code class="language-bash">sort -n names.txt</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="Terminal: sort names.txt prints 1, 10, 2, 50; sort -n names.txt prints 1, 2, 10, 50" width="673" height="312"><figcaption>Side by side: plain <code>sort</code> gives 1 10 2 50, <code>sort -n</code> gives 1 2 10 50.</figcaption></figure>
 
   <h3>Reverse sort <code>-r</code></h3>
-  <p>Flips the order: Z to A, or 10 to 1.</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">Apple
+  <p><b>What it does:</b> flips the order of your list. <b>Simple meaning:</b> instead of A to Z it goes Z to A; instead of 1 to 10 it goes 10 to 1.</p>
+  <div class="codebox"><span class="cap">syntax · -r is short for reverse</span><pre><code class="language-bash">sort -r filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>fruits.txt</code> contains:</p>
+  <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">Apple
 Banana
 Cherry</code></pre></div>
-    <div><pre><code class="language-bash">sort -r fruits.txt</code></pre>
-    <pre class="out"><code>Cherry
-Banana
-Apple</code></pre></div>
-  </div>
+  <pre><code class="language-bash">sort -r fruits.txt</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="Terminal: sort -r fruits.txt prints Cherry, Banana, Apple" width="675" height="207"><figcaption>Z to A: Cherry, Banana, Apple.</figcaption></figure>
 
-  <h3>Combine them: <code>-nr</code></h3>
-  <p>Options can be joined. Largest number first, e.g. prices from most to least expensive:</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">points.txt</span><pre><code class="language-plaintext">10
+  <h3>Combining options: numeric + reverse <code>-nr</code></h3>
+  <p>You can use options together. To see a list of prices from the most expensive to the cheapest, combine <code>-n</code> and <code>-r</code>. <b>Full example.</b> Suppose <code>points.txt</code> contains:</p>
+  <div class="codebox"><span class="cap">points.txt</span><pre><code class="language-plaintext">10
 50
 25</code></pre></div>
-    <div><pre><code class="language-bash">sort -nr points.txt</code></pre>
-    <pre class="out"><code>50
-25
-10</code></pre></div>
-  </div>
+  <pre><code class="language-bash">sort -nr points.txt</code></pre>
+  <figure class="shot"><img src="img/10.webp" alt="Terminal: sort -nr points.txt prints 50, 25, 10" width="647" height="200"><figcaption>Biggest number first: 50, 25, 10.</figcaption></figure>
 
   <h3>Sort and remove duplicates: <code>-u</code></h3>
-  <p>If a line appears three times, <code>-u</code> (<b>unique</b>) keeps it once. The fastest way to get a clean list.</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">members.txt</span><pre><code class="language-plaintext">Alice
+  <p><b>What it does:</b> sorts the list and removes identical lines. <b>Simple meaning:</b> if a word appears three times, <code>-u</code> (<b>unique</b>) “cleans” it so you see it only once. It’s the fastest way to get a list of unique items.</p>
+  <div class="codebox"><span class="cap">syntax · -u is short for unique</span><pre><code class="language-bash">sort -u filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>members.txt</code> has some names repeated:</p>
+  <div class="codebox"><span class="cap">members.txt</span><pre><code class="language-plaintext">Alice
 Bob
 Alice
 Charlie
 Bob</code></pre></div>
-    <div><pre><code class="language-bash">sort -u members.txt</code></pre>
-    <pre class="out"><code>Alice
-Bob
-Charlie</code></pre></div>
-  </div>
-  <p>Useful for email lists and usernames, and combined with <code>wc</code> it counts <b>unique</b> people:</p>
+  <pre><code class="language-bash">sort -u members.txt</code></pre>
+  <figure class="shot"><img src="img/11.webp" alt="Terminal: sort -u members.txt prints Alice, Bob, Charlie" width="686" height="207"><figcaption>Each name once, in order.</figcaption></figure>
+  <p><b>Why is this helpful?</b></p>
+  <ul>
+    <li><b>Clean lists:</b> when you collect email addresses or usernames, you don’t want the same one appearing twice.</li>
+    <li><b>Counting unique items:</b> combine it with <code>wc</code> through a pipe to count how many unique people are in a list:</li>
+  </ul>
   <pre><code class="language-bash">sort -u members.txt | wc -l</code></pre>
-  <pre class="out"><code>3</code></pre>
+  <figure class="shot"><img src="img/12.webp" alt="Terminal: sort -u members.txt prints Alice, Bob, Charlie; sort -u members.txt | wc -l prints 3" width="683" height="206"><figcaption>3 unique members.</figcaption></figure>
 </section>
 
 <!-- 7 -->
 <section class="ch" id="uniq">
   <h2><code>uniq</code> · remove repeated lines</h2>
-  <p><code>uniq</code> is a <b>duplicate remover</b>, with one important rule: <mark><code>uniq</code> only removes duplicates that are consecutive, right next to each other.</mark></p>
+  <p><b>Why uniq exists:</b> files sometimes contain repeated entries that clutter your data: the same name or ID several times in a row, when you only want to see it once. <code>uniq</code> is a <b>duplicate remover</b>.</p>
+  <p><b>The important rule:</b> <code>uniq</code> is a bit picky. <mark><code>uniq</code> only removes duplicates that are consecutive, right next to each other.</mark></p>
+  <ul>
+    <li>apple, apple, banana → it works.</li>
+    <li>apple, banana, apple → it does not, because the apples are separated.</li>
+  </ul>
+  <p><b>The solution:</b> almost always <code>sort</code> first to put identical items together, then pipe them into <code>uniq</code>:</p>
+  <div class="codebox"><span class="cap">syntax · usually used with a pipe</span><pre><code class="language-bash">sort filename | uniq</code></pre></div>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="uniq on apple apple banana apple gives apple banana apple, missing the separated apple. sort first gives apple apple apple banana, then uniq gives apple banana">
       <g class="rough">
@@ -265,52 +324,50 @@ Charlie</code></pre></div>
     </svg></div>
     <figcaption>Sort first so identical lines sit together; then <code>uniq</code> can collapse them.</figcaption>
   </figure>
+  <p><b>Full example.</b> Suppose <code>list.txt</code> contains:</p>
   <div class="codebox"><span class="cap">list.txt</span><pre><code class="language-plaintext">apple
 apple
 banana
 apple</code></pre></div>
-  <div class="two">
-    <div><pre><code class="language-bash">uniq list.txt</code></pre>
-    <pre class="out"><code>apple
-banana
-apple</code></pre></div>
-    <div><pre><code class="language-bash">sort list.txt | uniq</code></pre>
-    <pre class="out"><code>apple
-banana</code></pre></div>
-  </div>
-  <p>Alone, <code>uniq</code> merged the first two apples (they were touching) but missed the third. That is why you almost always write <code>sort file | uniq</code>.</p>
+  <p>If you run <code>uniq</code> alone, it only merges the first two apples because they are touching. It misses the third one:</p>
+  <pre><code class="language-bash">uniq list.txt</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="Terminal: uniq list.txt prints apple, banana, apple" width="668" height="177"><figcaption>apple still appears twice.</figcaption></figure>
+  <p>Now the combined command:</p>
+  <pre><code class="language-bash">sort list.txt | uniq</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="Terminal: uniq list.txt prints apple, banana, apple; sort list.txt | uniq prints apple, banana" width="747" height="231"><figcaption>After sorting, every duplicate is gone: apple, banana.</figcaption></figure>
 
   <h3>Count duplicates with <code>-c</code></h3>
-  <p><code>-c</code> puts a counter in front of each line showing how many copies were found:</p>
-  <div class="two">
-    <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">apple
+  <p><b>What it does:</b> shows how many times each line appears. <b>Simple meaning:</b> it adds a counter in front of each line so you know exactly how many copies were found.</p>
+  <div class="codebox"><span class="cap">syntax · -c is short for count</span><pre><code class="language-bash">uniq -c filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>fruits.txt</code> now contains:</p>
+  <div class="codebox"><span class="cap">fruits.txt</span><pre><code class="language-plaintext">apple
 apple
 banana
 banana</code></pre></div>
-    <div><pre><code class="language-bash">uniq -c fruits.txt</code></pre>
-    <pre class="out"><code>      2 apple
-      2 banana</code></pre></div>
-  </div>
-  <div class="sticky warn"><strong>Messy file? Sort first.</strong> <code>uniq -c</code> on unsorted data gives several small counts for the same word. Use <code>sort file | uniq -c</code>.</div>
+  <pre><code class="language-bash">uniq -c fruits.txt</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="Terminal: uniq -c fruits.txt prints 2 apple and 2 banana" width="611" height="205"><figcaption>Two copies of each.</figcaption></figure>
+  <div class="sticky warn"><strong>Messy file? Sort first.</strong> Remember that <code>uniq</code> only works on lines that are consecutive (touching). <code>uniq -c</code> on unsorted data gives several small counts for the same word. Use <code>sort file | uniq -c</code>.</div>
   <div class="sticky fde l"><strong>In the field (FDE)</strong> “Which IPs hit the API most?” <code>cut -d ' ' -f1 access.log | sort | uniq -c | sort -nr | head</code> gives a ranked top 10 in one line. You’ll use this sort → uniq -c → sort -nr pattern constantly when reading customer logs.</div>
 </section>
 
 <!-- 8 -->
 <section class="ch" id="cut">
   <h2><code>cut</code> · extract part of every line</h2>
-  <p><code>cut</code> <b>extracts specific parts of text</b>. Instead of showing whole lines, it cuts out only the portion you need, from <b>every</b> line.</p>
-  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cut [option] filename     # option says which part to keep
-cut -c 3 file.txt         # -c = character position: the 3rd character of each line</code></pre></div>
-  <div class="two">
-    <div class="codebox"><span class="cap">file.txt</span><pre><code class="language-plaintext">Apple
+  <p>The <code>cut</code> command <b>extracts specific parts of text</b> from a file. If a file contains many characters or many columns of data, <code>cut</code> lets you select and display only the part you need. Instead of showing the whole file, it cuts out the required portion. <mark>Its main purpose: extract required data from a file, printing only the selected characters or columns.</mark></p>
+  <div class="codebox"><span class="cap">basic syntax</span><pre><code class="language-bash">cut [option] filename</code></pre></div>
+  <ul>
+    <li><code>cut</code> → the command used to extract data</li>
+    <li><code>option</code> → tells which part of the text to extract</li>
+    <li><code>filename</code> → the file the data will be extracted from</li>
+  </ul>
+  <p><b>Example:</b> <code>cut -c 3 file.txt</code>. Here <code>-c</code> means character position and <code>3</code> means the third character of each line, so this prints only the third character from every line in the file.</p>
+  <p><b>Full example.</b> Suppose <code>file.txt</code> contains the lines below, and you only want to see the 3rd character of every word:</p>
+  <div class="codebox"><span class="cap">file.txt</span><pre><code class="language-plaintext">Apple
 Banana
 Cherry</code></pre></div>
-    <div><pre><code class="language-bash">cut -c 3 file.txt</code></pre>
-    <pre class="out"><code>p
-n
-e</code></pre></div>
-  </div>
-  <p>Apple → 3rd character <b>p</b>; Banana → <b>n</b>; Cherry → <b>e</b>.</p>
+  <pre><code class="language-bash">cut -c 3 file.txt</code></pre>
+  <figure class="shot"><img src="img/16.webp" alt="Terminal: cut -c 3 file.txt prints p, n, e" width="626" height="202"><figcaption>One character from each line: p, n, e.</figcaption></figure>
+  <p>Apple → third character <b>p</b>; Banana → <b>n</b>; Cherry → <b>e</b>. So the command prints the third character from each line.</p>
 
   <h3>Counting positions</h3>
   <p>Positions start at <b>1</b>, not 0. Here is how <code>cut -c</code> sees the line <code>HELLOWORLD</code>:</p>
@@ -337,44 +394,92 @@ e</code></pre></div>
     <figcaption>Count from 1. A range <code>5-9</code> includes both ends.</figcaption>
   </figure>
 
-  <h3>Single position, range, and open ranges</h3>
+  <h3>Character-based extraction: one position</h3>
+  <p><b>What it does:</b> pulls out a single character from a specific spot in every line. <b>Simple meaning:</b> you give a number, and <code>cut</code> goes to that exact position in every row and grabs the letter or symbol sitting there.</p>
+  <div class="codebox"><span class="cap">syntax · -c is short for characters (character position)</span><pre><code class="language-bash">cut -c position filename</code></pre></div>
+  <p><b>Full example.</b> Suppose <code>emp.txt</code> contains:</p>
   <div class="codebox"><span class="cap">emp.txt</span><pre><code class="language-plaintext">HELLOWORLD
 LINUXSYSTEM
 PROGRAMMING</code></pre></div>
-  <div class="two">
-    <div><pre><code class="language-bash">cut -c 9 emp.txt       # the 9th character</code></pre>
-    <pre class="out"><code>L
-T
-I</code></pre></div>
-    <div><pre><code class="language-bash">cut -c 5-9 emp.txt     # characters 5 to 9</code></pre>
-    <pre class="out"><code>OWORL
-XSYST
-RAMMI</code></pre></div>
-  </div>
-  <p>The 9th characters: HELLOWOR<b>L</b>D → L, LINUXSYS<b>T</b>EM → T, PROGRAMM<b>I</b>NG → I.</p>
+  <pre><code class="language-bash">cut -c 9 emp.txt</code></pre>
+  <figure class="shot"><img src="img/17.webp" alt="Terminal: cut -c 9 emp.txt prints L, T, I" width="620" height="212"><figcaption>The 9th character of each line: L, T, I.</figcaption></figure>
+  <p>HELLOWOR<b>L</b>D → L, LINUXSYS<b>T</b>EM → T, PROGRAMM<b>I</b>NG → I. So <code>cut -c 9</code> prints the 9th character from every line.</p>
+
+  <h3>Extract a range of characters</h3>
+  <p><b>What it does:</b> extracts a “slice” or “chunk” of text from every line. <b>Simple meaning:</b> instead of one letter, you give a <b>start</b> and an <b>end</b> number to cut out a whole section.</p>
+  <div class="codebox"><span class="cap">syntax · -c followed by the start-end range</span><pre><code class="language-bash">cut -c start-end filename</code></pre></div>
+  <ul>
+    <li><code>-c</code> → character positions</li>
+    <li><code>start-end</code> → the range of characters to extract</li>
+    <li><code>filename</code> → the file the characters are taken from</li>
+  </ul>
+  <p><b>Full example.</b> Using the same <code>emp.txt</code> (HELLOWORLD, LINUXSYSTEM, PROGRAMMING), extract everything from the 5th character to the 9th:</p>
+  <pre><code class="language-bash">cut -c 5-9 emp.txt</code></pre>
+  <figure class="shot"><img src="img/18.webp" alt="Terminal: cut -c 5-9 emp.txt prints OWORL, XSYST, RAMMI" width="588" height="158"><figcaption>Positions 5 to 9 of each line: OWORL, XSYST, RAMMI.</figcaption></figure>
+  <p>This displays characters from position 5 to position 9 of every line in the file.</p>
+
+  <h3>From a position to the end</h3>
+  <p>Sometimes you want characters from a certain position until the end of the line. <code>cut -c 5- filename</code> displays characters from position 5 up to the last character of each line.</p>
+  <p><b>Full example.</b> Suppose <code>text.txt</code> contains <code>HELLOWORLD</code>:</p>
+  <pre><code class="language-bash">cut -c 5- text.txt</code></pre>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal: cut -c 5- text.txt prints OWORLD" width="612" height="182"><figcaption>From position 5 to the end: OWORLD.</figcaption></figure>
+
+  <h3>From the beginning to a position</h3>
+  <p>You can also extract from the start of the line up to a specific position. <code>cut -c -3 filename</code> means: display characters from position 1 to position 3.</p>
+  <p><b>Full example.</b> With the same <code>text.txt</code> (<code>HELLOWORLD</code>):</p>
+  <pre><code class="language-bash">cut -c -3 text.txt</code></pre>
+  <figure class="shot"><img src="img/20.webp" alt="Terminal: cut -c -3 text.txt prints HEL" width="590" height="108"><figcaption>The first three characters: HEL.</figcaption></figure>
+
+  <h3>Several ranges at once</h3>
+  <p>You can also extract multiple character ranges at the same time. <code>cut -c 3-5,7-10 filename</code> extracts characters 3 to 5 <b>and</b> characters 7 to 10; both ranges are printed together.</p>
+  <p><b>Full example.</b> With the same <code>text.txt</code> (<code>HELLOWORLD</code>):</p>
+  <pre><code class="language-bash">cut -c 3-5,7-10 text.txt</code></pre>
+  <figure class="shot"><img src="img/21.webp" alt="Terminal: cut -c 3-5,7-10 text.txt prints LLOORLD" width="661" height="168"><figcaption>Two slices joined: LLOORLD.</figcaption></figure>
+  <p>Characters 3–5 are <b>LLO</b>, characters 7–10 are <b>ORLD</b>, and both are combined: LLO + ORLD = <b>LLOORLD</b>.</p>
   <div class="tbl"><table>
-    <tr><th>Form</th><th>Meaning</th><th>On <code>HELLOWORLD</code></th><th>Output</th></tr>
-    <tr><td><code>cut -c 3</code></td><td>one position</td><td><code>cut -c 3 text.txt</code></td><td><code>L</code></td></tr>
-    <tr><td><code>cut -c 5-9</code></td><td>from 5 to 9</td><td><code>cut -c 5-9 text.txt</code></td><td><code>OWORL</code></td></tr>
-    <tr><td><code>cut -c 5-</code></td><td>from 5 to the end of the line</td><td><code>cut -c 5- text.txt</code></td><td><code>OWORLD</code></td></tr>
-    <tr><td><code>cut -c -3</code></td><td>from the start up to 3</td><td><code>cut -c -3 text.txt</code></td><td><code>HEL</code></td></tr>
-    <tr><td><code>cut -c 3-5,7-10</code></td><td>several ranges, joined</td><td><code>cut -c 3-5,7-10 text.txt</code></td><td><code>LLOORLD</code></td></tr>
+    <tr><th>Form</th><th>Meaning</th><th>On <code>HELLOWORLD</code></th></tr>
+    <tr><td><code>cut -c 3</code></td><td>one position</td><td><code>L</code></td></tr>
+    <tr><td><code>cut -c 5-9</code></td><td>from 5 to 9</td><td><code>OWORL</code></td></tr>
+    <tr><td><code>cut -c 5-</code></td><td>from 5 to the end of the line</td><td><code>OWORLD</code></td></tr>
+    <tr><td><code>cut -c -3</code></td><td>from the start up to 3</td><td><code>HEL</code></td></tr>
+    <tr><td><code>cut -c 3-5,7-10</code></td><td>several ranges, joined</td><td><code>LLOORLD</code></td></tr>
   </table></div>
-  <p>The last one: characters 3–5 are <b>LLO</b>, characters 7–10 are <b>ORLD</b>, and both are printed together: LLO + ORLD = <b>LLOORLD</b>.</p>
   <div class="sticky tip"><strong>Columns, not just characters</strong> For data with separators (CSV, <code>/etc/passwd</code>), use <code>-d</code> for the delimiter and <code>-f</code> for the field number: <code>cut -d ',' -f 2 users.csv</code> prints the 2nd comma-separated column; <code>cut -d ':' -f 1 /etc/passwd</code> lists every username.</div>
 </section>
 
 <!-- 9 -->
 <section class="ch" id="tr">
   <h2><code>tr</code> · translate characters</h2>
-  <p><code>tr</code> stands for <b>translate</b>. It reads text, <b>changes characters</b>, and prints the result. It does <b>not</b> change the original file.</p>
+  <p><code>tr</code> stands for <b>translate</b>. It is used to change characters in text. <b>Simple meaning:</b> <code>tr</code> reads text from its input, modifies the characters, and prints the result. It does <b>not</b> change the original file; it only shows the modified output. It is used to:</p>
   <div class="grid">
-    <div class="card t1 tilt-a"><h4>Replace</h4><p>Every <code>a</code> becomes <code>4</code>.</p></div>
-    <div class="card t5 tilt-b"><h4>Convert</h4><p>lowercase → UPPERCASE.</p></div>
-    <div class="card t3 tilt-a"><h4>Delete <code>-d</code></h4><p>Remove symbols or digits.</p></div>
-    <div class="card t8 tilt-b"><h4>Squeeze <code>-s</code></h4><p>“helloooooo” → “hello”.</p></div>
+    <div class="card t1 tilt-a"><h4>Replace characters</h4><p>Change every <code>a</code> into a <code>4</code>, for example.</p></div>
+    <div class="card t5 tilt-b"><h4>Convert characters</h4><p>Change all lowercase letters to UPPERCASE.</p></div>
+    <div class="card t3 tilt-a"><h4>Delete characters <code>-d</code></h4><p>Remove specific symbols or numbers from a list.</p></div>
+    <div class="card t8 tilt-b"><h4>Compress repeats <code>-s</code></h4><p>Turn “helloooooo” into “hello” by squeezing the extra letters.</p></div>
   </div>
-  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">tr [options] SET1 SET2    # characters in SET1 are replaced by the matching characters in SET2</code></pre></div>
+  <p><b>Basic syntax.</b> The command needs two sets of characters: SET1 (what to find) and SET2 (what to change it to).</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">tr [options] SET1 SET2</code></pre></div>
+  <ul>
+    <li><b>SET1</b> → characters that will be replaced or modified</li>
+    <li><b>SET2</b> → characters that will replace SET1</li>
+  </ul>
+  <p>So the rule is: <mark>characters in SET1 are replaced by the matching characters in SET2.</mark></p>
+  <p><b>Simple example:</b></p>
+  <pre><code class="language-bash">echo "apple" | tr a o</code></pre>
+  <pre class="out"><code>opple</code></pre>
+  <p><code>echo "apple"</code> prints the word apple; <code>tr a o</code> means “replace a with o”. So apple → opple.</p>
+  <div class="sticky warn l"><strong>tr takes no file name</strong> Unlike the other filters, <code>tr</code> only reads its input stream. Feed it with a pipe (<code>cat names.txt | tr 'a-z' 'A-Z'</code>) or with input redirection (<code>tr 'a-z' 'A-Z' &lt; names.txt</code>). <code>tr 'a-z' 'A-Z' names.txt</code> is an error.</div>
+
+  <h3>Replacing characters</h3>
+  <p><b>What it does:</b> swaps specific letters or symbols for new ones. <b>Simple meaning:</b> you tell the computer “whenever you see this letter, change it to that letter”. It works on every match it finds in the text.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">echo "text" | tr 'find' 'replace'</code></pre></div>
+  <p><b>Full example.</b> Capitalise the first letter of the word “hello”:</p>
+  <pre><code class="language-bash">echo "hello" | tr 'h' 'H'</code></pre>
+  <figure class="shot"><img src="img/22.webp" alt="Terminal: echo hello prints hello; echo hello | tr 'h' 'H' prints Hello" width="671" height="188"><figcaption>Replace h → H: <code>Hello</code>.</figcaption></figure>
+
+  <h3>Replace multiple characters</h3>
+  <p><b>What it does:</b> replaces several different characters at the same time. <b>Simple meaning:</b> you provide two lists. The first letter of the “find” list is matched with the first letter of the “replace” list, the second with the second, and so on.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">echo "text" | tr 'set1' 'set2'</code></pre></div>
   <figure>
     <div class="dia sm"><svg viewBox="0 0 520 200" role="img" aria-label="tr eo EO maps e to E and o to O position by position, turning hello into hEllO">
       <g class="rough">
@@ -397,19 +502,44 @@ RAMMI</code></pre></div>
     </svg></div>
     <figcaption>1st of SET1 → 1st of SET2, 2nd → 2nd, and so on.</figcaption>
   </figure>
-  <div class="tbl"><table>
-    <tr><th>Job</th><th>Command</th><th>Output</th></tr>
-    <tr><td>Replace one character (a → o)</td><td><code>echo "apple" | tr 'a' 'o'</code></td><td><code>opple</code></td></tr>
-    <tr><td>Replace h → H</td><td><code>echo "hello" | tr 'h' 'H'</code></td><td><code>Hello</code></td></tr>
-    <tr><td>Replace several (e→E, o→O)</td><td><code>echo "hello" | tr 'eo' 'EO'</code></td><td><code>hEllO</code></td></tr>
-    <tr><td>Lowercase → uppercase</td><td><code>echo "linux" | tr 'a-z' 'A-Z'</code></td><td><code>LINUX</code></td></tr>
-    <tr><td>Uppercase → lowercase</td><td><code>echo "LINUX" | tr 'A-Z' 'a-z'</code></td><td><code>linux</code></td></tr>
-    <tr><td>Delete digits</td><td><code>echo "hello123" | tr -d '0-9'</code></td><td><code>hello</code></td></tr>
-    <tr><td>Delete spaces</td><td><code>echo "hello world" | tr -d ' '</code></td><td><code>helloworld</code></td></tr>
-    <tr><td>Squeeze repeats</td><td><code>echo "hellooooo" | tr -s 'o'</code></td><td><code>hello</code></td></tr>
-  </table></div>
-  <p><code>echo "apple"</code> prints the word, the pipe hands it to <code>tr 'a' 'o'</code>, and every <b>a</b> becomes <b>o</b>: apple → opple. Ranges like <code>a-z</code> mean “all 26 lowercase letters”, so <code>tr 'a-z' 'A-Z'</code> is a Caps Lock converter. Lowercasing is handy for standardising data so “Apple” and “apple” are treated the same.</p>
-  <div class="sticky warn l"><strong>tr takes no file name</strong> Unlike the other filters, <code>tr</code> only reads its input stream. Feed it with a pipe (<code>cat names.txt | tr 'a-z' 'A-Z'</code>) or with input redirection (<code>tr 'a-z' 'A-Z' &lt; names.txt</code>). <code>tr 'a-z' 'A-Z' names.txt</code> is an error.</div>
+  <p><b>Full example.</b> Make the vowels <code>e</code> and <code>o</code> uppercase in the word “hello”:</p>
+  <pre><code class="language-bash">echo "hello" | tr 'eo' 'EO'</code></pre>
+  <figure class="shot"><img src="img/23.webp" alt="Terminal: echo hello | tr 'eo' 'EO' prints hEllO" width="792" height="212"><figcaption>e → E and o → O: <code>hEllO</code>.</figcaption></figure>
+
+  <h3>Convert lowercase to uppercase</h3>
+  <p><b>What it does:</b> turns every small letter into its capital version. <b>Simple meaning:</b> a “Caps Lock” converter. Instead of typing individual letters, you give the whole range: <code>'a-z'</code> (all lowercase) and <code>'A-Z'</code> (all uppercase).</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">echo "text" | tr 'a-z' 'A-Z'</code></pre></div>
+  <p><b>Full example.</b> Make the word “linux” stand out in all caps:</p>
+  <pre><code class="language-bash">echo "linux" | tr 'a-z' 'A-Z'</code></pre>
+  <figure class="shot"><img src="img/24.webp" alt="Terminal: echo linux | tr 'a-z' 'A-Z' prints LINUX" width="748" height="197"><figcaption><code>linux</code> → <code>LINUX</code>.</figcaption></figure>
+
+  <h3>Convert uppercase to lowercase</h3>
+  <p><b>What it does:</b> turns every capital letter into its lowercase version. <b>Simple meaning:</b> it “undoes” capitalisation. Very helpful for standardising data so that “Apple” and “apple” are treated the same way. The ranges are <code>'A-Z'</code> then <code>'a-z'</code>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">echo "TEXT" | tr 'A-Z' 'a-z'</code></pre></div>
+  <p><b>Full example.</b> Make the all-caps word “LINUX” lowercase:</p>
+  <pre><code class="language-bash">echo "LINUX" | tr 'A-Z' 'a-z'</code></pre>
+  <figure class="shot"><img src="img/25.webp" alt="Terminal: echo LINUX | tr 'A-Z' 'a-z' prints linux" width="737" height="192"><figcaption><code>LINUX</code> → <code>linux</code>.</figcaption></figure>
+
+  <h3>Delete characters: <code>-d</code></h3>
+  <p><b>What it does:</b> completely removes specific characters from your text. <b>Simple meaning:</b> an “eraser”. Instead of replacing a character with something else, it just makes it disappear.</p>
+  <div class="codebox"><span class="cap">syntax · -d is short for delete</span><pre><code class="language-bash">tr -d 'characters'</code></pre></div>
+  <p><b>Full example.</b> A string has numbers in it, and you only want the letters:</p>
+  <pre><code class="language-bash">echo "hello123" | tr -d '0-9'</code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: echo hello123 | tr -d '0-9' prints hello" width="722" height="217"><figcaption>All digits erased: <code>hello</code>.</figcaption></figure>
+
+  <h3>Delete spaces</h3>
+  <p><b>What it does:</b> removes every blank space from a line of text. <b>Simple meaning:</b> it “squashes” the words together so there are no gaps. Put a single space inside the quotes: <code>' '</code>.</p>
+  <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">tr -d ' '</code></pre></div>
+  <p><b>Full example.</b> Turn the phrase “hello world” into a single word:</p>
+  <pre><code class="language-bash">echo "hello world" | tr -d ' '</code></pre>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal: echo hello world | tr -d ' ' prints helloworld" width="763" height="220"><figcaption>The gap is gone: <code>helloworld</code>.</figcaption></figure>
+
+  <h3>Compress repeated characters: <code>-s</code></h3>
+  <p><b>What it does:</b> squeezes several identical characters that are touching into just one. <b>Simple meaning:</b> a “shrinker”. If you accidentally typed a letter too many times, this cleans it up.</p>
+  <div class="codebox"><span class="cap">syntax · -s is short for squeeze</span><pre><code class="language-bash">tr -s 'character'</code></pre></div>
+  <p><b>Full example.</b> A word has too many “o”s at the end:</p>
+  <pre><code class="language-bash">echo "hellooooo" | tr -s 'o'</code></pre>
+  <figure class="shot"><img src="img/28.webp" alt="Terminal: echo hellooooo | tr -s 'o' prints hello" width="713" height="232"><figcaption>The run of o’s is squeezed to one: <code>hello</code>.</figcaption></figure>
 </section>
 
 <!-- 10 -->
@@ -484,6 +614,6 @@ RAMMI</code></pre></div>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

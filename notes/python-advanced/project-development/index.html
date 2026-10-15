@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-23">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-advanced/project-development">
@@ -34,6 +34,8 @@
   </div>
   <p>This note follows that order. Each idea comes with what it is, why it exists, and an example.</p>
   <div class="flow"><span>Project structure</span><span>Virtual environment</span><span>pip</span><span class="op">requirements.txt</span><span>Env variables &amp; .env</span><span>Configuration</span><span class="ok">Type hints</span></div>
+  <h3>Learning path</h3>
+  <figure class="shot"><img src="img/01.webp" alt="Learning path of 14 steps: 1 Project Structure, from packages to a real application; 2 The Problem With Installing Packages Globally; 3 Virtual Environments, isolating project dependencies; 4 venv and Environment Management; 5 Python Packages and pip, managing external dependencies; 6 requirements.txt, recording project dependencies; 7 Dependency Versions and Version Constraints; 8 Environment Variables, separating configuration from code; 9 .env Files, managing local configuration; 10 Project Configuration, managing application settings; 11 Type Hints, making Python code easier to understand; 12 Optional and Union Types; 13 Type Aliases, naming complex types; 14 Common Project-Level Mistakes." width="1400" height="933"><figcaption>The 14 stops of this note, from project structure to common mistakes.</figcaption></figure>
 </section>
 
 <!-- 2 -->
@@ -41,16 +43,16 @@
   <h2>Project structure</h2>
   <p><b>Project structure</b> is the overall organisation of an application: not just its source code, but also its tests, its list of dependencies and its documentation. In Python Fundamentals you used a <b>package</b> to organise the code itself. Project structure is the layer above that: it organises <mark>everything the project needs as a whole</mark>.</p>
   <h3>A basic layout</h3>
-  <div class="codebox"><span class="cap">project folder</span><pre><code class="language-plaintext">project/
-├── app/                 → application code (a package)
-│   ├── __init__.py
-│   └── main.py
-├── tests/               → test code
-├── requirements.txt     → project dependencies
-├── README.md            → project documentation
-└── .gitignore           → files Git should ignore</code></pre></div>
-  <p>All of the application’s own code sits inside the <code>app</code> package. Tests, <code>requirements.txt</code>, <code>.gitignore</code> and <code>README.md</code> sit beside it at the top level, because they <b>support</b> the project without being part of its logic.</p>
+  <figure class="shot sm"><img src="img/02.webp" alt="VS Code Explorer: student-management folder containing app (with __init__.py and the folders models, services, utils and database), tests, main.py, requirements.txt, README.md and .gitignore." width="1230" height="1278"><figcaption>A real project, <code>student-management</code>: the code lives in the <code>app</code> package; supporting files sit at the top level.</figcaption></figure>
+  <p>Here, all of the application’s own code sits inside the <code>app</code> package. Tests, <code>requirements.txt</code>, <code>.gitignore</code> and <code>README.md</code> sit beside it at the top level, because they <b>support</b> the project without being part of its logic.</p>
   <h3>Application code vs supporting files</h3>
+  <p>A real project separates <b>application code</b> from files that <b>support</b> the project. For example:</p>
+  <div class="codebox"><span class="cap">project folder</span><pre><code class="language-plaintext">project/
+├── app/                 → Application code
+├── tests/               → Test code
+├── requirements.txt     → Project dependencies
+├── README.md            → Project documentation
+└── .gitignore           → Files Git should ignore</code></pre></div>
   <div class="two">
     <div class="card t1 tilt-a"><h4>Application code</h4><p>The <code>app/</code> folder: what the program actually does.</p></div>
     <div class="card t6 tilt-b"><h4>Supporting files</h4><p>Tests, dependency list, docs and Git settings: what helps you build, run and share it.</p></div>
@@ -58,6 +60,7 @@
   <p>This split makes it easy to see <b>what the application does and which files support it</b>.</p>
   <div class="sticky info l"><strong>What is .gitignore?</strong> A plain text file that tells Git which files or folders <b>should not be tracked or uploaded</b>, such as virtual environments, <code>.env</code> files, cache files (<code>__pycache__/</code>) and generated files.</div>
   <h3>Structure grows with the project</h3>
+  <p>A project usually grows <b>gradually</b> as more code and responsibilities are added:</p>
   <div class="flow"><span>Small script</span><span>Multiple modules</span><span>Packages</span><span>Application structure</span><span class="ok">Production project</span></div>
   <p>You don’t need a complex structure on day one. <b>Start simple and organise the project as it grows.</b></p>
 </section>
@@ -119,16 +122,8 @@
   <h3>Creating one with venv</h3>
   <p><code>venv</code> is Python’s <b>built-in module</b> for this, so there is nothing extra to install. <code>.venv</code> is the most common folder name (<code>venv</code> is also common; any name works).</p>
   <pre><code class="language-bash">python -m venv .venv</code></pre>
-  <p>This creates a <code>.venv</code> folder holding the project’s own Python and its own place for packages. It simply sits beside your code as another folder:</p>
-  <pre><code class="language-plaintext">project/
-├── .venv/               → the isolated Python environment
-├── app/
-│   ├── __init__.py
-│   └── main.py
-├── tests/
-├── requirements.txt
-├── README.md
-└── .gitignore</code></pre>
+  <p>This creates a <code>.venv</code> folder containing the project’s isolated Python environment: its own Python and its own place for packages.</p>
+  <figure class="shot sm"><img src="img/03.webp" alt="VS Code Explorer: project folder containing .venv, app and main.py." width="1230" height="1278"><figcaption>Project structure with a virtual environment: <code>.venv</code> sits alongside your application code as just another folder.</figcaption></figure>
   <h3>Activating and deactivating</h3>
   <p>Creating the environment is not enough. You also <b>activate</b> it, which tells this terminal to use that environment’s Python and packages instead of the system ones, for the rest of the terminal session.</p>
   <div class="tbl"><table>
@@ -137,7 +132,8 @@
     <tr><td>Linux / macOS</td><td><code>source .venv/bin/activate</code></td></tr>
     <tr><td>Any (to leave)</td><td><code>deactivate</code></td></tr>
   </table></div>
-  <p>After activating, the prompt usually shows the environment name in front, like <code>(.venv)</code>.</p>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code terminal on Windows in C:\Kumar_All_Data\Project: python -m venv .venv, then .venv\Scripts\activate; the next prompt starts with (.venv). The Explorer shows .venv, app and main.py." width="1083" height="363"><figcaption>Windows: after <code>.venv\Scripts\activate</code> the prompt starts with <code>(.venv)</code>.</figcaption></figure>
+  <p>After activating, the prompt shows the environment name in front, like <code>(.venv)</code>. Run <code>deactivate</code> to leave the environment and return to the system-wide Python.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 240" role="img" aria-label="Before activation the terminal's python points to the system Python; after activation it points to the Python inside the .venv folder">
       <g class="rough">
@@ -199,6 +195,7 @@ C:\Python312\python.exe</code></pre>
   <p><code>requirements.txt</code> is a text file listing the <b>packages a project needs and their versions</b>, one per line:</p>
   <div class="codebox"><span class="cap">requirements.txt</span><pre><code class="language-plaintext">pandas==2.2.2
 numpy==1.26.4</code></pre></div>
+  <figure class="shot"><img src="img/05.webp" alt="VS Code editor: requirements.txt in a Test_Projects folder with two lines, pandas==2.2.2 and numpy==1.26.4." width="1105" height="343"><figcaption>A <code>requirements.txt</code> open in VS Code: one package per line, each with its version.</figcaption></figure>
   <h3>Generating and installing</h3>
   <p>After installing what you need inside the virtual environment, generate the file automatically:</p>
   <pre><code class="language-bash">pip freeze &gt; requirements.txt</code></pre>
@@ -251,7 +248,7 @@ numpy==1.26.4</code></pre></div>
   <p>Constraints exist so that <mark>an unrelated upgrade can’t silently break your project</mark>.</p>
   <div class="two">
     <div class="card t2 tilt-a"><h4>Exact pin <code>==</code></h4><p>Most stable and predictable: the same version every time. But someone must edit the file to get a newer version.</p></div>
-    <div class="card t3 tilt-b"><h4>Range <code>&gt;=</code>, <code>&lt;=</code>, both</h4><p>Picks up minor updates automatically, at some risk that an update changes behaviour unexpectedly.</p></div>
+    <div class="card t3 tilt-b"><h4>Range <code>&gt;=</code>, <code>&lt;=</code>, both</h4><p>Allows automatic minor updates without editing the file, at the cost of some risk that an update introduces an unexpected change in behaviour.</p></div>
   </div>
 </section>
 
@@ -268,6 +265,7 @@ numpy==1.26.4</code></pre></div>
     <tr><td>Windows PowerShell</td><td><code>$env:API_KEY="abc123"</code></td></tr>
     <tr><td>Linux / macOS</td><td><code>export API_KEY=abc123</code></td></tr>
   </table></div>
+  <figure class="shot"><img src="img/06.webp" alt="VS Code PowerShell terminal in C:\Kumar_All_Data\Test_Projects: $env:API_KEY=&quot;abc123&quot; runs with no output." width="780" height="187"><figcaption>PowerShell: setting <code>API_KEY</code> prints nothing; it just stores the value for this session.</figcaption></figure>
   <p>A variable set like this lives only in <b>that terminal session</b>. Close the terminal and you must set it again.</p>
   <h3>Reading it in Python</h3>
   <div class="codebox"><span class="cap">app.py</span><pre><code class="language-python">import os
@@ -276,7 +274,7 @@ api_key = os.getenv("API_KEY")
 print(api_key)</code></pre></div>
   <p>Run it in the <b>same</b> terminal where you set the variable:</p>
   <pre><code class="language-bash">python app.py</code></pre>
-  <pre class="out"><code>abc123</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="VS Code: app.py with import os, api_key = os.getenv(&quot;API_KEY&quot;) and print(api_key); the terminal runs $env:API_KEY=&quot;abc123&quot; then python .\app.py, which prints abc123." width="1400" height="248"><figcaption>Output: <code>abc123</code>, read from the environment, not from the code.</figcaption></figure>
   <p><code>os.getenv("API_KEY")</code> looks for a variable named <code>API_KEY</code> and returns its value, or <code>None</code> if it isn’t set. You can give a default that is used when it is missing:</p>
   <pre><code class="language-python">port = os.getenv("PORT", "8000")</code></pre>
   <p>Secrets stay out of the code, and development and production can use <b>different values without changing the code</b>.</p>
@@ -292,6 +290,7 @@ DEBUG=True</code></pre></div>
   <h3>Loading it with python-dotenv</h3>
   <p>Python does <b>not</b> read <code>.env</code> files by itself. The <code>python-dotenv</code> package loads them into the environment:</p>
   <pre><code class="language-bash">pip install python-dotenv</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="VS Code PowerShell terminal: pip install python-dotenv reports Defaulting to user installation because normal site-packages is not writeable, then Requirement already satisfied: python-dotenv (1.2.2), plus a notice that a new release of pip is available." width="826" height="378"><figcaption>Here the package was already installed (1.2.2), so pip says “Requirement already satisfied”. “Defaulting to user installation” means no virtual environment was active; in your own project, activate <code>.venv</code> first.</figcaption></figure>
   <div class="codebox"><span class="cap">app.py</span><pre><code class="language-python">from dotenv import load_dotenv
 import os
 
@@ -413,7 +412,7 @@ user_id: Union[int, str]             # older syntax</code></pre>
 
 value: Any = 10</code></pre>
   <p><code>Any</code> tells type checkers to <b>allow any type</b>. It is useful for dynamic data whose type you don’t know in advance.</p>
-  <div class="sticky warn l"><strong>Don’t overuse Any</strong> Every <code>Any</code> switches type checking off for that value, so real mistakes slip through unnoticed.</div>
+  <div class="sticky warn l"><strong>Don’t overuse Any</strong> Using <code>Any</code> too much reduces the benefits of type hints: every <code>Any</code> switches type checking off for that value, so potential type errors may go unnoticed.</div>
 </section>
 
 <!-- 13 -->
@@ -506,6 +505,6 @@ scores: UserScores</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

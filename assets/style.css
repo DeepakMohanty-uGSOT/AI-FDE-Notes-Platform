@@ -595,3 +595,5 @@ ol.road li.stage{z-index:6}
 .wrap{max-width:1320px}
 footer.site .in{max-width:1320px}
 .bar .in{max-width:1320px}
+.sticky .callout-ic{float:left;width:34px;height:34px;margin:2px 12px 4px 0;border:none;box-shadow:none;background:none}
+.shots{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}

@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-07">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="linux/reading-files">
@@ -61,20 +61,20 @@
   <p>Full form: <b>concatenate</b>. Program location: <code>/bin/cat</code>. <code>cat</code> prints a file’s contents straight into the terminal, all at once. <mark>It is the most convenient choice for small files.</mark></p>
   <div class="flow"><span>file</span><span class="op">cat</span><span class="ok">entire content appears</span></div>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-bash">cat filename</code></pre></div>
-  <p>Suppose <code>app.txt</code> contains three lines. Run:</p>
-  <pre><code class="language-bash">cat app.txt</code></pre>
-  <pre class="out"><code>Linux is an operating system.
+  <p>Suppose <code>app.txt</code> contains these three lines:</p>
+  <div class="codebox"><span class="cap">app.txt</span><pre><code class="language-plaintext">Linux is an operating system.
 Linux is widely used on servers.
-Linux is important in DevOps.</code></pre>
+Linux is important in DevOps.</code></pre></div>
+  <p>Run:</p>
+  <pre><code class="language-bash">cat app.txt</code></pre>
+  <figure class="shot sm"><img src="img/01.webp" alt="Terminal: cat app.txt prints Linux is an operating system. Linux is widely used on servers. Linux is important in DevOps." width="594" height="213"><figcaption>All three lines, printed at once.</figcaption></figure>
   <p>What happened? Linux <b>opened</b> <code>app.txt</code>, <b>read</b> its contents and <b>sent</b> them to the terminal.</p>
   <div class="flow"><span>open app.txt</span><span>read contents</span><span class="ok">send to terminal</span></div>
 
   <h3>Line numbers with <code>-n</code></h3>
   <p>Sometimes you need to know <i>which line</i> contains something, for example when an error message says “line 2”. The <code>-n</code> option numbers every line:</p>
-  <pre><code class="language-bash">cat -n app.txt</code></pre>
-  <pre class="out"><code>     1  Linux is an operating system.
-     2  Linux is widely used on servers.
-     3  Linux is important in DevOps.</code></pre>
+  <pre><code class="language-bash">cat -n app.txt     # -n = number the lines</code></pre>
+  <figure class="shot sm"><img src="img/03.webp" alt="Terminal: cat -n app.txt prints the three lines numbered 1, 2, 3" width="649" height="159"><figcaption>Each line now starts with its line number.</figcaption></figure>
 </section>
 
 <!-- 3 -->
@@ -88,10 +88,7 @@ Welcome to Linux</code></pre></div>
 Linux is flexible</code></pre></div>
   </div>
   <pre><code class="language-bash">cat file1.txt file2.txt</code></pre>
-  <pre class="out"><code>Hello
-Welcome to Linux
-Linux is powerful
-Linux is flexible</code></pre>
+  <figure class="shot sm"><img src="img/02.webp" alt="Terminal: cat file1.txt file2.txt prints Hello, Welcome to Linux, Linux is powerful, Linux is flexible" width="708" height="199"><figcaption>file1’s two lines, then file2’s two lines.</figcaption></figure>
   <p>Notice the order: all of <code>file1.txt</code>, then all of <code>file2.txt</code>, joined end to end. That joining is where the name <i>concatenate</i> comes from.</p>
   <h3>Saving the combined result</h3>
   <p>Because <code>cat</code> produces <i>file1 content + file2 content</i>, you can redirect that output into a new file with <code>&gt;</code>:</p>
@@ -118,6 +115,7 @@ Linux is flexible</code></pre>
     </svg></div>
     <figcaption><code>combined.txt</code> holds file1 followed immediately by file2.</figcaption>
   </figure>
+  <figure class="shot"><img src="img/04.webp" alt="Terminal: cat file1.txt file2.txt > combined.txt prints nothing; cat combined.txt shows all four lines" width="934" height="205"><figcaption>The redirect prints nothing; <code>cat combined.txt</code> shows the joined content.</figcaption></figure>
   <div class="sticky warn"><strong>&gt; replaces</strong> If <code>combined.txt</code> already exists, <code>&gt;</code> overwrites it. Use <code>&gt;&gt;</code> to append instead. The Pipes &amp; Redirection note covers both in detail.</div>
 </section>
 
@@ -199,14 +197,29 @@ echo "Database backup started" &gt;&gt; server.log
 echo "Database backup completed" &gt;&gt; server.log
 echo "ERROR network unavailable" &gt;&gt; server.log
 # repeat these lines a few more times to make the file longer than one screen</code></pre></div>
-  <p><code>cat server.log</code> shows every line at once. Now open it with <code>less server.log</code>. For a small file you may not notice much difference; the more lines you add, the more useful it gets.</p>
+  <p>Now check the file with <code>cat server.log</code>. You will see all the lines at once:</p>
+  <figure class="shot sm"><img src="img/05.webp" alt="Terminal: cat server.log dumps the whole repeated log, from Server started down to Database backup completed, including the ERROR lines" width="829" height="970"><figcaption>Everything dumped at once. (In this demo file one line break was missed, so two entries run together as “Request completedServer started”.)</figcaption></figure>
+  <p>Now use <code>less server.log</code>. <code>less</code> takes control of the terminal, so you can read the file without dumping everything onto the screen. For a small file like this you may not notice much difference; the more lines you add, the more useful it gets.</p>
+  <figure class="shot sm"><img src="img/06.webp" alt="less showing the top of server.log, one screenful, with a colon prompt at the bottom" width="649" height="952"><figcaption>The <code>:</code> at the bottom is <code>less</code> waiting for your key.</figcaption></figure>
 
   <h3>Move through the file</h3>
-  <p>Press <kbd>Space</kbd> to go one screen forward. Went too far? Press <kbd>b</kbd> to go back one screen.</p>
-  <div class="flow"><span>Screen 1</span><span class="op">Space</span><span>Screen 2</span><span class="op">b</span><span>Screen 1</span></div>
+  <p>Suppose the file is very large. Inside <code>less</code>, press <kbd>Space</kbd> to go one screen forward:</p>
+  <div class="shots">
+    <figure class="shot"><img src="img/06.webp" alt="less: first screen of server.log starting at Server started" width="649" height="952"><figcaption>Before pressing <kbd>Space</kbd>: the first screen.</figcaption></figure>
+    <figure class="shot"><img src="img/07.webp" alt="less: the view has moved further down, now starting at ERROR database connection failed" width="682" height="937"><figcaption>After <kbd>Space</kbd>: the next screen.</figcaption></figure>
+  </div>
+  <p>Went too far? Press <kbd>b</kbd>. This moves backward one screen.</p>
+  <div class="flow"><span>Screen 2</span><span class="op">b</span><span>Screen 1</span></div>
+  <div class="shots">
+    <figure class="shot"><img src="img/08.webp" alt="less: screen 2 of server.log, starting at ERROR database connection failed" width="634" height="970"><figcaption>Before pressing <kbd>b</kbd>: screen 2.</figcaption></figure>
+    <figure class="shot"><img src="img/09.webp" alt="less: back at the top of server.log, starting at Server started" width="588" height="966"><figcaption>After <kbd>b</kbd>: back to screen 1.</figcaption></figure>
+  </div>
 
   <h3>Find an error</h3>
-  <p>Imagine <code>server.log</code> has <b>10,000 lines</b> and somewhere inside is <code>ERROR database connection failed</code>. Don’t scroll manually. Inside <code>less</code>, type <code>/ERROR</code> and press <kbd>Enter</kbd>. <code>less</code> jumps to the <b>first match</b> and highlights it. Press <kbd>n</kbd> for the next one, and again for the one after:</p>
+  <p>This is where <code>less</code> becomes really useful. Imagine <code>server.log</code> has <b>10,000 lines</b> and somewhere inside is <code>ERROR database connection failed</code>. You don’t want to scroll manually through 10,000 lines. Open the file with <code>less server.log</code>, then type <code>/ERROR</code> and press <kbd>Enter</kbd>:</p>
+  <figure class="shot sm"><img src="img/10.webp" alt="less after searching /ERROR: every ERROR word on the visible screen is highlighted" width="687" height="964"><figcaption>Every <code>ERROR</code> on the screen is highlighted.</figcaption></figure>
+  <h3>Finding the next error</h3>
+  <p>The file contains several ERROR messages (all highlighted above). After <code>/ERROR</code>, <code>less</code> takes you to the <b>first matching occurrence</b>. To find the next one, press <kbd>n</kbd>, and again for the one after. So <kbd>n</kbd> = move to the next search result:</p>
   <div class="flow"><span class="op">/ERROR</span><span class="hl">first ERROR</span><span class="op">n</span><span class="hl">next ERROR</span><span class="op">n</span><span class="hl">next ERROR</span></div>
   <p>Near the end of the file and want to look <b>upwards</b>? Use <code>?ERROR</code> + <kbd>Enter</kbd> to search backward.</p>
   <div class="two">
@@ -261,23 +274,15 @@ echo "Line 12" &gt;&gt; app.log
 
 cat app.log      # shows all 12 lines
 head app.log     # shows only the first 10</code></pre></div>
-  <pre class="out"><code>Line 1
-Line 2
-Line 3
-Line 4
-Line 5
-Line 6
-Line 7
-Line 8
-Line 9
-Line 10</code></pre>
+  <div class="shots">
+    <figure class="shot"><img src="img/11.webp" alt="Terminal: cat app.log prints Line 1 through Line 12" width="633" height="396"><figcaption><code>cat app.log</code>: all 12 lines.</figcaption></figure>
+    <figure class="shot"><img src="img/12.webp" alt="Terminal: head app.log prints Line 1 through Line 10" width="571" height="331"><figcaption><code>head app.log</code>: only the first 10.</figcaption></figure>
+  </div>
+  <p>The rest of the file is not displayed.</p>
+  <h3>Display a specific number of lines</h3>
   <p>Ten lines too many, or too few? Tell <code>head</code> exactly how many:</p>
-  <pre><code class="language-bash">head -n 5 app.log</code></pre>
-  <pre class="out"><code>Line 1
-Line 2
-Line 3
-Line 4
-Line 5</code></pre>
+  <pre><code class="language-bash">head -n 5 app.log    # show the first 5 lines of app.log</code></pre>
+  <figure class="shot sm"><img src="img/13.webp" alt="Terminal: head -n 5 app.log prints Line 1 through Line 5" width="637" height="214"><figcaption>Exactly five lines.</figcaption></figure>
   <div class="sticky info l"><strong>Its twin: tail</strong> <code>tail</code> is the mirror image: it shows the <b>last</b> 10 lines (<code>tail -n 20 app.log</code> for 20). <code>tail -f app.log</code> keeps the file open and prints new lines as they are written, perfect for watching a live log.</div>
 </section>
 
@@ -348,6 +353,6 @@ Line 5</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

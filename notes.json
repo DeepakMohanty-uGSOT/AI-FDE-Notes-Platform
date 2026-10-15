@@ -1955,7 +1955,7 @@
     "git help"
    ],
    "readMinutes": 12,
-   "words": 2273,
+   "words": 2308,
    "sections": [
     {
      "id": "what",
@@ -2028,7 +2028,7 @@
     "secrets in git"
    ],
    "readMinutes": 13,
-   "words": 2537,
+   "words": 2548,
    "sections": [
     {
      "id": "three-ways",
@@ -2093,8 +2093,8 @@
     "GitHub Desktop",
     "GitLab and Bitbucket"
    ],
-   "readMinutes": 21,
-   "words": 3992,
+   "readMinutes": 23,
+   "words": 4296,
    "sections": [
     {
      "id": "what-is-github",
@@ -2460,8 +2460,8 @@
     "list comprehension",
     "dict comprehension"
    ],
-   "readMinutes": 30,
-   "words": 5786,
+   "readMinutes": 36,
+   "words": 6931,
    "sections": [
     {
      "id": "why",
@@ -2542,8 +2542,8 @@
     "scope",
     "lambda"
    ],
-   "readMinutes": 23,
-   "words": 4424,
+   "readMinutes": 26,
+   "words": 4900,
    "sections": [
     {
      "id": "why",
@@ -2714,8 +2714,8 @@
     "csv",
     "persistent data"
    ],
-   "readMinutes": 26,
-   "words": 4882,
+   "readMinutes": 27,
+   "words": 5117,
    "sections": [
     {
      "id": "why",
@@ -2962,8 +2962,8 @@
     "class methods",
     "static methods"
    ],
-   "readMinutes": 17,
-   "words": 3298,
+   "readMinutes": 21,
+   "words": 3924,
    "sections": [
     {
      "id": "init-problem",
@@ -3052,8 +3052,8 @@
     "multiple inheritance",
     "hybrid inheritance"
    ],
-   "readMinutes": 21,
-   "words": 3923,
+   "readMinutes": 23,
+   "words": 4458,
    "sections": [
     {
      "id": "why-connect",
@@ -3142,7 +3142,7 @@
     "multiple inheritance"
    ],
    "readMinutes": 14,
-   "words": 2594,
+   "words": 2666,
    "sections": [
     {
      "id": "what",
@@ -3215,8 +3215,8 @@
     ".env",
     "type hints"
    ],
-   "readMinutes": 17,
-   "words": 3183,
+   "readMinutes": 18,
+   "words": 3326,
    "sections": [
     {
      "id": "why",
@@ -3309,8 +3309,8 @@
     "computed_field",
     "model_dump"
    ],
-   "readMinutes": 24,
-   "words": 4492,
+   "readMinutes": 25,
+   "words": 4766,
    "sections": [
     {
      "id": "problem",
@@ -3493,8 +3493,8 @@
     "requirements.txt",
     "Student API"
    ],
-   "readMinutes": 18,
-   "words": 3388,
+   "readMinutes": 21,
+   "words": 3972,
    "sections": [
     {
      "id": "what-is",
@@ -3530,7 +3530,11 @@
     },
     {
      "id": "responses",
-     "title": "Exploring responses and 404s"
+     "title": "Exploring responses"
+    },
+    {
+     "id": "invalid-routes",
+     "title": "Exploring invalid routes: 404"
     },
     {
      "id": "uvicorn-options",
@@ -3539,6 +3543,10 @@
     {
      "id": "structure",
      "title": "Basic project structure"
+    },
+    {
+     "id": "app-package",
+     "title": "Move the application into the app package"
     },
     {
      "id": "requirements",
@@ -3766,8 +3774,8 @@
     "inference cost",
     "open vs proprietary models"
    ],
-   "readMinutes": 51,
-   "words": 9674,
+   "readMinutes": 54,
+   "words": 10166,
    "sections": [
     {
      "id": "what-is-llm",
@@ -3779,7 +3787,7 @@
     },
     {
      "id": "journey",
-     "title": "The journey of a prompt"
+     "title": "Basic LLM architecture and workflow"
     },
     {
      "id": "training-inference",
@@ -3868,8 +3876,8 @@
     "structured output",
     "prompt injection"
    ],
-   "readMinutes": 35,
-   "words": 6602,
+   "readMinutes": 36,
+   "words": 6816,
    "sections": [
     {
      "id": "what-is-prompt",
@@ -3970,7 +3978,7 @@
     "decision matrix"
    ],
    "readMinutes": 28,
-   "words": 5252,
+   "words": 5246,
    "sections": [
     {
      "id": "what-is",
@@ -4071,8 +4079,8 @@
     "tools",
     "LangGraph & LangSmith"
    ],
-   "readMinutes": 28,
-   "words": 5353,
+   "readMinutes": 30,
+   "words": 5696,
    "sections": [
     {
      "id": "why",
@@ -4427,8 +4435,8 @@
     "segment packet frame bits",
     "opening a website"
    ],
-   "readMinutes": 20,
-   "words": 3808,
+   "readMinutes": 26,
+   "words": 4871,
    "sections": [
     {
      "id": "why-layers",
@@ -4513,8 +4521,8 @@
     "NAT",
     "IPv6"
    ],
-   "readMinutes": 27,
-   "words": 5211,
+   "readMinutes": 28,
+   "words": 5398,
    "sections": [
     {
      "id": "why",
@@ -4611,8 +4619,8 @@
     "VLSM",
     "troubleshooting"
    ],
-   "readMinutes": 28,
-   "words": 5402,
+   "readMinutes": 30,
+   "words": 5715,
    "sections": [
     {
      "id": "why",
@@ -4954,8 +4962,8 @@
     "built-in commands",
     "environment variables"
    ],
-   "readMinutes": 19,
-   "words": 3564,
+   "readMinutes": 22,
+   "words": 4154,
    "sections": [
     {
      "id": "interact",
@@ -5219,8 +5227,8 @@
     "log files",
     "searching in less"
    ],
-   "readMinutes": 10,
-   "words": 1925,
+   "readMinutes": 11,
+   "words": 2076,
    "sections": [
     {
      "id": "why",
@@ -5370,8 +5378,8 @@
     "text filters",
     "characters vs bytes"
    ],
-   "readMinutes": 13,
-   "words": 2454,
+   "readMinutes": 22,
+   "words": 4188,
    "sections": [
     {
      "id": "why",
@@ -5675,8 +5683,8 @@
     "del ins s",
     "sub and sup"
    ],
-   "readMinutes": 12,
-   "words": 2296,
+   "readMinutes": 14,
+   "words": 2575,
    "sections": [
     {
      "id": "headings",
@@ -5847,8 +5855,8 @@
     "fieldset legend",
     "form validation"
    ],
-   "readMinutes": 22,
-   "words": 4089,
+   "readMinutes": 24,
+   "words": 4563,
    "sections": [
     {
      "id": "real-forms",
@@ -5921,5 +5929,5 @@
    "drive": "1WBLr-SdnOsf4QG2uztMICOhyCvkD877Ueb4kw9kPFDw"
   }
  ],
- "built": "2026-10-14T13:33:43"
+ "built": "2026-10-15T10:26:24"
 }

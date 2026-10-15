@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-01">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-fundamentals/method-overriding">
@@ -31,6 +31,7 @@
     <div class="card t1 tilt-a"><h4>Overridden method</h4><p>The <b>parent’s</b> original version.</p></div>
     <div class="card t3 tilt-b"><h4>Overriding method</h4><p>The <b>child’s</b> new version with the same name.</p></div>
   </div>
+  <figure class="shot"><img src="img/01.webp" alt="Diagram, Method Overriding: same method name in parent and child, the child&#x27;s version wins. Animal (parent, general version) has sound(); Dog and Cat each override sound(); d.sound() gives &quot;Dog barks&quot; and c.sound() gives &quot;Cat meows&quot;" width="1400" height="814"><figcaption>Same method name in parent and child: the child’s version wins.</figcaption></figure>
   <h3>Why we need it</h3>
   <p>Inheritance gives the child <b>all</b> the parent’s methods, but sometimes the parent’s way doesn’t suit the child. An Animal makes “some sound”, but a Dog <b>barks</b> and a Cat <b>meows</b>. We keep the <b>same method name</b> for the same action, let each child do it its own way, and never need to change the parent or invent names like <code>dog_sound()</code>.</p>
   <h3>The problem without overriding</h3>
@@ -43,7 +44,7 @@ class Dog(Animal):
 
 d = Dog()
 d.sound()</code></pre>
-  <pre class="out"><code>Animal makes a sound</code></pre>
+  <figure class="shot"><img src="img/02.webp" alt="VS Code: Animal with sound() printing &quot;Animal makes a sound&quot; and Dog(Animal) with pass; d.sound() prints Animal makes a sound" width="1400" height="373"><figcaption>Without overriding, the dog just gets the general animal sound.</figcaption></figure>
   <p>The dog inherits the general sound, which is not correct for a dog.</p>
 </section>
 
@@ -73,9 +74,7 @@ c = Cat()
 a.sound()
 d.sound()
 c.sound()</code></pre>
-  <pre class="out"><code>Animal makes a sound
-Dog barks
-Cat meows</code></pre>
+  <figure class="shot"><img src="img/03.webp" alt="VS Code: Animal, Dog(Animal) and Cat(Animal), where Dog and Cat override sound(); a.sound(), d.sound(), c.sound() print Animal makes a sound, Dog barks, Cat meows" width="1400" height="687"><figcaption>Each object runs its own class’s version of <code>sound()</code>.</figcaption></figure>
   <ul>
     <li><code>Dog</code> and <code>Cat</code> both define <code>sound()</code>, the same name as in <code>Animal</code>.</li>
     <li>For a <code>Dog</code> object, Python finds <code>sound()</code> in <code>Dog</code> first, so the dog version runs.</li>
@@ -151,8 +150,11 @@ class Car(Vehicle):
 car = Car()
 car.start()
 car.stop()</code></pre>
-  <pre class="out"><code>Car starts with a key
-Vehicle stops</code></pre>
+  <figure class="shot"><img src="img/04.webp" alt="VS Code: Vehicle with start() and stop(); Car(Vehicle) overrides only start(); car.start() and car.stop() print Car starts with a key and Vehicle stops" width="1400" height="542"><figcaption>One overridden method, one inherited as it is.</figcaption></figure>
+  <ul>
+    <li><code>start()</code> is overridden, so the <code>Car</code> version runs.</li>
+    <li><code>stop()</code> is not overridden, so the parent’s version runs.</li>
+  </ul>
   <div class="flow"><span class="op">car.start()</span><span class="ok">found in Car</span><span class="op">car.stop()</span><span class="skip">not in Car</span><span class="ok">found in Vehicle</span></div>
   <p>Real-world version: an electric car charges instead of filling petrol, but drives like any car.</p>
   <pre><code class="language-python">class Car:
@@ -188,7 +190,7 @@ class Child(Parent):
         print("Child constructor is called")
 
 c = Child()</code></pre>
-  <pre class="out"><code>Child constructor is called</code></pre>
+  <figure class="shot"><img src="img/05.webp" alt="VS Code: Parent and Child both define __init__; c = Child() prints only Child constructor is called" width="1400" height="373"><figcaption>The child’s <code>__init__()</code> overrides the parent’s.</figcaption></figure>
   <p>Only the child constructor runs, because it <b>overrides</b> the parent’s.</p>
 </section>
 
@@ -196,6 +198,7 @@ c = Child()</code></pre>
 <section class="ch" id="extend">
   <h2>Extending a parent method with <code>super().method()</code></h2>
   <p>Sometimes you don’t want to <b>replace</b> the parent’s method completely; you want to <b>keep</b> its work and <b>add</b> more. Call the parent’s version with <code>super().method_name()</code> inside the overriding method.</p>
+  <figure class="shot"><img src="img/06.webp" alt="Diagram, Extending a Method with super(): the child keeps the parent&#x27;s work and adds its own. Employee.show_details() prints name and salary; Manager.show_details() calls super().show_details() (step 1, runs the parent&#x27;s version) then prints the team size (step 2, adds its own work); output Name: Ravi, Salary: 80000, Team Size: 5" width="1400" height="847"><figcaption>Step 1 runs the parent’s version; step 2 adds the child’s own work.</figcaption></figure>
   <pre><code class="language-python">class Employee:
     def __init__(self, name, salary):
         self.name = name
@@ -218,9 +221,7 @@ class Manager(Employee):
 
 m = Manager("Ravi", 80000, 5)
 m.show_details()</code></pre>
-  <pre class="out"><code>Name: Ravi
-Salary: 80000
-Team Size: 5</code></pre>
+  <figure class="shot"><img src="img/07.webp" alt="VS Code: Employee with show_details() and Manager(Employee) whose show_details() calls super().show_details() then prints the team size; m = Manager(&quot;Ravi&quot;, 80000, 5) prints Name: Ravi, Salary: 80000, Team Size: 5" width="1400" height="687"><figcaption>The parent prints name and salary, then the child adds the team size.</figcaption></figure>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 220" role="img" aria-label="Manager.show_details calls super().show_details, which runs Employee.show_details to print name and salary, then control returns and Manager prints the team size">
       <g class="rough">
@@ -241,7 +242,7 @@ Team Size: 5</code></pre>
     </svg></div>
     <figcaption>Extend = run the parent’s version via <code>super()</code>, then add your own.</figcaption>
   </figure>
-  <p><code>Manager</code> overrides <code>show_details()</code>. <code>super().show_details()</code> first runs the parent’s version (name and salary), then the child adds its own line. <code>super().__init__(name, salary)</code> does the same thing for the constructor. Real-world version: a premium customer’s bill shows the normal details plus loyalty points.</p>
+  <p><code>Manager</code> overrides <code>show_details()</code>. <code>super().show_details()</code> first runs the parent’s version, which prints the name and salary; then the child adds its own line for the team size. <code>super().__init__(name, salary)</code> does the same for the constructor, as you learned in the Inheritance note. Real-world version: a premium customer’s bill shows the normal details plus loyalty points.</p>
   <pre><code class="language-python">class Customer:
     def __init__(self, name, bill_amount):
         self.name = name
@@ -289,10 +290,7 @@ Loyalty Points Earned: 120</code></pre>
 calc = Calculator()
 print(calc.add(1, 2, 3))
 print(calc.add(1, 2))                # ERROR</code></pre>
-  <pre class="out"><code>6
-Traceback (most recent call last):
-  ...
-TypeError: Calculator.add() missing 1 required positional argument: 'c'</code></pre>
+  <figure class="shot"><img src="img/08.webp" alt="VS Code: Calculator with two add methods, the second replacing the first; add(1, 2, 3) prints 6, then add(1, 2) fails with TypeError: Calculator.add() missing 1 required positional argument: &#x27;c&#x27;" width="1400" height="421"><figcaption>The second <code>add()</code> replaced the first, so <code>add(1, 2)</code> raises a <code>TypeError</code>.</figcaption></figure>
   <h3>The Python way: default arguments</h3>
   <p>To call one method with different numbers of values, give a parameter a <b>default value</b>:</p>
   <pre><code class="language-python">class Calculator:
@@ -303,8 +301,7 @@ TypeError: Calculator.add() missing 1 required positional argument: 'c'</code></
 calc = Calculator()
 print(calc.add(1, 2))
 print(calc.add(1, 2, 3))</code></pre>
-  <pre class="out"><code>3
-6</code></pre>
+  <figure class="shot"><img src="img/09.webp" alt="VS Code: Calculator with one add(self, a, b, c=0); add(1, 2) prints 3 and add(1, 2, 3) prints 6" width="1400" height="349"><figcaption>One method, two ways to call it, thanks to <code>c=0</code>.</figcaption></figure>
   <p>Real-world version: an order total where the delivery charge is optional.</p>
   <pre><code class="language-python">class OrderCalculator:
     def total(self, food_price, tax, delivery_charge=0):
@@ -317,14 +314,7 @@ print(calc.total(400, 20, 40))</code></pre>
   <pre class="out"><code>420
 460</code></pre>
   <h3>Key differences</h3>
-  <div class="tbl"><table>
-    <tr><th></th><th>Method overriding</th><th>Method overloading</th></tr>
-    <tr><td>Where</td><td>Parent and child classes</td><td>The same class</td></tr>
-    <tr><td>Method signature</td><td>Same name, same parameters</td><td>Same name, different parameters</td></tr>
-    <tr><td>Needs inheritance?</td><td>Yes</td><td>No</td></tr>
-    <tr><td>Supported in Python?</td><td>Yes: the child’s version wins</td><td>No: the last definition replaces earlier ones</td></tr>
-    <tr><td>Python alternative</td><td>—</td><td>Default arguments</td></tr>
-  </table></div>
+  <figure class="shot"><img src="img/10.webp" alt="Table, Method Overriding vs Method Overloading. Where: parent class and child class / the same class. Method name: same / same. Parameters: same / different. Needs inheritance: yes / no. Supported in Python: yes / no (the last definition wins). Purpose: change parent behaviour in the child / one name for different inputs." width="1400" height="731"><figcaption>Overriding vs overloading at a glance. In Python, use default arguments instead of overloading.</figcaption></figure>
   <div class="sticky tip l"><strong>Key points</strong> Overriding = same name in parent and child; the child’s version wins. A child can <b>replace</b> a method or <b>extend</b> it with <code>super().method()</code>. <code>__init__()</code> can be overridden too. Python has no overloading; use default arguments.</div>
 </section>
 
@@ -338,6 +328,7 @@ print(calc.total(400, 20, 40))</code></pre>
     <li><b>SoftToy</b> and <b>PlasticToy</b> are both types of Toy, and both <b>override</b> <code>play()</code>.</li>
     <li><b>KidsToy</b> has the qualities of both.</li>
   </ul>
+  <figure class="shot"><img src="img/11.webp" alt="Diagram, The Toy Family: KidsToy has two parents, which play() should run? Toy with play() on top, SoftToy and PlasticToy each with play() below it, and KidsToy (pass) inheriting from both; k.play() could mean soft, plastic or toy" width="1400" height="1009"><figcaption>KidsToy has two parents, each with its own <code>play()</code>.</figcaption></figure>
   <pre><code class="language-python">class Toy:
     def play(self):
         print("This is a toy")
@@ -355,6 +346,8 @@ class PlasticToy(Toy):
 
 class KidsToy(SoftToy, PlasticToy):
     pass</code></pre>
+  <p><b>Note:</b> <code>SoftToy</code> and <code>PlasticToy</code> both override the <code>play()</code> method of <code>Toy</code>. <code>KidsToy</code> inherits from both of them, so which overriding <code>play()</code> should run?</p>
+  <figure class="shot"><img src="img/12.webp" alt="Diagram, Method Resolution Order (MRO): Python checks the classes in a fixed order, 1 KidsToy, 2 SoftToy, 3 PlasticToy, 4 Toy, 5 object (Python&#x27;s root class); k.play() stops at step 2 (SoftToy) and prints &quot;This is a soft toy&quot;" width="1400" height="1237"><figcaption>The answer, worked out below: KidsToy → SoftToy → PlasticToy → Toy → object.</figcaption></figure>
   <h3>The big question</h3>
   <pre><code class="language-python">k = KidsToy()
 k.play()</code></pre>
@@ -375,9 +368,7 @@ k.play()</code></pre>
   <pre><code class="language-python">print(Toy.mro())
 print(SoftToy.mro())
 print(PlasticToy.mro())</code></pre>
-  <pre class="out"><code>[&lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]
-[&lt;class '__main__.SoftToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]
-[&lt;class '__main__.PlasticToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]</code></pre>
+  <figure class="shot"><img src="img/13.webp" alt="VS Code: the Toy family classes, then print(Toy.mro()), print(SoftToy.mro()), print(PlasticToy.mro()); the terminal shows [Toy, object], [SoftToy, Toy, object] and [PlasticToy, Toy, object] as class lists" width="1400" height="687"><figcaption>Each simple class: itself, then <code>Toy</code>, then <code>object</code>.</figcaption></figure>
   <p>Toy → object; SoftToy → Toy → object; PlasticToy → Toy → object. Simple inheritance gives a simple order.</p>
   <h3>KidsToy, step by step (most important)</h3>
   <ol class="path">
@@ -386,35 +377,10 @@ print(PlasticToy.mro())</code></pre>
     <li><span class="dot">3</span><div><b>PlasticToy</b>Toy is also PlasticToy’s parent, so it must wait: check PlasticToy before Toy.</div></li>
     <li><span class="dot">4</span><div><b>Toy, then object</b>Now that all its children are done, the shared parent, then the root.</div></li>
   </ol>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Toy family diamond. Toy at the top, SoftToy on the left and PlasticToy on the right, KidsToy at the bottom. Search order: 1 KidsToy, 2 SoftToy, 3 PlasticToy, 4 Toy, 5 object.">
-      <g class="rough">
-        <rect class="box f-grey dash" x="300" y="4" width="120" height="30" rx="10"/>
-        <rect class="box f-green" x="290" y="66" width="140" height="46" rx="12"/>
-        <rect class="box f-blue" x="90" y="140" width="170" height="46" rx="12"/>
-        <rect class="box f-blue" x="460" y="140" width="170" height="46" rx="12"/>
-        <rect class="box f-orange" x="270" y="212" width="180" height="46" rx="12"/>
-        <path class="lr" d="M310 210 L 210 191" marker-end="url(#ahr)"/>
-        <path class="lr" d="M410 210 L 510 191" marker-end="url(#ahr)"/>
-        <path class="lr" d="M200 137 L 300 115" marker-end="url(#ahr)"/>
-        <path class="lr" d="M520 137 L 420 115" marker-end="url(#ahr)"/>
-        <path class="ln" d="M360 64 L 360 40" marker-end="url(#ah)"/>
-      </g>
-      <text class="tm" x="360" y="24" text-anchor="middle">object</text>
-      <text class="tm" x="360" y="94" text-anchor="middle">Toy</text>
-      <text class="tm" x="175" y="168" text-anchor="middle">SoftToy</text>
-      <text class="tm" x="545" y="168" text-anchor="middle">PlasticToy</text>
-      <text class="tm" x="360" y="240" text-anchor="middle">KidsToy</text>
-      <text class="th" x="250" y="245" text-anchor="middle">1</text>
-      <text class="th" x="70" y="172" text-anchor="middle">2</text>
-      <text class="th" x="650" y="172" text-anchor="middle">3</text>
-      <text class="th" x="455" y="98" text-anchor="middle">4</text>
-      <text class="th" x="440" y="30" text-anchor="middle">5</text>
-    </svg></div>
-    <figcaption>KidsToy → SoftToy → PlasticToy → Toy → object. Toy waits until both of its children have been checked.</figcaption>
-  </figure>
+  <!-- img 12 is shown above, in "The MRO problem"; the SVG mock-up of the same numbered diamond was removed -->
+  <p><b>Final MRO: KidsToy → SoftToy → PlasticToy → Toy → object</b></p>
   <pre><code class="language-python">print(KidsToy.mro())</code></pre>
-  <pre class="out"><code>[&lt;class '__main__.KidsToy'&gt;, &lt;class '__main__.SoftToy'&gt;, &lt;class '__main__.PlasticToy'&gt;, &lt;class '__main__.Toy'&gt;, &lt;class 'object'&gt;]</code></pre>
+  <figure class="shot"><img src="img/14.webp" alt="VS Code: the Toy family classes and print(KidsToy.mro()); the terminal shows [KidsToy, SoftToy, PlasticToy, Toy, object] as class list" width="1400" height="639"><figcaption>Python’s own answer matches the order worked out by hand.</figcaption></figure>
   <p>Python’s own output matches the order we worked out by hand. For a given class definition, this order is fixed.</p>
 </section>
 
@@ -422,6 +388,7 @@ print(PlasticToy.mro())</code></pre>
 <section class="ch" id="mro-call">
   <h2>Following the method call</h2>
   <p>For <code>k.play()</code>, Python checks <code>KidsToy</code> (no <code>play()</code>), then <code>SoftToy</code> (has <code>play()</code>), and <b>stops searching</b>.</p>
+  <h3>Complete program and output</h3>
   <pre><code class="language-python">class Toy:
     def play(self):
         print("This is a toy")
@@ -443,7 +410,7 @@ class KidsToy(SoftToy, PlasticToy):
 
 k = KidsToy()
 k.play()</code></pre>
-  <pre class="out"><code>This is a soft toy</code></pre>
+  <figure class="shot"><img src="img/15.webp" alt="VS Code: the complete Toy family program with k = KidsToy() and k.play(); the terminal prints This is a soft toy" width="1400" height="663"><figcaption><code>SoftToy</code> comes first in the MRO, so its <code>play()</code> runs.</figcaption></figure>
   <div class="flow"><span class="skip">KidsToy · no play()</span><span class="ok">SoftToy · play() found, stop</span><span class="skip">PlasticToy</span><span class="skip">Toy</span></div>
   <p>Real-world version: HD and subtitled videos both override <code>play()</code>, and a premium video inherits from both.</p>
   <pre><code class="language-python">class Video:
@@ -566,6 +533,6 @@ Delivery in 20 minutes</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

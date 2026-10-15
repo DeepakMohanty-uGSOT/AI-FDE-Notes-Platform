@@ -9,7 +9,7 @@
 <meta name="date" content="2026-09-28">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-fundamentals/working-with-data">
@@ -265,31 +265,8 @@ file.write("Sneha\n")
 file.close()</code></pre>
   <figure class="shot sm"><img src="img/15.webp" alt="VS Code: students.txt contains Rahul, Priya, Amit and Sneha on lines 1 to 4" width="745" height="193" loading="lazy"><figcaption>Sneha is added at the end; the existing students are kept.</figcaption></figure>
   <p>The important difference is:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 230" role="img" aria-label="Same starting file Rahul Priya Amit. With mode w and write Sneha the result is only Sneha. With mode a and write Sneha the result is Rahul Priya Amit Sneha">
-      <g class="rough">
-        <rect class="box f-card" x="20" y="60" width="150" height="110" rx="12"/>
-        <rect class="box f-orange" x="290" y="10" width="170" height="90" rx="12"/>
-        <rect class="box f-green" x="290" y="120" width="170" height="104" rx="12"/>
-        <path class="lr" d="M174 95 C 220 70, 250 55, 284 55" marker-end="url(#ahr)"/>
-        <path class="lb" d="M174 140 C 220 160, 250 170, 284 170" marker-end="url(#ahb)"/>
-      </g>
-      <text class="tm" x="40" y="94">Rahul</text>
-      <text class="tm" x="40" y="118">Priya</text>
-      <text class="tm" x="40" y="142">Amit</text>
-      <text class="ts" x="95" y="194" text-anchor="middle">before</text>
-      <text class="tr" x="226" y="54" text-anchor="middle">"w"</text>
-      <text class="tb" x="226" y="196" text-anchor="middle">"a"</text>
-      <text class="tm" x="310" y="62">Sneha</text>
-      <text class="tm" x="310" y="146">Rahul</text>
-      <text class="tm" x="310" y="166">Priya</text>
-      <text class="tm" x="310" y="186">Amit</text>
-      <text class="tm" x="310" y="206">Sneha</text>
-      <text class="t" x="480" y="50">replaces everything</text>
-      <text class="t" x="480" y="176">adds to the end</text>
-    </svg></div>
-    <figcaption><code>"w"</code> = start over. <code>"a"</code> = keep and add.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/16.webp" alt="&quot;w&quot; replaces existing content: output.txt holding Rahul, Priya, Amit holds only Sneha after opening with w and writing Sneha. &quot;a&quot; keeps existing content and adds new content at the end: the file becomes Rahul, Priya, Amit, Sneha" width="1400" height="700" loading="lazy"><figcaption><code>"w"</code> = start over. <code>"a"</code> = keep and add to the end.</figcaption></figure>
+
   <div class="sticky fde"><strong>Real world: chat history</strong> A chat app saves each new message at the end of the history file, so <code>"a"</code> is the right mode.
   <pre><code class="language-python">message = input("Type a message: ")
 
@@ -304,6 +281,7 @@ file.close()</code></pre>
     <li>When writing, Python may keep recent data in a temporary <b>buffer</b> instead of saving it immediately. <code>.close()</code> <b>flushes</b> it to disk.</li>
     <li>Other programs (or other parts of yours) may not reliably access a file that is still open.</li>
   </ul>
+  <figure class="shot"><img src="img/17.webp" alt="Left, forgetting to close: file = open("output.txt", "w"), file.write("Sneha\n"), file.close() commented out as forgotten, leading to risk of unsaved data, wasted resources and file access issues. Right, always .close() when done: guarantees the data is saved and the file is released (no longer locked)" width="1400" height="700" loading="lazy"><figcaption>Forgetting <code>.close()</code> risks unsaved data; closing guarantees it is saved and releases the file.</figcaption></figure>
   <pre><code class="language-python">file = open("students.txt", "w")
 file.write("Rahul\n")
 file.close()     # flushes the data to disk and frees the file</code></pre>
@@ -318,25 +296,19 @@ file.close()     # flushes the data to disk and frees the file</code></pre>
 <section class="ch" id="modes">
   <h2>File modes</h2>
   <p>Every mode decides two things: what you’re <b>allowed</b> to do (read, write, or both), and what happens if the file <b>already exists</b> or doesn’t exist.</p>
-  <div class="tbl"><table>
-    <tr><th>Mode</th><th>Allows</th><th>File exists</th><th>File missing</th></tr>
-    <tr><td><code>"r"</code> (default)</td><td>read only</td><td>reads from the start</td><td>❌ <code>FileNotFoundError</code></td></tr>
-    <tr><td><code>"w"</code></td><td>write only</td><td>⚠️ erases it first</td><td>creates it</td></tr>
-    <tr><td><code>"a"</code></td><td>write at the end</td><td>keeps content, adds at end</td><td>creates it</td></tr>
-    <tr><td><code>"x"</code></td><td>write, new file only</td><td>❌ <code>FileExistsError</code></td><td>creates it</td></tr>
-  </table></div>
+  <p>Here are the four basic modes:</p>
+  <figure class="shot"><img src="img/18.webp" alt="Four basic modes. "r": read an existing file; only reading is allowed, the file must exist, default mode. "w": overwrite the file; creates the file if missing, erases old content, writing only. "a": append to the end; creates the file if missing, keeps old content, new data goes at the end. "x": create a brand-new file; the file must NOT exist, error if it already exists, never erases anything" width="1400" height="349" loading="lazy"><figcaption>The four basic modes and what each one does with an existing or missing file.</figcaption></figure>
   <h3>Default mode: <code>"r"</code></h3>
   <p>Leave out the mode and Python assumes <code>"r"</code>. With <code>students.txt</code> holding Rahul, Priya, Amit:</p>
   <pre><code class="language-python">file = open("students.txt")      # same as open("students.txt", "r")
 content = file.read()
 print(content)
 file.close()</code></pre>
-  <pre class="out"><code>Rahul
-Priya
-Amit</code></pre>
+  <figure class="shot"><img src="img/19.webp" alt="Terminal output: Rahul, Priya and Amit" width="1366" height="184" loading="lazy"><figcaption>No mode given, so <code>"r"</code> is used and the file is read.</figcaption></figure>
   <h3>What if the file doesn’t exist?</h3>
+  <p>This is very important. Suppose there is no <code>marks.txt</code> in your folder, and you run:</p>
   <pre><code class="language-python">file = open("marks.txt", "r")</code></pre>
-  <pre class="out"><code>FileNotFoundError: [Errno 2] No such file or directory: 'marks.txt'</code></pre>
+  <figure class="shot"><img src="img/20.webp" alt="Terminal traceback: line 1 file = open("marks.txt", "r") fails with FileNotFoundError: [Errno 2] No such file or directory: 'marks.txt'" width="1366" height="211" loading="lazy"><figcaption><code>"r"</code> on a missing file: <code>FileNotFoundError</code>.</figcaption></figure>
   <p><code>"r"</code> can only open a file that <b>already exists</b>. <code>"w"</code> and <code>"a"</code> simply <b>create</b> a missing file:</p>
   <pre><code class="language-python">file = open("marks.txt", "w")    # marks.txt didn't exist -&gt; Python creates it
 file.close()</code></pre>
@@ -346,10 +318,12 @@ file.close()</code></pre>
   <pre><code class="language-python">file = open("new_students.txt", "x")
 file.write("Karan\n")
 file.close()</code></pre>
-  <p><code>new_students.txt</code> didn’t exist, so Python creates it with <code>Karan</code> inside. Now try <code>"x"</code> on a file that <b>does</b> exist:</p>
+  <p>Since <code>new_students.txt</code> didn’t exist, Python creates it:</p>
+  <figure class="shot sm"><img src="img/21.webp" alt="VS Code: a new file new_students.txt appears in student_project, containing Karan" width="745" height="148" loading="lazy"><figcaption><code>new_students.txt</code> is created with <code>Karan</code> inside.</figcaption></figure>
+  <p>But what if you try <code>"x"</code> on a file that <b>already</b> exists?</p>
   <pre><code class="language-python">file = open("students.txt", "x")</code></pre>
-  <pre class="out"><code>FileExistsError: [Errno 17] File exists: 'students.txt'</code></pre>
-  <p>Python refuses, and your existing students are safe.</p>
+  <figure class="shot"><img src="img/22.webp" alt="Terminal traceback: line 1 file = open("students.txt", "x") fails with FileExistsError: [Errno 17] File exists: 'students.txt'" width="1366" height="211" loading="lazy"><figcaption><code>"x"</code> on an existing file: <code>FileExistsError</code>.</figcaption></figure>
+  <p>Python refuses and raises a <code>FileExistsError</code>, and your existing students are safe.</p>
   <div class="sticky fde"><strong>Real world: one file per student</strong> A registration program creates a file per roll number but must never overwrite an existing student’s file:
   <pre><code class="language-python">roll_number = input("Enter roll number: ")
 
@@ -358,24 +332,21 @@ file.write("Registered\n")
 file.close()</code></pre>
   Enter <code>101</code> and <code>101.txt</code> is created. Enter <code>101</code> again and you get <code>FileExistsError</code> instead of losing data.</div>
   <h3>Reading and writing together: the <code>"+"</code> modes</h3>
-  <div class="tbl"><table>
-    <tr><th>Mode</th><th>Meaning</th></tr>
-    <tr><td><code>"r+"</code></td><td>read and write; file must exist; nothing is erased</td></tr>
-    <tr><td><code>"w+"</code></td><td>write and read; <b>erases</b> the file first</td></tr>
-    <tr><td><code>"a+"</code></td><td>append and read; new content always goes at the end</td></tr>
-  </table></div>
+  <p>Till now, each mode allowed only one thing: either reading or writing. Adding a <code>+</code> to a mode allows both.</p>
+  <figure class="shot"><img src="img/23.webp" alt=""r+": read + write; file must exist, does not erase content, cursor starts at the beginning. "w+": write + read; creates the file if missing, erases old content first, cursor starts at the beginning. "a+": append + read; creates the file if missing, keeps old content, writing always goes at the end" width="1400" height="349" loading="lazy"><figcaption>The three <code>+</code> modes: each allows both reading and writing.</figcaption></figure>
+  <ul>
+    <li><code>"r+"</code>: read and write (file must already exist, nothing is erased)</li>
+    <li><code>"w+"</code>: write and read (<b>erases</b> the file first)</li>
+    <li><code>"a+"</code>: append and read (new content always goes at the end)</li>
+  </ul>
   <p><b>Example with <code>"r+"</code></b> (students.txt holds Rahul, Priya, Amit):</p>
   <pre><code class="language-python">with open("students.txt", "r+") as file:
     content = file.read()
     print(content)
     file.write("Sneha\n")     # read() moved the cursor to the end</code></pre>
-  <pre class="out"><code>Rahul
-Priya
-Amit</code></pre>
-  <div class="codebox"><span class="cap">students.txt afterwards</span><pre><code class="language-plaintext">Rahul
-Priya
-Amit
-Sneha</code></pre></div>
+  <figure class="shot"><img src="img/24.webp" alt="Terminal output: Rahul, Priya, Amit and Sneha" width="1279" height="213" loading="lazy"><figcaption><code>print(content)</code> shows what the file held when it was read. (In this recorded run, Sneha was already in the file from an earlier run; starting from three names, you would see Rahul, Priya, Amit.)</figcaption></figure>
+  <p>And the file now contains:</p>
+  <figure class="shot sm"><img src="img/25.webp" alt="VS Code: students.txt contains Rahul, Priya, Amit and Sneha" width="745" height="193" loading="lazy"><figcaption>Sneha was added at the end.</figcaption></figure>
   <p>Sneha went at the <b>end</b> because <code>.read()</code> moved Python’s position in the file, the <b>cursor</b>, all the way to the end, and <code>.write()</code> continued from there.</p>
   <figure>
     <div class="dia"><svg viewBox="0 0 720 200" role="img" aria-label="A file drawn as a strip of text. With r+ the cursor starts at the beginning and after read it is at the end. With a+ the cursor already starts at the end so read returns nothing">
@@ -401,7 +372,7 @@ Sneha</code></pre></div>
   <pre><code class="language-python">with open("students.txt", "a+") as file:
     content = file.read()
     print(content)     # prints an empty string</code></pre>
-  <pre class="out"><code></code></pre>
+  <figure class="shot"><img src="img/26.webp" alt="Terminal: the program runs and prints only an empty line" width="1366" height="129" loading="lazy"><figcaption>Nothing is printed except an empty line.</figcaption></figure>
   <p>Only an empty line appears. The file isn’t empty; Python is already standing at the end, so there’s nothing left to read. (You could call <code>file.seek(0)</code> to jump back to the start.)</p>
 </section>
 
@@ -415,106 +386,79 @@ Sneha</code></pre></div>
 content = file.read()
 print(content + 5)     # TypeError happens here
 file.close()           # this line never runs</code></pre>
-  <pre class="out"><code>Traceback (most recent call last):
-  File "main.py", line 3, in &lt;module&gt;
-    print(content + 5)     # TypeError happens here
-          ~~~~~~~~^~~
-TypeError: can only concatenate str (not "int") to str</code></pre>
+  <figure class="shot"><img src="img/27.webp" alt="Terminal traceback: line 3 print(content + 5) fails with TypeError: can only concatenate str (not "int") to str" width="1366" height="239" loading="lazy"><figcaption>The error at line 3 stops the program before <code>file.close()</code>.</figcaption></figure>
   <p>Python stopped at line 3. <code>file.close()</code> was never reached, so the file was left <b>open</b>. <code>with</code> solves both problems.</p>
+  <figure class="shot"><img src="img/28.webp" alt="Left, open() + close(): we must remember to close, an error before .close() leaves the file open, more lines to write. Right, with open(): the file is closed automatically, even if an error happens, shorter and cleaner" width="1400" height="367" loading="lazy"><figcaption><code>open()</code> + <code>close()</code> versus <code>with open()</code>.</figcaption></figure>
   <div class="codebox"><span class="cap">syntax</span><pre><code class="language-python">with open(filename, mode) as file:
     # work with the file here</code></pre></div>
-  <div class="anatomy"><span class="a1">with</span> <span class="a2">open("students.txt", "r")</span> <span class="a3">as file</span><span class="a4">:</span></div>
-  <div class="legend">
-    <div><span class="sw a1"></span><p>tells Python to <b>manage</b> the file for you</p></div>
-    <div><span class="sw a2"></span><p>opens the file exactly as before</p></div>
-    <div><span class="sw a3"></span><p>gives the opened file a name to use inside the block</p></div>
-    <div><span class="sw a4"></span><p>colon + indentation: everything indented belongs to the block, like an <code>if</code> or <code>for</code> body</p></div>
-  </div>
+  <p>Example:</p>
+  <pre><code class="language-python">with open("students.txt", "r") as file:
+    content = file.read()</code></pre>
+  <figure class="shot"><img src="img/29.webp" alt="with open("students.txt", "r") as file: broken into parts. with: start a managed block, Python takes care of the file. open(filename, mode): open the file, exactly the same open() we already know. as file: the name for the file inside the block. Colon + indentation: everything indented is inside the with block" width="1400" height="372" loading="lazy"><figcaption>The four parts of a <code>with</code> line.</figcaption></figure>
+  <ul>
+    <li><code>with</code>: tells Python to <b>manage</b> the file for you</li>
+    <li><code>open(filename, mode)</code>: opens the file, exactly as before</li>
+    <li><code>as file</code>: gives the opened file a name to use inside the block</li>
+    <li><code>:</code> and indentation: everything indented belongs to the <code>with</code> block, like the body of an <code>if</code> or a <code>for</code> loop</li>
+  </ul>
   <h3>Automatic closing</h3>
   <p>The moment the indented block ends, Python <b>closes the file automatically</b>. Check with <code>file.closed</code>:</p>
   <pre><code class="language-python">with open("students.txt", "r") as file:
     print(file.closed)      # inside the block
 
 print(file.closed)          # after the block</code></pre>
-  <pre class="out"><code>False
-True</code></pre>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 210" role="img" aria-label="Timeline: with line opens the file, the indented block runs with the file open, and at the end of the block the file closes automatically, even if an error occurred">
-      <g class="rough">
-        <rect class="box f-blue" x="20" y="70" width="170" height="70" rx="12"/>
-        <rect class="box f-yellow" x="260" y="70" width="200" height="70" rx="12"/>
-        <rect class="box f-green" x="530" y="70" width="170" height="70" rx="12"/>
-        <path class="ln" d="M194 105 L 254 105" marker-end="url(#ah)"/>
-        <path class="ln" d="M464 105 L 524 105" marker-end="url(#ah)"/>
-        <path class="lr dash" d="M400 144 C 430 180, 520 180, 580 146" marker-end="url(#ahr)"/>
-      </g>
-      <text class="tm" x="105" y="100" text-anchor="middle">with open()</text>
-      <text class="ts" x="105" y="124" text-anchor="middle">file opened</text>
-      <text class="th" x="360" y="104" text-anchor="middle">block runs</text>
-      <text class="ts" x="360" y="126" text-anchor="middle">file.closed = False</text>
-      <text class="th" x="615" y="104" text-anchor="middle">auto-close</text>
-      <text class="ts" x="615" y="126" text-anchor="middle">file.closed = True</text>
-      <text class="tr" x="470" y="198" text-anchor="middle">even if an error happens</text>
-    </svg></div>
-    <figcaption><code>with</code> guarantees the file is closed when the block ends, whatever happens inside.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/30.webp" alt="Terminal output: False, then True" width="1366" height="156" loading="lazy"><figcaption>Inside the block: <code>False</code> (open). After it: <code>True</code> (closed).</figcaption></figure>
+  <p>Inside the block the file is open (<code>False</code>). As soon as you come out of the block it’s already closed (<code>True</code>), and you never wrote <code>.close()</code>. This happens even if an error occurs inside the block.</p>
+  <figure class="shot"><img src="img/31.webp" alt="Four steps: 1 with open() runs and the file is opened; 2 the indented block runs and we read or write using file; 3 the block ends, because indentation is over or an error happens; 4 the file is closed automatically, Python calls .close() for us and file.closed is True" width="1400" height="272" loading="lazy"><figcaption><code>with</code> closes the file when the block ends, even if an error happens inside.</figcaption></figure>
+
   <h3>Reading with <code>with</code></h3>
   <p>All the reading methods work the same inside <code>with</code>. Suppose <code>students.txt</code> holds Rahul, Priya, Amit, Sneha.</p>
   <pre><code class="language-python">with open("students.txt", "r") as file:
     content = file.read()
 
 print(content)     # content is still available after the file is closed</code></pre>
-  <pre class="out"><code>Rahul
-Priya
-Amit
-Sneha</code></pre>
+  <figure class="shot"><img src="img/32.webp" alt="Terminal output: Rahul, Priya, Amit and Sneha" width="1366" height="211" loading="lazy"><figcaption>The whole file, printed after the block has closed it.</figcaption></figure>
   <p><code>print(content)</code> is <b>outside</b> the block. The file is closed, but <code>content</code> is an ordinary string now and stays available.</p>
-  <div class="two">
-    <div><pre><code class="language-python">with open("students.txt", "r") as file:
+  <p><b>Reading line by line:</b></p>
+  <pre><code class="language-python">with open("students.txt", "r") as file:
     for line in file:
         print(line.strip())</code></pre>
-    <pre class="out"><code>Rahul
-Priya
-Amit
-Sneha</code></pre></div>
-    <div><pre><code class="language-python">with open("students.txt", "r") as file:
+  <figure class="shot"><img src="img/32.webp" alt="Terminal output: Rahul, Priya, Amit and Sneha" width="1366" height="211" loading="lazy"><figcaption>Same output, one line per loop round.</figcaption></figure>
+  <p><b>Reading into a list:</b></p>
+  <pre><code class="language-python">with open("students.txt", "r") as file:
     lines = file.readlines()
 
 print(lines)
 print(len(lines))</code></pre>
-    <pre class="out"><code>['Rahul\n', 'Priya\n', 'Amit\n', 'Sneha\n']
-4</code></pre></div>
-  </div>
+  <figure class="shot"><img src="img/33.webp" alt="Terminal output: ['Rahul\\n', 'Priya\\n', 'Amit\\n', 'Sneha\\n'] and 4" width="1366" height="156" loading="lazy"><figcaption>A list of four lines, and its length <code>4</code>.</figcaption></figure>
   <h3>Writing with <code>with</code></h3>
   <pre><code class="language-python">with open("students.txt", "w") as file:
     file.write("Rahul\n")
     file.write("Priya\n")
     file.write("Amit\n")</code></pre>
-  <p>The file now holds Rahul, Priya, Amit. There’s no <code>file.close()</code> anywhere, yet the data is safely <b>saved</b>, because closing also flushes it to disk.</p>
+  <p>The file becomes:</p>
+  <figure class="shot sm"><img src="img/34.webp" alt="VS Code: students.txt contains Rahul, Priya and Amit" width="642" height="165" loading="lazy"><figcaption>Three students, written inside a <code>with</code> block.</figcaption></figure>
+  <p>There’s no <code>file.close()</code> anywhere, yet the data is safely <b>saved</b>, because closing also flushes it to disk.</p>
   <h3><code>with</code> works with every mode</h3>
   <p><b>Appending with <code>"a"</code>:</b></p>
   <pre><code class="language-python">with open("students.txt", "a") as file:
     file.write("Sneha\n")</code></pre>
+  <figure class="shot sm"><img src="img/35.webp" alt="VS Code: students.txt contains Rahul, Priya, Amit and Sneha" width="642" height="193" loading="lazy"><figcaption>Sneha appended at the end.</figcaption></figure>
   <p><b>Creating a backup safely with <code>"x"</code>:</b> copy the students, but never overwrite an old backup by mistake. Two <code>with</code> blocks, one after another:</p>
   <pre><code class="language-python">with open("students.txt", "r") as file:
     content = file.read()
 
 with open("backup.txt", "x") as backup:
     backup.write(content)     # FileExistsError if backup.txt already exists</code></pre>
-  <div class="codebox"><span class="cap">backup.txt</span><pre><code class="language-plaintext">Rahul
-Priya
-Amit
-Sneha</code></pre></div>
+  <p>Now <code>backup.txt</code> contains:</p>
+  <figure class="shot sm"><img src="img/36.webp" alt="VS Code: a new backup.txt next to students.txt, containing Rahul, Priya, Amit and Sneha" width="642" height="193" loading="lazy"><figcaption>The backup holds a copy of all four students.</figcaption></figure>
+  <p>If <code>backup.txt</code> already existed, <code>"x"</code> would raise a <code>FileExistsError</code> instead of replacing it.</p>
   <p><b>Reading and updating with <code>"r+"</code>:</b> count the students and write the total at the end.</p>
   <pre><code class="language-python">with open("students.txt", "r+") as file:
     content = file.read()
     count = len(content.splitlines())
     file.write("Total: " + str(count) + "\n")</code></pre>
-  <div class="codebox"><span class="cap">students.txt</span><pre><code class="language-plaintext">Rahul
-Priya
-Amit
-Sneha
-Total: 4</code></pre></div>
+  <figure class="shot sm"><img src="img/37.webp" alt="VS Code: students.txt contains Rahul, Priya, Amit, Sneha and Total: 4" width="642" height="222" loading="lazy"><figcaption><code>Total: 4</code> is added after the last student.</figcaption></figure>
   <p>After <code>.read()</code> the cursor is at the end, so <code>.write()</code> adds the total after the last student.</p>
   <div class="sticky fde"><strong>Real world: daily sales total</strong> A shop reads today’s sales file (<code>450</code>, <code>1200</code>, <code>300</code>, one per line) and adds the total at the end.
   <pre><code class="language-python">with open("sales.txt", "r+") as file:
@@ -544,6 +488,8 @@ Total: 4</code></pre></div>
 }</code></pre>
   <p>In a <code>.txt</code> file it becomes just text: <code>Rahul, 21, 85, 90, 78</code>. Read it back and you get <b>one string</b>. Which number is the age? Where do the marks start? The <b>structure</b> (keys, list) is lost.</p>
   <p><b>JSON</b> (JavaScript Object Notation) saves dictionaries and lists <mark>as they are, so loading gives back the same structure</mark>.</p>
+  <figure class="shot"><img src="img/38.webp" alt="A Python dictionary in memory is saved to and loaded from student.json, which keeps the structure on disk; the JSON file can be shared with any other program: websites (JavaScript), mobile apps, web APIs and other Python programs" width="1400" height="302" loading="lazy"><figcaption>Save and load keeps the structure; JSON is understood everywhere.</figcaption></figure>
+  <p>Why this matters:</p>
   <div class="grid two">
     <div class="card t1 tilt-a"><h4>Structure kept</h4><p>Dictionaries stay dictionaries, lists stay lists.</p></div>
     <div class="card t2 tilt-b"><h4>Human-friendly</h4><p>Easy to read and edit by hand.</p></div>
@@ -568,22 +514,15 @@ Total: 4</code></pre></div>
     <div class="card t1 tilt-a"><h4>Object <code>{ }</code></h4><p>key-value pairs, just like a Python <b>dictionary</b>.</p></div>
     <div class="card t2 tilt-b"><h4>Array <code>[ ]</code></h4><p>an ordered list of values, just like a Python <b>list</b>.</p></div>
   </div>
+  <figure class="shot"><img src="img/39.webp" alt="Object { }: key-value pairs such as {"name": "Rahul", "age": 21}; Python sees it as a dictionary. Array [ ]: an ordered list of values such as [85, 90, 78] or ["Rahul", "Priya"]; Python sees it as a list" width="1400" height="435" loading="lazy"><figcaption>An object becomes a dictionary; an array becomes a list.</figcaption></figure>
   <p>They nest, exactly like nested data structures. <code>students.json</code> is an <b>array</b> of <b>objects</b>, each holding an array of marks:</p>
   <div class="codebox"><span class="cap">students.json</span><pre><code class="language-json">[
     {"name": "Rahul", "age": 21, "marks": [85, 90, 78]},
     {"name": "Priya", "age": 22, "marks": [90, 88, 95]}
 ]</code></pre></div>
   <h3>JSON data types</h3>
-  <div class="tbl"><table>
-    <tr><th>JSON</th><th>Example</th><th>Python</th></tr>
-    <tr><td>object</td><td><code>{"a": 1}</code></td><td><code>dict</code></td></tr>
-    <tr><td>array</td><td><code>[1, 2]</code></td><td><code>list</code></td></tr>
-    <tr><td>string</td><td><code>"Rahul"</code></td><td><code>str</code></td></tr>
-    <tr><td>number (integer)</td><td><code>21</code></td><td><code>int</code></td></tr>
-    <tr><td>number (decimal)</td><td><code>85.5</code></td><td><code>float</code></td></tr>
-    <tr><td><code>true</code> / <code>false</code></td><td><code>true</code></td><td><code>True</code> / <code>False</code></td></tr>
-    <tr><td><code>null</code></td><td><code>null</code></td><td><code>None</code></td></tr>
-  </table></div>
+  <p>JSON supports only a few data types. When Python reads JSON, each one turns into a Python type you already know:</p>
+  <figure class="shot"><img src="img/40.webp" alt="JSON data types to Python: string "Rahul" to str; number 21 or 85.5 to int or float; boolean true/false to bool True/False; null to NoneType None; object {"age": 21} to dict; array [85, 90] to list. JSON writes true, false, null in lowercase; Python uses True, False, None" width="1400" height="636" loading="lazy"><figcaption>Each JSON type and the Python type it becomes.</figcaption></figure>
   <div class="sticky info l"><strong>Lowercase in JSON</strong> <code>true</code>, <code>false</code> and <code>null</code> are lowercase in JSON; in Python they are <code>True</code>, <code>False</code>, <code>None</code>. The <code>json</code> module converts them automatically.</div>
   <pre><code class="language-python">import json
 
@@ -592,32 +531,8 @@ print(data)</code></pre>
   <pre class="out"><code>{'passed': True, 'failed': False, 'grade': None}</code></pre>
   <h3>The <code>json</code> module</h3>
   <p>Built in: nothing to install, just <code>import json</code>. Four main functions:</p>
-  <figure>
-    <div class="dia"><svg viewBox="0 0 720 270" role="img" aria-label="Python objects in the middle. Arrows to and from a JSON file on the left use dump and load. Arrows to and from a JSON string on the right use dumps and loads, where s means string">
-      <g class="rough">
-        <rect class="box f-green" x="20" y="80" width="180" height="100" rx="14"/>
-        <rect class="box f-blue" x="270" y="80" width="180" height="100" rx="14"/>
-        <rect class="box f-purple" x="520" y="80" width="180" height="100" rx="14"/>
-        <path class="lr" d="M264 105 L 206 105" marker-end="url(#ahr)"/>
-        <path class="lb" d="M206 155 L 264 155" marker-end="url(#ahb)"/>
-        <path class="lr" d="M456 105 L 514 105" marker-end="url(#ahr)"/>
-        <path class="lb" d="M514 155 L 456 155" marker-end="url(#ahb)"/>
-      </g>
-      <text class="th" x="110" y="124" text-anchor="middle">JSON file</text>
-      <text class="ts" x="110" y="150" text-anchor="middle">students.json</text>
-      <text class="th" x="360" y="124" text-anchor="middle">Python</text>
-      <text class="ts" x="360" y="150" text-anchor="middle">dict / list</text>
-      <text class="th" x="610" y="124" text-anchor="middle">JSON string</text>
-      <text class="ts" x="610" y="150" text-anchor="middle">text in memory</text>
-      <text class="tm" x="235" y="90" text-anchor="middle">dump</text>
-      <text class="tm" x="235" y="180" text-anchor="middle">load</text>
-      <text class="tm" x="485" y="90" text-anchor="middle">dumps</text>
-      <text class="tm" x="485" y="180" text-anchor="middle">loads</text>
-      <text class="tr" x="360" y="40" text-anchor="middle">dump = Python → JSON · load = JSON → Python</text>
-      <text class="tb" x="360" y="230" text-anchor="middle">the extra "s" means string, not file</text>
-    </svg></div>
-    <figcaption>File functions on the left, string functions on the right.</figcaption>
-  </figure>
+  <figure class="shot"><img src="img/41.webp" alt="Working with a FILE: json.load() turns a JSON file into a Python object (data = json.load(file)); json.dump() turns a Python object into a JSON file (json.dump(data, file)). Working with a STRING, where the extra s means string: json.loads() turns a JSON string into a Python object (data = json.loads(text)); json.dumps() turns a Python object into a JSON string (text = json.dumps(data))" width="1400" height="608" loading="lazy"><figcaption>File functions on top; string functions (the extra <code>s</code>) below.</figcaption></figure>
+
   <div class="tbl"><table>
     <tr><th>Function</th><th>Converts</th></tr>
     <tr><td><code>json.load(file)</code></td><td>JSON <b>file</b> → Python object</td></tr>
@@ -626,6 +541,8 @@ print(data)</code></pre>
     <tr><td><code>json.dumps(data)</code></td><td>Python object → JSON <b>string</b></td></tr>
   </table></div>
   <h3>Reading JSON files: <code>json.load()</code></h3>
+  <p>Suppose <code>students.json</code> already exists in your folder:</p>
+  <figure class="shot"><img src="img/42.webp" alt="VS Code: students.json in student_project, an array holding Rahul (age 21, marks 85, 90, 78) and Priya (age 22, marks 90, 88, 95)" width="1063" height="192" loading="lazy"><figcaption>The <code>students.json</code> file we will read.</figcaption></figure>
   <pre><code class="language-python">import json
 
 with open("students.json", "r") as file:
@@ -633,18 +550,14 @@ with open("students.json", "r") as file:
 
 print(students)
 print(type(students))</code></pre>
-  <pre class="out"><code>[{'name': 'Rahul', 'age': 21, 'marks': [85, 90, 78]}, {'name': 'Priya', 'age': 22, 'marks': [90, 88, 95]}]
-&lt;class 'list'&gt;</code></pre>
+  <figure class="shot"><img src="img/43.webp" alt="Terminal output: [{'name': 'Rahul', 'age': 21, 'marks': [85, 90, 78]}, {'name': 'Priya', 'age': 22, 'marks': [90, 88, 95]}] and &lt;class 'list'&gt;" width="1366" height="156" loading="lazy"><figcaption>A real Python list of dictionaries.</figcaption></figure>
   <p>A real Python <b>list of dictionaries</b>, so all your list and dictionary skills apply:</p>
   <pre><code class="language-python">print(students[0]["name"])
 print(students[1]["marks"][2])
 
 for student in students:
     print(student["name"], "→", sum(student["marks"]))</code></pre>
-  <pre class="out"><code>Rahul
-95
-Rahul → 253
-Priya → 273</code></pre>
+  <figure class="shot"><img src="img/44.webp" alt="Terminal output: Rahul, 95, Rahul → 253, Priya → 273" width="1366" height="211" loading="lazy"><figcaption>Indexing and looping work exactly as with any list of dictionaries.</figcaption></figure>
   <h3>Writing JSON files: <code>json.dump()</code></h3>
   <pre><code class="language-python">import json
 
@@ -657,20 +570,12 @@ student = {
 
 with open("student.json", "w") as file:
     json.dump(student, file)</code></pre>
-  <div class="codebox"><span class="cap">student.json</span><pre><code class="language-json">{"name": "Sneha", "age": 20, "marks": [82, 91, 87], "passed": true}</code></pre></div>
+  <p><code>student.json</code> now contains:</p>
+  <figure class="shot"><img src="img/45.webp" alt="VS Code: student.json holds one line: {"name": "Sneha", "age": 20, "marks": [82, 91, 87], "passed": true}" width="1184" height="116" loading="lazy"><figcaption>Everything on one line, and <code>True</code> became <code>true</code>.</figcaption></figure>
   <p><code>True</code> became <code>true</code>, and it’s all on <b>one line</b>: valid, but hard to read. Add <code>indent</code>:</p>
   <pre><code class="language-python">with open("student.json", "w") as file:
     json.dump(student, file, indent=4)</code></pre>
-  <div class="codebox"><span class="cap">student.json</span><pre><code class="language-json">{
-    "name": "Sneha",
-    "age": 20,
-    "marks": [
-        82,
-        91,
-        87
-    ],
-    "passed": true
-}</code></pre></div>
+  <figure class="shot sm"><img src="img/46.webp" alt="VS Code: student.json now spread over 10 indented lines, with each mark on its own line" width="667" height="336" loading="lazy"><figcaption>With <code>indent=4</code>: one item per line.</figcaption></figure>
   <p><code>indent=4</code> puts each item on its own line with 4 spaces of indentation.</p>
   <h3>Updating a JSON file: load → change → dump</h3>
   <p>You can’t “append” to JSON like a text file (that would break the brackets). Instead:</p>
@@ -684,7 +589,7 @@ students.append({"name": "Amit", "age": 20, "marks": [70, 75, 80]})
 
 with open("students.json", "w") as file:
     json.dump(students, file, indent=4)</code></pre>
-  <p><code>students.json</code> now holds three student objects (Rahul, Priya and Amit), neatly indented.</p>
+  <figure class="shot sm"><img src="img/47.webp" alt="VS Code: students.json now holds three indented student objects: Rahul, Priya and Amit" width="711" height="884" loading="lazy"><figcaption><code>students.json</code> now holds three students (Rahul, Priya and Amit), neatly indented.</figcaption></figure>
   <div class="sticky fde"><strong>Real world: app settings</strong> A music app keeps settings in JSON and updates the volume when the user changes it.
   <pre><code class="language-python">import json
 
@@ -710,8 +615,7 @@ student = {"name": "Rahul", "age": 21, "passed": True, "grade": None}
 text = json.dumps(student)
 print(text)          # True becomes true, None becomes null
 print(type(text))</code></pre>
-  <pre class="out"><code>{"name": "Rahul", "age": 21, "passed": true, "grade": null}
-&lt;class 'str'&gt;</code></pre>
+  <figure class="shot"><img src="img/48.webp" alt="Terminal output: {"name": "Rahul", "age": 21, "passed": true, "grade": null} and &lt;class 'str'&gt;" width="1366" height="156" loading="lazy"><figcaption>A JSON <b>string</b>: <code>true</code> and <code>null</code> in lowercase.</figcaption></figure>
   <pre><code class="language-python">import json
 
 text = '{"name": "Priya", "age": 22, "passed": false}'
@@ -720,9 +624,8 @@ student = json.loads(text)
 print(student)       # false becomes False
 print(type(student))
 print(student["name"])</code></pre>
-  <pre class="out"><code>{'name': 'Priya', 'age': 22, 'passed': False}
-&lt;class 'dict'&gt;
-Priya</code></pre>
+  <figure class="shot"><img src="img/49.webp" alt="Terminal output: {'name': 'Priya', 'age': 22, 'passed': False}, &lt;class 'dict'&gt; and Priya" width="1366" height="184" loading="lazy"><figcaption>Back to a Python <code>dict</code>: <code>false</code> became <code>False</code>.</figcaption></figure>
+  <p>Look carefully at the outputs: <code>True</code> became <code>true</code> and <code>None</code> became <code>null</code> when converting to JSON, and <code>false</code> became <code>False</code> when coming back to Python.</p>
 </section>
 
 <!-- 9 -->
@@ -735,23 +638,18 @@ Priya</code></pre>
     <li>It’s small and simple: just plain text.</li>
     <li>Many apps export CSV: attendance sheets, sales reports, bank statements.</li>
   </ul>
+  <figure class="shot"><img src="img/50.webp" alt="What is saved on disk: students.csv as plain text with values separated by commas. What we see when it is opened in Excel or Sheets: a neat table with columns name, age, marks and rows Rahul 21 85, Priya 22 90, Amit 20 78" width="1400" height="336" loading="lazy"><figcaption>On disk it’s plain text; in Excel or Sheets it’s a neat table.</figcaption></figure>
   <div class="codebox"><span class="cap">bank_statement.csv</span><pre><code class="language-plaintext">date,description,amount
 01-07,UPI Payment,-250
 02-07,Salary,45000
 03-07,ATM Withdrawal,-2000</code></pre></div>
   <h3>Rows and columns</h3>
-  <div class="two">
-    <div class="codebox"><span class="cap">students.csv</span><pre><code class="language-plaintext">name,age,marks
+  <p>Suppose <code>students.csv</code> contains:</p>
+  <div class="codebox"><span class="cap">students.csv</span><pre><code class="language-plaintext">name,age,marks
 Rahul,21,85
 Priya,22,90
 Amit,20,78</code></pre></div>
-    <div class="tbl"><table>
-      <tr><th>name</th><th>age</th><th>marks</th></tr>
-      <tr><td>Rahul</td><td>21</td><td>85</td></tr>
-      <tr><td>Priya</td><td>22</td><td>90</td></tr>
-      <tr><td>Amit</td><td>20</td><td>78</td></tr>
-    </table></div>
-  </div>
+  <figure class="shot"><img src="img/51.webp" alt="The students.csv table: header row name, age, marks (the first line, names of the columns); a row is one line, one record (one student); a column is one field for every record (all the marks); a comma separates one value from the next" width="1009" height="408" loading="lazy"><figcaption>Header row, rows, columns and commas.</figcaption></figure>
   <ul>
     <li>Each <b>line</b> is a <b>row</b>: one record (one student).</li>
     <li><b>Commas</b> split each row into <b>columns</b>: name, age, marks.</li>
@@ -775,10 +673,7 @@ with open("students.csv", "r") as file:
     reader = csv.reader(file)
     for row in reader:
         print(row)</code></pre>
-  <pre class="out"><code>['name', 'age', 'marks']
-['Rahul', '21', '85']
-['Priya', '22', '90']
-['Amit', '20', '78']</code></pre>
+  <figure class="shot"><img src="img/52.webp" alt="Terminal output: ['name', 'age', 'marks'], ['Rahul', '21', '85'], ['Priya', '22', '90'], ['Amit', '20', '78']" width="1366" height="211" loading="lazy"><figcaption>Each row comes out as a list of strings, header included.</figcaption></figure>
   <p>Each row is a <b>list</b>, so use indexing:</p>
   <pre><code class="language-python">import csv
 
@@ -786,10 +681,7 @@ with open("students.csv", "r") as file:
     reader = csv.reader(file)
     for row in reader:
         print(row[0], "-", row[2])</code></pre>
-  <pre class="out"><code>name - marks
-Rahul - 85
-Priya - 90
-Amit - 78</code></pre>
+  <figure class="shot"><img src="img/53.webp" alt="Terminal output: name - marks, Rahul - 85, Priya - 90, Amit - 78" width="1366" height="211" loading="lazy"><figcaption><code>row[0]</code> and <code>row[2]</code>: name and marks.</figcaption></figure>
   <h3>Every value is a string</h3>
   <p>CSV is plain text, so you get <code>"85"</code>, not <code>85</code>. Convert with <code>int()</code> before doing maths:</p>
   <pre><code class="language-python">import csv
@@ -800,8 +692,7 @@ with open("students.csv", "r") as file:
 
 print(rows[1][2], type(rows[1][2]))
 print(int(rows[1][2]) + 5)</code></pre>
-  <pre class="out"><code>85 &lt;class 'str'&gt;
-90</code></pre>
+  <figure class="shot"><img src="img/54.webp" alt="Terminal output: 85 &lt;class 'str'&gt; and 90" width="1366" height="156" loading="lazy"><figcaption><code>"85"</code> is a string; after <code>int()</code> you can add 5.</figcaption></figure>
   <h3>Writing CSV: <code>csv.writer()</code></h3>
   <p>Create a writer and give it one row at a time as a list with <code>.writerow()</code>:</p>
   <pre><code class="language-python">import csv
@@ -811,9 +702,9 @@ with open("new_students.csv", "w", newline="") as file:
     writer.writerow(["name", "age", "marks"])
     writer.writerow(["Rahul", 21, 85])
     writer.writerow(["Priya", 22, 90])     # numbers are converted to text automatically</code></pre>
-  <div class="codebox"><span class="cap">new_students.csv</span><pre><code class="language-plaintext">name,age,marks
-Rahul,21,85
-Priya,22,90</code></pre></div>
+  <p><code>new_students.csv</code> now contains:</p>
+  <figure class="shot sm"><img src="img/55.webp" alt="VS Code: new_students.csv contains name,age,marks then Rahul,21,85 and Priya,22,90" width="642" height="164" loading="lazy"><figcaption>Each list became one comma-separated row.</figcaption></figure>
+  <p>Notice you passed numbers like <code>21</code>: the writer converts them to text automatically.</p>
   <div class="sticky warn l"><strong>Why <code>newline=""</code>?</strong> The csv writer adds its own line endings. Without <code>newline=""</code>, on Windows you get an <b>extra blank line</b> between every row. Always add it when opening a CSV file for writing or appending.</div>
   <h3>Many rows at once: <code>.writerows()</code></h3>
   <pre><code class="language-python">import csv
@@ -828,13 +719,14 @@ students = [
 with open("new_students.csv", "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerows(students)</code></pre>
+  <figure class="shot sm"><img src="img/56.webp" alt="VS Code: new_students.csv contains the header and rows for Rahul, Priya and Amit" width="642" height="192" loading="lazy"><figcaption>All four rows written with one call.</figcaption></figure>
   <h3>Adding a row with <code>"a"</code></h3>
   <pre><code class="language-python">import csv
 
 with open("students.csv", "a", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(["Sneha", 20, 88])</code></pre>
-  <p><code>students.csv</code> now ends with <code>Sneha,20,88</code>; the other rows are untouched.</p>
+  <figure class="shot sm"><img src="img/57.webp" alt="VS Code: students.csv now ends with a new row Sneha,20,88 after Rahul, Priya and Amit" width="642" height="221" loading="lazy"><figcaption><code>students.csv</code> now ends with <code>Sneha,20,88</code>; the other rows are untouched.</figcaption></figure>
   <div class="sticky fde"><strong>Real world: ID-card attendance</strong> Every scan adds one row:
   <pre><code class="language-python">import csv
 
@@ -843,7 +735,7 @@ name = input("Enter student name: ")
 with open("attendance.csv", "a", newline="") as file:
     writer = csv.writer(file)
     writer.writerow([name, "Present"])</code></pre></div>
-  <h3>Handling the header</h3>
+  <h3>Basic handling of headers</h3>
   <p>In the first reader example, <code>['name', 'age', 'marks']</code> printed as if it were a student. Try converting marks on every row and the header breaks the program:</p>
   <pre><code class="language-python">import csv
 
@@ -851,7 +743,7 @@ with open("students.csv", "r") as file:
     reader = csv.reader(file)
     for row in reader:
         print(row[0], int(row[2]))</code></pre>
-  <pre class="out"><code>ValueError: invalid literal for int() with base 10: 'marks'</code></pre>
+  <figure class="shot"><img src="img/58.webp" alt="Terminal traceback: line 6 print(row[0], int(row[2])) fails with ValueError: invalid literal for int() with base 10: 'marks'" width="1366" height="239" loading="lazy"><figcaption>The header’s <code>"marks"</code> can’t become a number: <code>ValueError</code>.</figcaption></figure>
   <p>The first row’s “marks” is a word, which can’t become a number. <code>next(reader)</code> reads <b>just one row</b> (the header) and moves forward, so the loop starts at real data:</p>
   <pre><code class="language-python">import csv
 
@@ -862,10 +754,7 @@ with open("students.csv", "r") as file:
 
     for row in reader:
         print(row[0], "scored", int(row[2]))</code></pre>
-  <pre class="out"><code>Columns: ['name', 'age', 'marks']
-Rahul scored 85
-Priya scored 90
-Amit scored 78</code></pre>
+  <figure class="shot"><img src="img/59.webp" alt="Terminal output: Columns: ['name', 'age', 'marks'], Rahul scored 85, Priya scored 90, Amit scored 78" width="1366" height="211" loading="lazy"><figcaption>The header is read once by <code>next()</code>; the loop starts at real data.</figcaption></figure>
   <h3>Putting it together: average marks</h3>
   <pre><code class="language-python">import csv
 
@@ -881,7 +770,8 @@ with open("students.csv", "r") as file:
         count = count + 1
 
 print("Average marks:", round(total / count, 2))</code></pre>
-  <pre class="out"><code>Average marks: 84.33</code></pre>
+  <figure class="shot"><img src="img/60.webp" alt="Terminal output: Average marks: 84.33" width="1366" height="129" loading="lazy"><figcaption>(85 + 90 + 78) / 3 = 84.33.</figcaption></figure>
+  <p>When writing, the header is simply the first row you write, like <code>writer.writerow(["name", "age", "marks"])</code> above. When appending with <code>"a"</code>, you don’t write the header again, because it’s already there.</p>
   <div class="sticky fde"><strong>Real world: shop’s daily sales</strong>
   <div class="codebox"><span class="cap">sales.csv</span><pre><code class="language-plaintext">item,quantity,price
 Rice,2,60
@@ -973,6 +863,6 @@ print("Total sales: ₹", total)</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>

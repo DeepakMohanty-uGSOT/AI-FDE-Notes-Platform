@@ -9,7 +9,7 @@
 <meta name="date" content="2026-10-12">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../../assets/style.css?v=20261014133343">
+<link rel="stylesheet" href="../../../assets/style.css?v=20261015102624">
 <script>try{var t=localStorage.getItem('aifde:theme'),f=localStorage.getItem('aifde:font');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));if(f&&JSON.parse(f)==='clean')document.documentElement.setAttribute('data-font','clean')}catch(e){}</script>
 </head>
 <body data-root="../../../" data-page="note" data-note="python-advanced/path-operations-http-methods">
@@ -78,8 +78,7 @@
     <tr><td><b>DELETE</b></td><td>Removes an existing resource from the server.</td></tr>
   </table></div>
   <figure class="shot"><img src="img/02.webp" alt="Six cards: GET reads data and changes nothing; POST creates something new by sending its data; PUT replaces an existing item completely; PATCH changes only some fields of an item; DELETE removes an existing item; Learn more: covered in detail in the earlier notes on HTTP methods." width="1400" height="646"><figcaption>The five HTTP methods: each one tells the server what you want to <b>do</b>.</figcaption></figure>
-  <!-- img 03: decorative lightbulb icon of the source's callout box; the callout text is the sticky note below -->
-  <div class="sticky info l"><strong>Resource?</strong> A <b>resource</b> simply means “a thing your API manages”: a book, a student, an order. To know more about HTTP methods, refer to the previous notes on HTTP methods.</div>
+  <div class="sticky info l"><img class="callout-ic" src="img/03.webp" alt="Lightbulb icon" width="180" height="180"><strong>Resource?</strong> A <b>resource</b> simply means “a thing your API manages”: a book, a student, an order. To know more about HTTP methods, refer to the previous notes on HTTP methods.</div>
   <h3>Why can the same URL do different things?</h3>
   <p>Because the URL and the method have different jobs:</p>
   <div class="grid two">
@@ -165,8 +164,7 @@ http://127.0.0.1:8000/books/1</code></pre>
   <h3>What is Swagger UI?</h3>
   <p><b>Swagger UI</b> is an interactive web page that lists <b>every route</b> in your API and lets you <b>send any request</b> with a few clicks: choose the method, fill in path values, type a request body, and see the response.</p>
   <p>The best part: <mark>FastAPI creates this page for you automatically by reading your code.</mark> You do not install or write anything. It is always available at <code>/docs</code> while your server is running.</p>
-  <!-- img 11: decorative check-mark icon of the source's callout box; the callout text is the sticky note below -->
-  <div class="sticky tip"><strong>Built from your code</strong> Every time you add a route and save the file, it appears on this page after a refresh. From now on, we test every method here.</div>
+  <div class="sticky tip"><img class="callout-ic" src="img/11.webp" alt="Check-mark icon" width="180" height="180"><strong>Built from your code</strong> Every time you add a route and save the file, it appears on this page after a refresh. From now on, we test every method here.</div>
   <h3>Open Swagger UI</h3>
   <p>With the server running, open:</p>
   <pre><code class="language-plaintext">http://127.0.0.1:8000/docs</code></pre>
@@ -305,8 +303,7 @@ def update_book(book_id: int, updated_book: dict):
   <figure class="shot"><img src="img/30.webp" alt="VS Code terminal: PUT /books/1 200 OK, GET /books 200 OK, GET /books/1 500 Internal Server Error, ERROR: Exception in ASGI application, Traceback pointing to app\main.py line 17 in get_book, if book[&quot;id&quot;] == book_id:, KeyError: 'id'." width="1400" height="411"><figcaption>The server log: <b>500 Internal Server Error</b> caused by <code>KeyError: 'id'</code> on line 17 of <code>get_book()</code>.</figcaption></figure>
   <figure class="shot"><img src="img/31.webp" alt="Before: id 1, Python Basics, Ravi. After PUT: only title Python Masterclass. Three cards: id and author are gone, PUT replaced the whole record with exactly what we sent; search by id now crashes, the loop reads book[&quot;id&quot;] but this record has no id, Python raises KeyError and the client gets 500 Internal Server Error; reset the data, save main.py or restart the server and the list goes back to the 2 starting books." width="1400" height="581"><figcaption>What went wrong with the partial PUT, and how to reset.</figcaption></figure>
   <p>The loop in <code>get_book()</code> reads <code>book["id"]</code> on the first book, which no longer has an <code>"id"</code> key. Python raises a <code>KeyError</code>, and the client gets <b>500 Internal Server Error</b>. Because the broken record is first in the list, even <b>GET /books/2</b> now fails the same way.</p>
-  <!-- img 32: decorative warning icon of the source's callout box; the callout text is the sticky note below -->
-  <div class="sticky warn l"><strong>With PUT, always send the complete record.</strong> Save <code>main.py</code> to restart the server and get the original two books back. If you only want to change one field, use <b>PATCH</b>, which is the next section.</div>
+  <div class="sticky warn l"><img class="callout-ic" src="img/32.webp" alt="Warning icon" width="180" height="180"><strong>With PUT, always send the complete record.</strong> Save <code>main.py</code> to restart the server and get the original two books back. If you only want to change one field, use <b>PATCH</b>, which is the next section.</div>
 </section>
 
 <!-- 8 -->
@@ -731,6 +728,6 @@ pip freeze &gt; requirements.txt</code></pre>
 
 </main>
 
-<script src="../../../assets/site.js?v=20261014133343"></script>
+<script src="../../../assets/site.js?v=20261015102624"></script>
 </body>
 </html>
